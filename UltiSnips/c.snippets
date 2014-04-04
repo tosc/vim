@@ -1,0 +1,104 @@
+snippet CC "New C-class" b
+int main(int argc, char* argv[])
+{
+	return 0;
+}
+endsnippet
+
+snippet if "if" b
+if(${1:condition})
+{
+	${VISUAL}
+	$0
+}
+endsnippet
+
+snippet elif "else if" b
+else if(${1:condition})
+{
+	${VISUAL}
+	$0
+}
+endsnippet
+
+snippet else "else" b
+else
+{
+	${VISUAL}
+	$0
+}
+endsnippet
+
+snippet header "New C-header" b
+#ifndef `!v toupper(expand('%:r'))`_H_
+#define `!v toupper(expand('%:r'))`_H_
+
+$0
+
+#endif
+endsnippet
+
+snippet include "include" b
+#include <${1:stdio.h}>
+endsnippet
+
+snippet switch
+switch(${1:var})
+{
+	case ${2:val}:
+		${0:${VISUAL}}
+		break;
+}
+endsnippet
+
+snippet case
+case ${1:val}:
+	${0:${VISUAL}}
+	break;
+endsnippet
+
+snippet tcpclient "" b
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h> 
+#include <unistd.h>
+#include <errno.h>
+
+int main()
+{
+	int sock;
+	char send_data[1024];
+	struct hostent *host;
+	struct sockaddr_in server_addr;
+	host = gethostbyname("127.0.0.1");
+
+	if((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+	{
+		perror("Socket");
+		exit(1);
+	}
+
+
+
+	server_addr.sin_family = AF_INET;     
+        server_addr.sin_port = htons(9637);   
+        server_addr.sin_addr = *((struct in_addr *)host->h_addr);
+        bzero(&(server_addr.sin_zero),8); 
+
+        if (connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1) 
+	{
+		perror("Connect");
+		exit(1);
+	}
+
+	sprintf(send_data, "windowNr 23 asdfj asd fjkasldf jaslkdf jasldf jasklvacsv masdklf jaslcvm asldfk jalwefi alsd");
+	send(sock,send_data,strlen(send_data), 0);   
+	close(sock);
+
+	return 0;
+}
+endsnippet

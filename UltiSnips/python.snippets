@@ -1,0 +1,48 @@
+snippet if "if" b
+if ${1:True}:
+	$0
+endsnippet
+
+snippet gui "A gui" b
+from Tkinter import *
+
+class Gui:
+	def __init__(self, window):
+		window.title("WINDOW TITLE")
+		$0
+
+window = Tk()
+gui = Gui(window)
+
+window.mainloop()
+endsnippet
+
+snippet bind "New keybinding" b
+${1:widget}.bind("<${2:Down}>", self.${3:function})
+$0
+endsnippet
+
+snippet button "New button" b
+${1:button} = Button(${2:parent}, text="${3:buttonText}", command = self.${4:commandFunction})
+$1.grid(row = ${5:rowNr}, column = ${6:columnNr}, ${7:columnSpan = 1, }${8:sticky = W+E})
+$0
+endsnippet
+
+snippet label "New label" b
+${1:label} = Label(${2:parent}, text="${3:buttonText}")
+$1.grid(row = ${4:rowNr}, column = ${5:columnNr})
+$0
+endsnippet
+
+snippet labelvar "New label with var" b
+self.${1:label}Var = StringVar()
+$1 = Label(${2:parent}, textvariable = self.$1Var)
+$1.grid(row = ${3:rowNr}, column = ${4:columnNr})
+self.$1Var.set("${5:Starttext for label}")
+$0
+endsnippet
+
+snippet for "" b
+for ${1:tempVar} in ${2:list}:
+	$0
+endsnippet

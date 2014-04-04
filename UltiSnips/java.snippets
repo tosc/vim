@@ -1,0 +1,125 @@
+snippet List "New List" b
+List<${1:ListType}> ${2:variable} = new List<$1>();
+$0
+endsnippet
+
+snippet for "For" b
+for(int ${1:index} = 0; $1 < ${2:times}; $1++)
+{
+	${3:${VISUAL}}
+}
+$0
+endsnippet
+
+snippet fori "For int i" b
+for(int i = 0; i < ${1:times}; i++)
+{
+	${2:${VISUAL}}
+}
+$0
+endsnippet
+
+
+
+snippet fore "For each" b
+foreach(${1:ElementType} ${2:ElementVarName} in ${3:Collection})
+{
+	${4:${VISUAL}}
+}
+$0
+endsnippet
+
+snippet if "If" b
+if($1)
+{
+	${2:${VISUAL}}
+}
+$0
+endsnippet
+
+snippet else "Else" b
+else
+{
+	${1:${VISUAL}}
+}
+$0
+endsnippet
+
+snippet elif "Else if" b
+else if($1)
+{
+	${2:${VISUAL}}
+}
+$0
+endsnippet
+
+snippet JC "New unity script" b
+public class ${1:ClassName} : MonoBehaviour 
+{
+	$0
+}
+endsnippet
+
+snippet comment "Comment method" b
+/** <summary>
+ * $1
+ */ </summary>
+$0
+endsnippet
+
+snippet param "Documentation for parameter" b
+ *@param ${1:variable} ${2:description}
+$0
+endsnippet
+
+snippet returns "Documentation for return" b
+ *@return ${1:description}
+$0
+endsnippet
+
+snippet switch "switch" b
+switch($1)
+{
+	case $2:
+		$3
+		break;
+	$4
+}
+$0
+endsnippet
+
+snippet case "case" b
+case $1:
+	$2
+	break;
+$0
+endsnippet
+
+snippet set "Setter" b
+${1:public} void set${2}(${3:String} ${4})
+{
+	this.$4 = $4;
+}
+$0
+endsnippet
+
+snippet /get/ "getter" !br
+${1:public} ${2:String} get${3:Name}() 
+{
+	return `!p snip.rv = t[3].lower()`;
+}
+$0
+endsnippet
+
+snippet /getset/ "getter/setter" !br
+${1:public} ${2:String} get${3:Name}() 
+{
+	return `!p snip.rv = t[3].lower()`;
+}
+
+$1 void set$3($2 `!p snip.rv = t[3].lower()`)
+{
+	this.`!p snip.rv = t[3].lower()` = `!p snip.rv = t[3].lower()`;
+}
+$0
+endsnippet
