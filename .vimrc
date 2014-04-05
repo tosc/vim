@@ -70,6 +70,9 @@ colorscheme desert
 let &titlestring = expand("%")
 
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
+
+set laststatus=2
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
 " ---------
 
 " ---- [2] Session settings ----
