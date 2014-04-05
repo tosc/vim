@@ -72,7 +72,7 @@ let &titlestring = expand("%")
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 
 set laststatus=2
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}%=%-14.(%l,%c%V%)\ %P
+set statusline=%<%f\ %h%m%r%{fugitive#statusline()}[%{len(GitGutterGetHunks())}]%=%-14.(%l,%c%V%)\ %P
 " ---------
 
 " ---- [2] Session settings ----
@@ -145,6 +145,7 @@ Bundle 'Shougo/unite-outline'
 Bundle 'Shougo/unite-build'
 Bundle 'Shougo/unite-session'
 Bundle 'skeept/ultisnips-unite'
+Bundle 'airblade/vim-gitgutter'
 " Required by vundle
 filetype plugin indent on
 syntax on
@@ -299,6 +300,13 @@ call unite#filters#matcher_default#use(['matcher_fuzzy'])
 " Use current directory as vimshell prompt.
 let g:vimshell_prompt_expr = 'escape(fnamemodify(getcwd(), ":~").">", "\\[]()?! ")." "'
 let g:vimshell_prompt_pattern = '^\%(\f\|\\.\)\+> '
+" --------------------
+
+" ---- [3.7] GITGUTTER ----
+hi clear SignColumn
+
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
 " --------------------
 " --------------------
 
