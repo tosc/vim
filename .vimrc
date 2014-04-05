@@ -28,6 +28,26 @@ function! QFixClose()
 	ccl
 	let t:qFixWin = 0
 endfunction
+
+let w:StatusLineVar = "aa"
+function! SlowStatusLine()
+	let gitTemp = system("git branch")
+	if gitTemp =~ "fatal" 
+		let w:StatusLineVar = ""
+	else
+		let lines = split(gitTemp, "\n")
+		for line in lines
+			if line =~ "*"
+			       	let w:StatusLineVar = line . " "
+			endif
+		endfor
+	endif
+	return w:StatusLineVar
+endfunction
+
+function! GetStatusLine()
+	return w:StatusLineVar
+endfunction
 " --------------------
 
 " ---- [1] Normal vimsettings ----
@@ -72,7 +92,7 @@ let &titlestring = expand("%")
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 
 set laststatus=2
-set statusline=%<%f\ %h%m%r%{fugitive#statusline()}[%{len(GitGutterGetHunks())}]%=%-14.(%l,%c%V%)\ %P
+set statusline=%<%f\ %h%m%r[%{GetStatusLine()}%{len(GitGutterGetHunks())}]%=%-14.(%l,%c%V%)\ %P
 " ---------
 
 " ---- [2] Session settings ----
@@ -111,7 +131,7 @@ function! LoadOldSessions()
 		let i = i + 1
 		call add(fixFiles, line)
 	endfor
-	let l:fixFiles = insert(l:fixFiles, "Select session: ")
+	let l:fixFiles = insert(l:fIxFiles, "Select session: ")
 	let l:session = inputlist(l:fixFiles)
 
 	exe "so " . l:files[l:session - 1]
@@ -208,16 +228,6 @@ function! SmartEnter()
 	endif
 endfunction
 
-" Runs my TabUltiNeo when you press tab
-imap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
-smap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
-imap <CR> <C-R>=SmartEnter()<CR>
-
-
-" When you press TAB and have something selected in visual mode, it saves it
-" ultisnips and removes it.
-xmap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
-
 " Adds a new split when running ultisnips edit instead of taking over the
 " current window
 let g:UltiSnipsEditSplit = 'horizontal'
@@ -258,10 +268,10 @@ let g:unite_enable_smart_case = 1
 let g:unite_update_time = 300
 
 function! s:unite_settings()
-	nmap <buffer> <ESC> <Plug>(unite_all_exit)
-	nmap <buffer> <BS> <Plug>()
-	imap <buffer> <TAB> <Plug>(unite_select_next_line)
-	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
+	nnoremap <buffer> <ESC> <Plug>(unite_all_exit)
+	nnoremap <buffer> <BS> <Plug>()
+	inoremap <buffer> <TAB> <Plug>(unite_select_next_line)
+	inoremap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
 	inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
 	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
 	inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
@@ -276,7 +286,6 @@ function! s:unite_settings()
 
 endfunction
 autocmd FileType unite call s:unite_settings()
-map - :Unite -no-split window buffer file_mru file file/new <CR>
 
 let s:bufferaction = {'description' : 'verbose', 'is_selectable' : 1,}
 
@@ -316,7 +325,6 @@ set foldmethod=expr
 set foldnestmax=2
 set foldopen=mark
 set foldlevelstart=99
-map <space> za
 " --------------------
 
 " ---- [4.1] FOLDEXPR ----
@@ -650,18 +658,32 @@ autocmd BufNewFile,BufRead *.pass set filetype=pass
 " ---- [6] Bindings ----
 " ---- [6.0] Normal ----
 " Ctrl + del and Ctrl + bs like normal editors in insert
-imap <C-BS> <C-W>
-imap <C-Del> <C-O>de
+inoremap <C-BS> <C-W>
+inoremap <C-Del> <C-O>de
 
-imap <C-F> <C-X><C-F>
+inoremap <C-F> <C-X><C-F>
 
 " perform expression on cursor word | EX: select a number ex 5, 5ä, then
-map ä viw"xc<C-R>=getreg('x')
+noremap ä viw"xc<C-R>=getreg('x')
 
 noremap <Up> <C-W>k<C-W>
 noremap <Down> <C-W>j<C-W>
 noremap <Left> <C-W>h<C-W>
 noremap <Right> <C-W>l<C-W>
+
+" Runs my TabUltiNeo when you press tab
+inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
+snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
+inoremap <CR> <C-R>=SmartEnter()<CR>
+
+
+" When you press TAB and have something selected in visual mode, it saves it
+" ultisnips and removes it.
+xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+
+noremap - :Unite -no-split window buffer file_mru directory_mru file file/new <CR>
+
+noremap <space> za
 " --------------------
 
 " ---- [6.1] Leader ----
