@@ -31,6 +31,7 @@ endfunction
 " --------------------
 
 " ---- [1] Normal vimsettings ----
+autocmd!
 set nocompatible
 set number
 set showmatch
@@ -69,9 +70,6 @@ let $LANG = 'en'
 colorscheme desert
 
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
-
-" Remove all autocmds.
-autocmd!
 " ---------
 
 " ---- [2] Session settings ----
@@ -116,7 +114,6 @@ function! LoadOldSessions()
 	exe "so " . l:files[l:session - 1]
 endfunction
 
-autocmd BufWritePost * call SaveSession()
 " --------------------
 
 " ---- [3] Plugins ----
@@ -225,19 +222,7 @@ let g:OmniSharp_sln_list_index = 1
 let g:Omnisharp_stop_server = 0
 " -------
 
-" ---- [3.4] LATEX ----
-" Cursor hold delay = 1sek
-set updatetime=1000
-" Compile latex to a pdf when you save
-autocmd BufWritePost *.tex silent !start /min pdflatex %
-" Save when you leave insertmove
-autocmd InsertLeave *.tex nested w
-"Save when you don't do any editing for a while
-autocmd CursorHold *.tex nested w
-autocmd CursorHoldI *.tex nested w
-" ---------------
-
-" ---- [3.5] UNITE ----
+" ---- [3.4] UNITE ----
 let g:unite_enable_start_insert = 1
 let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
@@ -277,7 +262,7 @@ call unite#custom#default_action('buffer', 'goto')
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 " --------------------
 
-" ---- [3.6] VIMSHELL ----
+" ---- [3.5] VIMSHELL ----
 " let g:vimshell_prompt = "% "
 " let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
 
@@ -287,7 +272,7 @@ let g:vimshell_prompt_expr = 'escape(fnamemodify(getcwd(), ":~").">", "\\[]()?! 
 let g:vimshell_prompt_pattern = '^\%(\f\|\\.\)\+> '
 " --------------------
 
-" ---- [3.8] Fugitive ----
+" ---- [3.6] Fugitive ----
 " --------------------
 " --------------------
 
@@ -487,8 +472,17 @@ endfunction
 " --------------------
 " --------------------
 
-" ---- [5] Filetype specific ----
-" ---- [5.0] JAVA specific ----
+" ---- [5] AUTOCMD ----
+autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
+
+autocmd BufEnter * call SlowStatusLine()
+
+autocmd InsertEnter * hi StatusLine gui=reverse
+autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
+" --------------------
+
+" ---- [6] Filetype specific ----
+" ---- [6.0] JAVA specific ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype java setlocal omnifunc=JavaOmni
@@ -508,7 +502,7 @@ autocmd Filetype java setlocal foldtext=SpecialBraceFoldText()
 autocmd Filetype java let s:CompletionCommand = "\<C-X>\<C-O>"
 " --------
 
-" ---- [5.1] C# specific ----
+" ---- [6.1] C# specific ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype cs setlocal omnifunc=CSOmni
@@ -531,7 +525,7 @@ autocmd Filetype cs setlocal foldtext=SpecialBraceFoldText()
 autocmd Filetype cs let s:CompletionCommand = "\<C-X>\<C-O>"
 " ----------------
 
-" ---- [5.2] C specific ----
+" ---- [6.2] C specific ----
 autocmd Filetype c,cpp setlocal omnifunc=COmni
 function! COmni(findstart, base)
 	let words = eclim#c#complete#CodeComplete(a:findstart, a:base)
@@ -551,7 +545,7 @@ autocmd Filetype c,cpp setlocal foldtext=NormalFoldText()
 autocmd Filetype c,cpp let s:CompletionCommand = "\<C-X>\<C-U>"
 " --------------------
 
-" ---- [5.3] VIMRC specific ----
+" ---- [6.3] VIMRC specific ----
 autocmd Filetype vim setlocal foldexpr=VimrcFolding(v:lnum)
 autocmd Filetype vim setlocal foldtext=NormalFoldText()
 autocmd Filetype vim let s:CompletionCommand = "\<C-X>\<C-P>"
@@ -560,20 +554,20 @@ autocmd Filetype vim let &foldlevel=0
 autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
 " -------------
 
-" ---- [5.4] SNIPPET specific ----
+" ---- [6.4] SNIPPET specific ----
 autocmd Filetype snippets setlocal foldexpr=SnippetFolding(v:lnum)
 autocmd Filetype snippets setlocal foldtext=NormalFoldText()
 autocmd Filetype snippets let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 
-" ---- [5.5] todo specific ----
+" ---- [6.5] todo specific ----
 autocmd BufEnter *.todo setlocal filetype=todo
 autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
 autocmd Filetype todo let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 
-" ---- [5.6] PYTHON specific ----
+" ---- [6.6] PYTHON specific ----
 autocmd Filetype python setlocal omnifunc=PythonOmni
 function! PythonOmni(findstart, base)
 	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
@@ -590,19 +584,19 @@ autocmd Filetype python setlocal foldtext=NormalFoldText()
 autocmd Filetype python let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 
-" ---- [5.7] LUA specific ----
+" ---- [6.7] LUA specific ----
 autocmd Filetype lua setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype lua setlocal foldtext=NormalFoldText()
 autocmd Filetype lua let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
 
-" ---- [5.8] make specific ----
+" ---- [6.8] make specific ----
 autocmd Filetype make setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype make setlocal foldtext=NormalFoldText()
 autocmd Filetype make let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
 
-" ---- [5.9] pass specific ----
+" ---- [6.9] pass specific ----
 function! GenPass(...)
 let l:passLen = (a:0 > 0 ? a:1 : 8) 
 python << endpy
@@ -621,10 +615,22 @@ autocmd Filetype pass setlocal foldminlines=0
 autocmd Filetype pass let &foldlevel=0
 autocmd BufNewFile,BufRead *.pass set filetype=pass
 " -------------
+
+" ---- [6.10] LATEX specific ----
+" Cursor hold delay = 1sek
+set updatetime=1000
+" Compile latex to a pdf when you save
+autocmd BufWritePost *.tex silent !start /min pdflatex %
+" Save when you leave insertmove
+autocmd InsertLeave *.tex nested w
+"Save when you don't do any editing for a while
+autocmd CursorHold *.tex nested w
+autocmd CursorHoldI *.tex nested w
+" --------------------
 " --------------------
 
-" ---- [6] Bindings ----
-" ---- [6.0] Normal ----
+" ---- [7] Bindings ----
+" ---- [7.0] Normal ----
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
 inoremap <C-Del> <C-O>de
@@ -654,7 +660,7 @@ noremap - :Unite -no-split window buffer file_mru directory_mru file file/new <C
 noremap <space> za
 " --------------------
 
-" ---- [6.1] Leader ----
+" ---- [7.1] Leader ----
 let mapleader="ö"
 
 " A
@@ -711,7 +717,7 @@ map <leader>z :Unite -no-split -no-start-insert session<CR>
 " --------------------
 " --------------------
 
-" ---- [7] Tabs ----
+" ---- [8] Tabs ----
 function! Tabline()
 	let s = ''
 	for i in range(tabpagenr('$'))
@@ -744,54 +750,52 @@ hi TabLine term=underline cterm=underline gui=underline guibg=grey30
 hi TabLineSel term=none cterm=none gui=none
 " --------------------
 
-" ---- [8] OS specific ----
+" ---- [9] OS specific ----
 " Windows
 if(has("win32"))
 	"set shell=C:\mingw\msys\1.0\bin\bash.exe
 endif
 " --------------------
 
-" ---- [9] STATUSLINE ----
+" ---- [10] STATUSLINE ----
 set laststatus=2
 hi clear StatusLine
 hi StatusLine gui=underline
-"autocmd BufWritePost,BufRead * call SlowStatusLine()
-autocmd BufEnter * call SlowStatusLine()
-
-autocmd InsertEnter * hi StatusLine gui=reverse
-autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
-
-autocmd InsertLeave * echo "HI"
 
 function! SlowStatusLine()
 	let SlowStatusLineVar = "[" . expand("%") . "] "
-	let dir = expand("%:h")
-	let gitTemp = system("git -C " . expand("%:h") . " status -b -s")
-	let gitTemp = substitute(gitTemp, "##" , "", "")
-	let gitTemp = substitute(gitTemp, "\\.\\.\\." , "-", "")
-	if gitTemp !~ "fatal" 
-		let gitList = split(gitTemp, "\n")
-		if len(gitList) > 0
-			let branchName = gitList[0]
-			let branchName = substitute(branchName, " ", "[", "")
-			let branchName = substitute(branchName, " ", "] ", "")
-			let SlowStatusLineVar .= branchName
-		endif
-		if len(gitList) > 1
-			let SlowStatusLineVar .= " [nc " . (len(gitList) -1) . "]"
+	if &modifiable
+		let gitTemp = system("git -C " . expand("%:h") . " status -b -s")
+		let gitTemp = substitute(gitTemp, "##" , "", "")
+		let gitTemp = substitute(gitTemp, "\\.\\.\\." , "-", "")
+		if gitTemp !~ "fatal" 
+			let gitList = split(gitTemp, "\n")
+			if len(gitList) > 0
+				let branchName = gitList[0]
+				let branchName = substitute(branchName, " ", "[", "")
+				let beforeSub = branchName
+				let branchName = substitute(branchName, " ", "] ", "")
+				if beforeSub == branchName
+					let branchName .= "]"
+				endif
+				let SlowStatusLineVar .= branchName
+			endif
+			if len(gitList) > 1
+				let SlowStatusLineVar .= " [nc " . (len(gitList) -1) . "]"
+			endif
 		endif
 	endif
 	let &l:statusline=SlowStatusLineVar
 endfunction
 " --------------------
 
-" ---- [10] AFTER VIMRC ----
+" ---- [11] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
 endif
 " --------------------
 
-" ---- [11] Fresh Install ----
+" ---- [12] Fresh Install ----
 " 1. Create a tmp folder, .vim/tmp for backup files.
 " 2. Create session folder, .vim/session for sessionrestoring.
 " 3. Link this vimrc to your homedir. 
@@ -814,7 +818,7 @@ endif
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"
 " --------------------
 
-" ---- [12] Troubleshooting ----
+" ---- [13] Troubleshooting ----
 " Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
 " Ultisnips - If completion doesn't work but ,u opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both _vimfiles and vimfiles last time to get it to work.)
 " --------------------
