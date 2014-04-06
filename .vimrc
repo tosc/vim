@@ -28,26 +28,6 @@ function! QFixClose()
 	ccl
 	let t:qFixWin = 0
 endfunction
-
-let w:StatusLineVar = "aa"
-function! SlowStatusLine()
-	let gitTemp = system("git branch")
-	if gitTemp =~ "fatal" 
-		let w:StatusLineVar = ""
-	else
-		let lines = split(gitTemp, "\n")
-		for line in lines
-			if line =~ "*"
-			       	let w:StatusLineVar = line . " "
-			endif
-		endfor
-	endif
-	return w:StatusLineVar
-endfunction
-
-function! GetStatusLine()
-	return w:StatusLineVar
-endfunction
 " --------------------
 
 " ---- [1] Normal vimsettings ----
@@ -79,6 +59,7 @@ set ignorecase
 set smartcase
 
 set cryptmethod=blowfish
+set formatoptions-=cro
 
 " Sets what backspace works on
 set backspace=indent,eol,start
@@ -87,12 +68,7 @@ let $LANG = 'en'
 
 colorscheme desert
 
-let &titlestring = expand("%")
-
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
-
-set laststatus=2
-set statusline=%<%f\ %h%m%r[%{GetStatusLine()}%{len(GitGutterGetHunks())}]%=%-14.(%l,%c%V%)\ %P
 " ---------
 
 " ---- [2] Session settings ----
@@ -137,39 +113,42 @@ function! LoadOldSessions()
 	exe "so " . l:files[l:session - 1]
 endfunction
 
-autocmd BufWritePost * call SaveSession()
+if !exists("g:reload")
+	autocmd BufWritePost * call SaveSession()
+endif
 " --------------------
 
 " ---- [3] Plugins ----
 " ---- [3.0] VUNDLE ----
-" Required by vundle
-filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-Bundle 'gmarik/vundle'
+if !exists("g:reload")
+	" Required by vundle
+	filetype off
+	set rtp+=~/.vim/bundle/vundle/
+	call vundle#rc()
+	Bundle 'gmarik/vundle'
 
-" Vundle addons"
-Bundle "SirVer/ultisnips"  
-Bundle 'nosami/Omnisharp'
-Bundle 'tpope/vim-dispatch'
-Bundle 'jcf/vim-latex'
-Bundle 'tpope/vim-fugitive'
-Bundle 'Rip-Rip/clang_complete'
-Bundle 'Shougo/vimproc'
-Bundle 'Shougo/vimshell'
-Bundle 'Shougo/unite'
-Bundle 'terryma/vim-multiple-cursors'
-Bundle 'Shougo/neomru'
-Bundle 'Shougo/unite-help'
-Bundle 'Shougo/unite-outline'
-Bundle 'Shougo/unite-build'
-Bundle 'Shougo/unite-session'
-Bundle 'skeept/ultisnips-unite'
-Bundle 'airblade/vim-gitgutter'
-" Required by vundle
-filetype plugin indent on
-syntax on
-
+	" Vundle addons"
+	Bundle "SirVer/ultisnips"  
+	Bundle 'nosami/Omnisharp'
+	Bundle 'tpope/vim-dispatch'
+	Bundle 'jcf/vim-latex'
+	Bundle 'tpope/vim-fugitive'
+	Bundle 'Rip-Rip/clang_complete'
+	Bundle 'Shougo/vimproc'
+	Bundle 'Shougo/vimshell'
+	Bundle 'Shougo/unite'
+	Bundle 'terryma/vim-multiple-cursors'
+	Bundle 'Shougo/neomru'
+	Bundle 'Shougo/unite-help'
+	Bundle 'Shougo/unite-outline'
+	Bundle 'Shougo/unite-build'
+	Bundle 'Shougo/unite-session'
+	Bundle 'skeept/ultisnips-unite'
+"	Bundle 'airblade/vim-gitgutter'
+	" Required by vundle
+	filetype plugin indent on
+	syntax on
+endif
 " ----------
 
 " ---- [3.1] ULTISNIPS ----
@@ -235,10 +214,8 @@ let g:UltiSnipsEditSplit = 'horizontal'
 " --------
 
 " ---- [3.2] ECLIM ----
-
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
-
 " -----
 
 " ---- [3.3] OMNISHARP (C# OMNICOMPLETE) ---- 
@@ -250,15 +227,17 @@ let g:Omnisharp_stop_server = 0
 " -------
 
 " ---- [3.4] LATEX ----
-" Compile latex to a pdf when you save
-autocmd BufWritePost *.tex silent !start /min pdflatex %
-" Save when you leave insertmove
-autocmd InsertLeave *.tex nested w
-"Save when you don't do any editing for a while
-autocmd CursorHold *.tex nested w
-autocmd CursorHoldI *.tex nested w
 " Cursor hold delay = 1sek
 set updatetime=1000
+if !exists("g:reload")
+	" Compile latex to a pdf when you save
+	autocmd BufWritePost *.tex silent !start /min pdflatex %
+	" Save when you leave insertmove
+	autocmd InsertLeave *.tex nested w
+	"Save when you don't do any editing for a while
+	autocmd CursorHold *.tex nested w
+	autocmd CursorHoldI *.tex nested w
+endif
 " ---------------
 
 " ---- [3.5] UNITE ----
@@ -283,7 +262,8 @@ function! s:unite_settings()
 	"nnoremap <silent><buffer><expr> <C-p> empty(filter(range(1, winnr('$')), 'getwinvar(v:val, "&previewwindow") != 0')) ?  unite#do_action('preview') : ":\<C-u>pclose!\<CR>"
 	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-
+	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
+	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 endfunction
 autocmd FileType unite call s:unite_settings()
 
@@ -298,7 +278,6 @@ call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep', 'i
 call unite#custom#default_action('buffer', 'goto')
 
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
-
 " --------------------
 
 " ---- [3.6] VIMSHELL ----
@@ -516,11 +495,7 @@ endfunction
 " --------------------
 
 " ---- [5] Filetype specific ----
-" ---- [5.0] ALL FILES ----
-autocmd Filetype * setlocal formatoptions-=cro
-" ----------------
-
-" ---- [5.1] JAVA specific ----
+" ---- [5.0] JAVA specific ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype java setlocal omnifunc=JavaOmni
@@ -540,7 +515,7 @@ autocmd Filetype java setlocal foldtext=SpecialBraceFoldText()
 autocmd Filetype java let s:CompletionCommand = "\<C-X>\<C-O>"
 " --------
 
-" ---- [5.2] C# specific ----
+" ---- [5.1] C# specific ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype cs setlocal omnifunc=CSOmni
@@ -563,7 +538,7 @@ autocmd Filetype cs setlocal foldtext=SpecialBraceFoldText()
 autocmd Filetype cs let s:CompletionCommand = "\<C-X>\<C-O>"
 " ----------------
 
-" ---- [5.3] C specific ----
+" ---- [5.2] C specific ----
 autocmd Filetype c,cpp setlocal omnifunc=COmni
 function! COmni(findstart, base)
 	let words = eclim#c#complete#CodeComplete(a:findstart, a:base)
@@ -583,29 +558,31 @@ autocmd Filetype c,cpp setlocal foldtext=NormalFoldText()
 autocmd Filetype c,cpp let s:CompletionCommand = "\<C-X>\<C-U>"
 " --------------------
 
-" ---- [5.4] VIMRC specific ----
+" ---- [5.3] VIMRC specific ----
 autocmd Filetype vim setlocal foldexpr=VimrcFolding(v:lnum)
 autocmd Filetype vim setlocal foldtext=NormalFoldText()
 autocmd Filetype vim let s:CompletionCommand = "\<C-X>\<C-P>"
 autocmd Filetype vim let &foldlevel=0
 
-autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
+if !exists("g:reload")
+	autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
+endif
 " -------------
 
-" ---- [5.5] SNIPPET specific ----
+" ---- [5.4] SNIPPET specific ----
 autocmd Filetype snippets setlocal foldexpr=SnippetFolding(v:lnum)
 autocmd Filetype snippets setlocal foldtext=NormalFoldText()
 autocmd Filetype snippets let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 
-" ---- [5.6] todo specific ----
+" ---- [5.5] todo specific ----
 autocmd BufEnter *.todo setlocal filetype=todo
 autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
 autocmd Filetype todo let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 
-" ---- [5.7] PYTHON specific ----
+" ---- [5.6] PYTHON specific ----
 autocmd Filetype python setlocal omnifunc=PythonOmni
 function! PythonOmni(findstart, base)
 	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
@@ -622,19 +599,19 @@ autocmd Filetype python setlocal foldtext=NormalFoldText()
 autocmd Filetype python let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 
-" ---- [5.8] LUA specific ----
+" ---- [5.7] LUA specific ----
 autocmd Filetype lua setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype lua setlocal foldtext=NormalFoldText()
 autocmd Filetype lua let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
 
-" ---- [5.9] make specific ----
+" ---- [5.8] make specific ----
 autocmd Filetype make setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype make setlocal foldtext=NormalFoldText()
 autocmd Filetype make let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
 
-" ---- [5.10] pass specific ----
+" ---- [5.9] pass specific ----
 function! GenPass(...)
 let l:passLen = (a:0 > 0 ? a:1 : 8) 
 python << endpy
@@ -783,7 +760,46 @@ if(has("win32"))
 endif
 " --------------------
 
-" ---- [9] Fresh Install ----
+" ---- [9] STATUSLINE ----
+set laststatus=2
+hi clear StatusLine
+hi StatusLine gui=underline
+if !exists("g:reload")
+	autocmd BufWritePost,BufRead * call SlowStatusLine()
+
+	au InsertEnter * hi StatusLine gui=reverse
+	au InsertLeave * hi StatusLine guibg=NONE gui=underline
+endif
+
+function! SlowStatusLine()
+	let SlowStatusLineVar = "[" . expand("%") . "] "
+	let dir = expand("%:h")
+	let gitTemp = system("git -C " . expand("%:h") . " status -b -s")
+	let gitTemp = substitute(gitTemp, "##" , "", "")
+	let gitTemp = substitute(gitTemp, "\\.\\.\\." , "-", "")
+	if gitTemp !~ "fatal" 
+		let gitList = split(gitTemp, "\n")
+		if len(gitList) > 0
+			let branchName = gitList[0]
+			let branchName = substitute(branchName, " ", "[", "")
+			let branchName = substitute(branchName, " ", "] ", "")
+			let SlowStatusLineVar .= branchName
+		endif
+		if len(gitList) > 1
+			let SlowStatusLineVar .= " [nc " . (len(gitList) -1) . "]"
+		endif
+	endif
+	let &l:statusline=SlowStatusLineVar
+endfunction
+" --------------------
+
+" ---- [10] AFTER VIMRC ----
+if !exists("g:reload")
+	let g:reload = 1
+endif
+" --------------------
+
+" ---- [11] Fresh Install ----
 " 1. Create a tmp folder, .vim/tmp for backup files.
 " 2. Create session folder, .vim/session for sessionrestoring.
 " 3. Link this vimrc to your homedir. 
@@ -806,7 +822,8 @@ endif
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"
 " --------------------
 
-" ---- [10] Troubleshooting ----
+" ---- [12] Troubleshooting ----
 " Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
 " Ultisnips - If completion doesn't work but ,u opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both _vimfiles and vimfiles last time to get it to work.)
 " --------------------
+
