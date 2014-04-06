@@ -69,6 +69,9 @@ let $LANG = 'en'
 colorscheme desert
 
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
+
+" Remove all autocmds.
+autocmd!
 " ---------
 
 " ---- [2] Session settings ----
@@ -113,9 +116,7 @@ function! LoadOldSessions()
 	exe "so " . l:files[l:session - 1]
 endfunction
 
-if !exists("g:reload")
-	autocmd BufWritePost * call SaveSession()
-endif
+autocmd BufWritePost * call SaveSession()
 " --------------------
 
 " ---- [3] Plugins ----
@@ -137,14 +138,12 @@ if !exists("g:reload")
 	Bundle 'Shougo/vimproc'
 	Bundle 'Shougo/vimshell'
 	Bundle 'Shougo/unite'
-	Bundle 'terryma/vim-multiple-cursors'
 	Bundle 'Shougo/neomru'
 	Bundle 'Shougo/unite-help'
 	Bundle 'Shougo/unite-outline'
 	Bundle 'Shougo/unite-build'
 	Bundle 'Shougo/unite-session'
 	Bundle 'skeept/ultisnips-unite'
-"	Bundle 'airblade/vim-gitgutter'
 	" Required by vundle
 	filetype plugin indent on
 	syntax on
@@ -229,15 +228,13 @@ let g:Omnisharp_stop_server = 0
 " ---- [3.4] LATEX ----
 " Cursor hold delay = 1sek
 set updatetime=1000
-if !exists("g:reload")
-	" Compile latex to a pdf when you save
-	autocmd BufWritePost *.tex silent !start /min pdflatex %
-	" Save when you leave insertmove
-	autocmd InsertLeave *.tex nested w
-	"Save when you don't do any editing for a while
-	autocmd CursorHold *.tex nested w
-	autocmd CursorHoldI *.tex nested w
-endif
+" Compile latex to a pdf when you save
+autocmd BufWritePost *.tex silent !start /min pdflatex %
+" Save when you leave insertmove
+autocmd InsertLeave *.tex nested w
+"Save when you don't do any editing for a while
+autocmd CursorHold *.tex nested w
+autocmd CursorHoldI *.tex nested w
 " ---------------
 
 " ---- [3.5] UNITE ----
@@ -290,11 +287,7 @@ let g:vimshell_prompt_expr = 'escape(fnamemodify(getcwd(), ":~").">", "\\[]()?! 
 let g:vimshell_prompt_pattern = '^\%(\f\|\\.\)\+> '
 " --------------------
 
-" ---- [3.7] GITGUTTER ----
-hi clear SignColumn
-
-let g:gitgutter_realtime = 0
-let g:gitgutter_eager = 0
+" ---- [3.8] Fugitive ----
 " --------------------
 " --------------------
 
@@ -564,9 +557,7 @@ autocmd Filetype vim setlocal foldtext=NormalFoldText()
 autocmd Filetype vim let s:CompletionCommand = "\<C-X>\<C-P>"
 autocmd Filetype vim let &foldlevel=0
 
-if !exists("g:reload")
-	autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
-endif
+autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
 " -------------
 
 " ---- [5.4] SNIPPET specific ----
@@ -764,12 +755,13 @@ endif
 set laststatus=2
 hi clear StatusLine
 hi StatusLine gui=underline
-if !exists("g:reload")
-	autocmd BufWritePost,BufRead * call SlowStatusLine()
+"autocmd BufWritePost,BufRead * call SlowStatusLine()
+autocmd BufEnter * call SlowStatusLine()
 
-	au InsertEnter * hi StatusLine gui=reverse
-	au InsertLeave * hi StatusLine guibg=NONE gui=underline
-endif
+autocmd InsertEnter * hi StatusLine gui=reverse
+autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
+
+autocmd InsertLeave * echo "HI"
 
 function! SlowStatusLine()
 	let SlowStatusLineVar = "[" . expand("%") . "] "
