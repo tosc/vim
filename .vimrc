@@ -229,10 +229,10 @@ let g:unite_enable_smart_case = 1
 let g:unite_update_time = 300
 
 function! s:unite_settings()
-	nnoremap <buffer> <ESC> <Plug>(unite_all_exit)
+	nmap <buffer> <ESC> <Plug>(unite_all_exit)
 	nnoremap <buffer> <BS> <Plug>()
-	inoremap <buffer> <TAB> <Plug>(unite_select_next_line)
-	inoremap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
+	imap <buffer> <TAB> <Plug>(unite_select_next_line)
+	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
 	inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
 	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
 	inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
@@ -321,7 +321,7 @@ function! OneIndentBraceFolding(lnum)
 			let g:InsideVar = 0
 	endif
 	" Catches end of function body
-	if indent(a:lnum) == 8 && line =~'}'
+	if indent(a:lnum) == 8 && line =~ '^\s*}'
 			let g:InsideBrace = 0
 			return 1
 	endif
@@ -782,6 +782,17 @@ function! SlowStatusLine()
 			endif
 			if len(gitList) > 1
 				let SlowStatusLineVar .= " [nc " . (len(gitList) -1) . "]"
+			endif
+
+			let changedRows = [] 
+			let rowsTemp = split(system("git -C " . expand("%:h") . " diff --stat"), "\n")
+			for row in rowsTemp
+				if row =~ escape(expand('%:t'), ".")
+					let changedRows = split(row, "|")
+				endif
+			endfor
+			if(len(changedRows) > 0)
+				let SlowStatusLineVar .= " [cr " . split(changedRows[1], " ")[0] . "]"
 			endif
 		endif
 	endif
