@@ -1,7 +1,5 @@
-
 " ---- [0] Defining variables ----
 let s:CompletionCommand = "\<C-X>\<C-N>"
-
 function! CompletionCommand(complKeys)
 	if a:complKeys == "K"
 		let s:CompletionCommand = "\<C-X>\<C-K>"
@@ -9,6 +7,8 @@ function! CompletionCommand(complKeys)
 		let s:CompletionCommand = "\<C-X>\<C-N>"
 	elseif a:complKeys == "O"
 		let s:CompletionCommand = "\<C-X>\<C-O>"
+	elseif a:complKeys == "S"
+		let s:CompletionCommand = "\<C-X>\<C-S>"
 	endif
 endfunction
 
@@ -62,12 +62,16 @@ set smartcase
 set cryptmethod=blowfish
 set formatoptions-=cro
 
+set updatetime=1000
+
 " Sets what backspace works on
 set backspace=indent,eol,start
 
 let $LANG = 'en'
 
 colorscheme desert
+
+syntax on
 
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 " ---------
@@ -129,7 +133,7 @@ if !exists("g:reload")
 	Bundle "SirVer/ultisnips"  
 	Bundle 'nosami/Omnisharp'
 	Bundle 'tpope/vim-dispatch'
-	Bundle 'jcf/vim-latex'
+	"Bundle 'jcf/vim-latex'
 	Bundle 'tpope/vim-fugitive'
 	Bundle 'Rip-Rip/clang_complete'
 	Bundle 'Shougo/vimproc'
@@ -140,10 +144,11 @@ if !exists("g:reload")
 	Bundle 'Shougo/unite-outline'
 	Bundle 'Shougo/unite-build'
 	Bundle 'Shougo/unite-session'
+	Bundle 'Shougo/neocomplcache'
+	Bundle 'JazzCore/neocomplcache-ultisnips'
 	Bundle 'skeept/ultisnips-unite'
 	" Required by vundle
 	filetype plugin indent on
-	syntax on
 endif
 " ----------
 
@@ -273,6 +278,57 @@ let g:vimshell_prompt_pattern = '^\%(\f\|\\.\)\+> '
 " --------------------
 
 " ---- [3.6] Fugitive ----
+" --------------------
+
+" ---- [3.7] VIM-LATEX (LATEX-SUITE) ----
+let g:Imap_UsePlaceHolders = 0
+" --------------------
+
+" ---- [3.8] NEOCOMPLCACHE ----
+" Required for clang_complete to play nice with NEOCOMPLCACHE.
+if !exists('g:neocomplcache_force_omni_patterns')
+	let g:neocomplcache_force_omni_patterns = {}
+endif
+
+let g:neocomplcache_force_overwrite_completefunc = 1
+let g:neocomplcache_force_omni_patterns.c =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplcache_force_omni_patterns.cpp =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplcache_force_omni_patterns.objc =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplcache_force_omni_patterns.objcpp =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_smart_case = 0
+let g:neocomplcache_enable_camel_case_completion = 0
+let g:neocomplcache_enable_ignore_case = 0
+let g:neocomplcache_min_syntax_length = 1
+
+let g:clang_complete_auto = 0
+let g:clang_auto_select = 0
+
+let g:ulti_expand_res = 0
+let g:ulti_jump_forwards_res = 0
+function! NeoTab()
+	call UltiSnips#ExpandSnippet()
+	if g:ulti_expand_res == 1
+		return ""
+	endif
+	let longestCommon = neocomplcache#complete_common_string()
+	if longestCommon == ""
+		call UltiSnips#JumpForwards()
+		if g:ulti_jump_forwards_res == 1
+			return ""
+		endif
+		return "\<TAB>"
+	endif
+	return longestCommon
+endfunction
+
+"let g:clang_use_library = 1
+
 " --------------------
 " --------------------
 
@@ -523,12 +579,16 @@ autocmd BufWritePost *.cs :OmniSharpReloadSolution
 autocmd Filetype cs setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 autocmd Filetype cs setlocal foldtext=SpecialBraceFoldText()
 autocmd Filetype cs let s:CompletionCommand = "\<C-X>\<C-O>"
+autocmd Filetype cs let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+autocmd FileType cs let g:neocomplcache_omni_patterns.cs = '.*'
+
 " ----------------
 
 " ---- [6.2] C specific ----
 autocmd Filetype c,cpp setlocal omnifunc=COmni
 function! COmni(findstart, base)
-	let words = eclim#c#complete#CodeComplete(a:findstart, a:base)
+"	let words = ClangComplete(a:findstart, a:base)
+	let words = UltiSnips#SnippetsInCurrentScope()
 	if a:findstart
 		return words
 	elseif type(words) == 0 && words < 0
@@ -561,7 +621,7 @@ autocmd Filetype snippets let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 
 " ---- [6.5] todo specific ----
-autocmd BufEnter *.todo setlocal filetype=todo
+autocmd BufEnter *.td setlocal filetype=todo
 autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
 autocmd Filetype todo let s:CompletionCommand = "\<C-X>\<C-P>"
@@ -617,15 +677,10 @@ autocmd BufNewFile,BufRead *.pass set filetype=pass
 " -------------
 
 " ---- [6.10] LATEX specific ----
-" Cursor hold delay = 1sek
-set updatetime=1000
 " Compile latex to a pdf when you save
-autocmd BufWritePost *.tex silent !start /min pdflatex %
-" Save when you leave insertmove
+autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
+autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
 autocmd InsertLeave *.tex nested w
-"Save when you don't do any editing for a while
-autocmd CursorHold *.tex nested w
-autocmd CursorHoldI *.tex nested w
 " --------------------
 " --------------------
 
@@ -645,10 +700,12 @@ noremap <Down> <C-W>j<C-W>
 noremap <Left> <C-W>h<C-W>
 noremap <Right> <C-W>l<C-W>
 
-" Runs my TabUltiNeo when you press tab
-inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
+" Old completion
+"inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
+"inoremap <expr><TAB> neocomplcache#complete_common_string()
+inoremap <TAB> <C-R>=NeoTab()<CR>
 snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
-inoremap <CR> <C-R>=SmartEnter()<CR>
+"inoremap <CR> <C-R>=SmartEnter()<CR>
 
 
 " When you press TAB and have something selected in visual mode, it saves it
@@ -664,9 +721,10 @@ noremap <space> za
 let mapleader="ö"
 
 " A
-map <leader>ad :call CompletionCommand("K")<CR>
+map <leader>ak :call CompletionCommand("K")<CR>
 map <leader>ao :call CompletionCommand("O")<CR>
-map <leader>af :call CompletionCommand("N")<CR>
+map <leader>an :call CompletionCommand("N")<CR>
+map <leader>as :call CompletionCommand("S")<CR>
 " B
 " C
 map <leader>c :w <CR>:make <CR>
@@ -701,9 +759,9 @@ map <leader>se :setlocal spell spelllang=en_us <CR>
 map <leader>ss :setlocal spell spelllang=sv <CR>
 map <leader>so :setlocal nospell <CR>
 " T
-map <leader>t :e ~/Dropbox/vim/main.todo <CR>
+map <leader>t :e ~/Dropbox/main.todo <CR>
 " U
-map <leader>ue :Unite -no-split -no-start-insert file:~/vimfiles/Ultisnips <CR>
+map <leader>ue :Unite -no-split file:~/vimfiles/Ultisnips <CR>
 map <leader>uu :Unite -no-split ultisnips <CR>
 " V
 " W
@@ -818,6 +876,7 @@ endif
 " 		Windows : make -f make_mingw32.mak
 " 		mac 	: make -f make_mac.mak
 " 		unix 	: make -f make_unix.mak
+" 9. Download LaTex.
 
 " For Windows install
 " 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/??/bin to path.
@@ -827,10 +886,20 @@ endif
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell]
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell\Open]
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"
+" 3. YCM Windows https://bitbucket.org/Haroogan/vim-youcompleteme-for-windows/src
+" 		Extract the zip and place the folder in vimfiles/plugin
+
+"For Linux install
+" 1. YCM?
 " --------------------
 
 " ---- [13] Troubleshooting ----
 " Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
 " Ultisnips - If completion doesn't work but ,u opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both _vimfiles and vimfiles last time to get it to work.)
+" --------------------
+
+" ---- [14] TODO ----
+" Try neocomplcache.
+" Make completion complete ultisnipps 
 " --------------------
 

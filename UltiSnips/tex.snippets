@@ -1,0 +1,102 @@
+snippet MD "New math document" b
+\documentclass[12pt]{article}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[latin1]{inputenc}
+
+
+\begin{document}
+
+\title{${1:Title}}
+\author{Tobias Schwalbe}
+
+\maketitle
+
+\section{${2:Introduction}}
+
+$0
+
+\end{document}
+
+endsnippet
+
+snippet italic "Italic" 
+\textit{${VISUAL}$0}
+endsnippet
+
+snippet description "Lista med förklaringar" 
+\begin{description}
+	\item[${1:Item}] ${2:Item description}
+\end{description}
+endsnippet
+
+snippet item
+\item[${1:Item}] ${2:Item description}
+endsnippet
+
+snippet m "Math" 
+$ ${VISUAL}$0 $
+endsnippet
+
+snippet ... "Mathdots" 
+\ldots
+endsnippet 
+
+snippet omega "Omega" 
+\Omega
+endsnippet
+
+snippet union
+\cup
+endsnippet
+
+snippet snitt
+\cap
+endsnippet
+
+snippet venn "Venn diagram" b
+\begin{center}
+	\begin{tikzpicture}
+		\draw (0,0) rectangle (6,3.2) node[below left]{$U$};
+		\begin{scope}
+		\clip (2.2,1.5) circle (1cm);
+		\fill[gray] (3.8,1.5) circle (1cm);
+		\end{scope}
+		\draw (2.2,1.5) circle (1cm) node {$A$};
+		\draw (3.8,1.5) circle (1cm) node {$B$};
+		\draw (3,2.9) node {$A \cup B$};
+	\end{tikzpicture}
+\end{center}
+endsnippet
+
+snippet tillhör 
+\in
+endsnippet
+
+snippet in 
+\in
+endsnippet
+
+snippet notin 
+\notin
+endsnippet
+
+snippet \ 
+\backslash
+endsnippet
+
+snippet empty "Tom mängd" 
+\emptyset
+endsnippet
+
+snippet delmängd
+\subset
+endsnippet
+
+snippet delmängdl
+\supset
+endsnippet
+
+snippet nl "New line" 
+\\*
+endsnippet 
