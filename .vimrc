@@ -1,4 +1,4 @@
-" ---- [0] Defining variables ----
+" ---- [0] VARIABLES AND FUNCTIONS ----
 let s:CompletionCommand = "\<C-X>\<C-N>"
 function! CompletionCommand(complKeys)
 	if a:complKeys == "K"
@@ -10,6 +10,10 @@ function! CompletionCommand(complKeys)
 	elseif a:complKeys == "S"
 		let s:CompletionCommand = "\<C-X>\<C-S>"
 	endif
+endfunction
+
+function! SpellOmni()
+
 endfunction
 
 function! QFix()
@@ -29,8 +33,7 @@ function! QFixClose()
 	let t:qFixWin = 0
 endfunction
 " --------------------
-
-" ---- [1] Normal vimsettings ----
+" ---- [1] NORMAL VIMSETTINGS ----
 autocmd!
 set nocompatible
 set number
@@ -75,8 +78,7 @@ syntax on
 
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 " ---------
-
-" ---- [2] Session settings ----
+" ---- [2] SESSION SETTINGS ----
 set sessionoptions-=options
 set sessionoptions-=folds
 
@@ -119,8 +121,7 @@ function! LoadOldSessions()
 endfunction
 
 " --------------------
-
-" ---- [3] Plugins ----
+" ---- [3] PLUGINS ----
 " ---- [3.0] VUNDLE ----
 if !exists("g:reload")
 	" Required by vundle
@@ -151,12 +152,11 @@ if !exists("g:reload")
 	filetype plugin indent on
 endif
 " ----------
-
 " ---- [3.1] ULTISNIPS ----
 " Ultisnips bindings
 " f9 just to remove them. TODO look for better way to remove binding
 let g:UltiSnipsExpandTrigger="<f10>"
-let g:UltiSnipsJumpForwardTrigger="<f9>"
+let g:UltiSnipsJumpForwardTrigger="<f2>"
 let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
 let g:UltiSnipsListSnippets = "<f9>"
 
@@ -213,12 +213,10 @@ endfunction
 let g:UltiSnipsEditSplit = 'horizontal'
 
 " --------
-
 " ---- [3.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
 " -----
-
 " ---- [3.3] OMNISHARP (C# OMNICOMPLETE) ---- 
 let g:OmniSharp_typeLookupInPreview = 1
 " Sets the sln file to the first file avaliable
@@ -226,7 +224,6 @@ let g:OmniSharp_sln_list_index = 1
 " If omnisharp server is running never stop it.
 let g:Omnisharp_stop_server = 0
 " -------
-
 " ---- [3.4] UNITE ----
 let g:unite_enable_start_insert = 1
 let g:unite_enable_ignore_case = 1
@@ -266,7 +263,6 @@ call unite#custom#default_action('buffer', 'goto')
 
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 " --------------------
-
 " ---- [3.5] VIMSHELL ----
 " let g:vimshell_prompt = "% "
 " let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
@@ -276,14 +272,11 @@ call unite#filters#matcher_default#use(['matcher_fuzzy'])
 let g:vimshell_prompt_expr = 'escape(fnamemodify(getcwd(), ":~").">", "\\[]()?! ")." "'
 let g:vimshell_prompt_pattern = '^\%(\f\|\\.\)\+> '
 " --------------------
-
 " ---- [3.6] Fugitive ----
 " --------------------
-
 " ---- [3.7] VIM-LATEX (LATEX-SUITE) ----
 let g:Imap_UsePlaceHolders = 0
 " --------------------
-
 " ---- [3.8] NEOCOMPLCACHE ----
 " Required for clang_complete to play nice with NEOCOMPLCACHE.
 if !exists('g:neocomplcache_force_omni_patterns')
@@ -331,7 +324,6 @@ endfunction
 
 " --------------------
 " --------------------
-
 " ---- [4] FOLDING ----
 " ---- [4.0] FOLDSETTINGS ----
 set foldmethod=expr
@@ -339,7 +331,6 @@ set foldnestmax=2
 set foldopen=mark
 set foldlevelstart=99
 " --------------------
-
 " ---- [4.1] FOLDEXPR ----
 let g:InsideBrace = 0
 let g:InsideVar = 0
@@ -475,8 +466,61 @@ function! PassFolding(lnum)
 	endif	
 	return ">1"
 endfunction
-" ---------------
 
+" Indentionfolding
+let g:InsideSection = 0
+let g:InsideSubSection = 0
+let g:InsideSubSubSection = 0
+function! TexFolding(lnum)
+	let line = getline(a:lnum)	
+	let nextline=getline(a:lnum + 1)
+
+	if line =~ 'end{document}'
+		return 0
+	endif
+
+	if line =~ '^\s*\\begin'
+		return 'a1'
+	elseif line =~ '^\s*\\end'
+		return 's1'
+	elseif line =~ '^\s*\\section'
+		let g:InsideSection = 1
+		return 'a1'
+	elseif nextline =~ '^\s*\\section' && g:InsideSection == 1
+		let g:InsideSection = 0
+		if g:InsideSubSection == 1
+			let g:InsideSubSection = 0
+			if g:InsideSubSubSection == 1
+				let g:InsideSubSubSection = 0
+				return 's3'
+			else
+				return 's2'
+			endif
+		else
+			return 's1'
+		endif
+	elseif line =~ '^\s*\\subsection'
+		let g:InsideSubSection = 1
+		return 'a1'
+	elseif nextline =~ '^\s*\\subsection' && g:InsideSubSection == 1
+		let g:InsideSubSection = 0
+		if g:InsideSubSubSection == 1
+			let g:InsideSubSubSection = 0
+			return 's2'
+		else
+			return 's1'
+		endif
+	elseif line =~ '^\s*\\subsubsection'
+		let g:InsideSubSubSection = 1
+		return 'a1'
+	elseif nextline =~ '^\s*\\subsubsection' && g:InsideSubSubSection == 1
+		let g:InsideSubSubSection = 0
+		return 's1'
+	else
+		return '='
+	endif
+endfunction
+" ---------------
 " ---- [4.2] FOLDTEXT ----
 " 
 " 1 if either line has a brace, else 2
@@ -527,7 +571,6 @@ endfunction
 
 " --------------------
 " --------------------
-
 " ---- [5] AUTOCMD ----
 autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
 
@@ -536,8 +579,7 @@ autocmd BufEnter * call SlowStatusLine()
 autocmd InsertEnter * hi StatusLine gui=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
 " --------------------
-
-" ---- [6] Filetype specific ----
+" ---- [6] FILETYPE SPECIFIC ----
 " ---- [6.0] JAVA specific ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
@@ -557,7 +599,6 @@ autocmd Filetype java setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 autocmd Filetype java setlocal foldtext=SpecialBraceFoldText()
 autocmd Filetype java let s:CompletionCommand = "\<C-X>\<C-O>"
 " --------
-
 " ---- [6.1] C# specific ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
@@ -583,7 +624,6 @@ autocmd Filetype cs let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 autocmd FileType cs let g:neocomplcache_omni_patterns.cs = '.*'
 
 " ----------------
-
 " ---- [6.2] C specific ----
 autocmd Filetype c,cpp setlocal omnifunc=COmni
 function! COmni(findstart, base)
@@ -601,32 +641,27 @@ endfunction
 
 autocmd Filetype c,cpp setlocal foldexpr=BraceFolding(v:lnum)
 autocmd Filetype c,cpp setlocal foldtext=NormalFoldText()
-"autocmd Filetype c,cpp let s:CompletionCommand = "\<C-X>\<C-O>"
 autocmd Filetype c,cpp let s:CompletionCommand = "\<C-X>\<C-U>"
 " --------------------
-
 " ---- [6.3] VIMRC specific ----
 autocmd Filetype vim setlocal foldexpr=VimrcFolding(v:lnum)
 autocmd Filetype vim setlocal foldtext=NormalFoldText()
 autocmd Filetype vim let s:CompletionCommand = "\<C-X>\<C-P>"
 autocmd Filetype vim let &foldlevel=0
-
+autocmd Filetype vim set textwidth=0
 autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
 " -------------
-
 " ---- [6.4] SNIPPET specific ----
 autocmd Filetype snippets setlocal foldexpr=SnippetFolding(v:lnum)
 autocmd Filetype snippets setlocal foldtext=NormalFoldText()
 autocmd Filetype snippets let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
-
 " ---- [6.5] todo specific ----
 autocmd BufEnter *.td setlocal filetype=todo
 autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
 autocmd Filetype todo let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
-
 " ---- [6.6] PYTHON specific ----
 autocmd Filetype python setlocal omnifunc=PythonOmni
 function! PythonOmni(findstart, base)
@@ -643,19 +678,16 @@ autocmd Filetype python setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype python setlocal foldtext=NormalFoldText()
 autocmd Filetype python let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
-
 " ---- [6.7] LUA specific ----
 autocmd Filetype lua setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype lua setlocal foldtext=NormalFoldText()
 autocmd Filetype lua let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
-
 " ---- [6.8] make specific ----
 autocmd Filetype make setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype make setlocal foldtext=NormalFoldText()
 autocmd Filetype make let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
-
 " ---- [6.9] pass specific ----
 function! GenPass(...)
 let l:passLen = (a:0 > 0 ? a:1 : 8) 
@@ -675,22 +707,18 @@ autocmd Filetype pass setlocal foldminlines=0
 autocmd Filetype pass let &foldlevel=0
 autocmd BufNewFile,BufRead *.pass set filetype=pass
 " -------------
-
 " ---- [6.10] LATEX specific ----
 " Compile latex to a pdf when you save
+autocmd Filetype tex setlocal foldexpr=TexFolding(v:lnum)
+autocmd Filetype tex setlocal foldtext=NormalFoldText()
 autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
 autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
-autocmd InsertLeave *.tex nested w
 " --------------------
 " --------------------
-
-" ---- [7] Bindings ----
+" ---- [7] BINDINGS ----
 " ---- [7.0] Normal ----
-" Ctrl + del and Ctrl + bs like normal editors in insert
-inoremap <C-BS> <C-W>
-inoremap <C-Del> <C-O>de
-
-inoremap <C-F> <C-X><C-F>
+"Not vi-compatible but more logical. Y yanks to end of line.
+map Y y$
 
 " perform expression on cursor word | EX: select a number ex 5, 5ä, then
 noremap ä viw"xc<C-R>=getreg('x')
@@ -707,6 +735,11 @@ inoremap <TAB> <C-R>=NeoTab()<CR>
 snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
 "inoremap <CR> <C-R>=SmartEnter()<CR>
 
+" Ctrl + del and Ctrl + bs like normal editors in insert
+inoremap <C-BS> <C-W>
+inoremap <C-Del> <C-O>de
+
+inoremap <C-F> <C-X><C-F>
 
 " When you press TAB and have something selected in visual mode, it saves it
 " ultisnips and removes it.
@@ -716,7 +749,6 @@ noremap - :Unite -no-split window buffer file_mru directory_mru file file/new <C
 
 noremap <space> za
 " --------------------
-
 " ---- [7.1] Leader ----
 let mapleader="ö"
 
@@ -774,8 +806,7 @@ map <leader>z :Unite -no-split -no-start-insert session<CR>
 " /
 " --------------------
 " --------------------
-
-" ---- [8] Tabs ----
+" ---- [8] TABS ----
 function! Tabline()
 	let s = ''
 	for i in range(tabpagenr('$'))
@@ -807,14 +838,12 @@ hi TabLineFill term=underline cterm=underline gui=underline guibg=grey30
 hi TabLine term=underline cterm=underline gui=underline guibg=grey30
 hi TabLineSel term=none cterm=none gui=none
 " --------------------
-
-" ---- [9] OS specific ----
+" ---- [9] OS SPECIFIC ----
 " Windows
 if(has("win32"))
 	"set shell=C:\mingw\msys\1.0\bin\bash.exe
 endif
 " --------------------
-
 " ---- [10] STATUSLINE ----
 set laststatus=2
 hi clear StatusLine
@@ -857,14 +886,12 @@ function! SlowStatusLine()
 	let &l:statusline=SlowStatusLineVar
 endfunction
 " --------------------
-
 " ---- [11] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
 endif
 " --------------------
-
-" ---- [12] Fresh Install ----
+" ---- [12] FRESH INSTALL ----
 " 1. Create a tmp folder, .vim/tmp for backup files.
 " 2. Create session folder, .vim/session for sessionrestoring.
 " 3. Link this vimrc to your homedir. 
@@ -892,14 +919,11 @@ endif
 "For Linux install
 " 1. YCM?
 " --------------------
-
-" ---- [13] Troubleshooting ----
+" ---- [13] TROUBLESHOOTING ----
 " Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
 " Ultisnips - If completion doesn't work but ,u opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both _vimfiles and vimfiles last time to get it to work.)
 " --------------------
-
 " ---- [14] TODO ----
-" Try neocomplcache.
-" Make completion complete ultisnipps 
+" Improve neocomplcache, when there are more then one possible match and you
+" tab, the completion window closes.
 " --------------------
-
