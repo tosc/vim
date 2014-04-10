@@ -12,10 +12,6 @@ function! CompletionCommand(complKeys)
 	endif
 endfunction
 
-function! SpellOmni()
-
-endfunction
-
 function! QFix()
 	if !exists("t:qFixWin")
 		let t:qFixWin = 0
@@ -328,7 +324,7 @@ endfunction
 " ---- [4.0] FOLDSETTINGS ----
 set foldmethod=expr
 set foldnestmax=2
-set foldopen=mark
+set foldopen=
 set foldlevelstart=99
 " --------------------
 " ---- [4.1] FOLDEXPR ----
@@ -471,21 +467,36 @@ endfunction
 let g:InsideSection = 0
 let g:InsideSubSection = 0
 let g:InsideSubSubSection = 0
+let g:TexHeader = 0
 function! TexFolding(lnum)
 	let line = getline(a:lnum)	
 	let nextline=getline(a:lnum + 1)
 
-	if line =~ 'end{document}'
+	" Starts fold for header
+	if a:lnum == 1
+		let g:TexHeader = 1
+		return 1
+	" Splits headerfold into ends header fold and starts a begin{docuement}-fold
+	elseif line =~ 'begin{document}'
+		return '>1'
+	" Leaves end{document} on own line for clarity
+	elseif line =~ 'end{document}'
 		return 0
-	endif
-
-	if line =~ '^\s*\\begin'
+	" Ends begin{document}-fold at first section
+	elseif nextline =~ '^\s*\\section' && g:TexHeader == 1
+		let g:TexHeader = 0
+		return '<1'
+	" Creates new folds at begin
+	elseif line =~ '^\s*\\begin'
 		return 'a1'
+	" Ends folds at end
 	elseif line =~ '^\s*\\end'
 		return 's1'
+	" Creates new folds at section
 	elseif line =~ '^\s*\\section'
 		let g:InsideSection = 1
 		return 'a1'
+	" Closes fold the line before the new section, also closes sub and subsub folds.
 	elseif nextline =~ '^\s*\\section' && g:InsideSection == 1
 		let g:InsideSection = 0
 		if g:InsideSubSection == 1
@@ -499,9 +510,11 @@ function! TexFolding(lnum)
 		else
 			return 's1'
 		endif
+	" Starts new fold at subsection
 	elseif line =~ '^\s*\\subsection'
 		let g:InsideSubSection = 1
 		return 'a1'
+	" Closes fold the line before the next subsection, also closes subsub folds.
 	elseif nextline =~ '^\s*\\subsection' && g:InsideSubSection == 1
 		let g:InsideSubSection = 0
 		if g:InsideSubSubSection == 1
@@ -510,12 +523,15 @@ function! TexFolding(lnum)
 		else
 			return 's1'
 		endif
+	" Starts new fold at subsubsection
 	elseif line =~ '^\s*\\subsubsection'
 		let g:InsideSubSubSection = 1
 		return 'a1'
+	" Closes fold the line before the next subsubsection
 	elseif nextline =~ '^\s*\\subsubsection' && g:InsideSubSubSection == 1
 		let g:InsideSubSubSection = 0
 		return 's1'
+	" Else, return same fold as prev line
 	else
 		return '='
 	endif
@@ -580,7 +596,7 @@ autocmd InsertEnter * hi StatusLine gui=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
 " --------------------
 " ---- [6] FILETYPE SPECIFIC ----
-" ---- [6.0] JAVA specific ----
+" ---- [6.0] JAVA ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype java setlocal omnifunc=JavaOmni
@@ -599,7 +615,7 @@ autocmd Filetype java setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 autocmd Filetype java setlocal foldtext=SpecialBraceFoldText()
 autocmd Filetype java let s:CompletionCommand = "\<C-X>\<C-O>"
 " --------
-" ---- [6.1] C# specific ----
+" ---- [6.1] C# ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype cs setlocal omnifunc=CSOmni
@@ -624,7 +640,7 @@ autocmd Filetype cs let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 autocmd FileType cs let g:neocomplcache_omni_patterns.cs = '.*'
 
 " ----------------
-" ---- [6.2] C specific ----
+" ---- [6.2] C ----
 autocmd Filetype c,cpp setlocal omnifunc=COmni
 function! COmni(findstart, base)
 "	let words = ClangComplete(a:findstart, a:base)
@@ -643,7 +659,7 @@ autocmd Filetype c,cpp setlocal foldexpr=BraceFolding(v:lnum)
 autocmd Filetype c,cpp setlocal foldtext=NormalFoldText()
 autocmd Filetype c,cpp let s:CompletionCommand = "\<C-X>\<C-U>"
 " --------------------
-" ---- [6.3] VIMRC specific ----
+" ---- [6.3] VIMRC ----
 autocmd Filetype vim setlocal foldexpr=VimrcFolding(v:lnum)
 autocmd Filetype vim setlocal foldtext=NormalFoldText()
 autocmd Filetype vim let s:CompletionCommand = "\<C-X>\<C-P>"
@@ -651,18 +667,18 @@ autocmd Filetype vim let &foldlevel=0
 autocmd Filetype vim set textwidth=0
 autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
 " -------------
-" ---- [6.4] SNIPPET specific ----
+" ---- [6.4] SNIPPET ----
 autocmd Filetype snippets setlocal foldexpr=SnippetFolding(v:lnum)
 autocmd Filetype snippets setlocal foldtext=NormalFoldText()
 autocmd Filetype snippets let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
-" ---- [6.5] todo specific ----
+" ---- [6.5] TODO ----
 autocmd BufEnter *.td setlocal filetype=todo
 autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
 autocmd Filetype todo let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
-" ---- [6.6] PYTHON specific ----
+" ---- [6.6] PYTHON ----
 autocmd Filetype python setlocal omnifunc=PythonOmni
 function! PythonOmni(findstart, base)
 	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
@@ -678,17 +694,17 @@ autocmd Filetype python setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype python setlocal foldtext=NormalFoldText()
 autocmd Filetype python let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
-" ---- [6.7] LUA specific ----
+" ---- [6.7] LUA ----
 autocmd Filetype lua setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype lua setlocal foldtext=NormalFoldText()
 autocmd Filetype lua let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
-" ---- [6.8] make specific ----
+" ---- [6.8] MAKE ----
 autocmd Filetype make setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype make setlocal foldtext=NormalFoldText()
 autocmd Filetype make let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
-" ---- [6.9] pass specific ----
+" ---- [6.9] PASS ----
 function! GenPass(...)
 let l:passLen = (a:0 > 0 ? a:1 : 8) 
 python << endpy
@@ -707,7 +723,7 @@ autocmd Filetype pass setlocal foldminlines=0
 autocmd Filetype pass let &foldlevel=0
 autocmd BufNewFile,BufRead *.pass set filetype=pass
 " -------------
-" ---- [6.10] LATEX specific ----
+" ---- [6.10] LATEX ----
 " Compile latex to a pdf when you save
 autocmd Filetype tex setlocal foldexpr=TexFolding(v:lnum)
 autocmd Filetype tex setlocal foldtext=NormalFoldText()
@@ -716,7 +732,7 @@ autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-di
 " --------------------
 " --------------------
 " ---- [7] BINDINGS ----
-" ---- [7.0] Normal ----
+" ---- [7.0] NORMAL ----
 "Not vi-compatible but more logical. Y yanks to end of line.
 map Y y$
 
@@ -728,18 +744,7 @@ noremap <Down> <C-W>j<C-W>
 noremap <Left> <C-W>h<C-W>
 noremap <Right> <C-W>l<C-W>
 
-" Old completion
-"inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
-"inoremap <expr><TAB> neocomplcache#complete_common_string()
-inoremap <TAB> <C-R>=NeoTab()<CR>
 snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
-"inoremap <CR> <C-R>=SmartEnter()<CR>
-
-" Ctrl + del and Ctrl + bs like normal editors in insert
-inoremap <C-BS> <C-W>
-inoremap <C-Del> <C-O>de
-
-inoremap <C-F> <C-X><C-F>
 
 " When you press TAB and have something selected in visual mode, it saves it
 " ultisnips and removes it.
@@ -749,7 +754,24 @@ noremap - :Unite -no-split window buffer file_mru directory_mru file file/new <C
 
 noremap <space> za
 " --------------------
-" ---- [7.1] Leader ----
+" ---- [7.1] INSERT ----
+
+inoremap ( (<C-R>=UltiSnips#ExpandSnippet()<CR>
+inoremap { {<C-R>=UltiSnips#ExpandSnippet()<CR>
+
+inoremap <TAB> <C-R>=NeoTab()<CR>
+" Ctrl + del and Ctrl + bs like normal editors in insert
+inoremap <C-BS> <C-W>
+inoremap <C-Del> <C-O>de
+
+inoremap <C-F> <C-X><C-F>
+inoremap <C-S> <C-X><C-S>
+
+" Old completion
+"inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
+"inoremap <CR> <C-R>=SmartEnter()<CR>
+" --------------------
+" ---- [7.2] LEADER ----
 let mapleader="ö"
 
 " A
@@ -790,6 +812,9 @@ map <leader>r :Unite -no-split -auto-preview -no-start-insert build:make <CR>
 map <leader>se :setlocal spell spelllang=en_us <CR>
 map <leader>ss :setlocal spell spelllang=sv <CR>
 map <leader>so :setlocal nospell <CR>
+map <leader>sn :setlocal nospell <CR>
+map <leader>sc :setlocal nospell <CR>
+map <leader>sd :setlocal nospell <CR>
 " T
 map <leader>t :e ~/Dropbox/main.todo <CR>
 " U
