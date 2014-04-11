@@ -446,13 +446,28 @@ function! SnippetFolding(lnum)
 	endif
 endfunction
 
-" Indentionfolding
+" Indentionfolding, includes row before new indent.
 function! IndentFolding(lnum)
 	if indent(a:lnum)/8 < indent(a:lnum+1)/8
 		return ">" . indent(a:lnum+1)/8
 	else
 	return indent(a:lnum)/8
 endfunction
+
+" Indentfolding, includes row before new indent and row after.
+function! IndentFolding2(lnum)
+	let line = getline(a:lnum)
+	if line =~ "^\s*$"
+		return '='
+	elseif indent(a:lnum)/8 < indent(a:lnum+1)/8
+		return ">" . indent(a:lnum+1)/8
+	elseif indent(a:lnum)/8 < indent(a:lnum-1)/8 && (line =~ '^\s*\\end' || line =~ '^\s*\\]')
+		return "<" . indent(a:lnum-1)/8
+	else
+		return indent(a:lnum)/8
+	endif
+endfunction
+
 
 "Passfolding
 function! PassFolding(lnum)
@@ -461,80 +476,6 @@ function! PassFolding(lnum)
 		return 0
 	endif	
 	return ">1"
-endfunction
-
-" Indentionfolding
-let g:InsideSection = 0
-let g:InsideSubSection = 0
-let g:InsideSubSubSection = 0
-let g:TexHeader = 0
-function! TexFolding(lnum)
-	let line = getline(a:lnum)	
-	let nextline=getline(a:lnum + 1)
-
-	" Starts fold for header
-	if a:lnum == 1
-		let g:TexHeader = 1
-		return 1
-	" Splits headerfold into ends header fold and starts a begin{docuement}-fold
-	elseif line =~ 'begin{document}'
-		return '>1'
-	" Leaves end{document} on own line for clarity
-	elseif line =~ 'end{document}'
-		return 0
-	" Ends begin{document}-fold at first section
-	elseif nextline =~ '^\s*\\section' && g:TexHeader == 1
-		let g:TexHeader = 0
-		return '<1'
-	" Creates new folds at begin
-	elseif line =~ '^\s*\\begin'
-		return 'a1'
-	" Ends folds at end
-	elseif line =~ '^\s*\\end'
-		return 's1'
-	" Creates new folds at section
-	elseif line =~ '^\s*\\section'
-		let g:InsideSection = 1
-		return 'a1'
-	" Closes fold the line before the new section, also closes sub and subsub folds.
-	elseif nextline =~ '^\s*\\section' && g:InsideSection == 1
-		let g:InsideSection = 0
-		if g:InsideSubSection == 1
-			let g:InsideSubSection = 0
-			if g:InsideSubSubSection == 1
-				let g:InsideSubSubSection = 0
-				return 's3'
-			else
-				return 's2'
-			endif
-		else
-			return 's1'
-		endif
-	" Starts new fold at subsection
-	elseif line =~ '^\s*\\subsection'
-		let g:InsideSubSection = 1
-		return 'a1'
-	" Closes fold the line before the next subsection, also closes subsub folds.
-	elseif nextline =~ '^\s*\\subsection' && g:InsideSubSection == 1
-		let g:InsideSubSection = 0
-		if g:InsideSubSubSection == 1
-			let g:InsideSubSubSection = 0
-			return 's2'
-		else
-			return 's1'
-		endif
-	" Starts new fold at subsubsection
-	elseif line =~ '^\s*\\subsubsection'
-		let g:InsideSubSubSection = 1
-		return 'a1'
-	" Closes fold the line before the next subsubsection
-	elseif nextline =~ '^\s*\\subsubsection' && g:InsideSubSubSection == 1
-		let g:InsideSubSubSection = 0
-		return 's1'
-	" Else, return same fold as prev line
-	else
-		return '='
-	endif
 endfunction
 " ---------------
 " ---- [4.2] FOLDTEXT ----
@@ -725,7 +666,7 @@ autocmd BufNewFile,BufRead *.pass set filetype=pass
 " -------------
 " ---- [6.10] LATEX ----
 " Compile latex to a pdf when you save
-autocmd Filetype tex setlocal foldexpr=TexFolding(v:lnum)
+autocmd Filetype tex setlocal foldexpr=IndentFolding2(v:lnum)
 autocmd Filetype tex setlocal foldtext=NormalFoldText()
 autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
 autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
@@ -761,6 +702,8 @@ inoremap { {<C-R>=UltiSnips#ExpandSnippet()<CR>
 
 inoremap <TAB> <C-R>=NeoTab()<CR>
 " Ctrl + del and Ctrl + bs like normal editors in insert
+inoremap <CR> <C-R>=SmartEnter()<CR>
+" Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
 inoremap <C-Del> <C-O>de
 
@@ -783,8 +726,9 @@ map <leader>as :call CompletionCommand("S")<CR>
 " C
 map <leader>c :w <CR>:make <CR>
 " D
-map <leader>d :bn <CR>:bd # <CR>
+map <leader>d :bd<CR>
 " E
+map <leader>e :silent !explorer %:p:h<CR>
 " F
 map <leader>f :Unite -no-split -auto-preview -no-start-insert grep:. <CR>
 " G

@@ -1,40 +1,74 @@
-snippet { "Hawk" i
-{$1}$0
-endsnippet
-
 snippet MD "New math document" b
-\documentclass[12pt]{article}
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{amssymb}
-\usepackage{enumitem}
-\usepackage{graphicx}
-\usepackage[latin1]{inputenc}
-\usepackage{tikz}
-\usepackage[framemethod=tikz]{mdframed}
-\usepackage[none]{hyphenat}
+\documentclass[11pt]{article}
+	\usepackage{amsmath}
+	\usepackage{amsthm}
+	\usepackage{amssymb}
+	\usepackage{enumitem}
+	\usepackage{graphicx}
+	\usepackage[latin1]{inputenc}
+	\usepackage{tikz}
+	\usepackage[framemethod=tikz]{mdframed}
+	\usepackage{lipsum}
+	\usepackage[none]{hyphenat}
+	\usepackage[margin=1in]{geometry}
+	
+	\newtheoremstyle{customtheorem}
+		{\topsep}
+		{\topsep}
+		{}
+		{0pt}
+		{\bfseries}
+		{\\*[3pt]}
+		{0mm}
+		{\thmname{#1}\thmnumber{ #2}\thmnote{ - #3}}
+	
+	\theoremstyle{customtheorem}
+	\newtheorem{theorem}{Theorem}[section]
+	\newtheorem{definition}{Definition}[section]
+	\newtheoremstyle{nonumstyle}
+		{\topsep}
+		{\topsep}
+		{}
+		{0pt}
+		{\bfseries}
+		{}
+		{3mm}
+		{\thmname{#1}\thmnote{ - #3}}
+	
+	\theoremstyle{nonumstyle}
+	\newtheorem{nonumtheorem}{Theorem}
+	\newtheorem{solution}{Solution}
+	\newtheorem{myproof}{Proof}
+	
+	\newmdenv[
+		frametitle={Example},
+		topline=true,
+		bottomline=true,
+		leftline=false, 
+		rightline=false, 
+		skipabove=1em,
+		frametitlerule=true,
+		]{exampleframe}
+	
+	\newmdenv[
+		frametitle={},
+		backgroundcolor=gray!25,
+		linecolor=gray!25,
+		skipabove=1em,
+		]{theoremframe}
+	
+	\newmdenv[
+		skipabove=1em,
+		]{definitionframe}
+	
+	
+	\begin{document}
+	\title{${1:Title}}
+	\author{Tobias Schwalbe}
+	
+	\maketitle
 
-\newtheoremstyle{customtheorem}
-	{\topsep}
-	{\topsep}
-	{}
-	{0pt}
-	{\bfseries}
-	{\\*[3pt]}
-	{0mm}
-	{\thmname{#1}\thmnumber{ #2}\thmnote{ - #3}}
-\theoremstyle{customtheorem}
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{definition}{Definition}[section]
-
-\begin{document}
-
-\title{${1:Title}}
-\author{Tobias Schwalbe}
-
-\maketitle
-
-\section{${2:Introduction}}
+\section{${2:First section}}
 
 $0
 
@@ -50,7 +84,7 @@ snippet bold "Bold"
 \textbf{${VISUAL}$1}$0
 endsnippet
 
-snippet description "Lista med förklaringar" 
+snippet dlist "Lista med förklaringar" 
 \begin{description}
 	\item[${1:Item}] ${2:Item description}
 	$0
@@ -106,7 +140,7 @@ snippet venn "Venn diagram" b
 		\draw (0,0) rectangle (6,3.2) node[below left]{$U$};
 		\begin{scope}
 		\clip (2.2,1.5) circle (1cm);
-		\fill[gray] (3.8,1.5) circle (1cm);
+		\draw [fill=gray] (3.8,1.5) circle (1cm);
 		\end{scope}
 		\draw (2.2,1.5) circle (1cm) node {$A$};
 		\draw (3.8,1.5) circle (1cm) node {$B$};
@@ -116,15 +150,15 @@ snippet venn "Venn diagram" b
 endsnippet
 
 snippet tillhör 
-\in 
+\in
 endsnippet
 
 snippet in 
-\in 
+\in
 endsnippet
 
 snippet notin 
-\notin 
+\notin
 endsnippet
 
 snippet \ 
@@ -172,22 +206,22 @@ snippet >=
 endsnippet
 
 snippet theorem "theorem"
-\begin{mdframed}[backgroundcolor=gray!25, linecolor=gray!25, skipabove=1em]
+\begin{theoremframe}
 	\begin{theorem}[$1]
 		${VISUAL}$0
 	\end{theorem}
-\end{mdframed}
+\end{theoremframe}
 endsnippet
 
 snippet definition "definition"
-\begin{mdframed}[]
+\begin{definitionframe}
 	\begin{definition}[$1]
 		${VISUAL}$0
 	\end{definition}
-\end{mdframed}
+\end{definitionframe}
 endsnippet
 
-snippet lorem "Lorem ipsum \usepackage{lipsum}"
+snippet lipsum "Lorem ipsum \usepackage{lipsum}"
 \lipsum[100]
 endsnippet
 
@@ -199,7 +233,7 @@ snippet N
 \mathbb{N}
 endsnippet
 
-snippet X
+snippet times
 \times 
 endsnippet
 
@@ -240,18 +274,12 @@ snippet aequation "A align equation, \\ - new line, &= - align this ="
 \end{align*}
 endsnippet
 
-snippet example
-\begin{mdframed}[frametitle={Example}, leftline=false, rightline=false, skipabove=1em]
-	${VISUAL}$0
-\end{mdframed}
-endsnippet
-
 snippet text
 \text{${VISUAL}$1}$0
 endsnippet
 
 snippet U "upphöjt" i
-^{$1} $0
+^{$1}$0
 endsnippet 
 
 snippet left
@@ -263,24 +291,89 @@ snippet left
 endsnippet	
 
 snippet _ "nersänkt" i
-_{$1} $0
+_{$1}$0
 endsnippet
 
 snippet space "space"
 \qquad 
 endsnippet 
 
+snippet smallspace "space"
+\quad 
+endsnippet 
+
 snippet table
-\begin{table}[ht]
-	\centering
+\begin{center}
 	\begin{tabular}{${1:c c c}}
 		${0:1 & 2 & 3 \\\\ }
 	\end{tabular}
-\end{table}
+\end{center}
 endsnippet
 
 snippet qed
 \hfill$ \qed $ 
 endsnippet
 
+snippet for
+\foreach \\${1:i} in {${2:0},...,${3:10}}
+{
+	${VISUAL}$0
+}
+endsnippet
 
+snippet if
+\ifnum\\${1:x = 1}
+	${VISUAL}$0
+\fi
+endsnippet
+
+snippet ifor
+\ifnum\ifnum\\${1:x} ${2:= 0} 1\else\ifnum\\$1 ${3:= 3} 1\else0\fi\fi
+endsnippet
+
+snippet ifelse
+\ifnum\\${1:x = 1}
+	${VISUAL}$2
+\else
+	$0
+\fi
+endsnippet
+
+snippet grid
+\begin{center}
+	\begin{tikzpicture}
+		\foreach \x in {0,$2,...,${1:7}}
+		{
+			\foreach \y in {0,$2,...,$1}
+			{
+				\draw [fill=white] (\x, \y) rectangle (\x + ${2:1},\y + $2);
+			}
+		}
+	\end{tikzpicture}
+\end{center}
+endsnippet
+
+snippet solution
+\begin{solution}
+	${VISUAL}$2
+\end{solution}
+endsnippet
+
+snippet proof
+\begin{myproof}
+	${VISUAL}$2
+	\hfill$ \qed $ 
+\end{myproof}
+endsnippet
+
+snippet example
+\begin{exampleframe}
+	${VISUAL}$2
+\end{exampleframe}
+endsnippet
+
+snippet notheorem
+\begin{nonumtheorem}
+	${VISUAL}$2
+\end{nonumtheorem}
+endsnippet
