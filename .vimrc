@@ -338,12 +338,6 @@ let NERDTreeChdir='<C-C>'
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
 let NERDTreeShowBookmarks = 1
-
-call NERDTreeAddKeyMap({
-	\ 'key': 'e',
-	\ 'callback': 'Explorer',
-	\ 'quickhelpText': 'Opens windows explorer',
-	\ 'scope': 'all'})
 " --------------------
 " --------------------
 " ---- [4] FOLDING ----
@@ -697,6 +691,13 @@ autocmd Filetype tex setlocal foldtext=NormalFoldText()
 autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
 autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
 " --------------------
+" ---- [6.11] NERDTREE ----
+autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+	\ 'key': 'e',
+	\ 'callback': 'Explorer',
+	\ 'quickhelpText': 'Opens windows explorer',
+	\ 'scope': 'all'})
+" --------------------
 " --------------------
 " ---- [7] BINDINGS ----
 " ---- [7.0] NORMAL ----
@@ -839,7 +840,7 @@ hi TabLineSel term=none cterm=none gui=none
 " ---- [9] OS SPECIFIC ----
 " Windows
 if(has("win32"))
-	"set shell=C:\mingw\msys\1.0\bin\bash.exe
+	au GUIEnter * simalt ~x
 endif
 " --------------------
 " ---- [10] STATUSLINE ----
