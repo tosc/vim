@@ -28,6 +28,15 @@ function! QFixClose()
 	ccl
 	let t:qFixWin = 0
 endfunction
+
+function! Explorer(...)
+	let node = g:NERDTreeBookmark.GetSelected()
+	if empty(node)
+		let return = system('explorer ' . a:1.path._str())
+	else
+		let return = system('explorer ' . node.path._str())
+	endif
+endfunction
 " --------------------
 " ---- [1] NORMAL VIMSETTINGS ----
 autocmd!
@@ -76,7 +85,7 @@ cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 " ---------
 " ---- [2] SESSION SETTINGS ----
 set sessionoptions-=options
-set sessionoptions-=folds
+set sessionoptions+=folds
 
 function! GetDir()
 	let l:name = getcwd()
@@ -328,6 +337,13 @@ let NERDTreeChdir='<C-C>'
 
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
+let NERDTreeShowBookmarks = 1
+
+call NERDTreeAddKeyMap({
+	\ 'key': 'e',
+	\ 'callback': 'Explorer',
+	\ 'quickhelpText': 'Opens windows explorer',
+	\ 'scope': 'all'})
 " --------------------
 " --------------------
 " ---- [4] FOLDING ----
@@ -690,11 +706,6 @@ map Y y$
 " perform expression on cursor word | EX: select a number ex 5, 5ä, then
 noremap å viw"xc<C-R>=getreg('x')
 
-noremap <Up> <C-W>k<C-W>
-noremap <Down> <C-W>j<C-W>
-noremap <Left> <C-W>h<C-W>
-noremap <Right> <C-W>l<C-W>
-
 snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
 
 " When you press TAB and have something selected in visual mode, it saves it
@@ -712,8 +723,9 @@ inoremap ( (<C-R>=UltiSnips#ExpandSnippet()<CR>
 inoremap { {<C-R>=UltiSnips#ExpandSnippet()<CR>
 
 inoremap <TAB> <C-R>=NeoTab()<CR>
-" Ctrl + del and Ctrl + bs like normal editors in insert
+
 inoremap <CR> <C-R>=SmartEnter()<CR>
+
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
 inoremap <C-Del> <C-O>de
@@ -737,7 +749,7 @@ map <leader>as :call CompletionCommand("S")<CR>
 " C
 map <leader>c <c-w>c
 " D
-map <leader>d :bd<CR>
+map <leader>d :bn\|bd #<CR>
 " E
 map <leader>e :silent !explorer %:p:h<CR>
 " F
@@ -786,7 +798,7 @@ map <leader>v <c-w>v
 " X
 " Y
 " Z
-map <leader>z :Unite -no-split -no-start-insert session<CR>
+map <leader>z :Unite -no-split session<CR>
 " !
 " -
 " /
