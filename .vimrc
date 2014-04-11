@@ -130,7 +130,6 @@ if !exists("g:reload")
 	Bundle "SirVer/ultisnips"  
 	Bundle 'nosami/Omnisharp'
 	Bundle 'tpope/vim-dispatch'
-	"Bundle 'jcf/vim-latex'
 	Bundle 'tpope/vim-fugitive'
 	Bundle 'Rip-Rip/clang_complete'
 	Bundle 'Shougo/vimproc'
@@ -144,6 +143,7 @@ if !exists("g:reload")
 	Bundle 'Shougo/neocomplcache'
 	Bundle 'JazzCore/neocomplcache-ultisnips'
 	Bundle 'skeept/ultisnips-unite'
+	Bundle 'scrooloose/nerdtree'
 	" Required by vundle
 	filetype plugin indent on
 endif
@@ -318,6 +318,16 @@ endfunction
 
 "let g:clang_use_library = 1
 
+" --------------------
+" ---- [3.9] NERDTREE ----
+let NERDTreeMapOpenSplit='<C-S>'
+let NERDTreeMapOpenVSplit='<C-V>'
+let NERDTreeMapOpenInTab='<C-T>'
+let NERDTreeMapUpdir='<BS>'
+let NERDTreeChdir='<C-C>'
+
+let NERDTreeShowHidden = 1
+let NERDTreeQuitOnOpen = 1
 " --------------------
 " --------------------
 " ---- [4] FOLDING ----
@@ -678,7 +688,7 @@ autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-di
 map Y y$
 
 " perform expression on cursor word | EX: select a number ex 5, 5ä, then
-noremap ä viw"xc<C-R>=getreg('x')
+noremap å viw"xc<C-R>=getreg('x')
 
 noremap <Up> <C-W>k<C-W>
 noremap <Down> <C-W>j<C-W>
@@ -691,9 +701,10 @@ snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
 " ultisnips and removes it.
 xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 
-noremap - :Unite -no-split window buffer file_mru directory_mru file file/new <CR>
+noremap ö :Unite -no-split window buffer file_mru<CR>
+noremap Ö :NERDTreeToggle<CR>
 
-noremap <space> za
+noremap <CR> za
 " --------------------
 " ---- [7.1] INSERT ----
 
@@ -715,7 +726,7 @@ inoremap <C-S> <C-X><C-S>
 "inoremap <CR> <C-R>=SmartEnter()<CR>
 " --------------------
 " ---- [7.2] LEADER ----
-let mapleader="ö"
+let mapleader="\<space>"
 
 " A
 map <leader>ak :call CompletionCommand("K")<CR>
@@ -724,7 +735,7 @@ map <leader>an :call CompletionCommand("N")<CR>
 map <leader>as :call CompletionCommand("S")<CR>
 " B
 " C
-map <leader>c :w <CR>:make <CR>
+map <leader>c <c-w>c
 " D
 map <leader>d :bd<CR>
 " E
@@ -732,12 +743,17 @@ map <leader>e :silent !explorer %:p:h<CR>
 " F
 map <leader>f :Unite -no-split -auto-preview -no-start-insert grep:. <CR>
 " G
+map <leader>g :Gstatus<CR>
 " H
-map <leader>h :Unite -no-split -auto-preview -no-start-insert help<CR>
+map <leader>h <c-w>h
 " I
 " J
+map <leader>j <c-w>j
 " K
+map <leader>k <c-w>k
 " L
+map <leader>l <c-w>l
+" I
 " M
 autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
 autocmd Filetype c map <buffer><silent> <leader>m :w <bar> make <bar> !./%:r <cr>
@@ -765,6 +781,7 @@ map <leader>t :e ~/Dropbox/main.todo <CR>
 map <leader>ue :Unite -no-split file:~/vimfiles/Ultisnips <CR>
 map <leader>uu :Unite -no-split ultisnips <CR>
 " V
+map <leader>v <c-w>v
 " W
 " X
 " Y
