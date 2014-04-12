@@ -1,0 +1,12 @@
+noremap j 5j
+noremap k 5k
+
+noremap h gT
+noremap l gt
+
+noremap H [[
+noremap L ]]
+
+noremap <c-h> :tabmove -1<cr>
+noremap <c-l> :tabmove +1<cr>
+
