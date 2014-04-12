@@ -19,10 +19,9 @@ endfunction
 function! Explorer(...)
 	let node = g:NERDTreeBookmark.GetSelected()
 	if empty(node)
-		let return = system('explorer ' . a:1.path._str())
-	else
-		let return = system('explorer ' . node.path._str())
+    		let node = g:NERDTreeDirNode.GetSelected()
 	endif
+	let return = system('explorer ' . node.path._str())
 endfunction
 
 let s:CompletionCommand = "\<C-X>\<C-U>"
@@ -655,7 +654,7 @@ autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-di
 " --------------------
 " ---- [6.11] NERDTREE ----
 autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': 'e',
+	\ 'key': '<C-e>',
 	\ 'callback': 'Explorer',
 	\ 'quickhelpText': 'Opens windows explorer',
 	\ 'scope': 'all'})
@@ -854,17 +853,16 @@ endif
 " --------------------
 " ---- [13] FRESH INSTALL ----
 " 1. Create a tmp folder, .vim/tmp for backup files.
-" 2. Create session folder, .vim/session for sessionrestoring.
-" 3. Link this vimrc to your homedir. 
-" 4. Run :BundleInstall.
-" 5. Link Ultisnips snippetfolder from Dropbox.
-" 6. Build clang. Go into clang folder and run make install.
-" 7. Eclim. Download the appropriate eclim version for your version of eclipse. Run jar.
-" 8. Vimproc. Compile 
+" 2. Link this vimrc to your homedir. 
+" 3. Run :BundleInstall.
+" 4. Link Ultisnips snippetfolder from Dropbox.
+" 5. Build clang. Go into clang folder and run make install.
+" 6. Eclim. Download the appropriate eclim version for your version of eclipse. Run jar.
+" 7. Vimproc. Compile 
 " 		Windows : make -f make_mingw32.mak
 " 		mac 	: make -f make_mac.mak
 " 		unix 	: make -f make_unix.mak
-" 9. Download LaTex.
+" 8. Download LaTex.
 
 " For Windows install
 " 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/??/bin to path.
@@ -883,7 +881,6 @@ endif
 " Clang_complete - If the completion engine returns nothing you might have updated clang_complete. Run make install and it should work.
 " --------------------
 " ---- [15] TODO ----
-" Improve neocomplcache, when there are more then one possible match and you
-" tab, the completion window closes.
+" Improve neocomplcache, when there are more then one possible match and you tab, the completion window closes.
 " Change neomru and unite's bundle path, incorrect atm.
 " --------------------
