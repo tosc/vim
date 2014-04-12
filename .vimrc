@@ -1,17 +1,4 @@
 " ---- [0] VARIABLES AND FUNCTIONS ----
-let s:CompletionCommand = "\<C-X>\<C-N>"
-function! CompletionCommand(complKeys)
-	if a:complKeys == "K"
-		let s:CompletionCommand = "\<C-X>\<C-K>"
-	elseif a:complKeys == "N"
-		let s:CompletionCommand = "\<C-X>\<C-N>"
-	elseif a:complKeys == "O"
-		let s:CompletionCommand = "\<C-X>\<C-O>"
-	elseif a:complKeys == "S"
-		let s:CompletionCommand = "\<C-X>\<C-S>"
-	endif
-endfunction
-
 function! QFix()
 	if !exists("t:qFixWin")
 		let t:qFixWin = 0
@@ -36,6 +23,35 @@ function! Explorer(...)
 	else
 		let return = system('explorer ' . node.path._str())
 	endif
+endfunction
+
+let s:CompletionCommand = "\<C-X>\<C-U>"
+let g:PosBeforeCompletion = 0
+function! SmartTab()
+	"if getline(line(".")) =~ '\S'
+	if getline(".")[col('.') - 2] =~ '\S'
+		call UltiSnips#ExpandSnippet()
+		if g:ulti_expand_res
+			return ""
+		else
+			if pumvisible()
+				let g:PosBeforeCompletion = col('.')
+				return "\<C-E>" . s:CompletionCommand
+			else
+				let g:PosBeforeCompletion = col('.')
+				return s:CompletionCommand
+			endif
+		endif
+	else
+		return "\<TAB>"
+	endif
+endfunction
+
+function! PostSmartTab()
+	if !pumvisible() && g:PosBeforeCompletion == col('.')
+		call UltiSnips#JumpForwards()
+	endif
+	return ""
 endfunction
 " --------------------
 " ---- [1] NORMAL VIMSETTINGS ----
@@ -170,49 +186,6 @@ let g:UltiSnipsListSnippets = "<f9>"
 let g:ulti_expand_res = 0 "default value, just set once
 let g:ulti_jump_forwards_res = 0 "default value, just set once
 
-" Handles all the different <TAB> bindings in the correct order.
-" 1: Expand word if expandable
-" 2: Choose next word in omnicomplete if omnicompletewindow visible
-" 3: Jump to next jump in snippet if another jump is avalible
-" 4: Normal tab
-
-let g:PosBeforeCompletion = 0
-function! SmartTab()
-	"if getline(line(".")) =~ '\S'
-	if getline(".")[col('.') - 2] =~ '\S'
-		call UltiSnips#ExpandSnippet()
-		if g:ulti_expand_res
-			return ""
-		else
-			if pumvisible()
-				let g:PosBeforeCompletion = col('.')
-				return "\<C-E>" . s:CompletionCommand
-			else
-				let g:PosBeforeCompletion = col('.')
-				return s:CompletionCommand
-			endif
-		endif
-	else
-		return "\<TAB>"
-	endif
-endfunction
-
-function! PostSmartTab()
-	if !pumvisible() && g:PosBeforeCompletion == col('.')
-		call UltiSnips#JumpForwards()
-	endif
-	return ""
-endfunction
-
-function! SmartEnter()
-	call UltiSnips#JumpForwards()
-	if g:ulti_jump_forwards_res 
-		return ""
-	else
-		return "\<CR>"
-	endif
-endfunction
-
 " Adds a new split when running ultisnips edit instead of taking over the
 " current window
 let g:UltiSnipsEditSplit = 'horizontal'
@@ -279,10 +252,9 @@ let g:vimshell_prompt_pattern = '^\%(\f\|\\.\)\+> '
 " --------------------
 " ---- [3.6] Fugitive ----
 " --------------------
-" ---- [3.7] VIM-LATEX (LATEX-SUITE) ----
-let g:Imap_UsePlaceHolders = 0
-" --------------------
-" ---- [3.8] NEOCOMPLCACHE ----
+" ---- [3.7] NEOCOMPLCACHE ----
+let g:neocomplcache_enable_at_startup = 1
+
 " Required for clang_complete to play nice with NEOCOMPLCACHE.
 if !exists('g:neocomplcache_force_omni_patterns')
 	let g:neocomplcache_force_omni_patterns = {}
@@ -298,11 +270,10 @@ let g:neocomplcache_force_omni_patterns.objc =
 let g:neocomplcache_force_omni_patterns.objcpp =
 			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
 
-let g:neocomplcache_enable_at_startup = 1
 let g:neocomplcache_enable_smart_case = 0
 let g:neocomplcache_enable_camel_case_completion = 0
 let g:neocomplcache_enable_ignore_case = 0
-let g:neocomplcache_min_syntax_length = 1
+let g:neocomplcache_min_syntax_length = 3
 
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
@@ -328,12 +299,12 @@ endfunction
 "let g:clang_use_library = 1
 
 " --------------------
-" ---- [3.9] NERDTREE ----
+" ---- [3.8] NERDTREE ----
 let NERDTreeMapOpenSplit='<C-S>'
 let NERDTreeMapOpenVSplit='<C-V>'
 let NERDTreeMapOpenInTab='<C-T>'
 let NERDTreeMapUpdir='<BS>'
-let NERDTreeChdir='<C-C>'
+let NERDTreeMapChdir='<C-C>'
 
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 1
@@ -574,7 +545,6 @@ endfunction
 
 autocmd Filetype java setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 autocmd Filetype java setlocal foldtext=SpecialBraceFoldText()
-autocmd Filetype java let s:CompletionCommand = "\<C-X>\<C-O>"
 " --------
 " ---- [6.1] C# ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
@@ -596,7 +566,6 @@ autocmd BufWritePost *.cs :OmniSharpReloadSolution
 
 autocmd Filetype cs setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 autocmd Filetype cs setlocal foldtext=SpecialBraceFoldText()
-autocmd Filetype cs let s:CompletionCommand = "\<C-X>\<C-O>"
 autocmd Filetype cs let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 autocmd FileType cs let g:neocomplcache_omni_patterns.cs = '.*'
 
@@ -618,12 +587,10 @@ endfunction
 
 autocmd Filetype c,cpp setlocal foldexpr=BraceFolding(v:lnum)
 autocmd Filetype c,cpp setlocal foldtext=NormalFoldText()
-autocmd Filetype c,cpp let s:CompletionCommand = "\<C-X>\<C-U>"
 " --------------------
 " ---- [6.3] VIMRC ----
 autocmd Filetype vim setlocal foldexpr=VimrcFolding(v:lnum)
 autocmd Filetype vim setlocal foldtext=NormalFoldText()
-autocmd Filetype vim let s:CompletionCommand = "\<C-X>\<C-P>"
 autocmd Filetype vim let &foldlevel=0
 autocmd Filetype vim set textwidth=0
 autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
@@ -631,13 +598,11 @@ autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
 " ---- [6.4] SNIPPET ----
 autocmd Filetype snippets setlocal foldexpr=SnippetFolding(v:lnum)
 autocmd Filetype snippets setlocal foldtext=NormalFoldText()
-autocmd Filetype snippets let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 " ---- [6.5] TODO ----
 autocmd BufEnter *.td setlocal filetype=todo
 autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
-autocmd Filetype todo let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 " ---- [6.6] PYTHON ----
 autocmd Filetype python setlocal omnifunc=PythonOmni
@@ -653,17 +618,14 @@ function! PythonOmni(findstart, base)
 endfunction
 autocmd Filetype python setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype python setlocal foldtext=NormalFoldText()
-autocmd Filetype python let s:CompletionCommand = "\<C-X>\<C-P>"
 " --------------------
 " ---- [6.7] LUA ----
 autocmd Filetype lua setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype lua setlocal foldtext=NormalFoldText()
-autocmd Filetype lua let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
 " ---- [6.8] MAKE ----
 autocmd Filetype make setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype make setlocal foldtext=NormalFoldText()
-autocmd Filetype make let s:CompletionCommand = "\<C-X>\<C-P>"
 " -------------
 " ---- [6.9] PASS ----
 function! GenPass(...)
@@ -716,16 +678,14 @@ xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 noremap ö :Unite -no-split window buffer file_mru<CR>
 noremap Ö :NERDTreeToggle<CR>
 
+noremap ´ '
+
 noremap <CR> za
 " --------------------
 " ---- [7.1] INSERT ----
-
-inoremap ( (<C-R>=UltiSnips#ExpandSnippet()<CR>
-inoremap { {<C-R>=UltiSnips#ExpandSnippet()<CR>
-
 inoremap <TAB> <C-R>=NeoTab()<CR>
 
-inoremap <CR> <C-R>=SmartEnter()<CR>
+inoremap <C-J> <C-R>=UltiSnips#JumpForwards()<CR>
 
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
@@ -733,19 +693,11 @@ inoremap <C-Del> <C-O>de
 
 inoremap <C-F> <C-X><C-F>
 inoremap <C-S> <C-X><C-S>
-
-" Old completion
-"inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
-"inoremap <CR> <C-R>=SmartEnter()<CR>
 " --------------------
 " ---- [7.2] LEADER ----
 let mapleader="\<space>"
 
 " A
-map <leader>ak :call CompletionCommand("K")<CR>
-map <leader>ao :call CompletionCommand("O")<CR>
-map <leader>an :call CompletionCommand("N")<CR>
-map <leader>as :call CompletionCommand("S")<CR>
 " B
 " C
 map <leader>c <c-w>c
@@ -768,9 +720,10 @@ map <leader>k <c-w>k
 map <leader>l <c-w>l
 " I
 " M
-autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
-autocmd Filetype c map <buffer><silent> <leader>m :w <bar> make <bar> !./%:r <cr>
-autocmd Filetype cpp map <buffer><silent> <leader>m :w <bar> make <bar> !./main <cr>
+"autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
+"autocmd Filetype c map <buffer><silent> <leader>m :w <bar> make <bar> !./%:r <cr>
+"autocmd Filetype cpp map <buffer><silent> <leader>m :w <bar> make <bar> !./main <cr>
+map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make <CR>
 " N 
 map <leader>n :bn <CR>
 map <leader>N :bp <CR>
@@ -780,7 +733,7 @@ map <leader>p :bp <CR>
 " Q
 map <leader>q :call QFix()<CR>
 " R 
-map <leader>r :Unite -no-split -auto-preview -no-start-insert build:make <CR>
+map <leader>r :Unite -no-split register<CR>
 " S
 map <leader>se :setlocal spell spelllang=en_us <CR>
 map <leader>ss :setlocal spell spelllang=sv <CR>
@@ -885,12 +838,21 @@ function! SlowStatusLine()
 	let &l:statusline=SlowStatusLineVar
 endfunction
 " --------------------
-" ---- [11] AFTER VIMRC ----
+" ---- [11] MINIMALMODE ----
+function! MinimalMode()
+	let g:neocomplcache_disable_auto_complete = 1
+	inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
+	function! SlowStatusLine()
+		return ""
+	endfunction
+endfunction
+" --------------------
+" ---- [12] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
 endif
 " --------------------
-" ---- [12] FRESH INSTALL ----
+" ---- [13] FRESH INSTALL ----
 " 1. Create a tmp folder, .vim/tmp for backup files.
 " 2. Create session folder, .vim/session for sessionrestoring.
 " 3. Link this vimrc to your homedir. 
@@ -898,7 +860,7 @@ endif
 " 5. Link Ultisnips snippetfolder from Dropbox.
 " 6. Build clang. Go into clang folder and run make install.
 " 7. Eclim. Download the appropriate eclim version for your version of eclipse. Run jar.
-" 8. Vimshell. Compile 
+" 8. Vimproc. Compile 
 " 		Windows : make -f make_mingw32.mak
 " 		mac 	: make -f make_mac.mak
 " 		unix 	: make -f make_unix.mak
@@ -912,17 +874,16 @@ endif
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell]
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell\Open]
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"
-" 3. YCM Windows https://bitbucket.org/Haroogan/vim-youcompleteme-for-windows/src
-" 		Extract the zip and place the folder in vimfiles/plugin
 
 "For Linux install
-" 1. YCM?
 " --------------------
-" ---- [13] TROUBLESHOOTING ----
+" ---- [14] TROUBLESHOOTING ----
 " Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
-" Ultisnips - If completion doesn't work but ,u opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both _vimfiles and vimfiles last time to get it to work.)
+" Ultisnips - If completion doesn't work but :UltiSnipsEdit opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both _vimfiles and vimfiles last time to get it to work.)
+" Clang_complete - If the completion engine returns nothing you might have updated clang_complete. Run make install and it should work.
 " --------------------
-" ---- [14] TODO ----
+" ---- [15] TODO ----
 " Improve neocomplcache, when there are more then one possible match and you
 " tab, the completion window closes.
+" Change neomru and unite's bundle path, incorrect atm.
 " --------------------
