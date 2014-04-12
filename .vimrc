@@ -173,22 +173,7 @@ if !exists("g:reload")
 endif
 " ----------
 " ---- [3.1] ULTISNIPS ----
-" Ultisnips bindings
-" f9 just to remove them. TODO look for better way to remove binding
-let g:UltiSnipsExpandTrigger="<f10>"
-let g:UltiSnipsJumpForwardTrigger="<f2>"
-let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
-let g:UltiSnipsListSnippets = "<f9>"
-
-" Global variables that UltiSnips_ExpandSnippet and UltiSnips_JumpForwards
-" calls when used.
-let g:ulti_expand_res = 0 "default value, just set once
-let g:ulti_jump_forwards_res = 0 "default value, just set once
-
-" Adds a new split when running ultisnips edit instead of taking over the
-" current window
 let g:UltiSnipsEditSplit = 'horizontal'
-
 " --------
 " ---- [3.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
@@ -294,9 +279,6 @@ function! NeoTab()
 	endif
 	return longestCommon
 endfunction
-
-"let g:clang_use_library = 1
-
 " --------------------
 " ---- [3.8] NERDTREE ----
 let NERDTreeMapOpenSplit='<C-S>'
@@ -682,9 +664,16 @@ noremap ´ '
 noremap <CR> za
 " --------------------
 " ---- [7.1] INSERT ----
+" Ultisnips bindings
+" f9 just to remove them. TODO look for better way to remove binding
+let g:UltiSnipsExpandTrigger="<f10>"
+let g:UltiSnipsJumpForwardTrigger="<S-Space>"
+let g:UltiSnipsJumpBackwardTrigger="<S-BS>"
+let g:UltiSnipsListSnippets = "<f9>"
+
 inoremap <TAB> <C-R>=NeoTab()<CR>
 
-inoremap <C-J> <C-R>=UltiSnips#JumpForwards()<CR>
+"inoremap <C-J> <C-R>=UltiSnips#JumpForwards()<CR>
 
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
@@ -692,6 +681,12 @@ inoremap <C-Del> <C-O>de
 
 inoremap <C-F> <C-X><C-F>
 inoremap <C-S> <C-X><C-S>
+
+inoremap <F13> {
+inoremap <F14> }
+inoremap <S-F13> <nop>
+inoremap <S-F14> <nop>
+inoremap <S-BS> <nop>
 " --------------------
 " ---- [7.2] LEADER ----
 let mapleader="\<space>"
@@ -839,8 +834,11 @@ endfunction
 " --------------------
 " ---- [11] MINIMALMODE ----
 function! MinimalMode()
+	" No complete-as-you-type, instead tab autocompletes/open completion window.
 	let g:neocomplcache_disable_auto_complete = 1
 	inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
+	
+	" Disables the slow statusline, no more git commands when saving etc.
 	function! SlowStatusLine()
 		return ""
 	endfunction
