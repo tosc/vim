@@ -87,8 +87,6 @@ let $LANG = 'en'
 colorscheme desert
 
 syntax on
-
-cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 " ---------
 " ---- [2] SESSION SETTINGS ----
 set sessionoptions-=options
@@ -143,23 +141,22 @@ if !exists("g:reload")
 	Bundle 'gmarik/vundle'
 
 	" Vundle addons"
-	Bundle "SirVer/ultisnips"  
-	Bundle 'nosami/Omnisharp'
-	Bundle 'tpope/vim-dispatch'
-	Bundle 'tpope/vim-fugitive'
-	Bundle 'Rip-Rip/clang_complete'
 	Bundle 'Shougo/vimproc'
 	Bundle 'Shougo/vimshell'
-	Bundle 'Shougo/unite'
 	Bundle 'Shougo/neomru'
-	Bundle 'Shougo/unite-help'
+	Bundle 'Shougo/unite'
 	Bundle 'Shougo/unite-outline'
 	Bundle 'Shougo/unite-build'
 	Bundle 'Shougo/unite-session'
 	Bundle 'Shougo/neocomplcache'
 	Bundle 'JazzCore/neocomplcache-ultisnips'
+	Bundle 'SirVer/ultisnips'  
 	Bundle 'skeept/ultisnips-unite'
 	Bundle 'scrooloose/nerdtree'
+	Bundle 'nosami/Omnisharp'
+	Bundle 'tpope/vim-dispatch'
+	Bundle 'tpope/vim-fugitive'
+	Bundle 'Rip-Rip/clang_complete'
 	" Required by vundle
 	filetype plugin indent on
 endif
@@ -750,6 +747,10 @@ cnoremap <F13> <nop>
 cnoremap <F14> <nop>
 cnoremap <S-F13> <nop>
 cnoremap <S-F14> <nop>
+
+cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
+" I tend to write :git instead of :Git
+cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
 " --------------------
 " ---- [7.4] NERDTREE ----
 let NERDTreeMapOpenSplit='<C-S>'
