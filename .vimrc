@@ -16,14 +16,6 @@ function! QFixClose()
 	let t:qFixWin = 0
 endfunction
 
-function! Explorer(...)
-	let node = g:NERDTreeBookmark.GetSelected()
-	if empty(node)
-    		let node = g:NERDTreeDirNode.GetSelected()
-	endif
-	let return = system('explorer ' . node.path._str())
-endfunction
-
 let s:CompletionCommand = "\<C-X>\<C-U>"
 let g:PosBeforeCompletion = 0
 function! SmartTab()
@@ -192,27 +184,6 @@ let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
 let g:unite_update_time = 300
 
-function! s:unite_settings()
-	nmap <buffer> <ESC> <Plug>(unite_all_exit)
-	nnoremap <buffer> <BS> <Plug>()
-	imap <buffer> <TAB> <Plug>(unite_select_next_line)
-	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
-	inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-	inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-	nnoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-	nnoremap <silent><buffer><expr> <C-t> unite#do_action('tab')
-	"imap <buffer> <C-p> <Plug>(unite_toggle_auto_preview) 
-	"nmap <buffer> <C-p> <Plug>(unite_toggle_auto_preview) 
-	"inoremap <silent><buffer><expr> <C-p> empty(filter(range(1, winnr('$')), 'getwinvar(v:val, "&previewwindow") != 0')) ?  unite#do_action('preview') : ":\<C-u>pclose!\<CR>"
-	"nnoremap <silent><buffer><expr> <C-p> empty(filter(range(1, winnr('$')), 'getwinvar(v:val, "&previewwindow") != 0')) ?  unite#do_action('preview') : ":\<C-u>pclose!\<CR>"
-	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
-	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
-endfunction
-autocmd FileType unite call s:unite_settings()
-
 let s:bufferaction = {'description' : 'verbose', 'is_selectable' : 1,}
 
 call unite#custom#source('file_rec', 'ignore_pattern', join(['.pyc$', '.exe$', '.o$'], '\|'))
@@ -281,15 +252,41 @@ function! NeoTab()
 endfunction
 " --------------------
 " ---- [3.8] NERDTREE ----
-let NERDTreeMapOpenSplit='<C-S>'
-let NERDTreeMapOpenVSplit='<C-V>'
-let NERDTreeMapOpenInTab='<C-T>'
-let NERDTreeMapUpdir='<BS>'
-let NERDTreeMapChdir='<C-C>'
-
 let NERDTreeShowHidden = 1
-let NERDTreeQuitOnOpen = 1
+let NERDTreeQuitOnOpen = 0
 let NERDTreeShowBookmarks = 1
+let NERDTreeMinimalUI = 1
+let NERDTreeIgnore=['\.\.$,','\.$']
+let NERDTreeWinSize = 50
+let NERDTreeSortOrder = ['^\a.*/$', '\/$', '^\a.*$', '*', '\.swp$',  '\.bak$', '\~$']
+let NERDTreeStatusline = "%{getcwd()}"
+
+
+function! Explorer(node)
+	call system('explorer ' . a:node.path._str())
+endfunction
+
+function! RunFile(node)
+	let fname = a:node.path._str()
+	if fname =~ ".mkv$" || fname =~ ".mp4$" || fname =~ ".avi$" || fname =~ ".wmv$" || fname =~ ".mov$" || fname =~ ".exe$" || fname =~ ".msi$" || fname =~ ".png$"
+		call system('cmd /c start ' . a:node.path._str())
+	else
+		call ActivateFileNode(a:node)
+	endif
+endfunction
+function! ActivateFileNode(node)
+	call a:node.activate({'reuse': 1, 'where': 'p'})
+endfunction
+function! ActivateDirNode(node)
+	call a:node.activate({'reuse': 1})
+endfunction
+function! ActivateBookmark(bm)
+	call a:bm.activate(!a:bm.path.isDirectory ? {'where': 'p'} : {})
+endfunction
+
+function! NERDRemove(node)
+	call system("rm -r " . "\"" . a:node.path._str() . "\"")
+endfunction
 " --------------------
 " --------------------
 " ---- [4] FOLDING ----
@@ -634,13 +631,6 @@ autocmd Filetype tex setlocal foldtext=NormalFoldText()
 autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
 autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
 " --------------------
-" ---- [6.11] NERDTREE ----
-autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': '<C-e>',
-	\ 'callback': 'Explorer',
-	\ 'quickhelpText': 'Opens windows explorer',
-	\ 'scope': 'all'})
-" --------------------
 " --------------------
 " ---- [7] BINDINGS ----
 " ---- [7.0] NORMAL ----
@@ -658,6 +648,9 @@ xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 
 noremap ö :Unite -no-split window buffer file_mru<CR>
 noremap Ö :NERDTreeToggle<CR>
+
+noremap ä /
+noremap Ä ?
 
 noremap ´ '
 
@@ -736,7 +729,7 @@ map <leader>sn :setlocal nospell <CR>
 map <leader>sc :setlocal nospell <CR>
 map <leader>sd :setlocal nospell <CR>
 " T
-map <leader>t :e ~/Dropbox/main.todo <CR>
+map <leader>tc :tabc <CR>
 " U
 map <leader>ue :Unite -no-split file:~/vimfiles/Ultisnips <CR>
 map <leader>uu :Unite -no-split ultisnips <CR>
@@ -750,6 +743,82 @@ map <leader>z :Unite -no-split session<CR>
 " !
 " -
 " /
+" --------------------
+" ---- [7.3] COMMAND ----
+cnoremap <C-A> <home>
+cnoremap <F13> <nop>
+cnoremap <F14> <nop>
+cnoremap <S-F13> <nop>
+cnoremap <S-F14> <nop>
+" --------------------
+" ---- [7.4] NERDTREE ----
+let NERDTreeMapOpenSplit='<C-S>'
+let NERDTreeMapOpenVSplit='<C-V>'
+let NERDTreeMapOpenInTab='<C-T>'
+let NERDTreeMapUpdir='<BS>'
+let NERDTreeMapChdir='<C-C>'
+
+autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+	\ 'key': '<C-e>',
+	\ 'callback': 'Explorer',
+	\ 'quickhelpText': 'Opens windows explorer',
+	\ 'scope': 'Bookmark'})
+autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+	\ 'key': '<C-e>',
+	\ 'callback': 'Explorer',
+	\ 'quickhelpText': 'Opens windows explorer',
+	\ 'scope': 'DirNode'})
+
+autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+	\ 'key': '<CR>',
+	\ 'callback': 'ActivateDirNode',
+	\ 'quickhelpText': 'A smarter vim enter.',
+	\ 'scope': 'DirNode'})
+
+autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+	\ 'key': '<CR>',
+	\ 'callback': 'RunFile',
+	\ 'quickhelpText': 'A smarter vim enter.',
+	\ 'scope': 'FileNode'})
+
+autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+	\ 'key': '<CR>',
+	\ 'callback': 'ActivateBookmark',
+	\ 'quickhelpText': 'A smarter vim enter.',
+	\ 'scope': 'Bookmark'})
+
+autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+	\ 'key': '<C-x>',
+	\ 'callback': 'NERDRemove',
+	\ 'quickhelpText': 'Removes stuff using NERDTree',
+	\ 'scope': 'FileNode'})
+autocmd Filetype nerdtree call NERDTreeAddKeyMap({
+	\ 'key': '<C-x>',
+	\ 'callback': 'NERDRemove',
+	\ 'quickhelpText': 'Removes stuff using NERDTree',
+	\ 'scope': 'DirNode'})
+" --------------------
+" ---- [7.5] UNITE ----
+function! s:unite_settings()
+	nmap <buffer> <ESC> <Plug>(unite_all_exit)
+	nnoremap <buffer> <BS> <Plug>()
+	imap <buffer> <TAB> <Plug>(unite_select_next_line)
+	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
+	inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
+	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
+	inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+	nnoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+	nnoremap <silent><buffer><expr> <C-t> unite#do_action('tab')
+	"imap <buffer> <C-p> <Plug>(unite_toggle_auto_preview) 
+	"nmap <buffer> <C-p> <Plug>(unite_toggle_auto_preview) 
+	"inoremap <silent><buffer><expr> <C-p> empty(filter(range(1, winnr('$')), 'getwinvar(v:val, "&previewwindow") != 0')) ?  unite#do_action('preview') : ":\<C-u>pclose!\<CR>"
+	"nnoremap <silent><buffer><expr> <C-p> empty(filter(range(1, winnr('$')), 'getwinvar(v:val, "&previewwindow") != 0')) ?  unite#do_action('preview') : ":\<C-u>pclose!\<CR>"
+	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
+	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
+	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
+	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
+endfunction
+autocmd FileType unite call s:unite_settings()
 " --------------------
 " --------------------
 " ---- [8] TABS ----
