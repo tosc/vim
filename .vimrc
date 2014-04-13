@@ -11,38 +11,10 @@ function! QFix()
 		let t:qFixWin = 0
 	endif
 endfunction
+
 function! QFixClose()
 	ccl
 	let t:qFixWin = 0
-endfunction
-
-let s:CompletionCommand = "\<C-X>\<C-U>"
-let g:PosBeforeCompletion = 0
-function! SmartTab()
-	"if getline(line(".")) =~ '\S'
-	if getline(".")[col('.') - 2] =~ '\S'
-		call UltiSnips#ExpandSnippet()
-		if g:ulti_expand_res
-			return ""
-		else
-			if pumvisible()
-				let g:PosBeforeCompletion = col('.')
-				return "\<C-E>" . s:CompletionCommand
-			else
-				let g:PosBeforeCompletion = col('.')
-				return s:CompletionCommand
-			endif
-		endif
-	else
-		return "\<TAB>"
-	endif
-endfunction
-
-function! PostSmartTab()
-	if !pumvisible() && g:PosBeforeCompletion == col('.')
-		call UltiSnips#JumpForwards()
-	endif
-	return ""
 endfunction
 " --------------------
 " ---- [1] NORMAL VIMSETTINGS ----
@@ -501,6 +473,8 @@ autocmd BufEnter * call SlowStatusLine()
 
 autocmd InsertEnter * hi StatusLine gui=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
+
+autocmd BufRead .pentadactylrc set filetype=vim
 " --------------------
 " ---- [6] FILETYPE SPECIFIC ----
 " ---- [6.0] JAVA ----
@@ -904,6 +878,35 @@ endfunction
 " --------------------
 " ---- [11] MINIMALMODE ----
 function! MinimalMode()
+	let s:CompletionCommand = "\<C-X>\<C-U>"
+	let g:PosBeforeCompletion = 0
+	function! SmartTab()
+		"if getline(line(".")) =~ '\S'
+		if getline(".")[col('.') - 2] =~ '\S'
+			call UltiSnips#ExpandSnippet()
+			if g:ulti_expand_res
+				return ""
+			else
+				if pumvisible()
+					let g:PosBeforeCompletion = col('.')
+					return "\<C-E>" . s:CompletionCommand
+				else
+					let g:PosBeforeCompletion = col('.')
+					return s:CompletionCommand
+				endif
+			endif
+		else
+			return "\<TAB>"
+		endif
+	endfunction
+
+	function! PostSmartTab()
+		if !pumvisible() && g:PosBeforeCompletion == col('.')
+			call UltiSnips#JumpForwards()
+		endif
+		return ""
+	endfunction
+
 	" No complete-as-you-type, instead tab autocompletes/open completion window.
 	let g:neocomplcache_disable_auto_complete = 1
 	inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
@@ -951,4 +954,5 @@ endif
 " ---- [15] TODO ----
 " Improve neocomplcache, when there are more then one possible match and you tab, the completion window closes.
 " Change neomru and unite's bundle path, incorrect atm.
+" Remove subcategory [0].
 " --------------------
