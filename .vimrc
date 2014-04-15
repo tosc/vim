@@ -117,18 +117,22 @@ if !exists("g:reload")
 	Bundle 'Shougo/vimshell'
 	Bundle 'Shougo/neomru'
 	Bundle 'Shougo/unite'
-	Bundle 'Shougo/unite-outline'
 	Bundle 'Shougo/unite-build'
 	Bundle 'Shougo/unite-session'
+	Bundle 'tsukkee/unite-tag'
+	Bundle 'skeept/ultisnips-unite'
 	Bundle 'Shougo/neocomplcache'
 	Bundle 'JazzCore/neocomplcache-ultisnips'
 	Bundle 'SirVer/ultisnips'  
-	Bundle 'skeept/ultisnips-unite'
 	Bundle 'scrooloose/nerdtree'
 	Bundle 'nosami/Omnisharp'
 	Bundle 'tpope/vim-dispatch'
 	Bundle 'tpope/vim-fugitive'
 	Bundle 'Rip-Rip/clang_complete'
+	Bundle 'majutsushi/tagbar'
+	Bundle 'xolox/vim-easytags'
+	Bundle 'xolox/vim-misc'
+	Bundle 'davidhalter/jedi-vim'
 	" Required by vundle
 	filetype plugin indent on
 endif
@@ -152,6 +156,7 @@ let g:unite_enable_start_insert = 1
 let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
 let g:unite_update_time = 300
+let g:unite_cursor_line_highlight = 'TabLine'
 
 let s:bufferaction = {'description' : 'verbose', 'is_selectable' : 1,}
 
@@ -164,12 +169,9 @@ call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep', 'i
 call unite#custom#default_action('buffer', 'goto')
 
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
+call unite#filters#sorter_default#use(['sorter_rank'])
 " --------------------
 " ---- [3.5] VIMSHELL ----
-" let g:vimshell_prompt = "% "
-" let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
-
-
 " Use current directory as vimshell prompt.
 let g:vimshell_prompt_expr = 'escape(fnamemodify(getcwd(), ":~").">", "\\[]()?! ")." "'
 let g:vimshell_prompt_pattern = '^\%(\f\|\\.\)\+> '
@@ -183,6 +185,9 @@ let g:neocomplcache_enable_at_startup = 1
 if !exists('g:neocomplcache_force_omni_patterns')
 	let g:neocomplcache_force_omni_patterns = {}
 endif
+if !exists('g:neocomplcache_omni_functions')
+	    let g:neocomplcache_omni_functions = {}
+endif
 
 let g:neocomplcache_force_overwrite_completefunc = 1
 let g:neocomplcache_force_omni_patterns.c =
@@ -193,11 +198,13 @@ let g:neocomplcache_force_omni_patterns.objc =
 			\ '[^.[:digit:] *\t]\%(\.\|->\)'
 let g:neocomplcache_force_omni_patterns.objcpp =
 			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplcache_omni_functions['python'] = 'jedi#completions'
 
 let g:neocomplcache_enable_smart_case = 0
 let g:neocomplcache_enable_camel_case_completion = 0
 let g:neocomplcache_enable_ignore_case = 0
 let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_enable_auto_close_preview = 0
 
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
@@ -211,11 +218,7 @@ function! NeoTab()
 	endif
 	let longestCommon = neocomplcache#complete_common_string()
 	if longestCommon == ""
-		call UltiSnips#JumpForwards()
-		if g:ulti_jump_forwards_res == 1
-			return ""
-		endif
-		return "\<TAB>"
+		return pumvisible() ? "" : "\<TAB>"
 	endif
 	return longestCommon
 endfunction
@@ -256,6 +259,13 @@ endfunction
 function! NERDRemove(node)
 	call system("rm -r " . "\"" . a:node.path._str() . "\"")
 endfunction
+" --------------------
+" ---- [3.9] EASYTAGS ----
+let g:easytags_updatetime_warn = 0
+let g:easytags_by_filetype = '~/.vim/tags/'
+" --------------------
+" ---- [3.10] JEDI-VIM ----
+let g:jedi#popup_on_dot = 0
 " --------------------
 " --------------------
 " ---- [4] FOLDING ----
@@ -554,7 +564,7 @@ autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
 " --------------------
 " ---- [6.6] PYTHON ----
-autocmd Filetype python setlocal omnifunc=PythonOmni
+"autocmd Filetype python setlocal omnifunc=PythonOmni
 function! PythonOmni(findstart, base)
 	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
 	if a:findstart
@@ -601,6 +611,7 @@ autocmd Filetype tex setlocal foldexpr=IndentFolding2(v:lnum)
 autocmd Filetype tex setlocal foldtext=NormalFoldText()
 autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
 autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
+autocmd Filetype tex setlocal spell spelllang=en_us
 " --------------------
 " --------------------
 " ---- [7] BINDINGS ----
@@ -611,28 +622,40 @@ map Y y$
 " perform expression on cursor word | EX: select a number ex 5, 5ä, then
 noremap å viw"xc<C-R>=getreg('x')
 
-snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
+" Jumps when stuff is selected
+" snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
 
 " When you press TAB and have something selected in visual mode, it saves it
 " ultisnips and removes it.
 xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 
-noremap ö :Unite -no-split window buffer file_mru<CR>
-noremap Ö :NERDTreeToggle<CR>
+"noremap ö :Unite -no-split window buffer file_mru<CR>
+noremap ö :Unite -no-split buffer file_mru<CR>
+noremap Ö :NERDTreeToggle .<CR>
 
 noremap ä /
 noremap Ä ?
 
-noremap ´ '
-
 noremap <CR> za
+
+noremap <C-J> <C-]>
+
+
+" Good avaliable binds
+" ´
+" Enter
+" Backspace
+" Shift space
+" Shift enter
+" Shift bs
+" l&r Shift solo
 " --------------------
 " ---- [7.1] INSERT ----
 " Ultisnips bindings
 " f9 just to remove them. TODO look for better way to remove binding
 let g:UltiSnipsExpandTrigger="<f10>"
-let g:UltiSnipsJumpForwardTrigger="<S-Space>"
-let g:UltiSnipsJumpBackwardTrigger="<S-BS>"
+let g:UltiSnipsJumpForwardTrigger="<F14>"
+let g:UltiSnipsJumpBackwardTrigger="<F13>"
 let g:UltiSnipsListSnippets = "<f9>"
 
 inoremap <TAB> <C-R>=NeoTab()<CR>
@@ -645,12 +668,15 @@ inoremap <C-Del> <C-O>de
 
 inoremap <C-F> <C-X><C-F>
 inoremap <C-S> <C-X><C-S>
+inoremap <expr><C-l>  neocomplcache#start_manual_complete()
 
-inoremap <F13> {
-inoremap <F14> }
+inoremap <F13> <nop>
+inoremap <F14> <nop>
 inoremap <S-F13> <nop>
 inoremap <S-F14> <nop>
 inoremap <S-BS> <nop>
+
+inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 " --------------------
 " ---- [7.2] LEADER ----
 let mapleader="\<space>"
@@ -700,7 +726,8 @@ map <leader>sn :setlocal nospell <CR>
 map <leader>sc :setlocal nospell <CR>
 map <leader>sd :setlocal nospell <CR>
 " T
-map <leader>tc :tabc <CR>
+map <leader>tt :TagbarToggle<CR>
+map <leader>tf :Unite -no-split tag<CR>
 " U
 map <leader>ue :Unite -no-split file:~/vimfiles/Ultisnips <CR>
 map <leader>uu :Unite -no-split ultisnips <CR>
@@ -923,6 +950,7 @@ if !exists("g:reload")
 endif
 " --------------------
 " ---- [13] FRESH INSTALL ----
+" ---- [13.0] ALL ----
 " 1. Create a tmp folder, .vim/tmp for backup files.
 " 2. Link this vimrc to your homedir. 
 " 3. Run :BundleInstall.
@@ -934,25 +962,28 @@ endif
 " 		mac 	: make -f make_mac.mak
 " 		unix 	: make -f make_unix.mak
 " 8. Download LaTex.
-
+" 9. Install ctags.
+" 10. Install JEDI by running git submodule update --init in jedi-vim.
+" --------------------
+" ---- [13.1] WINDOWS ----
 " For Windows install
-" 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/??/bin to path.
+" 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/*/bin to path.
 " 2. Add VIM as editor for files without extension.
 " 		[HKEY_CLASSES_ROOT.] @="No Extension"
 " 		[HKEY_CLASSES_ROOT\No Extension]
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell]
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell\Open]
 " 		[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"
-
-"For Linux install
+" 3. Add ctags to path.
+" --------------------
+" ---- [13.2] LINUX----
+" --------------------
 " --------------------
 " ---- [14] TROUBLESHOOTING ----
 " Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
 " Ultisnips - If completion doesn't work but :UltiSnipsEdit opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both _vimfiles and vimfiles last time to get it to work.)
-" Clang_complete - If the completion engine returns nothing you might have updated clang_complete. Run make install and it should work.
+" Clang_complete - If the completion engine returns nothing then clang_complete might have been updated. Run make install and it should work.
 " --------------------
 " ---- [15] TODO ----
-" Improve neocomplcache, when there are more then one possible match and you tab, the completion window closes.
-" Change neomru and unite's bundle path, incorrect atm.
-" Remove subcategory [0].
+" 1. Change neomru and unite's bundle path, incorrect atm.
 " --------------------
