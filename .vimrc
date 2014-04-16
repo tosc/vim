@@ -21,6 +21,7 @@ endfunction
 autocmd!
 set nocompatible
 set number
+set relativenumber
 set showmatch
 set guioptions=
 set incsearch
@@ -552,7 +553,7 @@ autocmd Filetype vim setlocal foldexpr=VimrcFolding(v:lnum)
 autocmd Filetype vim setlocal foldtext=NormalFoldText()
 autocmd Filetype vim let &foldlevel=0
 autocmd Filetype vim set textwidth=0
-autocmd BufWritePost .vimrc so ~/Dropbox/vim/.vimrc
+autocmd BufWritePost .vimrc so ~/git/vim/.vimrc
 " -------------
 " ---- [6.4] SNIPPET ----
 autocmd Filetype snippets setlocal foldexpr=SnippetFolding(v:lnum)
