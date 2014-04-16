@@ -636,8 +636,6 @@ noremap Ö :NERDTreeToggle .<CR>
 noremap ä /
 noremap Ä ?
 
-noremap <CR> za
-
 noremap <C-J> <C-]>
 
 
@@ -688,9 +686,7 @@ map <leader>c <c-w>c
 " D
 map <leader>d :bn\|bd #<CR>
 " E
-map <leader>e :silent !explorer %:p:h<CR>
 " F
-map <leader>f :Unite -no-split -auto-preview -no-start-insert grep:. <CR>
 " G
 map <leader>g :Gstatus<CR>
 " H
@@ -704,9 +700,6 @@ map <leader>k <c-w>k
 map <leader>l <c-w>l
 " I
 " M
-"autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
-"autocmd Filetype c map <buffer><silent> <leader>m :w <bar> make <bar> !./%:r <cr>
-"autocmd Filetype cpp map <buffer><silent> <leader>m :w <bar> make <bar> !./main <cr>
 map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make <CR>
 " N 
 map <leader>n :bn <CR>
@@ -717,7 +710,9 @@ map <leader>p :bp <CR>
 " Q
 map <leader>q :call QFix()<CR>
 " R 
-map <leader>r :Unite -no-split register<CR>
+autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
+autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
+autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
 " S
 map <leader>se :setlocal spell spelllang=en_us <CR>
 map <leader>ss :setlocal spell spelllang=sv <CR>
@@ -726,11 +721,13 @@ map <leader>sn :setlocal nospell <CR>
 map <leader>sc :setlocal nospell <CR>
 map <leader>sd :setlocal nospell <CR>
 " T
-map <leader>tt :TagbarToggle<CR>
-map <leader>tf :Unite -no-split tag<CR>
+map <leader>t :TagbarToggle <CR>
 " U
-map <leader>ue :Unite -no-split file:~/vimfiles/Ultisnips <CR>
-map <leader>uu :Unite -no-split ultisnips <CR>
+map <leader>uu :Unite -no-split file:~/vimfiles/Ultisnips <CR>
+map <leader>us :Unite -no-split ultisnips <CR>
+map <leader>ur :Unite -no-split register<CR>
+map <leader>ut :Unite -no-split tag<CR>
+"map <leader>uf :Unite -no-split -auto-preview -no-start-insert grep:. <CR>
 " V
 map <leader>v <c-w>v
 " W
