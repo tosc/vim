@@ -20,7 +20,6 @@ endfunction
 " ---- [1] NORMAL VIMSETTINGS ----
 autocmd!
 set nocompatible
-set number
 set relativenumber
 set showmatch
 set guioptions=
@@ -480,8 +479,6 @@ endfunction
 " ---- [5] AUTOCMD ----
 autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
 
-autocmd BufEnter * call SlowStatusLine()
-
 autocmd InsertEnter * hi StatusLine gui=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
 
@@ -863,9 +860,17 @@ endif
 set laststatus=2
 hi clear StatusLine
 hi StatusLine gui=underline
+set statusline=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
+
+function! MyStatusLine()
+	if !exists("b:statusLineVar")
+		call SlowStatusLine()
+	endif
+	return b:statusLineVar
+endfunction
 
 function! SlowStatusLine()
-	let SlowStatusLineVar = "[" . expand("%") . "] "
+	let SlowStatusLineVar = ""
 	if &modifiable
 		let gitTemp = system("git -C " . expand("%:h") . " status -b -s")
 		let gitTemp = substitute(gitTemp, "##" , "", "")
@@ -898,7 +903,7 @@ function! SlowStatusLine()
 			endif
 		endif
 	endif
-	let &l:statusline=SlowStatusLineVar
+	let b:statusLineVar = SlowStatusLineVar
 endfunction
 " --------------------
 " ---- [11] MINIMALMODE ----
@@ -935,11 +940,6 @@ function! MinimalMode()
 	" No complete-as-you-type, instead tab autocompletes/open completion window.
 	let g:neocomplcache_disable_auto_complete = 1
 	inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
-	
-	" Disables the slow statusline, no more git commands when saving etc.
-	function! SlowStatusLine()
-		return ""
-	endfunction
 endfunction
 " --------------------
 " ---- [12] AFTER VIMRC ----
@@ -961,7 +961,8 @@ endif
 " 		unix 	: make -f make_unix.mak
 " 8. Download LaTex.
 " 9. Install ctags.
-" 10. Install JEDI by running git submodule update --init in jedi-vim.
+" 10. Create folder ~/.vim/tags
+" 11. Install JEDI by running git submodule update --init in jedi-vim.
 " --------------------
 " ---- [13.1] WINDOWS ----
 " For Windows install
