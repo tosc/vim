@@ -615,7 +615,11 @@ autocmd Filetype tex setlocal spell spelllang=en_us
 " ---- [7] BINDINGS ----
 " ---- [7.0] NORMAL ----
 "Not vi-compatible but more logical. Y yanks to end of line.
-map Y y$
+noremap Y y$
+
+" Switched , with ;.
+noremap , ;
+noremap ; ,
 
 " perform expression on cursor word | EX: select a number ex 5, 5ä, then
 noremap å viw"xc<C-R>=getreg('x')
@@ -949,20 +953,22 @@ endif
 " --------------------
 " ---- [13] FRESH INSTALL ----
 " ---- [13.0] ALL ----
-" 1. Create a tmp folder, .vim/tmp for backup files.
-" 2. Link this vimrc to your homedir. 
-" 3. Run :BundleInstall.
-" 4. Link Ultisnips snippetfolder from Dropbox.
-" 5. Build clang. Go into clang folder and run make install.
-" 6. Eclim. Download the appropriate eclim version for your version of eclipse. Run jar.
-" 7. Vimproc. Compile 
+" 1. Create a ./_vimrc with the line:
+"		- source ~/git/vim/.vimrc
+" 2. Create a tmp folder, .vim/tmp for backup files.
+" 3. Link this vimrc to your homedir. 
+" 4. Run :BundleInstall.
+" 5. Link Ultisnips snippetfolder from Dropbox.
+" 6. Build clang. Go into clang folder and run make install.
+" 7. Eclim. Download the appropriate eclim version for your version of eclipse. Run jar.
+" 8. Vimproc. Compile 
 " 		Windows : make -f make_mingw32.mak
 " 		mac 	: make -f make_mac.mak
 " 		unix 	: make -f make_unix.mak
-" 8. Download LaTex.
-" 9. Install ctags.
-" 10. Create folder ~/.vim/tags
-" 11. Install JEDI by running git submodule update --init in jedi-vim.
+" 9. Download LaTex.
+" 10. Install ctags.
+" 11. Create folder ~/.vim/tags
+" 12. Install JEDI by running git submodule update --init in jedi-vim.
 " --------------------
 " ---- [13.1] WINDOWS ----
 " For Windows install
