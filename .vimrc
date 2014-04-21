@@ -4,10 +4,10 @@ function! QFix()
 		let t:qFixWin = 0
 	endif
 	if t:qFixWin == 0
-		copen	
+		copen
 		let t:qFixWin = 1
 	else
-		ccl	
+		ccl
 		let t:qFixWin = 0
 	endif
 endfunction
@@ -55,6 +55,9 @@ set updatetime=1000
 set backspace=indent,eol,start
 
 let $LANG = 'en'
+
+" Better way to represent whitespaces.
+set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 
 colorscheme desert
 
@@ -123,7 +126,7 @@ if !exists("g:reload")
 	Bundle 'skeept/ultisnips-unite'
 	Bundle 'Shougo/neocomplcache'
 	Bundle 'JazzCore/neocomplcache-ultisnips'
-	Bundle 'SirVer/ultisnips'  
+	Bundle 'SirVer/ultisnips'
 	Bundle 'scrooloose/nerdtree'
 	Bundle 'nosami/Omnisharp'
 	Bundle 'tpope/vim-dispatch'
@@ -327,7 +330,7 @@ function! OneIndentBraceFolding(lnum)
 		let g:InsideVar = 1
 		return 1
 	" Catches import/using for folding
-	elseif indent(a:lnum) == 0 && (line =~ 'import' || line=~ 'using') 
+	elseif indent(a:lnum) == 0 && (line =~ 'import' || line=~ 'using')
 		return 1
 	" Rest, don't fold
 	else
@@ -419,10 +422,10 @@ endfunction
 
 "Passfolding
 function! PassFolding(lnum)
-	let line = getline(a:lnum)	
+	let line = getline(a:lnum)
 	if line == ""
 		return 0
-	endif	
+	endif
 	return ">1"
 endfunction
 " ---------------
@@ -497,7 +500,7 @@ function! JavaOmni(findstart, base)
 		return words
 	else
 		return filter(words, 'match(v:val["word"], a:base)==0')
-	endif	
+	endif
 endfunction
 
 autocmd Filetype java setlocal foldexpr=OneIndentBraceFolding(v:lnum)
@@ -515,7 +518,7 @@ function! CSOmni(findstart, base)
 		return words
 	else
 		return filter(words, 'match(v:val["word"], a:base)==0')
-	endif	
+	endif
 endfunction
 
 " Updates omnisharp to include new methods
@@ -538,7 +541,7 @@ function! COmni(findstart, base)
 		return words
 	else
 		return filter(words, 'match(v:val["word"], a:base)==0')
-	endif	
+	endif
 endfunction
 
 
@@ -571,7 +574,7 @@ function! PythonOmni(findstart, base)
 		return words
 	else
 		return filter(words, 'match(v:val["word"], a:base)==0')
-	endif	
+	endif
 endfunction
 autocmd Filetype python setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype python setlocal foldtext=NormalFoldText()
@@ -586,7 +589,7 @@ autocmd Filetype make setlocal foldtext=NormalFoldText()
 " -------------
 " ---- [6.9] PASS ----
 function! GenPass(...)
-let l:passLen = (a:0 > 0 ? a:1 : 8) 
+let l:passLen = (a:0 > 0 ? a:1 : 8)
 python << endpy
 import random, string, vim, sys
 characters = string.ascii_letters + string.digits + '@&-_=+?!'
@@ -881,7 +884,7 @@ function! SlowStatusLine()
 		let gitTemp = substitute(gitTemp, "\\.\\.\\." , "-", "")
 		if gitTemp !~ "fatal" 
 			let gitList = split(gitTemp, "\n")
-			if len(gitList) > 0
+			if len(gitList) > 0 
 				let branchName = gitList[0]
 				let branchName = substitute(branchName, " ", "[", "")
 				let beforeSub = branchName
@@ -895,7 +898,7 @@ function! SlowStatusLine()
 				let SlowStatusLineVar .= " [nc " . (len(gitList) -1) . "]"
 			endif
 
-			let changedRows = [] 
+			let changedRows = []
 			let rowsTemp = split(system("git -C " . expand("%:h") . " diff --stat"), "\n")
 			for row in rowsTemp
 				if row =~ escape(expand('%:t'), ".")
@@ -950,13 +953,16 @@ endfunction
 if !exists("g:reload")
 	let g:reload = 1
 endif
+
+" More discreet color for whitespaces.
+hi SpecialKey guifg=grey40
 " --------------------
 " ---- [13] FRESH INSTALL ----
 " ---- [13.0] ALL ----
 " 1. Create a ./_vimrc with the line:
 "		- source ~/git/vim/.vimrc
 " 2. Create a tmp folder, .vim/tmp for backup files.
-" 3. Link this vimrc to your homedir. 
+" 3. Link this vimrc to your homedir.
 " 4. Run :BundleInstall.
 " 5. Link Ultisnips snippetfolder from Dropbox.
 " 6. Build clang. Go into clang folder and run make install.
