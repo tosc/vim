@@ -37,26 +37,18 @@ set nobackup
 set winminheight=0
 set visualbell
 set hidden
-
 set splitbelow
 set splitright
-
 set scrolloff=999
-
+set nrformats-=octal
 set ignorecase
 set smartcase
-
+set autoread
 set cryptmethod=blowfish
 set formatoptions-=cro
-
 set updatetime=1000
-
-" Sets what backspace works on
 set backspace=indent,eol,start
-
 let $LANG = 'en'
-
-" Better way to represent whitespaces.
 set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 
 colorscheme desert
@@ -997,4 +989,5 @@ hi SpecialKey guifg=grey40
 " --------------------
 " ---- [15] TODO ----
 " 1. Change neomru and unite's bundle path, incorrect atm.
+" 2. Look at syntastic. (scrooloose/syntastic)
 " --------------------
