@@ -21,7 +21,6 @@ endfunction
 autocmd!
 set nocompatible
 set relativenumber
-set showmatch
 set guioptions=
 set incsearch
 set ruler
@@ -155,11 +154,11 @@ let g:unite_cursor_line_highlight = 'TabLine'
 
 let s:bufferaction = {'description' : 'verbose', 'is_selectable' : 1,}
 
-call unite#custom#source('file_rec', 'ignore_pattern', join(['.pyc$', '.exe$', '.o$'], '\|'))
-call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep', 'ignore_pattern', join([
-			\ '.pyc$',
-			\ '.o$',
-			\ ], '\|'))
+"call unite#custom#source('file_rec', 'ignore_pattern', join(['.pyc$', '.exe$', '.o$'], '\|'))
+"call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep', 'ignore_pattern', join([
+"			\ '.pyc$',
+"			\ '.o$',
+"			\ ], '\|'))
 " call unite#custom#source('tab', 'ignore_pattern', join(['unite'], '\|'))
 call unite#custom#default_action('buffer', 'goto')
 
@@ -598,7 +597,13 @@ autocmd Filetype pass setlocal foldminlines=0
 autocmd Filetype pass let &foldlevel=0
 autocmd BufNewFile,BufRead *.pass set filetype=pass
 " -------------
-" ---- [6.10] LATEX ----
+" ---- [6.10] JAPANESE ----
+autocmd Filetype jp set guifont=MS_Gothic:h16:w8
+autocmd Filetype jp set fileencoding=utf-8
+autocmd Filetype jp set encoding=utf-8
+autocmd BufNewFile,BufRead *.jp set filetype=jp
+" -------------
+" ---- [6.11] LATEX ----
 " Compile latex to a pdf when you save
 autocmd Filetype tex setlocal foldexpr=IndentFolding2(v:lnum)
 autocmd Filetype tex setlocal foldtext=NormalFoldText()
@@ -612,7 +617,7 @@ autocmd Filetype tex setlocal spell spelllang=en_us
 "Not vi-compatible but more logical. Y yanks to end of line.
 noremap Y y$
 
-" Switched , with ;.
+"Switches repeat f/F, feels more logical
 noremap , ;
 noremap ; ,
 
@@ -660,6 +665,8 @@ inoremap <TAB> <C-R>=NeoTab()<CR>
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
 inoremap <C-Del> <C-O>de
+
+inoremap <S-CR> <C-O>O
 
 inoremap <C-F> <C-X><C-F>
 inoremap <C-S> <C-X><C-S>
@@ -796,6 +803,7 @@ autocmd Filetype nerdtree call NERDTreeAddKeyMap({
 " --------------------
 " ---- [7.5] UNITE ----
 function! s:unite_settings()
+	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <ESC> <Plug>(unite_all_exit)
 	nnoremap <buffer> <BS> <Plug>()
 	imap <buffer> <TAB> <Plug>(unite_select_next_line)
@@ -990,4 +998,5 @@ hi SpecialKey guifg=grey40
 " ---- [15] TODO ----
 " 1. Change neomru and unite's bundle path, incorrect atm.
 " 2. Look at syntastic. (scrooloose/syntastic)
+" 3. Make vim create required directories by itself. (call mkdir)
 " --------------------
