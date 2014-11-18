@@ -24,7 +24,6 @@ FRESH INSTALL
 9. Download LaTex.
 10. Install ctags.
 11. Create folder ~/.vim/tags
-12. Install JEDI by running git submodule update --init in jedi-vim.
 
 #### WINDOWS
 
@@ -42,8 +41,7 @@ FRESH INSTALL
 Current version
 ===============
 
-* Added section "[6.0] ALL" in under Filetype Specific
-* Disabled everything from jedi-vim, only use their completion method.
+* Removed jedi-vim completly. Don't use it.
 
 TODO
 ====

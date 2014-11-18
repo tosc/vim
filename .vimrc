@@ -126,7 +126,6 @@ if !exists("g:reload")
 	Bundle 'majutsushi/tagbar'
 	Bundle 'xolox/vim-easytags'
 	Bundle 'xolox/vim-misc'
-	Bundle 'davidhalter/jedi-vim'
 	" Required by vundle
 	filetype plugin indent on
 endif
@@ -192,7 +191,6 @@ let g:neocomplcache_force_omni_patterns.objc =
 			\ '[^.[:digit:] *\t]\%(\.\|->\)'
 let g:neocomplcache_force_omni_patterns.objcpp =
 			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-let g:neocomplcache_omni_functions['python'] = 'jedi#completions'
 
 let g:neocomplcache_enable_smart_case = 0
 let g:neocomplcache_enable_camel_case_completion = 0
@@ -257,12 +255,6 @@ endfunction
 " ---- [3.9] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
-" --------------------
-" ---- [3.10] JEDI-VIM ----
-
-" Disable all jedi actions. We just want completion with neocomplcache and we add that manually.
-let g:jedi#auto_initialization = 0
-
 " --------------------
 " --------------------
 " ---- [4] FOLDING ----
