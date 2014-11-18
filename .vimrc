@@ -107,8 +107,8 @@ if !exists("g:reload")
 	Bundle 'gmarik/vundle'
 
 	" Vundle addons"
-	Bundle 'Shougo/vimproc'
-	Bundle 'Shougo/vimshell'
+"	Bundle 'Shougo/vimproc'
+"	Bundle 'Shougo/vimshell'
 	Bundle 'Shougo/neomru.vim'
 	Bundle 'Shougo/unite.vim'
 	Bundle 'Shougo/unite-build'
@@ -953,14 +953,4 @@ endif
 
 " More discreet color for whitespaces.
 hi SpecialKey guifg=grey40
-" --------------------
-" ---- [13] TROUBLESHOOTING ----
-" Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
-" Ultisnips - If completion doesn't work but :UltiSnipsEdit opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both _vimfiles and vimfiles last time to get it to work.)
-" Clang_complete - If the completion engine returns nothing then clang_complete might have been updated. Run make install and it should work.
-" --------------------
-" ---- [14] TODO ----
-" 1. Change neomru and unite's bundle path, incorrect atm.
-" 2. Look at syntastic. (scrooloose/syntastic)
-" 3. Make vim create required directories by itself. (call mkdir)
 " --------------------

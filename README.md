@@ -15,7 +15,7 @@ FRESH INSTALL
 4. Run :BundleInstall.
 5. Link Ultisnips snippetfolder from ``~/git/vim/UltiSnips``  
 ``Windows	: mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
-6. Build clang. Go into clang folder and run make install.
+6. Build clang_complete. Go into clang_complete folder and run make install.
 7. Eclim. Download the appropriate eclim version for your version of eclipse. Run jar.
 8. Vimproc. Compile  
 ``Windows : make -f make_mingw32.mak``  
@@ -41,10 +41,18 @@ FRESH INSTALL
 Current version
 ===============
 
-* Removed jedi-vim completly. Don't use it.
+* Commented vimproc and vimshell, remove on next update if I don't have any issues.
+* Moved TODO and TROUBLESHOOTING from vimrc to README.
 
 TODO
 ====
 
-* Do I use vimproc? Else remove it.
-* Is FreshInstall/All/6 still relevant?
+* Use eclim for python completion.
+* Look at syntastic. (scrooloose/syntastic)
+* Make vim create required directories by itself. (call mkdir)
+
+TROUBLESHOOTING
+===============
+* Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
+* Ultisnips - If completion doesn't work but :UltiSnipsEdit opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both vimfiles and vimfiles last time to get it to work.)
+* Clang_complete - If the completion engine returns nothing then clang_complete might have been updated. Run make install and it should work.
