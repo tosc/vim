@@ -1,6 +1,15 @@
 snippet if "if" b
 if ${1:True}:
-	$0
+	${0:${VISUAL}}
+endsnippet
+
+snippet elif "else if" b
+elif ${1:True}:
+	${0:${VISUAL}}
+endsnippet
+
+snippet else:
+	${0:${VISUAL}}
 endsnippet
 
 snippet gui "A gui" b
@@ -52,4 +61,15 @@ class ${1:NewClass}:
 	def __init__(self):
 		pass
 	${VISUAL}$0
+endsnippet
+
+snippet comment
+"""
+${1:What it does.}
+
+Parameters:
+	${2:param1 - first param}
+
+${3:Returns:}
+"""
 endsnippet

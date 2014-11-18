@@ -109,8 +109,8 @@ if !exists("g:reload")
 	" Vundle addons"
 	Bundle 'Shougo/vimproc'
 	Bundle 'Shougo/vimshell'
-	Bundle 'Shougo/neomru'
-	Bundle 'Shougo/unite'
+	Bundle 'Shougo/neomru.vim'
+	Bundle 'Shougo/unite.vim'
 	Bundle 'Shougo/unite-build'
 	Bundle 'Shougo/unite-session'
 	Bundle 'tsukkee/unite-tag'
@@ -259,7 +259,10 @@ let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
 " ---- [3.10] JEDI-VIM ----
-let g:jedi#popup_on_dot = 0
+
+" Disable all jedi actions. We just want completion with neocomplcache and we add that manually.
+let g:jedi#auto_initialization = 0
+
 " --------------------
 " --------------------
 " ---- [4] FOLDING ----
@@ -479,7 +482,10 @@ autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
 autocmd BufRead .pentadactylrc set filetype=vim
 " --------------------
 " ---- [6] FILETYPE SPECIFIC ----
-" ---- [6.0] JAVA ----
+" ---- [6.0] All ----
+" :set filetype? To know current loaded filetype
+" --------
+" ---- [6.1] JAVA ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype java setlocal omnifunc=JavaOmni
@@ -497,7 +503,7 @@ endfunction
 autocmd Filetype java setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 autocmd Filetype java setlocal foldtext=SpecialBraceFoldText()
 " --------
-" ---- [6.1] C# ----
+" ---- [6.2] C# ----
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype cs setlocal omnifunc=CSOmni
@@ -521,10 +527,9 @@ autocmd Filetype cs let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 autocmd FileType cs let g:neocomplcache_omni_patterns.cs = '.*'
 
 " ----------------
-" ---- [6.2] C ----
+" ---- [6.3] C ----
 autocmd Filetype c,cpp setlocal omnifunc=COmni
 function! COmni(findstart, base)
-"	let words = ClangComplete(a:findstart, a:base)
 	let words = UltiSnips#SnippetsInCurrentScope()
 	if a:findstart
 		return words
@@ -539,23 +544,23 @@ endfunction
 autocmd Filetype c,cpp setlocal foldexpr=BraceFolding(v:lnum)
 autocmd Filetype c,cpp setlocal foldtext=NormalFoldText()
 " --------------------
-" ---- [6.3] VIMRC ----
+" ---- [6.4] VIMRC ----
 autocmd Filetype vim setlocal foldexpr=VimrcFolding(v:lnum)
 autocmd Filetype vim setlocal foldtext=NormalFoldText()
 autocmd Filetype vim let &foldlevel=0
 autocmd Filetype vim set textwidth=0
 autocmd BufWritePost .vimrc so ~/git/vim/.vimrc
 " -------------
-" ---- [6.4] SNIPPET ----
+" ---- [6.5] SNIPPET ----
 autocmd Filetype snippets setlocal foldexpr=SnippetFolding(v:lnum)
 autocmd Filetype snippets setlocal foldtext=NormalFoldText()
 " --------------------
-" ---- [6.5] TODO ----
+" ---- [6.6] TODO ----
 autocmd BufEnter *.td setlocal filetype=todo
 autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
 " --------------------
-" ---- [6.6] PYTHON ----
+" ---- [6.7] PYTHON ----
 "autocmd Filetype python setlocal omnifunc=PythonOmni
 function! PythonOmni(findstart, base)
 	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
@@ -570,15 +575,15 @@ endfunction
 autocmd Filetype python setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype python setlocal foldtext=NormalFoldText()
 " --------------------
-" ---- [6.7] LUA ----
+" ---- [6.8] LUA ----
 autocmd Filetype lua setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype lua setlocal foldtext=NormalFoldText()
 " -------------
-" ---- [6.8] MAKE ----
+" ---- [6.9] MAKE ----
 autocmd Filetype make setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype make setlocal foldtext=NormalFoldText()
 " -------------
-" ---- [6.9] PASS ----
+" ---- [6.10] PASS ----
 function! GenPass(...)
 let l:passLen = (a:0 > 0 ? a:1 : 8)
 python << endpy
@@ -597,13 +602,13 @@ autocmd Filetype pass setlocal foldminlines=0
 autocmd Filetype pass let &foldlevel=0
 autocmd BufNewFile,BufRead *.pass set filetype=pass
 " -------------
-" ---- [6.10] JAPANESE ----
+" ---- [6.11] JAPANESE ----
 autocmd Filetype jp set guifont=MS_Gothic:h16:w8
 autocmd Filetype jp set fileencoding=utf-8
 autocmd Filetype jp set encoding=utf-8
 autocmd BufNewFile,BufRead *.jp set filetype=jp
 " -------------
-" ---- [6.11] LATEX ----
+" ---- [6.12] LATEX ----
 " Compile latex to a pdf when you save
 autocmd Filetype tex setlocal foldexpr=IndentFolding2(v:lnum)
 autocmd Filetype tex setlocal foldtext=NormalFoldText()
