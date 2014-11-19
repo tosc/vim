@@ -13,14 +13,11 @@ FRESH INSTALL
 ``source ~/git/vim/.vimrc``  
 2. Create folder  ``.vim/tmp`` , it's used for backup files.
 4. Run :BundleInstall.
-5. Link Ultisnips snippetfolder from ``~/git/vim/UltiSnips``  
+5. Link Ultisnips snippetfolder from ``~/git/vim/UltiSnips to ~/vimfiles/UltiSnips/``  
 ``Windows	: mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
 6. Build clang_complete. Go into clang_complete folder and run make install.
-7. Eclim. Download the appropriate eclim version for your version of eclipse. Run jar.
-8. Vimproc. Compile  
-``Windows : make -f make_mingw32.mak``  
-``mac 	: make -f make_mac.mak``  
-``unix 	: make -f make_unix.mak``  
+7. Install Eclipse.
+8. Install ECLIM.
 9. Download LaTex.
 10. Install ctags.
 11. Create folder ~/.vim/tags
@@ -28,31 +25,47 @@ FRESH INSTALL
 #### WINDOWS
 
 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
-2. Add VIM as editor for files without extension (Optional).  
+2. Add ctags to path.
+
+##### (Optional)
+
+1. Add VIM as editor for files without extension (Optional).  
 ``[HKEY_CLASSES_ROOT.] @="No Extension"``  
 ``[HKEY_CLASSES_ROOT\No Extension]``  
 ``[HKEY_CLASSES_ROOT\No Extension\Shell]``  
 ``[HKEY_CLASSES_ROOT\No Extension\Shell\Open]``  
 ``[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"``
-3. Add ctags to path.
 
 #### LINUX
 
 Current version
 ===============
 
-Added Fastfold plugin, makes computing folds faster.
-Fixed so that statusline updates when you use commit or push.
+Fixed python and java code-completion.
+Removed vimproc and vimshell.
+Added C-BS binding to command-mode.
 
 TODO
 ====
 
-* Use eclim for python completion.
-* Look at syntastic. (scrooloose/syntastic)
+* CHECK IF ECLIM IS A BETTER OPTION FOR C/C++ completion.
+* Look into if I should keep ctags stuff.
+* Make statusline update when using push. Idea is to check autocmd focuslost and then in slowstatusupdate keep track using a global variable if currently running slowstatusupdate, if so don't run again. Should stop all annoying problems. Might still be slow though since this will run everytime you do an external program.
 * Make vim create required directories by itself. (call mkdir)
+* Add RUBY ECLIM completion.
+* Add PHP ECLIM completion.
+* Add SCALA ECLIM completion.
+* Add a jump to next tag when using snippets.
 
 TROUBLESHOOTING
 ===============
-* Omnisharp. Check omnisharp github for installation. (It may work without any special installation, if not, you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths.)
-* Ultisnips - If completion doesn't work but :UltiSnipsEdit opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both vimfiles and vimfiles last time to get it to work.)
-* Clang_complete - If the completion engine returns nothing then clang_complete might have been updated. Run make install and it should work.
+
+#### Code-Completion
+
+* C - clang_complete might have been updated. Try running make install on it.
+* C# - Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
+* Snippets - If snippet completion doesn't work but :UltiSnipsEdit opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both vimfiles and vimfiles last time to get it to work.)
+* Python or Java - Make sure you have the ECLIM deamon running. If it still doesn't work then you might not have created a eclipse project.  
+``Run :ProjectCreate path -n language``  
+``Ex :ProjectCreate ~\git\test -n java``  
+``If still unclear then look at :EclimHelp gettingstarted``  

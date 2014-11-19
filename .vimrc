@@ -107,8 +107,6 @@ if !exists("g:reload")
 	Bundle 'gmarik/vundle'
 
 	" Vundle addons"
-"	Bundle 'Shougo/vimproc'
-"	Bundle 'Shougo/vimshell'
 	Bundle 'Shougo/neomru.vim'
 	Bundle 'Shougo/unite.vim'
 	Bundle 'Shougo/unite-build'
@@ -165,14 +163,9 @@ call unite#custom#default_action('buffer', 'goto')
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#sorter_default#use(['sorter_rank'])
 " --------------------
-" ---- [3.5] VIMSHELL ----
-" Use current directory as vimshell prompt.
-let g:vimshell_prompt_expr = 'escape(fnamemodify(getcwd(), ":~").">", "\\[]()?! ")." "'
-let g:vimshell_prompt_pattern = '^\%(\f\|\\.\)\+> '
+" ---- [3.5] Fugitive ----
 " --------------------
-" ---- [3.6] Fugitive ----
-" --------------------
-" ---- [3.7] NEOCOMPLCACHE ----
+" ---- [3.6] NEOCOMPLCACHE ----
 let g:neocomplcache_enable_at_startup = 1
 
 " Required for clang_complete to play nice with NEOCOMPLCACHE.
@@ -216,7 +209,7 @@ function! NeoTab()
 	return longestCommon
 endfunction
 " --------------------
-" ---- [3.8] NERDTREE ----
+" ---- [3.7] NERDTREE ----
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 0
 let NERDTreeShowBookmarks = 1
@@ -253,11 +246,11 @@ function! NERDRemove(node)
 	call system("rm -r " . "\"" . a:node.path._str() . "\"")
 endfunction
 " --------------------
-" ---- [3.9] EASYTAGS ----
+" ---- [3.8] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
-" ---- [3.10] FastFold ----
+" ---- [3.9] FastFold ----
 let g:fastfold_savehook = 1
 let g:fastfold_togglehook = 0
 let g:fastfold_map = 1
@@ -488,6 +481,8 @@ autocmd BufRead .pentadactylrc set filetype=vim
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype java setlocal omnifunc=JavaOmni
+autocmd Filetype java let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+autocmd FileType java let g:neocomplcache_omni_patterns.java = '.*'
 function! JavaOmni(findstart, base)
 	let words = eclim#java#complete#CodeComplete(a:findstart, a:base)
 	if a:findstart
@@ -560,7 +555,9 @@ autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
 autocmd Filetype todo setlocal foldtext=NormalFoldText()
 " --------------------
 " ---- [6.7] PYTHON ----
-"autocmd Filetype python setlocal omnifunc=PythonOmni
+autocmd Filetype python setlocal omnifunc=PythonOmni
+autocmd Filetype python let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+autocmd FileType python let g:neocomplcache_omni_patterns.python = '.*'
 function! PythonOmni(findstart, base)
 	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
 	if a:findstart
@@ -749,6 +746,7 @@ map <leader>z :Unite -no-split session<CR>
 " --------------------
 " ---- [7.3] COMMAND ----
 cnoremap <C-A> <home>
+cnoremap <C-BS> <C-W>
 cnoremap <F13> <nop>
 cnoremap <F14> <nop>
 cnoremap <S-F13> <nop>
