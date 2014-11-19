@@ -12,9 +12,9 @@ FRESH INSTALL
 1. Create a vimrc with the line:  
 ``source ~/git/vim/.vimrc``  
 2. Create folders  
-``.vim/tmp - put's all backup files here instead of cluttering normal folders ``  
-``.vim/tags - saves my tagfiles here ``  
-4. Download Vundle
+``.vim/tmp``  
+``.vim/tags``  
+4. Download Vundle  
 `` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
 `` :BundleInstall ``  
 5. Link Ultisnips snippetfolder from ``~/git/vim/UltiSnips to ~/vimfiles/UltiSnips/``  
@@ -30,7 +30,7 @@ FRESH INSTALL
 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
 2. Add ctags to path.
 3. Build omnisharp.  
-`` Run msbuild in filder ~/.vim/bundle/omnisharp-vim/server``  
+`` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
 
 ##### (Optional)
 
@@ -46,7 +46,7 @@ FRESH INSTALL
 Current version
 ===============
 
-Updated omnisharps location.
+Fixed README.
 
 TODO
 ====
