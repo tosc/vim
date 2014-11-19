@@ -29,6 +29,8 @@ FRESH INSTALL
 
 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
 2. Add ctags to path.
+3. Build omnisharp.  
+`` Run msbuild in filder ~/.vim/bundle/omnisharp-vim/server``  
 
 ##### (Optional)
 
@@ -44,7 +46,7 @@ FRESH INSTALL
 Current version
 ===============
 
-Updated vundle to use the new system.
+Updated omnisharps location.
 
 TODO
 ====

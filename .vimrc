@@ -117,7 +117,7 @@ if !exists("g:reload")
 	Plugin 'JazzCore/neocomplcache-ultisnips'
 	Plugin 'SirVer/ultisnips'
 	Plugin 'scrooloose/nerdtree'
-	Plugin 'nosami/Omnisharp'
+	Plugin 'OmniSharp/omnisharp-vim'
 	Plugin 'tpope/vim-dispatch'
 	Plugin 'tpope/vim-fugitive'
 	Plugin 'Rip-Rip/clang_complete'
