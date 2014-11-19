@@ -75,6 +75,8 @@ function! LoadSession()
 	exe "so " . GetDir()
 endfunction
 
+
+
 function! LoadOldSessions()
 	exe "cd ~/.vim/sessions/"
 	let l:rawfiles = system("ls")
@@ -953,7 +955,12 @@ function! MinimalMode()
 	inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
 endfunction
 " --------------------
-" ---- [12] AFTER VIMRC ----
+" ---- [12] TERMINALVIM ----
+if has("terminfo")
+	let &t_Co=256
+endif
+" --------------------
+" ---- [13] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
 endif

@@ -14,16 +14,17 @@ FRESH INSTALL
 2. Create folders  
 ``.vim/tmp``  
 ``.vim/tags``  
-4. Download Vundle  
+``.cache/unite/session``  
+3. Download Vundle  
 `` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
 `` :BundleInstall ``  
-5. Link Ultisnips snippetfolder from ``~/git/vim/UltiSnips to ~/vimfiles/UltiSnips/``  
+4. Link Ultisnips snippetfolder from ``~/git/vim/UltiSnips to ~/vimfiles/UltiSnips/``  
 ``Windows	: mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
-6. Build clang_complete. Go into clang_complete folder and run make install.
-7. Install Eclipse.
-8. Install ECLIM.
-9. Download LaTex.
-10. Install ctags.
+5. Build clang_complete. Go into clang_complete folder and run make install.
+6. Install Eclipse.
+7. Install ECLIM.
+8. Download LaTex.
+9. Install ctags.
 
 #### WINDOWS
 
@@ -46,7 +47,8 @@ FRESH INSTALL
 Current version
 ===============
 
-Fixed README.
+Added a terminal-section to vimrc.
+Added missing line from freash install.
 
 TODO
 ====
