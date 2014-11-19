@@ -11,8 +11,12 @@ FRESH INSTALL
 
 1. Create a vimrc with the line:  
 ``source ~/git/vim/.vimrc``  
-2. Create folder  ``.vim/tmp`` , it's used for backup files.
-4. Run :BundleInstall.
+2. Create folders  
+``.vim/tmp - put's all backup files here instead of cluttering normal folders ``  
+``.vim/tags - saves my tagfiles here ``  
+4. Download Vundle
+`` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
+`` :BundleInstall ``  
 5. Link Ultisnips snippetfolder from ``~/git/vim/UltiSnips to ~/vimfiles/UltiSnips/``  
 ``Windows	: mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
 6. Build clang_complete. Go into clang_complete folder and run make install.
@@ -20,7 +24,6 @@ FRESH INSTALL
 8. Install ECLIM.
 9. Download LaTex.
 10. Install ctags.
-11. Create folder ~/.vim/tags
 
 #### WINDOWS
 
@@ -41,9 +44,7 @@ FRESH INSTALL
 Current version
 ===============
 
-Fixed python and java code-completion.
-Removed vimproc and vimshell.
-Added C-BS binding to command-mode.
+Updated vundle to use the new system.
 
 TODO
 ====

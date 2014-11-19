@@ -102,30 +102,32 @@ endfunction
 if !exists("g:reload")
 	" Required by vundle
 	filetype off
-	set rtp+=~/.vim/bundle/vundle/
-	call vundle#rc()
-	Bundle 'gmarik/vundle'
+	set rtp+=~/.vim/bundle/Vundle.vim/
+	call vundle#begin()
+	Plugin 'gmarik/Vundle.vim'
 
 	" Vundle addons"
-	Bundle 'Shougo/neomru.vim'
-	Bundle 'Shougo/unite.vim'
-	Bundle 'Shougo/unite-build'
-	Bundle 'Shougo/unite-session'
-	Bundle 'tsukkee/unite-tag'
-	Bundle 'skeept/ultisnips-unite'
-	Bundle 'Shougo/neocomplcache'
-	Bundle 'JazzCore/neocomplcache-ultisnips'
-	Bundle 'SirVer/ultisnips'
-	Bundle 'scrooloose/nerdtree'
-	Bundle 'nosami/Omnisharp'
-	Bundle 'tpope/vim-dispatch'
-	Bundle 'tpope/vim-fugitive'
-	Bundle 'Rip-Rip/clang_complete'
-	Bundle 'majutsushi/tagbar'
-	Bundle 'xolox/vim-easytags'
-	Bundle 'xolox/vim-misc'
-	Bundle 'Konfekt/FastFold'
+	Plugin 'Shougo/neomru.vim'
+	Plugin 'Shougo/unite.vim'
+	Plugin 'Shougo/unite-build'
+	Plugin 'Shougo/unite-session'
+	Plugin 'tsukkee/unite-tag'
+	Plugin 'skeept/ultisnips-unite'
+	Plugin 'Shougo/neocomplcache'
+	Plugin 'JazzCore/neocomplcache-ultisnips'
+	Plugin 'SirVer/ultisnips'
+	Plugin 'scrooloose/nerdtree'
+	Plugin 'nosami/Omnisharp'
+	Plugin 'tpope/vim-dispatch'
+	Plugin 'tpope/vim-fugitive'
+	Plugin 'Rip-Rip/clang_complete'
+	Plugin 'majutsushi/tagbar'
+	Plugin 'xolox/vim-easytags'
+	Plugin 'xolox/vim-misc'
+	Plugin 'Konfekt/FastFold'
+
 	" Required by vundle
+	call vundle#end()
 	filetype plugin indent on
 endif
 " ----------
