@@ -18,8 +18,6 @@ FRESH INSTALL
 3. Download Vundle  
 `` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
 `` :BundleInstall ``  
-4. Link Ultisnips snippetfolder from ``~/git/vim/UltiSnips to ~/vimfiles/UltiSnips/``  
-``Windows	: mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
 5. Build clang_complete. Go into clang_complete folder and run make install.
 6. Install Eclipse.
 7. Install ECLIM.
@@ -30,7 +28,9 @@ FRESH INSTALL
 
 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
 2. Add ctags to path.
-3. Build omnisharp.  
+3. Link Ultisnips snippetfolder
+``mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
+4. Build omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
 
 ##### (Optional)
@@ -43,6 +43,9 @@ FRESH INSTALL
 ``[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"``
 
 #### LINUX
+
+1. Link Ultisnips snippetfolde
+``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
 
 Current version
 ===============
