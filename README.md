@@ -47,8 +47,7 @@ FRESH INSTALL
 Current version
 ===============
 
-Added a terminal-section to vimrc.
-Added missing line from freash install.
+Updated colorscheme with better colors for terminal.
 
 TODO
 ====
@@ -74,3 +73,7 @@ TROUBLESHOOTING
 ``Run :ProjectCreate path -n language``  
 ``Ex :ProjectCreate ~\git\test -n java``  
 ``If still unclear then look at :EclimHelp gettingstarted``  
+
+#### SSH
+
+* Unite binding doesn't work! Make sure you are using right encoding for ssh.

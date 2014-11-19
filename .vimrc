@@ -958,6 +958,25 @@ endfunction
 " ---- [12] TERMINALVIM ----
 if has("terminfo")
 	let &t_Co=256
+	set background=dark
+	hi Title ctermfg=209
+	hi SpecialKey ctermfg=242
+	hi NonText ctermfg=7 ctermbg=8
+	hi IncSearch ctermfg=191 ctermbg=8
+	hi Search ctermfg=15 ctermbg=172
+	hi MoreMsg ctermfg=22
+	hi Visual ctermbg=15 ctermfg=70
+	hi Folded ctermbg=236 ctermfg=11
+	hi FoldColumn ctermbg=8 ctermfg=178
+	hi Constant ctermfg=174
+	hi Idetifier ctermfg=47
+	hi Statement ctermfg=11 cterm=bold
+	hi PreProc ctermfg=209
+	hi Type ctermfg=3 cterm=bold
+	hi Todo ctermfg=9 cterm=bold
+	hi Special ctermfg=11
+	hi Identifier ctermfg=47
+	hi Normal ctermfg=15
 endif
 " --------------------
 " ---- [13] AFTER VIMRC ----
