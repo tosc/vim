@@ -41,8 +41,8 @@ FRESH INSTALL
 Current version
 ===============
 
-* Commented vimproc and vimshell, remove on next update if I don't have any issues.
-* Moved TODO and TROUBLESHOOTING from vimrc to README.
+Added Fastfold plugin, makes computing folds faster.
+Fixed so that statusline updates when you use commit or push.
 
 TODO
 ====

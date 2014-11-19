@@ -126,6 +126,7 @@ if !exists("g:reload")
 	Bundle 'majutsushi/tagbar'
 	Bundle 'xolox/vim-easytags'
 	Bundle 'xolox/vim-misc'
+	Bundle 'Konfekt/FastFold'
 	" Required by vundle
 	filetype plugin indent on
 endif
@@ -255,6 +256,11 @@ endfunction
 " ---- [3.9] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
+" --------------------
+" ---- [3.10] FastFold ----
+let g:fastfold_savehook = 1
+let g:fastfold_togglehook = 0
+let g:fastfold_map = 1
 " --------------------
 " --------------------
 " ---- [4] FOLDING ----
@@ -467,6 +473,7 @@ endfunction
 " --------------------
 " ---- [5] AUTOCMD ----
 autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
+autocmd BufEnter * call SlowStatusLine() 
 
 autocmd InsertEnter * hi StatusLine gui=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
