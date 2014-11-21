@@ -50,7 +50,10 @@ FRESH INSTALL
 Current version
 ===============
 
-Updated colorscheme with better colors for terminal.
+Added ultisnips bindings to jump forward and backwards (S-Space, S-BS). 
+Removed my searchbindings, use default.
+Removed my leader bindings that used <C-W>?, use default.
+Removed some bindings that just removed some unused bindinging (EX: disable <S-F13>)
 
 TODO
 ====

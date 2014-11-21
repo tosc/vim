@@ -134,7 +134,6 @@ if !exists("g:reload")
 endif
 " ----------
 " ---- [3.1] ULTISNIPS ----
-let g:UltiSnipsEditSplit = 'horizontal'
 " --------
 " ---- [3.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
@@ -640,9 +639,6 @@ xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 noremap ö :Unite -no-split buffer file_mru<CR>
 noremap Ö :NERDTreeToggle .<CR>
 
-noremap ä /
-noremap Ä ?
-
 noremap <C-J> <C-]>
 
 
@@ -654,36 +650,44 @@ noremap <C-J> <C-]>
 " Shift enter
 " Shift bs
 " l&r Shift solo
+" H
+" M
+" L
+" ä
+" Ä
+
 " --------------------
 " ---- [7.1] INSERT ----
 " Ultisnips bindings
 " f9 just to remove them. TODO look for better way to remove binding
 let g:UltiSnipsExpandTrigger="<f10>"
-let g:UltiSnipsJumpForwardTrigger="<F14>"
-let g:UltiSnipsJumpBackwardTrigger="<F13>"
 let g:UltiSnipsListSnippets = "<f9>"
-
-inoremap <TAB> <C-R>=NeoTab()<CR>
-
+let g:UltiSnipsJumpForwardTrigger="<S-Space>"
+let g:UltiSnipsJumpBackwardTrigger="<S-BS>"
 "inoremap <C-J> <C-R>=UltiSnips#JumpForwards()<CR>
+
+" Run my special tab-command that.
+inoremap <TAB> <C-R>=NeoTab()<CR>
 
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
 inoremap <C-Del> <C-O>de
 
+" Shift-Enter acts like O in normal
 inoremap <S-CR> <C-O>O
 
+" Autocomplete filename.
 inoremap <C-F> <C-X><C-F>
+
+" Autocomplete spelling
 inoremap <C-S> <C-X><C-S>
+
+" Force normal completion.
 inoremap <expr><C-l>  neocomplcache#start_manual_complete()
 
-inoremap <F13> <nop>
-inoremap <F14> <nop>
-inoremap <S-F13> <nop>
-inoremap <S-F14> <nop>
-inoremap <S-BS> <nop>
-
+" Pressing enter chooses completion if completion window is up, else normal enter.
 inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
+
 " --------------------
 " ---- [7.2] LEADER ----
 let mapleader="\<space>"
@@ -691,7 +695,6 @@ let mapleader="\<space>"
 " A
 " B
 " C
-map <leader>c <c-w>c
 " D
 map <leader>d :bn\|bd #<CR>
 " E
@@ -699,14 +702,10 @@ map <leader>d :bn\|bd #<CR>
 " G
 map <leader>g :Gstatus<CR>
 " H
-map <leader>h <c-w>h
 " I
 " J
-map <leader>j <c-w>j
 " K
-map <leader>k <c-w>k
 " L
-map <leader>l <c-w>l
 " I
 " M
 map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make <CR>
@@ -732,13 +731,13 @@ map <leader>sd :setlocal nospell <CR>
 " T
 map <leader>t :TagbarToggle <CR>
 " U
+map <leader>ue :UltiSnipsEdit <CR>
 map <leader>uu :Unite -no-split file:~/vimfiles/Ultisnips <CR>
 map <leader>us :Unite -no-split ultisnips <CR>
 map <leader>ur :Unite -no-split register<CR>
 map <leader>ut :Unite -no-split tag<CR>
 "map <leader>uf :Unite -no-split -auto-preview -no-start-insert grep:. <CR>
 " V
-map <leader>v <c-w>v
 " W
 " X
 " Y
@@ -751,10 +750,6 @@ map <leader>z :Unite -no-split session<CR>
 " ---- [7.3] COMMAND ----
 cnoremap <C-A> <home>
 cnoremap <C-BS> <C-W>
-cnoremap <F13> <nop>
-cnoremap <F14> <nop>
-cnoremap <S-F13> <nop>
-cnoremap <S-F14> <nop>
 
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 " I tend to write :git instead of :Git
