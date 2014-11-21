@@ -4,8 +4,7 @@ vim
 My vim settings.
 
 
-FRESH INSTALL
-=============
+## FRESH INSTALL
 
 #### ALL
 
@@ -28,7 +27,7 @@ FRESH INSTALL
 
 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
 2. Add ctags to path.
-3. Link Ultisnips snippetfolder
+3. Link Ultisnips snippetfolder  
 ``mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
 4. Build omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
@@ -44,37 +43,31 @@ FRESH INSTALL
 
 #### LINUX
 
-1. Link Ultisnips snippetfolde
+1. Link Ultisnips snippetfolder  
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
 
-Current version
-===============
+## Current version
 
 Added ultisnips bindings to jump forward and backwards (S-Space, S-BS). 
 Removed my searchbindings, use default.
 Removed my leader bindings that used <C-W>?, use default.
 Removed some bindings that just removed some unused bindinging (EX: disable <S-F13>)
 
-TODO
-====
+## TODO
 
-* CHECK IF ECLIM IS A BETTER OPTION FOR C/C++ completion.
-* Look into if I should keep ctags stuff.
-* Make statusline update when using push. Idea is to check autocmd focuslost and then in slowstatusupdate keep track using a global variable if currently running slowstatusupdate, if so don't run again. Should stop all annoying problems. Might still be slow though since this will run everytime you do an external program.
-* Make vim create required directories by itself. (call mkdir)
+* Check if ECLIM is a viable option for C and C++ code-completion.
+* Update statusline after running :Git push.
+* Make vim create required directories by itself.
 * Add RUBY ECLIM completion.
 * Add PHP ECLIM completion.
 * Add SCALA ECLIM completion.
-* Add a jump to next tag when using snippets.
 
-TROUBLESHOOTING
-===============
+## TROUBLESHOOTING
 
 #### Code-Completion
 
 * C - clang_complete might have been updated. Try running make install on it.
 * C# - Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
-* Snippets - If snippet completion doesn't work but :UltiSnipsEdit opens the correct file, check if there is another vimfiles folder and add a symlink to that one aswell. (Had to symlink UltiSnips to both vimfiles and vimfiles last time to get it to work.)
 * Python or Java - Make sure you have the ECLIM deamon running. If it still doesn't work then you might not have created a eclipse project.  
 ``Run :ProjectCreate path -n language``  
 ``Ex :ProjectCreate ~\git\test -n java``  
