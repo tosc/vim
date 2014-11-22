@@ -50,6 +50,7 @@ My vim settings.
 
 ## TODO
 
+* Add plugin tpope/vim-surround.
 * Check if ECLIM is a viable option for C and C++ code-completion.
 * Update statusline after running :Git push.
 * Make vim create required directories by itself.
