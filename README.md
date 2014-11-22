@@ -48,9 +48,6 @@ My vim settings.
 
 ## Current version
 
-Removed unused loadSession command. I use unite for that now.
-Cleaned up vimrc a bit.
-
 ## TODO
 
 * Check if ECLIM is a viable option for C and C++ code-completion.
@@ -59,7 +56,10 @@ Cleaned up vimrc a bit.
 * Add RUBY ECLIM completion.
 * Add PHP ECLIM completion.
 * Add SCALA ECLIM completion.
-* Look into if I should keep nertree. I don't seem to use it atm. Atleast remove some of the strange keycommands I have.
+* Remove unnecessary NERDTREE commands.
+* Instead of a minimalMode setting split of heavy stuff into an own vimrc that you have to load in. So when I use school computers and so on I can just download that.
+* Look into vim-org
+* Add markdown folding.
 
 ## TROUBLESHOOTING
 

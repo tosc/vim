@@ -646,6 +646,10 @@ inoremap <TAB> <C-R>=NeoTab()<CR>
 inoremap <C-BS> <C-W>
 inoremap <C-Del> <C-O>de
 
+" inoremap <silent> ( (<C-R>=UltiSnips#Anon('($1)$0', '(', '', 'i')<cr>
+" inoremap <silent> " "<C-R>=UltiSnips#Anon('"$1"$0', '"', '', 'i')<cr>
+" inoremap <silent> ' '<C-R>=UltiSnips#Anon("\'$1\'$0", "\'", '', 'i')<cr>
+
 " Shift-Enter acts like O in normal
 inoremap <S-CR> <C-O>O
 
@@ -853,12 +857,15 @@ function! MyStatusLine()
 	return b:statusLineVar
 endfunction
 
+" Updates gitinfo for the statusline. 
+" cf - Nr of [c]hanged [f]iles.
+" cl - Nr of [c]hanged [l]ines in current file.
 function! SlowStatusLine()
 	let SlowStatusLineVar = ""
 	if &modifiable
 		let gitTemp = system("git -C " . expand("%:h") . " status -b -s")
 		let gitTemp = substitute(gitTemp, "##" , "", "")
-		let gitTemp = substitute(gitTemp, "\\.\\.\\." , "-", "")
+		let gitTemp = substitute(gitTemp, "\\.\\.\\." , "->", "")
 		if gitTemp !~ "fatal" 
 			let gitList = split(gitTemp, "\n")
 			if len(gitList) > 0 
@@ -872,7 +879,7 @@ function! SlowStatusLine()
 				let SlowStatusLineVar .= branchName
 			endif
 			if len(gitList) > 1
-				let SlowStatusLineVar .= " [nc " . (len(gitList) -1) . "]"
+				let SlowStatusLineVar .= " [cf " . (len(gitList) -1) . "]"
 			endif
 
 			let changedRows = []
@@ -883,7 +890,7 @@ function! SlowStatusLine()
 				endif
 			endfor
 			if(len(changedRows) > 0)
-				let SlowStatusLineVar .= " [cr " . split(changedRows[1], " ")[0] . "]"
+				let SlowStatusLineVar .= " [cl " . split(changedRows[1], " ")[0] . "]"
 			endif
 		endif
 	endif
