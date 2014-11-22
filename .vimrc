@@ -71,33 +71,6 @@ function! SaveSession()
 	exe "mksession! " . GetDir()
 endfunction
 
-function! LoadSession()
-	exe "so " . GetDir()
-endfunction
-
-
-
-function! LoadOldSessions()
-	exe "cd ~/.vim/sessions/"
-	let l:rawfiles = system("ls")
-	let l:files = split(l:rawfiles, "\n")
-	let l:fixFiles = []
-	let i = 1
-	for line in l:files
-		if i < 10
-			let line = " " . i . ": " . line
-		else
-			let line = i . ": " . line
-		endif
-		let i = i + 1
-		call add(fixFiles, line)
-	endfor
-	let l:fixFiles = insert(l:fIxFiles, "Select session: ")
-	let l:session = inputlist(l:fixFiles)
-
-	exe "so " . l:files[l:session - 1]
-endfunction
-
 " --------------------
 " ---- [3] PLUGINS ----
 " ---- [3.0] VUNDLE ----
@@ -504,6 +477,8 @@ autocmd Filetype java setlocal foldtext=SpecialBraceFoldText()
 " Removes all other types of matches from the omnicomplete, ex smartcomplete
 " so that completeopt=longest will work
 autocmd Filetype cs setlocal omnifunc=CSOmni
+autocmd Filetype cs let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+autocmd FileType cs let g:neocomplcache_omni_patterns.cs = '.*'
 function! CSOmni(findstart, base)
 	let words = OmniSharp#Complete(a:findstart, a:base)
 	if a:findstart
@@ -520,8 +495,6 @@ autocmd BufWritePost *.cs :OmniSharpReloadSolution
 
 autocmd Filetype cs setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 autocmd Filetype cs setlocal foldtext=SpecialBraceFoldText()
-autocmd Filetype cs let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-autocmd FileType cs let g:neocomplcache_omni_patterns.cs = '.*'
 
 " ----------------
 " ---- [6.3] C ----
@@ -625,7 +598,7 @@ noremap Y y$
 noremap , ;
 noremap ; ,
 
-" perform expression on cursor word | EX: select a number ex 5, 5ä, then
+" perform math on cursor
 noremap å viw"xc<C-R>=getreg('x')
 
 " Jumps when stuff is selected
@@ -859,10 +832,13 @@ hi TabLine term=underline cterm=underline gui=underline guibg=grey30
 hi TabLineSel term=none cterm=none gui=none
 " --------------------
 " ---- [9] OS SPECIFIC ----
-" Windows
+" ---- [9.0] Windows ----
 if(has("win32"))
 	au GUIEnter * simalt ~x
 endif
+" --------------------
+" ---- [9.1] Linux ----
+" --------------------
 " --------------------
 " ---- [10] STATUSLINE ----
 set laststatus=2

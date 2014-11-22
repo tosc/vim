@@ -48,10 +48,8 @@ My vim settings.
 
 ## Current version
 
-Added ultisnips bindings to jump forward and backwards (S-Space, S-BS). 
-Removed my searchbindings, use default.
-Removed my leader bindings that used <C-W>?, use default.
-Removed some bindings that just removed some unused bindinging (EX: disable <S-F13>)
+Removed unused loadSession command. I use unite for that now.
+Cleaned up vimrc a bit.
 
 ## TODO
 
@@ -61,6 +59,7 @@ Removed some bindings that just removed some unused bindinging (EX: disable <S-F
 * Add RUBY ECLIM completion.
 * Add PHP ECLIM completion.
 * Add SCALA ECLIM completion.
+* Look into if I should keep nertree. I don't seem to use it atm. Atleast remove some of the strange keycommands I have.
 
 ## TROUBLESHOOTING
 
