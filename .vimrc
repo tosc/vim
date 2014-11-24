@@ -95,6 +95,7 @@ if !exists("g:reload")
 	Plugin 'OmniSharp/omnisharp-vim'
 	Plugin 'tpope/vim-dispatch'
 	Plugin 'tpope/vim-fugitive'
+	Plugin 'tpope/vim-surround'
 	Plugin 'Rip-Rip/clang_complete'
 	Plugin 'majutsushi/tagbar'
 	Plugin 'xolox/vim-easytags'
@@ -594,7 +595,7 @@ autocmd Filetype tex setlocal spell spelllang=en_us
 "Not vi-compatible but more logical. Y yanks to end of line.
 noremap Y y$
 
-"Switches repeat f/F, feels more logical
+"Switches repeat f/F, feels more logical on swedish keyboard.
 noremap , ;
 noremap ; ,
 
@@ -603,10 +604,6 @@ noremap å viw"xc<C-R>=getreg('x')
 
 " Jumps when stuff is selected
 " snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
-
-" When you press TAB and have something selected in visual mode, it saves it
-" ultisnips and removes it.
-xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 
 "noremap ö :Unite -no-split window buffer file_mru<CR>
 noremap ö :Unite -no-split buffer file_mru<CR>
@@ -623,11 +620,13 @@ noremap <C-J> <C-]>
 " Shift enter
 " Shift bs
 " l&r Shift solo
-" H
-" M
-" L
 " ä
 " Ä
+" H (doesn't do anything since cursor always in middle for me)
+" M (doesn't do anything since cursor always in middle for me)
+" L (doesn't do anything since cursor always in middle for me)
+" s (synonym for cl)
+" S (synonym for cc)
 
 " --------------------
 " ---- [7.1] INSERT ----
@@ -724,7 +723,17 @@ map <leader>z :Unite -no-split session<CR>
 " -
 " /
 " --------------------
-" ---- [7.3] COMMAND ----
+" ---- [7.3] VISUAL ----
+
+" When you press TAB and have something selected in visual mode, it saves it
+" ultisnips and removes it.
+xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+
+" Remapped visual s to vim-surround
+xmap s S
+
+" --------------------
+" ---- [7.4] COMMAND ----
 cnoremap <C-A> <home>
 cnoremap <C-BS> <C-W>
 
@@ -732,7 +741,7 @@ cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 " I tend to write :git instead of :Git
 cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
 " --------------------
-" ---- [7.4] NERDTREE ----
+" ---- [7.5] NERDTREE ----
 let NERDTreeMapOpenSplit='<C-S>'
 let NERDTreeMapOpenVSplit='<C-V>'
 let NERDTreeMapOpenInTab='<C-T>'
@@ -779,7 +788,7 @@ autocmd Filetype nerdtree call NERDTreeAddKeyMap({
 	\ 'quickhelpText': 'Removes stuff using NERDTree',
 	\ 'scope': 'DirNode'})
 " --------------------
-" ---- [7.5] UNITE ----
+" ---- [7.6] UNITE ----
 function! s:unite_settings()
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <ESC> <Plug>(unite_all_exit)
@@ -879,18 +888,18 @@ function! SlowStatusLine()
 				let SlowStatusLineVar .= branchName
 			endif
 			if len(gitList) > 1
-				let SlowStatusLineVar .= " [cf " . (len(gitList) -1) . "]"
+				let SlowStatusLineVar .= " [m " . (len(gitList) -1) . "]"
 			endif
 
 			let changedRows = []
-			let rowsTemp = split(system("git -C " . expand("%:h") . " diff --stat"), "\n")
+			let rowsTemp = split(system("git -C " . expand("%:h") . " diff --numstat"), "\n")
 			for row in rowsTemp
 				if row =~ escape(expand('%:t'), ".")
-					let changedRows = split(row, "|")
+					let changedRows = split(row, "\t")
 				endif
 			endfor
 			if(len(changedRows) > 0)
-				let SlowStatusLineVar .= " [cl " . split(changedRows[1], " ")[0] . "]"
+				let SlowStatusLineVar .= " [+" . changedRows[0] . " -" . changedRows[1] . "]"
 			endif
 		endif
 	endif

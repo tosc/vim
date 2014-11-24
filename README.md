@@ -47,10 +47,12 @@ My vim settings.
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
 
 ## Current version
+Added plugin tpope/vim-surround.
+Changed visual map s to vim-surround.
+Changed my statusline to show +/- git info not just changed.
 
 ## TODO
 
-* Add plugin tpope/vim-surround.
 * Check if ECLIM is a viable option for C and C++ code-completion.
 * Update statusline after running :Git push.
 * Make vim create required directories by itself.
