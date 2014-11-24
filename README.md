@@ -74,4 +74,4 @@ My vim settings.
 
 ## Current version
 
-BUGGFIX: Vim folded gitstatuswindow.
+Changed j/k to ctrl-n/ctrl-p in :Gstatus.

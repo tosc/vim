@@ -660,6 +660,8 @@ autocmd Filetype tex call TEXSettings()
 " ---- [6.13] GitCommit ----
 function! GITCSettings()
 	let &foldlevel = 99
+	nmap <buffer> j <C-N>
+	nmap <buffer> k <C-P>
 endfunction
 
 autocmd FileType gitcommit call GITCSettings()
