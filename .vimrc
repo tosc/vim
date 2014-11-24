@@ -361,10 +361,18 @@ endfunction
 
 " Indentionfolding, includes row before new indent.
 function! IndentFolding(lnum)
-	if indent(a:lnum)/8 < indent(a:lnum+1)/8
-		return ">" . indent(a:lnum+1)/8
+	let line = getline(a:lnum)
+	if line =~ '^import' || line =~ '^from'
+		return 1
+	elseif line =~ '\S'
+		if indent(a:lnum)/8 < indent(a:lnum+1)/8
+			return ">" . indent(a:lnum+1)/8
+		else
+			return indent(a:lnum)/8
+		endif
 	else
-	return indent(a:lnum)/8
+		return '='
+	endif
 endfunction
 
 " Indentfolding, includes row before new indent and row after.
@@ -428,6 +436,9 @@ function! NormalFoldText()
 	let line = substitute(getline(v:foldstart),'^\s*','','')
 	let indent_level = indent(v:foldstart)
 	let indent = repeat(' ', indent_level)
+	if line =~ 'import'
+	       let line = "import"	
+	endif
 	return indent . line
 endfunction
 

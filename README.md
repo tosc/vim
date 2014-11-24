@@ -46,21 +46,6 @@ My vim settings.
 1. Link Ultisnips snippetfolder  
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
 
-## Current version
-Added more git leaderbindings. Use those to have the statusline update correctly.
-
-## TODO
-
-* Check if ECLIM is a viable option for C and C++ code-completion.
-* Make vim create required directories by itself.
-* Add RUBY ECLIM completion.
-* Add PHP ECLIM completion.
-* Add SCALA ECLIM completion.
-* Remove unnecessary NERDTREE commands.
-* Instead of a minimalMode setting split of heavy stuff into an own vimrc that you have to load in. So when I use school computers and so on I can just download that.
-* Look into vim-org
-* Add markdown folding.
-
 ## TROUBLESHOOTING
 
 #### Code-Completion
@@ -75,3 +60,18 @@ Added more git leaderbindings. Use those to have the statusline update correctly
 #### SSH
 
 * Unite binding doesn't work! Make sure you are using right encoding for ssh.
+
+## TODO
+
+* Look into vim-org
+* Add markdown folding.
+* Look at replacing NERDTREE with VIMFILER
+* Check if ECLIM is a viable option for C and C++ code-completion.
+* Add RUBY ECLIM completion.
+* Add PHP ECLIM completion.
+* Add SCALA ECLIM completion.
+* Make vim create required directories by itself.
+
+## Current version
+
+Fixed python folding (indentfolding).
