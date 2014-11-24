@@ -74,3 +74,4 @@ My vim settings.
 
 ## Current version
 
+BUGGFIX: Vim folded gitstatuswindow.

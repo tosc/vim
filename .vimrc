@@ -657,6 +657,13 @@ autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-di
 
 autocmd Filetype tex call TEXSettings()
 " --------------------
+" ---- [6.13] GitCommit ----
+function! GITCSettings()
+	let &foldlevel = 99
+endfunction
+
+autocmd FileType gitcommit call GITCSettings()
+" --------------------
 " --------------------
 " ---- [7] BINDINGS ----
 " ---- [7.0] NORMAL ----
