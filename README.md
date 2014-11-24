@@ -47,14 +47,11 @@ My vim settings.
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
 
 ## Current version
-Added plugin tpope/vim-surround.
-Changed visual map s to vim-surround.
-Changed my statusline to show +/- git info not just changed.
+Added more git leaderbindings. Use those to have the statusline update correctly.
 
 ## TODO
 
 * Check if ECLIM is a viable option for C and C++ code-completion.
-* Update statusline after running :Git push.
 * Make vim create required directories by itself.
 * Add RUBY ECLIM completion.
 * Add PHP ECLIM completion.

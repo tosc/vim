@@ -676,7 +676,9 @@ map <leader>d :bn\|bd #<CR>
 " E
 " F
 " G
-map <leader>g :Gstatus<CR>
+map <leader>gg :Gstatus<CR>
+map <leader>gc :Gcommit<CR>
+map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
 " H
 " I
 " J
