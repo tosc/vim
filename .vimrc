@@ -238,7 +238,7 @@ let g:fastfold_map = 1
 set foldmethod=expr
 set foldnestmax=2
 set foldopen=
-set foldlevelstart=99
+set foldlevelstart=0
 " --------------------
 " ---- [4.1] FOLDEXPR ----
 let g:InsideBrace = 0
@@ -459,18 +459,23 @@ autocmd BufEnter * call SlowStatusLine()
 autocmd InsertEnter * hi StatusLine gui=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
 
-autocmd BufRead .pentadactylrc set filetype=vim
+" To make FastFold calculate the folds when you open a file.
+autocmd BufReadPost * let &foldlevel=0
 " --------------------
 " ---- [6] FILETYPE SPECIFIC ----
 " ---- [6.0] All ----
 " :set filetype? To know current loaded filetype
+" for specific startfolding - let &foldlevel=0
 " --------
 " ---- [6.1] JAVA ----
-" Removes all other types of matches from the omnicomplete, ex smartcomplete
-" so that completeopt=longest will work
-autocmd Filetype java setlocal omnifunc=JavaOmni
-autocmd Filetype java let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-autocmd FileType java let g:neocomplcache_omni_patterns.java = '.*'
+function! JavaSettings()
+	setlocal omnifunc=JavaOmni
+	let g:neocomplcache_omni_patterns.java = '.*'
+	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
+	setlocal foldtext=SpecialBraceFoldText()
+endfunction
+
 function! JavaOmni(findstart, base)
 	let words = eclim#java#complete#CodeComplete(a:findstart, a:base)
 	if a:findstart
@@ -482,15 +487,17 @@ function! JavaOmni(findstart, base)
 	endif
 endfunction
 
-autocmd Filetype java setlocal foldexpr=OneIndentBraceFolding(v:lnum)
-autocmd Filetype java setlocal foldtext=SpecialBraceFoldText()
+autocmd Filetype java call JavaSettings()
 " --------
 " ---- [6.2] C# ----
-" Removes all other types of matches from the omnicomplete, ex smartcomplete
-" so that completeopt=longest will work
-autocmd Filetype cs setlocal omnifunc=CSOmni
-autocmd Filetype cs let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-autocmd FileType cs let g:neocomplcache_omni_patterns.cs = '.*'
+function! CSSettings()
+	setlocal omnifunc=CSOmni
+	let g:neocomplcache_omni_patterns.cs = '.*'
+	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
+	setlocal foldtext=SpecialBraceFoldText()
+endfunction
+
 function! CSOmni(findstart, base)
 	let words = OmniSharp#Complete(a:findstart, a:base)
 	if a:findstart
@@ -505,12 +512,15 @@ endfunction
 " Updates omnisharp to include new methods
 autocmd BufWritePost *.cs :OmniSharpReloadSolution
 
-autocmd Filetype cs setlocal foldexpr=OneIndentBraceFolding(v:lnum)
-autocmd Filetype cs setlocal foldtext=SpecialBraceFoldText()
-
+autocmd Filetype cs call CSSettings()
 " ----------------
 " ---- [6.3] C ----
-autocmd Filetype c,cpp setlocal omnifunc=COmni
+function! CSettings()
+	setlocal omnifunc=COmni
+	setlocal foldexpr=BraceFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
 function! COmni(findstart, base)
 	let words = UltiSnips#SnippetsInCurrentScope()
 	if a:findstart
@@ -522,30 +532,51 @@ function! COmni(findstart, base)
 	endif
 endfunction
 
-
-autocmd Filetype c,cpp setlocal foldexpr=BraceFolding(v:lnum)
-autocmd Filetype c,cpp setlocal foldtext=NormalFoldText()
+autocmd Filetype c,cpp call CSettings()
 " --------------------
 " ---- [6.4] VIMRC ----
-autocmd Filetype vim setlocal foldexpr=VimrcFolding(v:lnum)
-autocmd Filetype vim setlocal foldtext=NormalFoldText()
-autocmd Filetype vim let &foldlevel=0
-autocmd Filetype vim set textwidth=0
+function! VIMSettings()
+	setlocal foldexpr=VimrcFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+	set textwidth=0
+endfunction
+
+" Pentadactyl file is a vim file.
+autocmd BufRead .pentadactylrc set filetype=vim
+
+" Runs the new vimrc when you save it.
 autocmd BufWritePost .vimrc so ~/git/vim/.vimrc
+
+autocmd Filetype vim call VIMSettings()
 " -------------
 " ---- [6.5] SNIPPET ----
-autocmd Filetype snippets setlocal foldexpr=SnippetFolding(v:lnum)
-autocmd Filetype snippets setlocal foldtext=NormalFoldText()
+function! SNIPPETSSettings()
+	setlocal foldexpr=SnippetFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+autocmd Filetype snippets call SNIPPETSSettings()
 " --------------------
 " ---- [6.6] TODO ----
+function! TODOSettings()
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+" Files that end with .td are now todofiles.
 autocmd BufEnter *.td setlocal filetype=todo
-autocmd Filetype todo setlocal foldexpr=IndentFolding(v:lnum)
-autocmd Filetype todo setlocal foldtext=NormalFoldText()
+
+autocmd Filetype todo call TODOSettings()
 " --------------------
 " ---- [6.7] PYTHON ----
-autocmd Filetype python setlocal omnifunc=PythonOmni
-autocmd Filetype python let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-autocmd FileType python let g:neocomplcache_omni_patterns.python = '.*'
+function! PythonSettings()
+	setlocal omnifunc=PythonOmni
+	let g:neocomplcache_omni_patterns.python = '.*'
+	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
 function! PythonOmni(findstart, base)
 	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
 	if a:findstart
@@ -556,18 +587,33 @@ function! PythonOmni(findstart, base)
 		return filter(words, 'match(v:val["word"], a:base)==0')
 	endif
 endfunction
-autocmd Filetype python setlocal foldexpr=IndentFolding(v:lnum)
-autocmd Filetype python setlocal foldtext=NormalFoldText()
+
+autocmd Filetype python call PythonSettings()
 " --------------------
 " ---- [6.8] LUA ----
-autocmd Filetype lua setlocal foldexpr=IndentFolding(v:lnum)
-autocmd Filetype lua setlocal foldtext=NormalFoldText()
+function! LUASettings()
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+autocmd Filetype lua call LUASettings()
 " -------------
 " ---- [6.9] MAKE ----
-autocmd Filetype make setlocal foldexpr=IndentFolding(v:lnum)
-autocmd Filetype make setlocal foldtext=NormalFoldText()
+function! MAKESettings()
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+autocmd Filetype make call MAKESettings()
 " -------------
 " ---- [6.10] PASS ----
+function! PASSSettings()
+	setlocal foldexpr=PassFolding(v:lnum)
+	setlocal foldtext=PassFoldText()
+	setlocal foldminlines=0
+	FastFoldUpdate
+endfunction
+
 function! GenPass(...)
 let l:passLen = (a:0 > 0 ? a:1 : 8)
 python << endpy
@@ -580,25 +626,36 @@ endpy
 execute "normal a".l:password
 endfunction
 
-autocmd Filetype pass setlocal foldexpr=PassFolding(v:lnum)
-autocmd Filetype pass setlocal foldtext=PassFoldText()
-autocmd Filetype pass setlocal foldminlines=0
-autocmd Filetype pass let &foldlevel=0
+" Files that end with .pass are now password files.
 autocmd BufNewFile,BufRead *.pass set filetype=pass
+
+autocmd Filetype pass call PASSSettings()
 " -------------
 " ---- [6.11] JAPANESE ----
-autocmd Filetype jp set guifont=MS_Gothic:h16:w8
-autocmd Filetype jp set fileencoding=utf-8
-autocmd Filetype jp set encoding=utf-8
+function! JAPANESESettings()
+	set guifont=MS_Gothic:h16:w8
+	set fileencoding=utf-8
+	set encoding=utf-8
+endfunction
+
+" Files that end with .jp are now japanese files.
 autocmd BufNewFile,BufRead *.jp set filetype=jp
+
+autocmd Filetype jp call JAPANESESettings()
 " -------------
 " ---- [6.12] LATEX ----
+function! TEXSettings()
+	setlocal foldexpr=IndentFolding2(v:lnum)
+	setlocal foldtext=NormalFoldText()
+	setlocal spell spelllang=en_us
+endfunction
+
+
 " Compile latex to a pdf when you save
-autocmd Filetype tex setlocal foldexpr=IndentFolding2(v:lnum)
-autocmd Filetype tex setlocal foldtext=NormalFoldText()
 autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
 autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
-autocmd Filetype tex setlocal spell spelllang=en_us
+
+autocmd Filetype tex call TEXSettings()
 " --------------------
 " --------------------
 " ---- [7] BINDINGS ----
@@ -986,4 +1043,6 @@ endif
 
 " More discreet color for whitespaces.
 hi SpecialKey guifg=grey40
+" Better color for the column that appears on the side.
+hi SignColumn guibg=bg
 " --------------------

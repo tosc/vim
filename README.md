@@ -74,4 +74,3 @@ My vim settings.
 
 ## Current version
 
-Fixed python folding (indentfolding).
