@@ -398,6 +398,18 @@ function! PassFolding(lnum)
 	endif
 	return ">1"
 endfunction
+
+"MARKDOWNfolding
+function! MDFolding(lnum)
+	let line = getline(a:lnum)
+	if line =~ "#"
+		let ind = strlen(substitute(line, "[^#]", "", "g"))
+		return '>' . ind
+	else
+		return '='
+	endif
+
+endfunction
 " ---------------
 " ---- [4.2] FOLDTEXT ----
 " 
@@ -668,6 +680,14 @@ function! GITCSettings()
 endfunction
 
 autocmd FileType gitcommit call GITCSettings()
+" --------------------
+" ---- [6.14] MARKDOWN ----
+function! MDSettings()
+	setlocal foldexpr=MDFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+autocmd FileType markdown call MDSettings()
 " --------------------
 " --------------------
 " ---- [7] BINDINGS ----

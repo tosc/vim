@@ -21,12 +21,15 @@ noremap <c-u> 50k
 
 noremap <c-c> <C-v><C-c>
 noremap <c-v> <C-v><C-v>
-inoremap <c-v> <C-v><C-v>
 
 noremap F g;b
 
 noremap < :back<cr>
 noremap > :forward<cr>
+
+noremap b <C-A-b>
+
+inoremap <c-v> <C-v><C-v>
 " --------------------
 " ---- [3] COLORSCHEME ----
 " Desert colorscheme

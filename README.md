@@ -1,5 +1,4 @@
-vim
-===
+# vim
 
 My vim settings.
 
@@ -51,7 +50,7 @@ My vim settings.
 #### Code-Completion
 
 * C - clang_complete might have been updated. Try running make install on it.
-* C# - Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with the correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
+* CS - Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with the correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
 * Python or Java - Make sure you have the ECLIM deamon running. If it still doesn't work then make sure that you are in an eclipse project. To create a new one run:  
 ``:ProjectCreate path -n language``  
 ``Ex :ProjectCreate ~\git\test -n java``  
@@ -73,7 +72,6 @@ Add a pentadactylrc with the line:
 * BUGG - Eclim syntax checker complains on a correct import in vim but not in Eclipse.
 * Make eclim start by itself.
 * Look into vim-org
-* Add markdown folding.
 * Look at replacing NERDTREE with VIMFILER
 * Check if ECLIM is a viable option for C and C++ code-completion.
 * Add RUBY ECLIM completion.
@@ -83,3 +81,4 @@ Add a pentadactylrc with the line:
 
 ## Current version
 
+Add markdown folding.
