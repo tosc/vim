@@ -1,5 +1,6 @@
 " ---- [1] NORMAL SETTINGS ----
 set visualbell
+set followhints=1
 
 hi FontFixed -a font: 14px "Inconsolatazi4" !important; font-weight: bold; color: #bdb76b !important;
 " --------------------
@@ -53,8 +54,4 @@ hi MoreMsg color: #6b8e23 !important; background: #333333 !important;
 hi Question color: #6b8e23 !important; background: #333333 !important; font-weight: bold !important;
 hi WarningMsg color: #ffa0a0 !important; background: #333333 !important;
 hi StatusQuestion color: #6b8e23 !important; background: inherit !important;
-" --------------------
-" ---- [4] FRESH INSTALL ----
-" 1. Create a ./_pentadactylrc with the line:
-"		- source ~/git/vim/.pentadactylrc
 " --------------------

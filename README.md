@@ -61,6 +61,12 @@ My vim settings.
 
 * If Unite binding doesn't work then check that you are using the right encoding for ssh.
 
+## Pentadactyl
+
+Firefox pentadactyl settings.  
+Add a pentadactylrc with the line:  
+`` source ~/git/vim/.pentadactylrc `` 
+
 ## TODO
 
 * BUGG - Pressing tab when you are at the beginning of a line sometimes paste some jibberish completion.
