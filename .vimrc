@@ -659,7 +659,10 @@ autocmd Filetype tex call TEXSettings()
 " --------------------
 " ---- [6.13] GitCommit ----
 function! GITCSettings()
+	" Don't fold gitstuff.
 	let &foldlevel = 99
+
+	" Fast movement for :GStatus
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
 endfunction
