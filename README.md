@@ -52,7 +52,7 @@ My vim settings.
 
 * C - clang_complete might have been updated. Try running make install on it.
 * C# - Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with the correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
-* Python or Java - Make sure you have the ECLIM deamon running. If it still doesn't work then make sure that you are in an eclipse project. To create a new one run:
+* Python or Java - Make sure you have the ECLIM deamon running. If it still doesn't work then make sure that you are in an eclipse project. To create a new one run:  
 ``:ProjectCreate path -n language``  
 ``Ex :ProjectCreate ~\git\test -n java``  
 ``If still unclear then look at :EclimHelp gettingstarted``  

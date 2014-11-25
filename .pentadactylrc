@@ -7,7 +7,6 @@ hi FontFixed -a font: 14px "Inconsolatazi4" !important; font-weight: bold; color
 " ---- [2] BINDINGS ----
 noremap j 5j
 noremap k 5k
-
 noremap h gT
 noremap l gt
 
@@ -23,6 +22,11 @@ noremap <c-u> 50k
 noremap <c-c> <C-v><C-c>
 noremap <c-v> <C-v><C-v>
 inoremap <c-v> <C-v><C-v>
+
+noremap F g;b
+
+noremap < :back<cr>
+noremap > :forward<cr>
 " --------------------
 " ---- [3] COLORSCHEME ----
 " Desert colorscheme
