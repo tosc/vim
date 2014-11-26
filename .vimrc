@@ -16,6 +16,57 @@ function! QFixClose()
 	ccl
 	let t:qFixWin = 0
 endfunction
+
+" Jumps you to the next/previous ultisnips location if exists.
+" Else it jumps to the next/previous delimiter.
+" Default delimiters: "'(){}[]
+" To change default delimiters just change b:smartJumpElements
+function! SmartJump()
+	call UltiSnips#JumpForwards()
+	if !exists("b:smartJumpElements")
+		let b:smartJumpElements = "[]'\"(){}\[]"
+	endif
+	if g:ulti_jump_forwards_res == 1
+		return ""
+	endif
+	let cursorPos = getpos('.')
+	let pos = match(getline('.'), b:smartJumpElements, cursorPos[2] - 1)
+	if pos == -1
+		return ""
+	else
+		let cursorPos[2] = pos + 1
+		call setpos('.', cursorPos)
+		call feedkeys("\<right>",'i')
+	endif
+	return ""
+endfunction
+function! SmartJumpBack()
+	call UltiSnips#JumpBackwards()
+	if !exists("b:smartJumpElements")
+		let b:smartJumpElements = "[]'\"(){}\[]"
+	endif
+	if g:ulti_jump_backwards_res == 1
+		return ""
+	endif
+	let cursorPos = getpos('.')
+	let newPos = match(getline('.'), b:smartJumpElements)
+	let pos = newPos
+	if pos == -1 || pos > cursorPos[2] + 1
+		return ""
+	endif
+	let matchCount = 1
+	while newPos < cursorPos[2] - 1
+		if newPos == -1
+			break
+		endif
+		let pos = newPos
+		let newPos = match(getline('.'), b:smartJumpElements, 0, matchCount)
+		let matchCount += 1
+	endwhile
+	let cursorPos[2] = pos + 1
+	call setpos('.', cursorPos)
+	return ""
+endfunction
 " --------------------
 " ---- [1] NORMAL VIMSETTINGS ----
 autocmd!
@@ -101,6 +152,7 @@ if !exists("g:reload")
 	Plugin 'xolox/vim-easytags'
 	Plugin 'xolox/vim-misc'
 	Plugin 'Konfekt/FastFold'
+	Plugin 'Raimondi/delimitMate'
 
 	" Required by vundle
 	call vundle#end()
@@ -174,6 +226,7 @@ let g:clang_auto_select = 0
 
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
+let g:ulti_jump_backwards_res = 0
 function! NeoTab()
 	call UltiSnips#ExpandSnippet()
 	if g:ulti_expand_res == 1
@@ -714,14 +767,15 @@ noremap <C-J> <C-]>
 " Close everything except current fold.
 noremap zV zMzv
 
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+noremap <S-Space> :call SmartJump()<CR>
+noremap <S-BS> :call SmartJumpBack()<CR>
 
 " Good avaliable binds
 " ´
 " Enter
 " Backspace
-" Shift space
 " Shift enter
-" Shift bs
 " l&r Shift solo
 " ä
 " Ä
@@ -736,9 +790,9 @@ noremap zV zMzv
 " Ultisnips bindings
 " f9 just to remove them. TODO look for better way to remove binding
 let g:UltiSnipsExpandTrigger="<f10>"
-let g:UltiSnipsListSnippets = "<f9>"
-let g:UltiSnipsJumpForwardTrigger="<S-Space>"
-let g:UltiSnipsJumpBackwardTrigger="<S-BS>"
+let g:UltiSnipsListSnippets = "<f10>"
+let g:UltiSnipsJumpForwardTrigger="<f-10>"
+let g:UltiSnipsJumpBackwardTrigger="<f-10>"
 "inoremap <C-J> <C-R>=UltiSnips#JumpForwards()<CR>
 
 " Run my special tab-command that.
@@ -767,6 +821,9 @@ inoremap <expr><C-l>  neocomplcache#start_manual_complete()
 " Pressing enter chooses completion if completion window is up, else normal enter.
 inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+inoremap <S-Space> <C-R>=SmartJump()<CR>
+inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
 " --------------------
 " ---- [7.2] LEADER ----
 let mapleader="\<space>"
