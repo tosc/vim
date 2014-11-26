@@ -63,7 +63,6 @@ if !exists("g:reload")
 	" Vundle addons"
 	Plugin 'Shougo/neomru.vim'
 	Plugin 'Shougo/unite.vim'
-	Plugin 'Shougo/unite-build'
 	Plugin 'Shougo/unite-session'
 	Plugin 'tsukkee/unite-tag'
 	Plugin 'skeept/ultisnips-unite'
@@ -113,12 +112,6 @@ let g:unite_cursor_line_highlight = 'TabLine'
 
 let s:bufferaction = {'description' : 'verbose', 'is_selectable' : 1,}
 
-"call unite#custom#source('file_rec', 'ignore_pattern', join(['.pyc$', '.exe$', '.o$'], '\|'))
-"call unite#custom_source('file_rec,file_rec/async,file_mru,file,buffer,grep', 'ignore_pattern', join([
-"			\ '.pyc$',
-"			\ '.o$',
-"			\ ], '\|'))
-" call unite#custom#source('tab', 'ignore_pattern', join(['unite'], '\|'))
 call unite#custom#default_action('buffer', 'goto')
 
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
@@ -799,7 +792,6 @@ map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
 " L
 " I
 " M
-map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make <CR>
 " N 
 map <leader>n :bn <CR>
 map <leader>N :bp <CR>
@@ -827,7 +819,6 @@ map <leader>uu :Unite -no-split file:~/vimfiles/Ultisnips <CR>
 map <leader>us :Unite -no-split ultisnips <CR>
 map <leader>ur :Unite -no-split register<CR>
 map <leader>ut :Unite -no-split tag<CR>
-"map <leader>uf :Unite -no-split -auto-preview -no-start-insert grep:. <CR>
 " V
 " W
 " X
@@ -840,11 +831,11 @@ map <leader>z :Unite -no-split session<CR>
 " --------------------
 " ---- [7.3] VISUAL ----
 
-" When you press TAB and have something selected in visual mode, it saves it
-" ultisnips and removes it.
+" When you press TAB and have something selected in visual mode, it saves it for
+" ultisnips and then removes it.
 xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 
-" Remapped visual s to vim-surround
+" Remapped s to vim-surround.
 xmap s S
 
 " --------------------
@@ -972,6 +963,7 @@ endif
 set laststatus=2
 set statusline=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
 
+" Gets the gitinfo for the statusline.
 function! MyStatusLine()
 	if !exists("b:statusLineVar")
 		call SlowStatusLine()
@@ -980,8 +972,8 @@ function! MyStatusLine()
 endfunction
 
 " Updates gitinfo for the statusline. 
-" cf - Nr of [c]hanged [f]iles.
-" cl - Nr of [c]hanged [l]ines in current file.
+" m - Nr of [m]odified [f]iles.
+" +/- - Nr of rows added / deleted.
 function! SlowStatusLine()
 	let SlowStatusLineVar = ""
 	if &modifiable
