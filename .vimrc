@@ -101,8 +101,6 @@ set backspace=indent,eol,start
 let $LANG = 'en'
 set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 
-colorscheme desert
-
 syntax on
 " ---------
 " ---- [2] SESSION SETTINGS ----
@@ -1006,9 +1004,6 @@ function! Tabline()
 endfunction
 
 set tabline=%!Tabline()
-hi TabLineFill term=underline cterm=underline gui=underline guibg=grey30
-hi TabLine term=underline cterm=underline gui=underline guibg=grey30
-hi TabLineSel term=none cterm=none gui=none
 " --------------------
 " ---- [9] OS SPECIFIC ----
 " ---- [9.0] Windows ----
@@ -1021,8 +1016,6 @@ endif
 " --------------------
 " ---- [10] STATUSLINE ----
 set laststatus=2
-hi clear StatusLine
-hi StatusLine gui=underline
 set statusline=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
 
 function! MyStatusLine()
@@ -1101,7 +1094,10 @@ function! MinimalMode()
 	inoremap <TAB> <C-R>=SmartTab()<CR>
 endfunction
 " --------------------
-" ---- [12] TERMINALVIM ----
+" ---- [12] COLORSETTINGS ----
+colorscheme desert
+
+" Change to better colors when using a terminal
 if has("terminfo")
 	let &t_Co=256
 	set background=dark
@@ -1124,14 +1120,21 @@ if has("terminfo")
 	hi Identifier ctermfg=47
 	hi Normal ctermfg=15
 endif
-" --------------------
-" ---- [13] AFTER VIMRC ----
-if !exists("g:reload")
-	let g:reload = 1
-endif
+
 
 " More discreet color for whitespaces.
 hi SpecialKey guifg=grey40
 " Better color for the column that appears on the side.
 hi SignColumn guibg=bg
+
+hi clear StatusLine
+hi StatusLine gui=underline
+hi TabLineFill term=underline cterm=underline gui=underline guibg=grey30
+hi TabLine term=underline cterm=underline gui=underline guibg=grey30
+hi TabLineSel term=none cterm=none gui=none
+" --------------------
+" ---- [13] AFTER VIMRC ----
+if !exists("g:reload")
+	let g:reload = 1
+endif
 " --------------------
