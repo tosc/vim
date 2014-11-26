@@ -726,10 +726,7 @@ autocmd Filetype tex call TEXSettings()
 function! GITCSettings()
 	" Don't fold gitstuff.
 	let &foldlevel = 99
-
-	" Fast movement for :GStatus
-	nmap <buffer> j <C-N>
-	nmap <buffer> k <C-P>
+	call FugitiveBindings()
 endfunction
 
 autocmd FileType gitcommit call GITCSettings()
@@ -972,6 +969,13 @@ function! s:unite_settings()
 	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 endfunction
 autocmd FileType unite call s:unite_settings()
+" --------------------
+" ---- [7.7] FUGITIVE ----
+function! FugitiveBindings()
+	" Fast movement for :GStatus
+	nmap <buffer> j <C-N>
+	nmap <buffer> k <C-P>
+endfunction
 " --------------------
 " --------------------
 " ---- [8] TABS ----
