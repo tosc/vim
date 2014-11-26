@@ -68,6 +68,7 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
+* Add some autobrace thingie. Make a smart s-space command that you can use with both autobrace and ultisnips.
 * BUGG - Pressing tab when you are at the beginning of a line sometimes paste some jibberish completion.
 * BUGG - Eclim syntax checker complains on a correct import in vim but not in Eclipse.
 * Make eclim start by itself.

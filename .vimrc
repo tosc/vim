@@ -711,6 +711,9 @@ noremap Ö :NERDTreeToggle .<CR>
 
 noremap <C-J> <C-]>
 
+" Close everything except current fold.
+noremap zV zMzv
+
 
 " Good avaliable binds
 " ´
@@ -1032,16 +1035,9 @@ function! MinimalMode()
 		endif
 	endfunction
 
-	function! PostSmartTab()
-		if !pumvisible() && g:PosBeforeCompletion == col('.')
-			call UltiSnips#JumpForwards()
-		endif
-		return ""
-	endfunction
-
 	" No complete-as-you-type, instead tab autocompletes/open completion window.
 	let g:neocomplcache_disable_auto_complete = 1
-	inoremap <TAB> <C-R>=SmartTab()<CR><C-R>=PostSmartTab()<CR>
+	inoremap <TAB> <C-R>=SmartTab()<CR>
 endfunction
 " --------------------
 " ---- [12] TERMINALVIM ----
