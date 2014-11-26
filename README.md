@@ -2,9 +2,7 @@
 
 My vim settings.
 
-
 ## FRESH INSTALL
-
 #### ALL
 
 1. Create a vimrc with the line:  
@@ -46,7 +44,6 @@ My vim settings.
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
 
 ## TROUBLESHOOTING
-
 #### Code-Completion
 
 * C - clang_complete might have been updated. Try running make install on it.
@@ -68,12 +65,11 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
-* Change my foldingmethods so that classes never fold and markdown title never folds.
+* Look at replacing NERDTREE with VIMFILER
 * BUGG - Pressing tab when you are at the beginning of a line sometimes paste some jibberish completion.
 * BUGG - Eclim syntax checker complains on a correct import in vim but not in Eclipse.
 * Make eclim start by itself.
 * Look into vim-org
-* Look at replacing NERDTREE with VIMFILER
 * Check if ECLIM is a viable option for C and C++ code-completion.
 * Add RUBY ECLIM completion.
 * Add PHP ECLIM completion.

@@ -1,73 +1,3 @@
-" ---- [0] VARIABLES AND FUNCTIONS ----
-function! QFix()
-	if !exists("t:qFixWin")
-		let t:qFixWin = 0
-	endif
-	if t:qFixWin == 0
-		copen
-		let t:qFixWin = 1
-	else
-		ccl
-		let t:qFixWin = 0
-	endif
-endfunction
-
-function! QFixClose()
-	ccl
-	let t:qFixWin = 0
-endfunction
-
-" Jumps you to the next/previous ultisnips location if exists.
-" Else it jumps to the next/previous delimiter.
-" Default delimiters: "'(){}[]
-" To change default delimiters just change b:smartJumpElements
-function! SmartJump()
-	call UltiSnips#JumpForwards()
-	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}\[]"
-	endif
-	if g:ulti_jump_forwards_res == 1
-		return ""
-	endif
-	let cursorPos = getpos('.')
-	let pos = match(getline('.'), b:smartJumpElements, cursorPos[2] - 1)
-	if pos == -1
-		return ""
-	else
-		let cursorPos[2] = pos + 1
-		call setpos('.', cursorPos)
-		call feedkeys("\<right>",'i')
-	endif
-	return ""
-endfunction
-function! SmartJumpBack()
-	call UltiSnips#JumpBackwards()
-	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}\[]"
-	endif
-	if g:ulti_jump_backwards_res == 1
-		return ""
-	endif
-	let cursorPos = getpos('.')
-	let newPos = match(getline('.'), b:smartJumpElements)
-	let pos = newPos
-	if pos == -1 || pos > cursorPos[2] + 1
-		return ""
-	endif
-	let matchCount = 1
-	while newPos < cursorPos[2] - 1
-		if newPos == -1
-			break
-		endif
-		let pos = newPos
-		let newPos = match(getline('.'), b:smartJumpElements, 0, matchCount)
-		let matchCount += 1
-	endwhile
-	let cursorPos[2] = pos + 1
-	call setpos('.', cursorPos)
-	return ""
-endfunction
-" --------------------
 " ---- [1] NORMAL VIMSETTINGS ----
 autocmd!
 set nocompatible
@@ -158,6 +88,10 @@ if !exists("g:reload")
 endif
 " ----------
 " ---- [3.1] ULTISNIPS ----
+" Needed for checking if a ultisnips action has happened.
+let g:ulti_expand_res = 0
+let g:ulti_jump_forwards_res = 0
+let g:ulti_jump_backwards_res = 0
 " --------
 " ---- [3.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
@@ -190,7 +124,7 @@ call unite#custom#default_action('buffer', 'goto')
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#sorter_default#use(['sorter_rank'])
 " --------------------
-" ---- [3.5] Fugitive ----
+" ---- [3.5] FUGITIVE ----
 " --------------------
 " ---- [3.6] NEOCOMPLCACHE ----
 let g:neocomplcache_enable_at_startup = 1
@@ -222,9 +156,6 @@ let g:neocomplcache_enable_auto_close_preview = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 
-let g:ulti_expand_res = 0
-let g:ulti_jump_forwards_res = 0
-let g:ulti_jump_backwards_res = 0
 function! NeoTab()
 	call UltiSnips#ExpandSnippet()
 	if g:ulti_expand_res == 1
@@ -278,7 +209,7 @@ endfunction
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
-" ---- [3.9] FastFold ----
+" ---- [3.9] FASTFOLD ----
 let g:fastfold_savehook = 1
 let g:fastfold_togglehook = 0
 let g:fastfold_map = 1
@@ -426,6 +357,33 @@ function! IndentFolding(lnum)
 	endif
 endfunction
 
+function! PythonFolding(lnum)
+	let line = getline(a:lnum)
+	if line =~ '^import' || line =~ '^from'
+		let g:InsideVar = 0
+		return 1
+	elseif line =~ '\S'
+		if line =~ '^\s*def'
+			let g:InsideVar = 1
+			return ">1"
+		elseif line =~ '^\s*class'
+			let g:InsideVar = 0
+			return 0
+		elseif indent(a:lnum)/8 < indent(a:lnum+1)/8 && g:InsideVar == 0
+			return ">1"
+		else
+			if g:InsideVar > indent(a:lnum)/8 || g:InsideVar == 0
+				let g:InsideVar = 0
+				return indent(a:lnum)/8
+			else
+				return g:InsideVar
+			endif
+		endif
+	else
+		return '='
+	endif
+endfunction
+
 " Indentfolding, includes row before new indent and row after.
 function! IndentFolding2(lnum)
 	let line = getline(a:lnum)
@@ -453,8 +411,8 @@ endfunction
 "MARKDOWNfolding
 function! MDFolding(lnum)
 	let line = getline(a:lnum)
-	if line =~ "#"
-		let ind = strlen(substitute(line, "[^#]", "", "g"))
+	if line =~ "##"
+		let ind = strlen(substitute(line, "[^#]", "", "g")) - 1
 		return '>' . ind
 	else
 		return '='
@@ -636,7 +594,7 @@ function! PythonSettings()
 	setlocal omnifunc=PythonOmni
 	let g:neocomplcache_omni_patterns.python = '.*'
 	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 endfunction
 
@@ -720,7 +678,7 @@ autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-di
 
 autocmd Filetype tex call TEXSettings()
 " --------------------
-" ---- [6.13] GitCommit ----
+" ---- [6.13] GITCOMMIT ----
 function! GITCSettings()
 	" Don't fold gitstuff.
 	let &foldlevel = 99
@@ -950,21 +908,17 @@ function! s:unite_settings()
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <ESC> <Plug>(unite_all_exit)
 	nnoremap <buffer> <BS> <Plug>()
+	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
+	nnoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+	nnoremap <silent><buffer><expr> <C-t> unite#do_action('tab')
+	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
+	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 	imap <buffer> <TAB> <Plug>(unite_select_next_line)
 	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
 	inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
 	inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-	nnoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-	nnoremap <silent><buffer><expr> <C-t> unite#do_action('tab')
-	"imap <buffer> <C-p> <Plug>(unite_toggle_auto_preview) 
-	"nmap <buffer> <C-p> <Plug>(unite_toggle_auto_preview) 
-	"inoremap <silent><buffer><expr> <C-p> empty(filter(range(1, winnr('$')), 'getwinvar(v:val, "&previewwindow") != 0')) ?  unite#do_action('preview') : ":\<C-u>pclose!\<CR>"
-	"nnoremap <silent><buffer><expr> <C-p> empty(filter(range(1, winnr('$')), 'getwinvar(v:val, "&previewwindow") != 0')) ?  unite#do_action('preview') : ":\<C-u>pclose!\<CR>"
 	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
-	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 endfunction
 autocmd FileType unite call s:unite_settings()
 " --------------------
@@ -1133,7 +1087,77 @@ hi TabLineFill term=underline cterm=underline gui=underline guibg=grey30
 hi TabLine term=underline cterm=underline gui=underline guibg=grey30
 hi TabLineSel term=none cterm=none gui=none
 " --------------------
-" ---- [13] AFTER VIMRC ----
+" ---- [13] VARIABLES AND FUNCTIONS ----
+function! QFix()
+	if !exists("t:qFixWin")
+		let t:qFixWin = 0
+	endif
+	if t:qFixWin == 0
+		copen
+		let t:qFixWin = 1
+	else
+		ccl
+		let t:qFixWin = 0
+	endif
+endfunction
+
+function! QFixClose()
+	ccl
+	let t:qFixWin = 0
+endfunction
+
+" Jumps you to the next/previous ultisnips location if exists.
+" Else it jumps to the next/previous delimiter.
+" Default delimiters: "'(){}[]
+" To change default delimiters just change b:smartJumpElements
+function! SmartJump()
+	call UltiSnips#JumpForwards()
+	if !exists("b:smartJumpElements")
+		let b:smartJumpElements = "[]'\"(){}\[]"
+	endif
+	if g:ulti_jump_forwards_res == 1
+		return ""
+	endif
+	let cursorPos = getpos('.')
+	let pos = match(getline('.'), b:smartJumpElements, cursorPos[2] - 1)
+	if pos == -1
+		return ""
+	else
+		let cursorPos[2] = pos + 1
+		call setpos('.', cursorPos)
+		call feedkeys("\<right>",'i')
+	endif
+	return ""
+endfunction
+function! SmartJumpBack()
+	call UltiSnips#JumpBackwards()
+	if !exists("b:smartJumpElements")
+		let b:smartJumpElements = "[]'\"(){}\[]"
+	endif
+	if g:ulti_jump_backwards_res == 1
+		return ""
+	endif
+	let cursorPos = getpos('.')
+	let newPos = match(getline('.'), b:smartJumpElements)
+	let pos = newPos
+	if pos == -1 || pos > cursorPos[2] + 1
+		return ""
+	endif
+	let matchCount = 1
+	while newPos < cursorPos[2] - 1
+		if newPos == -1
+			break
+		endif
+		let pos = newPos
+		let newPos = match(getline('.'), b:smartJumpElements, 0, matchCount)
+		let matchCount += 1
+	endwhile
+	let cursorPos[2] = pos + 1
+	call setpos('.', cursorPos)
+	return ""
+endfunction
+" --------------------
+" ---- [14] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
 endif
