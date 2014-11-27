@@ -217,80 +217,75 @@ set foldlevelstart=0
 " ---- [4.1] FOLDEXPR ----
 let g:InsideBrace = 0
 let g:InsideVar = 0
+let g:InsideComment = 0
 
-" Foldfunction for braces and vars indented one forward (C# and JAVA)
+" Foldfunction for C# and JAVA.
 function! OneIndentBraceFolding(lnum)
-	let line=getline(a:lnum)
-	let nextline=getline(a:lnum + 1)
-	" Catches start of function body
-	if indent(a:lnum) == 8 && line =~ '{'
-			let g:InsideBrace = 1
-			let g:InsideVar = 0
-	endif
-	" Catches end of function body
-	if indent(a:lnum) == 8 && line =~ '^\s*}'
-			let g:InsideBrace = 0
-			return 1
-	endif
-	" If inside function body
-	if g:InsideBrace
-		return 1
-	" If inside multiline variable declaration or something similar, like a multiline comment with indentation
-	elseif g:InsideVar && line =~ '\S'
-		return 1
-	" Cacthes start of multiline variable or comment
-	elseif indent(a:lnum) == 8 && line =~ '\S'
-		let g:InsideVar = 1
-		return 1
-	" Catches import/using for folding
-	elseif indent(a:lnum) == 0 && (line =~ 'import' || line=~ 'using')
-		return 1
-	" Rest, don't fold
-	else
-		let g:InsideVar = 0
-		return 0
-	endif
-endfunction
-
-function! CSFolding(lnum)
-	let lastline = getline(a:lnum-1)
 	let line = getline(a:lnum)
 	let nextline = getline(a:lnum+1)
-	if line =~ '^using'
+	let lastline = getline(a:lnum-1)
+	if lnum == 1
+		let g:InsideBrace = 0
 		let g:InsideVar = 0
+	endif
+	if line =~ '^using' || line =~ '^import' || line =~ '^package'
 		return 1
-	elseif line =~ '^\s*$'
-		if lastline =~ '^\s*}' && indent(a:lnum-1)/8 == 1
+	elseif line =~ '^\s*$' && g:InsideComment == 0
+		if nextline =~ '^\s*$' && g:InsideVar == 1
+			return 1
+		elseif g:InsideVar == 1
+			let g:InsideVar = 0
 			return '<1'
 		else
 			return '='
 		endif
 	else
-		if g:InsideVar == 0
-			if line =~ '^\s*{' && indent(a:lnum)/8 == 1
-				let g:InsideVar = 1
-				return ">1"
-			elseif line =~ '/// <summary>' && indent(a:lnum)/8 == 1
-				let g:InsideVar = 1
-				return ">1"
-			elseif nextline =~ '^\s*{' && indent(a:lnum + 1)/8 == 1
-				let g:InsideVar = 1
-				return ">1"
-			elseif indent(a:lnum)/8 == 1
-				return 1
-			else
-				return 0
-			endif
-		else
+		if g:InsideBrace == 1
 			if line =~ '^\s*}' && indent(a:lnum)/8 == 1
-				let g:InsideVar = 0
+				let g:InsideBrace = 0
 				if  nextline =~ '^\s*$'
 					return '1'
+					let g:InsideVar = 1
 				else
 					return '<1'
 				endif
 			else
 				return 1
+			endif
+		elseif g:InsideComment == 1
+			if line =~ '\*/$'
+				let g:InsideComment = 0
+				if  nextline =~ '^\s*$'
+					return '1'
+					let g:InsideVar = 1
+				else
+					return '<1'
+				endif
+			else
+				return 1
+			endif
+		else
+			if line =~ '^\s*/\*' && line =~ '\*/$'
+				return '='
+			elseif line =~ '^\s*/\*' 
+				let g:InsideComment = 1
+				return '>1'
+			elseif line =~ '{' && indent(a:lnum)/8 == 1
+				let g:InsideBrace = 1
+				return ">1"
+			elseif line =~ '/// <summary>' && indent(a:lnum)/8 == 1
+				let g:InsideBrace = 1
+				return ">1"
+			elseif line =~ '@Override' && indent(a:lnum)/8 == 1
+				let g:InsideBrace = 1
+				return ">1"
+			elseif nextline =~ '^\s*{' && indent(a:lnum + 1)/8 == 1
+				let g:InsideBrace = 1
+				return ">1"
+			elseif indent(a:lnum)/8 == 1
+				return 1
+			else
+				return 0
 			endif
 		endif
 	endif
@@ -425,32 +420,18 @@ function! MDFolding(lnum)
 endfunction
 " ---------------
 " ---- [4.2] FOLDTEXT ----
-" 
-" 1 if either line has a brace, else 2
-" (1)
-"-------Line1 Line2
-" (2)
-" 	Line1 Line2	
-"function! SpecialBraceFoldText()
-"	let i = v:foldstart
-"	let line = getline(i)
-"	let i = i+1
-"	let line .= getline(i)
-"	if line =~ '{'
-"		return '-------' . line
-"	else
-"		return '       ' . line
-"	endif
-"endfunction
+" FoldText for CS and JAVA.
 function! SpecialBraceFoldText()
 	let i = v:foldstart
 	let line = getline(i)
-	if line =~ 'using'
-		let line = "USING"
-	elseif line =~ ';' && line !~ 'using'
+	if line =~ '^using' || line =~ '^import' || line =~ '^package'
+		let line = "IMPORT"
+	elseif line =~ '/\*'
+		let line = "COMMENT"
+	elseif line =~ ';'
 		let line = "VARIABLES"
 	endif
-	while(line =~ '/' || line =~ '@' || line !~ '\S')
+	while(line =~ '^\s*/' || line =~ '@' || line !~ '\S')
 		let i = i+1
 		let line = getline(i)
 	endwhile
@@ -524,7 +505,7 @@ function! CSSettings()
 	setlocal omnifunc=CSOmni
 	let g:neocomplcache_omni_patterns.cs = '.*'
 	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-	setlocal foldexpr=CSFolding(v:lnum)
+	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
 endfunction
 
