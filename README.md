@@ -47,8 +47,10 @@ My vim settings.
 ### Code-Completion
 #### C
 * clang_complete might have been updated. Try running make install on it.
+
 #### CS
 * Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with the correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
+
 #### Java and Python
 * Make sure you have the ECLIM deamon running. If it still doesn't work then make sure that you are in an eclipse project. To create a new one run:  
 ``:ProjectCreate path -n language``  
@@ -68,14 +70,12 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
-* Replace NERDTREE with VIMFILER or builtin.
-* C-K in cmdmode.
+* Change binds for Vimfiler. Use vimfiler_expand_tree instead of edit.
 * Find a good bind for za, use it so often. Maybe s?
 * Find a good bind for $.
 * Do I use unite tag?
 * Do I use dispath?
 * Do I use vim-misc?
-* MDFolding folds stuff twice when skipping one size of header.
 * Think of better order for my sections in vimrc and move them around.
 * Make eclim start by itself.
 * Look into vim-org

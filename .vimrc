@@ -155,6 +155,7 @@ function! NeoTab()
 endfunction
 " --------------------
 " ---- [2.7] VIMFILER ----
+let g:vimfiler_expand_jump_to_first_child = 0
 " --------------------
 " ---- [2.8] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
@@ -719,12 +720,18 @@ inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 inoremap <S-Space> <C-R>=SmartJump()<CR>
 inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
 
+" Readline bindings.
+inoremap <C-A> <home>
+inoremap <C-E> <end>
+inoremap <C-K> <C-O>D
+
 " Matching delimiters
 inoremap "" ""<left>
 inoremap () ()<left>
 inoremap {} {}<left>
 inoremap '' ''<left>
 inoremap [] []<left>
+inoremap <> <><left>
 " --------------------
 " ---- [6.2] LEADER ----
 let mapleader="\<space>"
@@ -732,6 +739,7 @@ let mapleader="\<space>"
 " A
 " B
 " C
+map <leader>c :cd %:h<CR>
 " D
 map <leader>d :bn\|bd #<CR>
 " E
@@ -750,7 +758,6 @@ map <leader>gd :Gdiff<CR>
 " M
 " N 
 map <leader>n :bn <CR>
-map <leader>N :bp <CR>
 " O
 " P 
 map <leader>p :bp <CR>
@@ -796,10 +803,16 @@ xmap s S
 
 " --------------------
 " ---- [6.4] COMMAND ----
-cnoremap <C-A> <home>
 cnoremap <C-BS> <C-W>
 
+" Readline bindings.
+cnoremap <C-A> <home>
+cnoremap <C-E> <end>
+cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+
+" Open help in new tab
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
+
 " I tend to write :git instead of :Git
 cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
 " --------------------
@@ -1029,7 +1042,7 @@ endfunction
 function! SmartJump()
 	call UltiSnips#JumpForwards()
 	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}\[]"
+		let b:smartJumpElements = "[]'\"(){}<>\[]"
 	endif
 	if g:ulti_jump_forwards_res == 1
 		return ""
@@ -1048,7 +1061,7 @@ endfunction
 function! SmartJumpBack()
 	call UltiSnips#JumpBackwards()
 	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}\[]"
+		let b:smartJumpElements = "[]'\"(){}<>\[]"
 	endif
 	if g:ulti_jump_backwards_res == 1
 		return ""
