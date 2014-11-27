@@ -44,16 +44,19 @@ My vim settings.
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
 
 ## TROUBLESHOOTING
-#### Code-Completion
-
-* C - clang_complete might have been updated. Try running make install on it.
-* CS - Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with the correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
-* Python or Java - Make sure you have the ECLIM deamon running. If it still doesn't work then make sure that you are in an eclipse project. To create a new one run:  
+### Code-Completion
+#### C
+* clang_complete might have been updated. Try running make install on it.
+#### CS
+* Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with the correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
+#### Java and Python
+* Make sure you have the ECLIM deamon running. If it still doesn't work then make sure that you are in an eclipse project. To create a new one run:  
 ``:ProjectCreate path -n language``  
 ``Ex :ProjectCreate ~\git\test -n java``  
 ``If still unclear then look at :EclimHelp gettingstarted``  
+* If vim complains about imports then add the location of that import in Eclipse to your project.
 
-#### SSH
+### SSH
 
 * If Unite binding doesn't work then check that you are using the right encoding for ssh.
 
@@ -66,13 +69,12 @@ Add a pentadactylrc with the line:
 ## TODO
 
 * Replace NERDTREE with VIMFILER or builtin.
+* C-K in cmdmode.
 * Find a good bind for za, use it so often. Maybe s?
 * Find a good bind for $.
 * Do I use unite tag?
 * Do I use dispath?
 * Do I use vim-misc?
-* BUGG - Pressing tab when you are at the beginning of a line sometimes paste some jibberish completion.
-* BUGG - Eclim syntax checker complains on a correct import in vim but not in Eclipse.
 * MDFolding folds stuff twice when skipping one size of header.
 * Think of better order for my sections in vimrc and move them around.
 * Make eclim start by itself.
@@ -82,4 +84,5 @@ Add a pentadactylrc with the line:
 * Add PHP ECLIM completion.
 * Add SCALA ECLIM completion.
 * Make vim create required directories by itself.
+* Eclim - find way of adding source directories using vim instead of having to open eclipse.
 

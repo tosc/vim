@@ -134,15 +134,18 @@ let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 
 function! NeoTab()
-	call UltiSnips#ExpandSnippet()
-	if g:ulti_expand_res == 1
-		return ""
+	if getline('.') =~ '\S'
+		call UltiSnips#ExpandSnippet()
+		if g:ulti_expand_res == 1
+			return ""
+		endif
+		let longestCommon = neocomplcache#complete_common_string()
+		if longestCommon == ""
+			return pumvisible() ? "" : "\<TAB>"
+		endif
+		return longestCommon
 	endif
-	let longestCommon = neocomplcache#complete_common_string()
-	if longestCommon == ""
-		return pumvisible() ? "" : "\<TAB>"
-	endif
-	return longestCommon
+	return ""
 endfunction
 " --------------------
 " ---- [2.7] NERDTREE ----
@@ -732,10 +735,6 @@ inoremap <TAB> <C-R>=NeoTab()<CR>
 inoremap <C-BS> <C-W>
 inoremap <C-Del> <C-O>de
 
-" inoremap <silent> ( (<C-R>=UltiSnips#Anon('($1)$0', '(', '', 'i')<cr>
-" inoremap <silent> " "<C-R>=UltiSnips#Anon('"$1"$0', '"', '', 'i')<cr>
-" inoremap <silent> ' '<C-R>=UltiSnips#Anon("\'$1\'$0", "\'", '', 'i')<cr>
-
 " Shift-Enter acts like O in normal
 inoremap <S-CR> <C-O>O
 
@@ -1122,7 +1121,6 @@ function! SmartJump()
 	endif
 	return ""
 endfunction
-
 function! SmartJumpBack()
 	call UltiSnips#JumpBackwards()
 	if !exists("b:smartJumpElements")
