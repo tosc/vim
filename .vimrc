@@ -79,7 +79,6 @@ if !exists("g:reload")
 	Plugin 'xolox/vim-easytags'
 	Plugin 'xolox/vim-misc'
 	Plugin 'Konfekt/FastFold'
-	Plugin 'Raimondi/delimitMate'
 
 	" Required by vundle
 	call vundle#end()
@@ -787,6 +786,13 @@ inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 " Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
 inoremap <S-Space> <C-R>=SmartJump()<CR>
 inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
+
+" Matching delimiters
+inoremap "" ""<left>
+inoremap () ()<left>
+inoremap {} {}<left>
+inoremap '' ''<left>
+inoremap [] []<left>
 " --------------------
 " ---- [7.2] LEADER ----
 let mapleader="\<space>"
