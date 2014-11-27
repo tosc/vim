@@ -65,9 +65,16 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
-* Look at replacing NERDTREE with VIMFILER
+* Replace NERDTREE with VIMFILER or builtin.
+* Find a good bind for za, use it so often. Maybe s?
+* Find a good bind for $.
+* Do I use unite tag?
+* Do I use dispath?
+* Do I use vim-misc?
 * BUGG - Pressing tab when you are at the beginning of a line sometimes paste some jibberish completion.
 * BUGG - Eclim syntax checker complains on a correct import in vim but not in Eclipse.
+* MDFolding folds stuff twice when skipping one size of header.
+* Think of better order for my sections in vimrc and move them around.
 * Make eclim start by itself.
 * Look into vim-org
 * Check if ECLIM is a viable option for C and C++ code-completion.

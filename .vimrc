@@ -31,28 +31,13 @@ set backspace=indent,eol,start
 let $LANG = 'en'
 set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
 
-syntax on
-" ---------
-" ---- [2] SESSION SETTINGS ----
 set sessionoptions-=options
 set sessionoptions+=folds
 
-function! GetDir()
-	let l:name = getcwd()
-	let l:name = substitute(l:name, "\\", "-", "g")
-	let l:name = substitute(l:name, ":", "-", "g")
-	let l:name = substitute(l:name, "/", "-", "g")
-	let l:name = "~/.cache/unite/session/" . l:name . ".vim"
-	return l:name
-endfunction
-
-function! SaveSession()
-	exe "mksession! " . GetDir()
-endfunction
-
-" --------------------
-" ---- [3] PLUGINS ----
-" ---- [3.0] VUNDLE ----
+syntax on
+" ---------
+" ---- [2] PLUGINS ----
+" ---- [2.0] VUNDLE ----
 if !exists("g:reload")
 	" Required by vundle
 	filetype off
@@ -85,24 +70,24 @@ if !exists("g:reload")
 	filetype plugin indent on
 endif
 " ----------
-" ---- [3.1] ULTISNIPS ----
+" ---- [2.1] ULTISNIPS ----
 " Needed for checking if a ultisnips action has happened.
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
 let g:ulti_jump_backwards_res = 0
 " --------
-" ---- [3.2] ECLIM ----
+" ---- [2.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
 " -----
-" ---- [3.3] OMNISHARP (C# OMNICOMPLETE) ---- 
+" ---- [2.3] OMNISHARP (C# OMNICOMPLETE) ---- 
 let g:OmniSharp_typeLookupInPreview = 1
 " Sets the sln file to the first file avaliable
 let g:OmniSharp_sln_list_index = 1
 " If omnisharp server is running never stop it.
 let g:Omnisharp_stop_server = 0
 " -------
-" ---- [3.4] UNITE ----
+" ---- [2.4] UNITE ----
 let g:unite_enable_start_insert = 1
 let g:unite_enable_ignore_case = 1
 let g:unite_enable_smart_case = 1
@@ -116,9 +101,9 @@ call unite#custom#default_action('buffer', 'goto')
 call unite#filters#matcher_default#use(['matcher_fuzzy'])
 call unite#filters#sorter_default#use(['sorter_rank'])
 " --------------------
-" ---- [3.5] FUGITIVE ----
+" ---- [2.5] FUGITIVE ----
 " --------------------
-" ---- [3.6] NEOCOMPLCACHE ----
+" ---- [2.6] NEOCOMPLCACHE ----
 let g:neocomplcache_enable_at_startup = 1
 
 " Required for clang_complete to play nice with NEOCOMPLCACHE.
@@ -160,7 +145,7 @@ function! NeoTab()
 	return longestCommon
 endfunction
 " --------------------
-" ---- [3.7] NERDTREE ----
+" ---- [2.7] NERDTREE ----
 let NERDTreeShowHidden = 1
 let NERDTreeQuitOnOpen = 0
 let NERDTreeShowBookmarks = 1
@@ -197,24 +182,24 @@ function! NERDRemove(node)
 	call system("rm -r " . "\"" . a:node.path._str() . "\"")
 endfunction
 " --------------------
-" ---- [3.8] EASYTAGS ----
+" ---- [2.8] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
-" ---- [3.9] FASTFOLD ----
+" ---- [2.9] FASTFOLD ----
 let g:fastfold_savehook = 1
 let g:fastfold_togglehook = 0
 let g:fastfold_map = 1
 " --------------------
 " --------------------
-" ---- [4] FOLDING ----
-" ---- [4.0] FOLDSETTINGS ----
+" ---- [3] FOLDING ----
+" ---- [3.0] FOLDSETTINGS ----
 set foldmethod=expr
 set foldnestmax=2
 set foldopen=
 set foldlevelstart=0
 " --------------------
-" ---- [4.1] FOLDEXPR ----
+" ---- [3.1] FOLDEXPR ----
 let g:InsideBrace = 0
 let g:InsideVar = 0
 let g:InsideComment = 0
@@ -419,7 +404,7 @@ function! MDFolding(lnum)
 
 endfunction
 " ---------------
-" ---- [4.2] FOLDTEXT ----
+" ---- [3.2] FOLDTEXT ----
 " FoldText for CS and JAVA.
 function! SpecialBraceFoldText()
 	let i = v:foldstart
@@ -463,7 +448,7 @@ endfunction
 
 " --------------------
 " --------------------
-" ---- [5] AUTOCMD ----
+" ---- [4] AUTOCMD ----
 autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
 autocmd BufEnter * call SlowStatusLine() 
 
@@ -473,12 +458,12 @@ autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
 " To make FastFold calculate the folds when you open a file.
 autocmd BufReadPost * let &foldlevel=0
 " --------------------
-" ---- [6] FILETYPE SPECIFIC ----
-" ---- [6.0] All ----
+" ---- [5] FILETYPE SPECIFIC ----
+" ---- [5.0] All ----
 " :set filetype? To know current loaded filetype
 " for specific startfolding - let &foldlevel=0
 " --------
-" ---- [6.1] JAVA ----
+" ---- [5.1] JAVA ----
 function! JavaSettings()
 	setlocal omnifunc=JavaOmni
 	let g:neocomplcache_omni_patterns.java = '.*'
@@ -500,7 +485,7 @@ endfunction
 
 autocmd Filetype java call JavaSettings()
 " --------
-" ---- [6.2] C# ----
+" ---- [5.2] C# ----
 function! CSSettings()
 	setlocal omnifunc=CSOmni
 	let g:neocomplcache_omni_patterns.cs = '.*'
@@ -525,7 +510,7 @@ autocmd BufWritePost *.cs :OmniSharpReloadSolution
 
 autocmd Filetype cs call CSSettings()
 " ----------------
-" ---- [6.3] C ----
+" ---- [5.3] C ----
 function! CSettings()
 	setlocal omnifunc=COmni
 	setlocal foldexpr=BraceFolding(v:lnum)
@@ -545,7 +530,7 @@ endfunction
 
 autocmd Filetype c,cpp call CSettings()
 " --------------------
-" ---- [6.4] VIMRC ----
+" ---- [5.4] VIMRC ----
 function! VIMSettings()
 	setlocal foldexpr=VimrcFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -560,7 +545,7 @@ autocmd BufWritePost .vimrc so ~/git/vim/.vimrc
 
 autocmd Filetype vim call VIMSettings()
 " -------------
-" ---- [6.5] SNIPPET ----
+" ---- [5.5] SNIPPET ----
 function! SNIPPETSSettings()
 	setlocal foldexpr=SnippetFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -568,7 +553,7 @@ endfunction
 
 autocmd Filetype snippets call SNIPPETSSettings()
 " --------------------
-" ---- [6.6] TODO ----
+" ---- [5.6] TODO ----
 function! TODOSettings()
 	setlocal foldexpr=IndentFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -579,7 +564,7 @@ autocmd BufEnter *.td setlocal filetype=todo
 
 autocmd Filetype todo call TODOSettings()
 " --------------------
-" ---- [6.7] PYTHON ----
+" ---- [5.7] PYTHON ----
 function! PythonSettings()
 	setlocal omnifunc=PythonOmni
 	let g:neocomplcache_omni_patterns.python = '.*'
@@ -601,7 +586,7 @@ endfunction
 
 autocmd Filetype python call PythonSettings()
 " --------------------
-" ---- [6.8] LUA ----
+" ---- [5.8] LUA ----
 function! LUASettings()
 	setlocal foldexpr=IndentFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -609,7 +594,7 @@ endfunction
 
 autocmd Filetype lua call LUASettings()
 " -------------
-" ---- [6.9] MAKE ----
+" ---- [5.9] MAKE ----
 function! MAKESettings()
 	setlocal foldexpr=IndentFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -617,7 +602,7 @@ endfunction
 
 autocmd Filetype make call MAKESettings()
 " -------------
-" ---- [6.10] PASS ----
+" ---- [5.10] PASS ----
 function! PASSSettings()
 	setlocal foldexpr=PassFolding(v:lnum)
 	setlocal foldtext=PassFoldText()
@@ -642,7 +627,7 @@ autocmd BufNewFile,BufRead *.pass set filetype=pass
 
 autocmd Filetype pass call PASSSettings()
 " -------------
-" ---- [6.11] JAPANESE ----
+" ---- [5.11] JAPANESE ----
 function! JAPANESESettings()
 	set guifont=MS_Gothic:h16:w8
 	set fileencoding=utf-8
@@ -654,7 +639,7 @@ autocmd BufNewFile,BufRead *.jp set filetype=jp
 
 autocmd Filetype jp call JAPANESESettings()
 " -------------
-" ---- [6.12] LATEX ----
+" ---- [5.12] LATEX ----
 function! TEXSettings()
 	setlocal foldexpr=IndentFolding2(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -668,7 +653,7 @@ autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-di
 
 autocmd Filetype tex call TEXSettings()
 " --------------------
-" ---- [6.13] GITCOMMIT ----
+" ---- [5.13] GITCOMMIT ----
 function! GITCSettings()
 	" Don't fold gitstuff.
 	let &foldlevel = 99
@@ -677,7 +662,7 @@ endfunction
 
 autocmd FileType gitcommit call GITCSettings()
 " --------------------
-" ---- [6.14] MARKDOWN ----
+" ---- [5.14] MARKDOWN ----
 function! MDSettings()
 	setlocal foldexpr=MDFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -686,8 +671,8 @@ endfunction
 autocmd FileType markdown call MDSettings()
 " --------------------
 " --------------------
-" ---- [7] BINDINGS ----
-" ---- [7.0] NORMAL ----
+" ---- [6] BINDINGS ----
+" ---- [6.0] NORMAL ----
 "Not vi-compatible but more logical. Y yanks to end of line.
 noremap Y y$
 
@@ -714,12 +699,14 @@ noremap zV zMzv
 noremap <S-Space> :call SmartJump()<CR>
 noremap <S-BS> :call SmartJumpBack()<CR>
 
+" Do last recording. (Removes exmode which I never use.)
+noremap Q @@
+
 " Good avaliable binds
 " ´
 " Enter
 " Backspace
 " Shift enter
-" l&r Shift solo
 " ä
 " Ä
 " H (doesn't do anything since cursor always in middle for me)
@@ -729,7 +716,7 @@ noremap <S-BS> :call SmartJumpBack()<CR>
 " S (synonym for cc)
 
 " --------------------
-" ---- [7.1] INSERT ----
+" ---- [6.1] INSERT ----
 " Ultisnips bindings
 " f9 just to remove them. TODO look for better way to remove binding
 let g:UltiSnipsExpandTrigger="<f10>"
@@ -775,7 +762,7 @@ inoremap {} {}<left>
 inoremap '' ''<left>
 inoremap [] []<left>
 " --------------------
-" ---- [7.2] LEADER ----
+" ---- [6.2] LEADER ----
 let mapleader="\<space>"
 
 " A
@@ -834,7 +821,7 @@ map <leader>z :Unite -no-split session<CR>
 " -
 " /
 " --------------------
-" ---- [7.3] VISUAL ----
+" ---- [6.3] VISUAL ----
 
 " When you press TAB and have something selected in visual mode, it saves it for
 " ultisnips and then removes it.
@@ -844,7 +831,7 @@ xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 xmap s S
 
 " --------------------
-" ---- [7.4] COMMAND ----
+" ---- [6.4] COMMAND ----
 cnoremap <C-A> <home>
 cnoremap <C-BS> <C-W>
 
@@ -852,7 +839,7 @@ cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 " I tend to write :git instead of :Git
 cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
 " --------------------
-" ---- [7.5] NERDTREE ----
+" ---- [6.5] NERDTREE ----
 let NERDTreeMapOpenSplit='<C-S>'
 let NERDTreeMapOpenVSplit='<C-V>'
 let NERDTreeMapOpenInTab='<C-T>'
@@ -899,7 +886,7 @@ autocmd Filetype nerdtree call NERDTreeAddKeyMap({
 	\ 'quickhelpText': 'Removes stuff using NERDTree',
 	\ 'scope': 'DirNode'})
 " --------------------
-" ---- [7.6] UNITE ----
+" ---- [6.6] UNITE ----
 function! s:unite_settings()
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <ESC> <Plug>(unite_all_exit)
@@ -918,7 +905,7 @@ function! s:unite_settings()
 endfunction
 autocmd FileType unite call s:unite_settings()
 " --------------------
-" ---- [7.7] FUGITIVE ----
+" ---- [6.7] FUGITIVE ----
 function! FugitiveBindings()
 	" Fast movement for :GStatus
 	nmap <buffer> j <C-N>
@@ -926,7 +913,7 @@ function! FugitiveBindings()
 endfunction
 " --------------------
 " --------------------
-" ---- [8] TABS ----
+" ---- [7] TABS ----
 function! Tabline()
 	let s = ''
 	for i in range(tabpagenr('$'))
@@ -955,16 +942,16 @@ endfunction
 
 set tabline=%!Tabline()
 " --------------------
-" ---- [9] OS SPECIFIC ----
-" ---- [9.0] Windows ----
+" ---- [8] OS SPECIFIC ----
+" ---- [8.0] Windows ----
 if(has("win32"))
 	au GUIEnter * simalt ~x
 endif
 " --------------------
-" ---- [9.1] Linux ----
+" ---- [8.1] Linux ----
 " --------------------
 " --------------------
-" ---- [10] STATUSLINE ----
+" ---- [9] STATUSLINE ----
 set laststatus=2
 set statusline=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
 
@@ -1016,7 +1003,7 @@ function! SlowStatusLine()
 	let b:statusLineVar = SlowStatusLineVar
 endfunction
 " --------------------
-" ---- [11] MINIMALMODE ----
+" ---- [10] MINIMALMODE ----
 function! MinimalMode()
 	let s:CompletionCommand = "\<C-X>\<C-U>"
 	let g:PosBeforeCompletion = 0
@@ -1045,7 +1032,7 @@ function! MinimalMode()
 	inoremap <TAB> <C-R>=SmartTab()<CR>
 endfunction
 " --------------------
-" ---- [12] COLORSETTINGS ----
+" ---- [11] COLORSETTINGS ----
 colorscheme desert
 
 " Change to better colors when using a terminal
@@ -1084,7 +1071,16 @@ hi TabLineFill term=underline cterm=underline gui=underline guibg=grey30
 hi TabLine term=underline cterm=underline gui=underline guibg=grey30
 hi TabLineSel term=none cterm=none gui=none
 " --------------------
-" ---- [13] VARIABLES AND FUNCTIONS ----
+" ---- [12] VARIABLES AND FUNCTIONS ----
+function! SaveSession()
+	let sessionName = getcwd()
+	let sessionName = substitute(sessionName, "\\", "-", "g")
+	let sessionName = substitute(sessionName, ":", "-", "g")
+	let sessionName = substitute(sessionName, "/", "-", "g")
+	let sessionName = "~/.cache/unite/session/" . sessionName . ".vim"
+	exe "mksession! " . sessionName
+endfunction
+
 function! QFix()
 	if !exists("t:qFixWin")
 		let t:qFixWin = 0
@@ -1126,6 +1122,7 @@ function! SmartJump()
 	endif
 	return ""
 endfunction
+
 function! SmartJumpBack()
 	call UltiSnips#JumpBackwards()
 	if !exists("b:smartJumpElements")
@@ -1154,7 +1151,7 @@ function! SmartJumpBack()
 	return ""
 endfunction
 " --------------------
-" ---- [14] AFTER VIMRC ----
+" ---- [13] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
 endif
