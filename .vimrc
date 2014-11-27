@@ -220,29 +220,6 @@ let g:InsideBrace = 0
 let g:InsideVar = 0
 
 " Foldfunction for braces and vars indented one forward (C# and JAVA)
-" 1	import/using bla; 
-" 1	import/using bla; 
-" 1	import/using bla; 
-"
-" 	class
-" 	{
-" 1 		var
-" 1 		var
-" 1 		var
-"
-" 1		var
-" 1 		var
-" 1 		var
-"
-" 1 		fun{
-" 1			bla 
-" 1		}
-"
-" 1 		fun
-" 1		{
-" 1			bla
-" 1		}
-" 	}
 function! OneIndentBraceFolding(lnum)
 	let line=getline(a:lnum)
 	let nextline=getline(a:lnum + 1)
@@ -276,11 +253,51 @@ function! OneIndentBraceFolding(lnum)
 	endif
 endfunction
 
+function! CSFolding(lnum)
+	let lastline = getline(a:lnum-1)
+	let line = getline(a:lnum)
+	let nextline = getline(a:lnum+1)
+	if line =~ '^using'
+		let g:InsideVar = 0
+		return 1
+	elseif line =~ '^\s*$'
+		if lastline =~ '^\s*}' && indent(a:lnum-1)/8 == 1
+			return '<1'
+		else
+			return '='
+		endif
+	else
+		if g:InsideVar == 0
+			if line =~ '^\s*{' && indent(a:lnum)/8 == 1
+				let g:InsideVar = 1
+				return ">1"
+			elseif line =~ '/// <summary>' && indent(a:lnum)/8 == 1
+				let g:InsideVar = 1
+				return ">1"
+			elseif nextline =~ '^\s*{' && indent(a:lnum + 1)/8 == 1
+				let g:InsideVar = 1
+				return ">1"
+			elseif indent(a:lnum)/8 == 1
+				return 1
+			else
+				return 0
+			endif
+		else
+			if line =~ '^\s*}' && indent(a:lnum)/8 == 1
+				let g:InsideVar = 0
+				if  nextline =~ '^\s*$'
+					return '1'
+				else
+					return '<1'
+				endif
+			else
+				return 1
+			endif
+		endif
+	endif
+endfunction
+
 " Foldfunction for braces (C)
-" 1	fun
-" 1	{
-" 1		bla
-" 1	}
 function! BraceFolding(lnum)
 	let line=getline(a:lnum)
 	let nextline=getline(a:lnum + 1)
@@ -303,10 +320,7 @@ function! BraceFolding(lnum)
 	endif
 endfunction
 
-" Foldfunction for " ---(-) (VIMRC)
-" 1	" ---
-" 1	bla
-" 1	" -----
+" Foldfunction for VIM
 function! VimrcFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^\" ---- '
@@ -319,10 +333,7 @@ function! VimrcFolding(lnum)
 endfunction
 
 
-" Foldfunction for snippet->endsnippet (snippet)
-" 1	snippet
-" 1	bla
-" 1	endsnippet
+" Foldfunction for snippets
 function! SnippetFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^snippet'
@@ -350,6 +361,7 @@ function! IndentFolding(lnum)
 	endif
 endfunction
 
+" Python folding.
 function! PythonFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^import' || line =~ '^from'
@@ -434,6 +446,11 @@ endfunction
 function! SpecialBraceFoldText()
 	let i = v:foldstart
 	let line = getline(i)
+	if line =~ 'using'
+		let line = "USING"
+	elseif line =~ ';' && line !~ 'using'
+		let line = "VARIABLES"
+	endif
 	while(line =~ '/' || line =~ '@' || line !~ '\S')
 		let i = i+1
 		let line = getline(i)
@@ -508,7 +525,7 @@ function! CSSettings()
 	setlocal omnifunc=CSOmni
 	let g:neocomplcache_omni_patterns.cs = '.*'
 	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
+	setlocal foldexpr=CSFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
 endfunction
 
