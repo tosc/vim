@@ -282,7 +282,7 @@ function! OneIndentBraceFolding(lnum)
 			elseif nextline =~ '^\s*{' && indent(a:lnum + 1)/8 == 1
 				let g:InsideBrace = 1
 				return ">1"
-			elseif indent(a:lnum)/8 == 1
+			elseif indent(a:lnum)/8 >= 1
 				return 1
 			else
 				return 0
@@ -789,6 +789,7 @@ map <leader>d :bn\|bd #<CR>
 map <leader>gg :Gstatus<CR>
 map <leader>gc :Gcommit<CR>
 map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
+map <leader>gd :Gdiff<CR>
 " H
 " I
 " J
