@@ -54,7 +54,6 @@ if !exists("g:reload")
 	Plugin 'Shougo/neocomplcache'
 	Plugin 'JazzCore/neocomplcache-ultisnips'
 	Plugin 'SirVer/ultisnips'
-	Plugin 'scrooloose/nerdtree'
 	Plugin 'OmniSharp/omnisharp-vim'
 	Plugin 'tpope/vim-dispatch'
 	Plugin 'tpope/vim-fugitive'
@@ -64,6 +63,7 @@ if !exists("g:reload")
 	Plugin 'xolox/vim-easytags'
 	Plugin 'xolox/vim-misc'
 	Plugin 'Konfekt/FastFold'
+	Plugin 'Shougo/vimfiler.vim'
 
 	" Required by vundle
 	call vundle#end()
@@ -75,6 +75,12 @@ endif
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
 let g:ulti_jump_backwards_res = 0
+
+" Remove default ultisnips bindings.
+let g:UltiSnipsExpandTrigger="<Nop>"
+let g:UltiSnipsListSnippets = "<Nop>"
+let g:UltiSnipsJumpForwardTrigger="<Nop>"
+let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 " --------
 " ---- [2.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
@@ -145,45 +151,10 @@ function! NeoTab()
 		endif
 		return longestCommon
 	endif
-	return ""
+	return "\<TAB>"
 endfunction
 " --------------------
-" ---- [2.7] NERDTREE ----
-let NERDTreeShowHidden = 1
-let NERDTreeQuitOnOpen = 0
-let NERDTreeShowBookmarks = 1
-let NERDTreeMinimalUI = 1
-let NERDTreeIgnore=['\.\.$,','\.$']
-let NERDTreeWinSize = 50
-let NERDTreeSortOrder = ['^\a.*/$', '\/$', '^\a.*$', '*', '\.swp$',  '\.bak$', '\~$']
-let NERDTreeStatusline = "%{getcwd()}"
-
-
-function! Explorer(node)
-	call system('explorer ' . a:node.path._str())
-endfunction
-
-function! RunFile(node)
-	let fname = a:node.path._str()
-	if fname =~ ".mkv$" || fname =~ ".mp4$" || fname =~ ".avi$" || fname =~ ".wmv$" || fname =~ ".mov$" || fname =~ ".exe$" || fname =~ ".msi$" || fname =~ ".png$"
-		call system('cmd /c start ' . a:node.path._str())
-	else
-		call ActivateFileNode(a:node)
-	endif
-endfunction
-function! ActivateFileNode(node)
-	call a:node.activate({'reuse': 1, 'where': 'p'})
-endfunction
-function! ActivateDirNode(node)
-	call a:node.activate({'reuse': 1})
-endfunction
-function! ActivateBookmark(bm)
-	call a:bm.activate(!a:bm.path.isDirectory ? {'where': 'p'} : {})
-endfunction
-
-function! NERDRemove(node)
-	call system("rm -r " . "\"" . a:node.path._str() . "\"")
-endfunction
+" ---- [2.7] VIMFILER ----
 " --------------------
 " ---- [2.8] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
@@ -686,12 +657,11 @@ noremap ; ,
 " perform math on cursor
 noremap å viw"xc<C-R>=getreg('x')
 
-" Jumps when stuff is selected
-" snoremap <TAB> <ESC>:call UltiSnips#JumpForwards()<CR>
-
-"noremap ö :Unite -no-split window buffer file_mru<CR>
+" Open files using unite. Shows all current buffers and a history of latest files.
 noremap ö :Unite -no-split buffer file_mru<CR>
-noremap Ö :NERDTreeToggle .<CR>
+
+" Filebrowser.
+noremap Ö :VimFiler<CR>
 
 noremap <C-J> <C-]>
 
@@ -720,15 +690,7 @@ noremap Q @@
 
 " --------------------
 " ---- [6.1] INSERT ----
-" Ultisnips bindings
-" f9 just to remove them. TODO look for better way to remove binding
-let g:UltiSnipsExpandTrigger="<f10>"
-let g:UltiSnipsListSnippets = "<f10>"
-let g:UltiSnipsJumpForwardTrigger="<f-10>"
-let g:UltiSnipsJumpBackwardTrigger="<f-10>"
-"inoremap <C-J> <C-R>=UltiSnips#JumpForwards()<CR>
-
-" Run my special tab-command that.
+" Run my tabcompletion.
 inoremap <TAB> <C-R>=NeoTab()<CR>
 
 " Ctrl + del and Ctrl + bs like normal editors in insert
@@ -744,8 +706,11 @@ inoremap <C-F> <C-X><C-F>
 " Autocomplete spelling
 inoremap <C-S> <C-X><C-S>
 
-" Force normal completion.
-inoremap <expr><C-l>  neocomplcache#start_manual_complete()
+" Autocomplete line.
+inoremap <C-L> <C-X><C-L>
+
+" Force manual completion.
+inoremap <expr><C-M>  neocomplcache#start_manual_complete()
 
 " Pressing enter chooses completion if completion window is up, else normal enter.
 inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
@@ -838,55 +803,8 @@ cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
 " I tend to write :git instead of :Git
 cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
 " --------------------
-" ---- [6.5] NERDTREE ----
-let NERDTreeMapOpenSplit='<C-S>'
-let NERDTreeMapOpenVSplit='<C-V>'
-let NERDTreeMapOpenInTab='<C-T>'
-let NERDTreeMapUpdir='<BS>'
-let NERDTreeMapChdir='<C-C>'
-
-autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': '<C-e>',
-	\ 'callback': 'Explorer',
-	\ 'quickhelpText': 'Opens windows explorer',
-	\ 'scope': 'Bookmark'})
-autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': '<C-e>',
-	\ 'callback': 'Explorer',
-	\ 'quickhelpText': 'Opens windows explorer',
-	\ 'scope': 'DirNode'})
-
-autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': '<CR>',
-	\ 'callback': 'ActivateDirNode',
-	\ 'quickhelpText': 'A smarter vim enter.',
-	\ 'scope': 'DirNode'})
-
-autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': '<CR>',
-	\ 'callback': 'RunFile',
-	\ 'quickhelpText': 'A smarter vim enter.',
-	\ 'scope': 'FileNode'})
-
-autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': '<CR>',
-	\ 'callback': 'ActivateBookmark',
-	\ 'quickhelpText': 'A smarter vim enter.',
-	\ 'scope': 'Bookmark'})
-
-autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': '<C-x>',
-	\ 'callback': 'NERDRemove',
-	\ 'quickhelpText': 'Removes stuff using NERDTree',
-	\ 'scope': 'FileNode'})
-autocmd Filetype nerdtree call NERDTreeAddKeyMap({
-	\ 'key': '<C-x>',
-	\ 'callback': 'NERDRemove',
-	\ 'quickhelpText': 'Removes stuff using NERDTree',
-	\ 'scope': 'DirNode'})
-" --------------------
-" ---- [6.6] UNITE ----
-function! s:unite_settings()
+" ---- [6.5] UNITE ----
+function! UniteBinds()
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <ESC> <Plug>(unite_all_exit)
 	nnoremap <buffer> <BS> <Plug>()
@@ -902,7 +820,13 @@ function! s:unite_settings()
 	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
 endfunction
-autocmd FileType unite call s:unite_settings()
+autocmd FileType unite call UniteBinds()
+" --------------------
+" ---- [6.6] VIMFILER ----
+function! VimFilerBinds()
+	nmap <buffer> <ESC> <Plug>(vimfiler_exit)
+endfunction
+autocmd FileType vimfiler call VimFilerBinds()
 " --------------------
 " ---- [6.7] FUGITIVE ----
 function! FugitiveBindings()
