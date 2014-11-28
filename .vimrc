@@ -1039,9 +1039,7 @@ function! KillAllExternal()
 	if exists("g:EclimdRunning")
 		ShutdownEclim
 	endif
-	" Required in order to stop omnisharp.
-	set filetype=cs
-	OmniSharpStopServer
+	call OmniSharp#StopServer()
 endfunction
 autocmd VimLeave * call KillAllExternal()
 " --------------------
