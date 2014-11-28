@@ -1,4 +1,4 @@
-" ---- [1] NORMAL VIMSETTINGS ----
+" ---- [1] VIMSETTINGS ----
 autocmd!
 set nocompatible
 set relativenumber
@@ -140,21 +140,6 @@ let g:neocomplcache_enable_auto_close_preview = 0
 
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
-
-function! NeoTab()
-	if getline('.') =~ '\S'
-		call UltiSnips#ExpandSnippet()
-		if g:ulti_expand_res == 1
-			return ""
-		endif
-		let longestCommon = neocomplcache#complete_common_string()
-		if longestCommon == ""
-			return pumvisible() ? "" : "\<TAB>"
-		endif
-		return longestCommon
-	endif
-	return "\<TAB>"
-endfunction
 " --------------------
 " ---- [2.7] VIMFILER ----
 let g:vimfiler_expand_jump_to_first_child = 0
@@ -169,19 +154,429 @@ let g:fastfold_togglehook = 0
 let g:fastfold_map = 1
 " --------------------
 " --------------------
-" ---- [3] FOLDING ----
-" ---- [3.0] FOLDSETTINGS ----
+" ---- [3] BINDINGS ----
+" ---- [3.0] NORMAL ----
+" Show the my normal and insert bindings.
+noremap g? :enew <bar> r ~/git/vim/.vimrc <bar> set buftype=help <bar> set filetype=help<CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg 
+
+" Do last recording. (Removes exmode which I never use.)
+noremap Q @@
+
+"Not vi-compatible but more logical. Y yanks to end of line.
+noremap Y y$
+
+" Close everything except current fold.
+noremap zV zMzv
+
+" perform math on cursor
+noremap å viw"xc<C-R>=getreg('x')
+
+" Search file using unite.
+noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
+
+" Open files using unite. Shows all current buffers and a history of latest files.
+noremap ö :Unite -no-split buffer file_mru<CR>
+" Filebrowser.
+noremap Ö :VimFiler<CR>
+
+"Switches repeat f/F, feels more logical on swedish keyboard.
+noremap , ;
+noremap ; ,
+
+" Jump to tag. C-T to jump back.
+noremap <C-J> <C-]>
+
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+noremap <S-Space> :call SmartJump()<CR>
+noremap <S-BS> :call SmartJumpBack()<CR>
+
+" Good avaliable binds
+" ´
+" Enter
+" Backspace
+" Shift enter
+" ä
+" Ä
+" H (doesn't do anything since cursor always in middle for me)
+" M (doesn't do anything since cursor always in middle for me)
+" L (doesn't do anything since cursor always in middle for me)
+" s (synonym for cl)
+" S (synonym for cc)
+" --------------------
+" ---- [3.1] INSERT ----
+" Run my tabcompletion.
+inoremap <TAB> <C-R>=NeoTab()<CR>
+
+" Ctrl + del and Ctrl + bs like normal editors in insert
+inoremap <C-BS> <C-W>
+inoremap <C-Del> <C-O>de
+
+" Shift-Enter acts like O in normal
+inoremap <S-CR> <C-O>O
+
+" Autocomplete filename.
+inoremap <C-F> <C-X><C-F>
+
+" Autocomplete spelling
+inoremap <C-S> <C-X><C-S>
+
+" Autocomplete line.
+inoremap <C-L> <C-X><C-L>
+
+" Force manual completion.
+inoremap <expr><C-M>  neocomplcache#start_manual_complete()
+
+" Pressing enter chooses completion if completion window is up, else normal enter.
+inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
+
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+inoremap <S-Space> <C-R>=SmartJump()<CR>
+inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
+
+" Readline bindings.
+inoremap <C-A> <home>
+inoremap <C-E> <end>
+inoremap <C-K> <C-O>D
+
+" Matching delimiters
+inoremap "" ""<left>
+inoremap () ()<left>
+inoremap {} {}<left>
+inoremap '' ''<left>
+inoremap [] []<left>
+inoremap <> <><left>
+" --------------------
+" ---- [3.2] LEADER ----
+let mapleader="\<space>"
+
+" A
+" B
+" C
+map <leader>c :cd %:h<CR>
+" D
+map <leader>d :bn<bar>bd #<CR>
+" E
+" F
+" G
+map <leader>gg :Gstatus<CR>
+map <leader>gc :Gcommit<CR>
+map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
+map <leader>gd :Gdiff<CR>
+
+map <leader>g? :enew <bar> r ~/git/vim/.vimrc <bar> set buftype=help <bar> set filetype=help<CR> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg 
+" H
+" I
+" J
+" K
+" L
+" I
+" M
+map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make<CR>
+" N 
+map <leader>n :bn <CR>
+" O
+" P 
+map <leader>p :bp <CR>
+" Q
+map <leader>q :call QFix()<CR>
+" R 
+autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
+autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
+autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
+" S
+map <leader>se :setlocal spell spelllang=en_us <CR>
+map <leader>ss :setlocal spell spelllang=sv <CR>
+map <leader>so :setlocal nospell <CR>
+map <leader>sn :setlocal nospell <CR>
+map <leader>sc :setlocal nospell <CR>
+map <leader>sd :setlocal nospell <CR>
+" T
+map <leader>t :TagbarToggle <CR>
+" U
+map <leader>ue :UltiSnipsEdit <CR>
+map <leader>uu :Unite -no-split file:~/vimfiles/Ultisnips <CR>
+map <leader>us :Unite -no-split ultisnips <CR>
+map <leader>ur :Unite -no-split register<CR>
+map <leader>ut :Unite -no-split tag<CR>
+" V
+" W
+" X
+" Y
+" Z
+map <leader>z :Unite -no-split session<CR>
+" !
+" ?
+" -
+" /
+" --------------------
+" ---- [3.3] VISUAL ----
+
+" When you press TAB and have something selected in visual mode, it saves it for
+" ultisnips and then removes it.
+xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+
+" Remapped s to vim-surround.
+xmap s S
+
+" --------------------
+" ---- [3.4] COMMAND ----
+cnoremap <C-BS> <C-W>
+
+" Readline bindings.
+cnoremap <C-A> <home>
+cnoremap <C-E> <end>
+cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+
+" Open help in current window.
+cnoreabbrev h enew <bar> :set buftype=help <bar> :h
+
+" I tend to write :Git instead of :GIt
+cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
+" --------------------
+" ---- [3.5] UNITE ----
+function! UniteBinds()
+	nmap <buffer> <S-Space> <Plug>(unite_redraw)
+	nmap <buffer> <ESC> <Plug>(unite_all_exit)
+	nnoremap <buffer> <BS> <Plug>()
+	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
+	nnoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+	nnoremap <silent><buffer><expr> <C-t> unite#do_action('tab')
+	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
+	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
+	imap <buffer> <TAB> <Plug>(unite_select_next_line)
+	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
+	inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
+	inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
+	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
+	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
+endfunction
+autocmd FileType unite call UniteBinds()
+" --------------------
+" ---- [3.6] VIMFILER ----
+function! VimFilerBinds()
+	nmap <buffer> <ESC> <Plug>(vimfiler_exit)
+	" Show default bindings.
+	nmap <buffer> g? :h vimfiler <bar> :838<CR>
+endfunction
+autocmd FileType vimfiler call VimFilerBinds()
+" --------------------
+" ---- [3.7] FUGITIVE ----
+function! FugitiveBindings()
+	" Fast movement for :GStatus
+	nmap <buffer> j <C-N>
+	nmap <buffer> k <C-P>
+endfunction
+" --------------------
+" ---- [3.8] HELP ----
+function! HelpBinds()
+	nmap <buffer> <ESC> :bp<bar>bd! #<CR>
+endfunction
+autocmd FileType help call HelpBinds()
+" --------------------
+" --------------------
+" ---- [4] FILETYPE SPECIFIC ----
+" ---- [4.0] All ----
+" :set filetype? To know current loaded filetype
+" for specific startfolding - let &foldlevel=nr
+" --------
+" ---- [4.1] JAVA ----
+function! JavaSettings()
+	setlocal omnifunc=JavaOmni
+	let g:neocomplcache_omni_patterns.java = '.*'
+	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
+	setlocal foldtext=SpecialBraceFoldText()
+endfunction
+
+function! JavaOmni(findstart, base)
+	let words = eclim#java#complete#CodeComplete(a:findstart, a:base)
+	return FilterOmni(words, a:findstart, a:base)
+endfunction
+
+autocmd Filetype java call JavaSettings()
+" --------
+" ---- [4.2] C# ----
+function! CSSettings()
+	setlocal omnifunc=CSOmni
+	let g:neocomplcache_omni_patterns.cs = '.*'
+	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
+	setlocal foldtext=SpecialBraceFoldText()
+endfunction
+
+function! CSOmni(findstart, base)
+	let words = OmniSharp#Complete(a:findstart, a:base)
+	return FilterOmni(words, a:findstart, a:base)
+endfunction
+
+" Updates omnisharp to include new methods
+autocmd BufWritePost *.cs :OmniSharpReloadSolution
+
+autocmd Filetype cs call CSSettings()
+" ----------------
+" ---- [4.3] C ----
+function! CSettings()
+	setlocal omnifunc=COmni
+	setlocal foldexpr=BraceFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+function! COmni(findstart, base)
+	let words = UltiSnips#SnippetsInCurrentScope()
+	return FilterOmni(words, a:findstart, a:base)
+endfunction
+
+autocmd Filetype c,cpp call CSettings()
+" --------------------
+" ---- [4.4] VIMRC ----
+function! VIMSettings()
+	setlocal foldexpr=VimrcFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+	set textwidth=0
+endfunction
+
+" Pentadactyl file is a vim file.
+autocmd BufRead .pentadactylrc set filetype=vim
+
+" Runs the new vimrc when you save it.
+autocmd BufWritePost .vimrc so ~/git/vim/.vimrc
+
+autocmd Filetype vim call VIMSettings()
+" -------------
+" ---- [4.5] SNIPPET ----
+function! SNIPPETSSettings()
+	setlocal foldexpr=SnippetFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+autocmd Filetype snippets call SNIPPETSSettings()
+" --------------------
+" ---- [4.6] TODO ----
+function! TODOSettings()
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+" Files that end with .td are now todofiles.
+autocmd BufEnter *.td setlocal filetype=todo
+
+autocmd Filetype todo call TODOSettings()
+" --------------------
+" ---- [4.7] PYTHON ----
+function! PythonSettings()
+	setlocal omnifunc=PythonOmni
+	let g:neocomplcache_omni_patterns.python = '.*'
+	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+	setlocal foldexpr=PythonFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+function! PythonOmni(findstart, base)
+	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
+	return FilterOmni(words, a:findstart, a:base)
+endfunction
+
+autocmd Filetype python call PythonSettings()
+" --------------------
+" ---- [4.8] LUA ----
+function! LUASettings()
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+autocmd Filetype lua call LUASettings()
+" -------------
+" ---- [4.9] MAKE ----
+function! MAKESettings()
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+autocmd Filetype make call MAKESettings()
+" -------------
+" ---- [4.10] PASS ----
+function! PASSSettings()
+	setlocal foldexpr=PassFolding(v:lnum)
+	setlocal foldtext=PassFoldText()
+	setlocal foldminlines=0
+	FastFoldUpdate
+endfunction
+
+function! GenPass(...)
+let l:passLen = (a:0 > 0 ? a:1 : 8)
+python << endpy
+import random, string, vim, sys
+characters = string.ascii_letters + string.digits + '@&-_=+?!'
+passLen = int(vim.eval("l:passLen"))
+password = "".join(random.choice(characters) for x in range(0,passLen))
+vim.command("let l:password = '" + str(password) + "'")
+endpy
+execute "normal a".l:password
+endfunction
+
+" Files that end with .pass are now password files.
+autocmd BufNewFile,BufRead *.pass set filetype=pass
+
+autocmd Filetype pass call PASSSettings()
+" -------------
+" ---- [4.11] JAPANESE ----
+function! JAPANESESettings()
+	set guifont=MS_Gothic:h16:w8
+	set fileencoding=utf-8
+	set encoding=utf-8
+endfunction
+
+" Files that end with .jp are now japanese files.
+autocmd BufNewFile,BufRead *.jp set filetype=jp
+
+autocmd Filetype jp call JAPANESESettings()
+" -------------
+" ---- [4.12] LATEX ----
+function! TEXSettings()
+	setlocal foldexpr=IndentFolding2(v:lnum)
+	setlocal foldtext=NormalFoldText()
+	setlocal spell spelllang=en_us
+endfunction
+
+
+" Compile latex to a pdf when you save
+autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
+autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
+
+autocmd Filetype tex call TEXSettings()
+" --------------------
+" ---- [4.13] GITCOMMIT ----
+function! GITCSettings()
+	" Don't fold gitstuff.
+	let &foldlevel = 99
+	call FugitiveBindings()
+endfunction
+
+autocmd FileType gitcommit call GITCSettings()
+" --------------------
+" ---- [4.14] MARKDOWN ----
+function! MDSettings()
+	setlocal foldexpr=MDFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+autocmd FileType markdown call MDSettings()
+" --------------------
+" --------------------
+" ---- [5] FOLDING ----
+" ---- [5.0] FOLDSETTINGS ----
 set foldmethod=expr
 set foldnestmax=2
 set foldopen=
 set foldlevelstart=0
 " --------------------
-" ---- [3.1] FOLDEXPR ----
+" ---- [5.1] FOLDEXPR ----
+" ---- [5.1.0] GLOBAL VARIABLES ----
 let g:InsideBrace = 0
 let g:InsideVar = 0
 let g:InsideComment = 0
-
-" Foldfunction for C# and JAVA.
+" --------------------
+" ---- [5.1.1] C# JAVA ----
 function! OneIndentBraceFolding(lnum)
 	let line = getline(a:lnum)
 	let nextline = getline(a:lnum+1)
@@ -252,8 +647,8 @@ function! OneIndentBraceFolding(lnum)
 		endif
 	endif
 endfunction
-
-" Foldfunction for braces (C)
+" --------------------
+" ---- [5.1.2] C ----
 function! BraceFolding(lnum)
 	let line=getline(a:lnum)
 	let nextline=getline(a:lnum + 1)
@@ -275,8 +670,8 @@ function! BraceFolding(lnum)
 		return 0
 	endif
 endfunction
-
-" Foldfunction for VIM
+" --------------------
+" ---- [5.1.3] VIM ----
 function! VimrcFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^\" ---- '
@@ -287,9 +682,8 @@ function! VimrcFolding(lnum)
 		return '='
 	endif
 endfunction
-
-
-" Foldfunction for snippets
+" --------------------
+" ---- [5.1.4] SNIPPETS ----
 function! SnippetFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^snippet'
@@ -300,8 +694,9 @@ function! SnippetFolding(lnum)
 		return '='
 	endif
 endfunction
-
-" Indentionfolding, includes row before new indent.
+" --------------------
+" ---- [5.1.5] TODO LUA MAKE ----
+" Includes row before new indent.
 function! IndentFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^import' || line =~ '^from'
@@ -316,8 +711,8 @@ function! IndentFolding(lnum)
 		return '='
 	endif
 endfunction
-
-" Python folding.
+" --------------------
+" ---- [5.1.6] PYTHON ----
 function! PythonFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^import' || line =~ '^from'
@@ -344,8 +739,9 @@ function! PythonFolding(lnum)
 		return '='
 	endif
 endfunction
-
-" Indentfolding, includes row before new indent and row after.
+" --------------------
+" ---- [5.1.7] LATEX ----
+" Includes row before new indent and row after.
 function! IndentFolding2(lnum)
 	let line = getline(a:lnum)
 	if line =~ "^\s*$"
@@ -358,9 +754,8 @@ function! IndentFolding2(lnum)
 		return indent(a:lnum)/8
 	endif
 endfunction
-
-
-"Passfolding
+" --------------------
+" ---- [5.1.8] PASS ----
 function! PassFolding(lnum)
 	let line = getline(a:lnum)
 	if line == ""
@@ -368,8 +763,8 @@ function! PassFolding(lnum)
 	endif
 	return ">1"
 endfunction
-
-"MARKDOWNfolding
+" --------------------
+" ---- [5.1.9] MARKDOWN ----
 function! MDFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ "##"
@@ -380,9 +775,22 @@ function! MDFolding(lnum)
 	endif
 
 endfunction
+" --------------------
 " ---------------
-" ---- [3.2] FOLDTEXT ----
-" FoldText for CS and JAVA.
+" ---- [5.2] FOLDTEXT ----
+" ---- [5.2.0] DEFAULT ----
+" First line of fold
+function! NormalFoldText()
+	let line = substitute(getline(v:foldstart),'^\s*','','')
+	let indent_level = indent(v:foldstart)
+	let indent = repeat(' ', indent_level)
+	if line =~ 'import'
+	       let line = "import"	
+	endif
+	return indent . line
+endfunction
+" --------------------
+" ---- [5.2.1] CS JAVA ----
 function! SpecialBraceFoldText()
 	let i = v:foldstart
 	let line = getline(i)
@@ -403,18 +811,8 @@ function! SpecialBraceFoldText()
 	let indent = repeat(' ', indent_level)
 	return indent . line
 endfunction
-
-" Line1
-function! NormalFoldText()
-	let line = substitute(getline(v:foldstart),'^\s*','','')
-	let indent_level = indent(v:foldstart)
-	let indent = repeat(' ', indent_level)
-	if line =~ 'import'
-	       let line = "import"	
-	endif
-	return indent . line
-endfunction
-
+" --------------------
+" ---- [5.2.2] PASS ----
 " name pass username
 " name ------------- 
 function! PassFoldText()
@@ -422,490 +820,10 @@ function! PassFoldText()
 	let words = split(line, '\t')
 	return words[0]
 endfunction
-
 " --------------------
 " --------------------
-" ---- [4] AUTOCMD ----
-autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
-autocmd BufEnter * call SlowStatusLine() 
-
-autocmd InsertEnter * hi StatusLine gui=reverse
-autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
-
-" To make FastFold calculate the folds when you open a file.
-autocmd BufReadPost * let &foldlevel=0
 " --------------------
-" ---- [5] FILETYPE SPECIFIC ----
-" ---- [5.0] All ----
-" :set filetype? To know current loaded filetype
-" for specific startfolding - let &foldlevel=0
-" --------
-" ---- [5.1] JAVA ----
-function! JavaSettings()
-	setlocal omnifunc=JavaOmni
-	let g:neocomplcache_omni_patterns.java = '.*'
-	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
-	setlocal foldtext=SpecialBraceFoldText()
-endfunction
-
-function! JavaOmni(findstart, base)
-	let words = eclim#java#complete#CodeComplete(a:findstart, a:base)
-	if a:findstart
-		return words
-	elseif type(words) == 0 && words < 0
-		return words
-	else
-		return filter(words, 'match(v:val["word"], a:base)==0')
-	endif
-endfunction
-
-autocmd Filetype java call JavaSettings()
-" --------
-" ---- [5.2] C# ----
-function! CSSettings()
-	setlocal omnifunc=CSOmni
-	let g:neocomplcache_omni_patterns.cs = '.*'
-	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
-	setlocal foldtext=SpecialBraceFoldText()
-endfunction
-
-function! CSOmni(findstart, base)
-	let words = OmniSharp#Complete(a:findstart, a:base)
-	if a:findstart
-		return words
-	elseif type(words) == 0 && words < 0
-		return words
-	else
-		return filter(words, 'match(v:val["word"], a:base)==0')
-	endif
-endfunction
-
-" Updates omnisharp to include new methods
-autocmd BufWritePost *.cs :OmniSharpReloadSolution
-
-autocmd Filetype cs call CSSettings()
-" ----------------
-" ---- [5.3] C ----
-function! CSettings()
-	setlocal omnifunc=COmni
-	setlocal foldexpr=BraceFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-function! COmni(findstart, base)
-	let words = UltiSnips#SnippetsInCurrentScope()
-	if a:findstart
-		return words
-	elseif type(words) == 0 && words < 0
-		return words
-	else
-		return filter(words, 'match(v:val["word"], a:base)==0')
-	endif
-endfunction
-
-autocmd Filetype c,cpp call CSettings()
-" --------------------
-" ---- [5.4] VIMRC ----
-function! VIMSettings()
-	setlocal foldexpr=VimrcFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-	set textwidth=0
-endfunction
-
-" Pentadactyl file is a vim file.
-autocmd BufRead .pentadactylrc set filetype=vim
-
-" Runs the new vimrc when you save it.
-autocmd BufWritePost .vimrc so ~/git/vim/.vimrc
-
-autocmd Filetype vim call VIMSettings()
-" -------------
-" ---- [5.5] SNIPPET ----
-function! SNIPPETSSettings()
-	setlocal foldexpr=SnippetFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-autocmd Filetype snippets call SNIPPETSSettings()
-" --------------------
-" ---- [5.6] TODO ----
-function! TODOSettings()
-	setlocal foldexpr=IndentFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-" Files that end with .td are now todofiles.
-autocmd BufEnter *.td setlocal filetype=todo
-
-autocmd Filetype todo call TODOSettings()
-" --------------------
-" ---- [5.7] PYTHON ----
-function! PythonSettings()
-	setlocal omnifunc=PythonOmni
-	let g:neocomplcache_omni_patterns.python = '.*'
-	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-	setlocal foldexpr=PythonFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-function! PythonOmni(findstart, base)
-	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
-	if a:findstart
-		return words
-	elseif type(words) == 0 && words < 0
-		return words
-	else
-		return filter(words, 'match(v:val["word"], a:base)==0')
-	endif
-endfunction
-
-autocmd Filetype python call PythonSettings()
-" --------------------
-" ---- [5.8] LUA ----
-function! LUASettings()
-	setlocal foldexpr=IndentFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-autocmd Filetype lua call LUASettings()
-" -------------
-" ---- [5.9] MAKE ----
-function! MAKESettings()
-	setlocal foldexpr=IndentFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-autocmd Filetype make call MAKESettings()
-" -------------
-" ---- [5.10] PASS ----
-function! PASSSettings()
-	setlocal foldexpr=PassFolding(v:lnum)
-	setlocal foldtext=PassFoldText()
-	setlocal foldminlines=0
-	FastFoldUpdate
-endfunction
-
-function! GenPass(...)
-let l:passLen = (a:0 > 0 ? a:1 : 8)
-python << endpy
-import random, string, vim, sys
-characters = string.ascii_letters + string.digits + '@&-_=+?!'
-passLen = int(vim.eval("l:passLen"))
-password = "".join(random.choice(characters) for x in range(0,passLen))
-vim.command("let l:password = '" + str(password) + "'")
-endpy
-execute "normal a".l:password
-endfunction
-
-" Files that end with .pass are now password files.
-autocmd BufNewFile,BufRead *.pass set filetype=pass
-
-autocmd Filetype pass call PASSSettings()
-" -------------
-" ---- [5.11] JAPANESE ----
-function! JAPANESESettings()
-	set guifont=MS_Gothic:h16:w8
-	set fileencoding=utf-8
-	set encoding=utf-8
-endfunction
-
-" Files that end with .jp are now japanese files.
-autocmd BufNewFile,BufRead *.jp set filetype=jp
-
-autocmd Filetype jp call JAPANESESettings()
-" -------------
-" ---- [5.12] LATEX ----
-function! TEXSettings()
-	setlocal foldexpr=IndentFolding2(v:lnum)
-	setlocal foldtext=NormalFoldText()
-	setlocal spell spelllang=en_us
-endfunction
-
-
-" Compile latex to a pdf when you save
-autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
-autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
-
-autocmd Filetype tex call TEXSettings()
-" --------------------
-" ---- [5.13] GITCOMMIT ----
-function! GITCSettings()
-	" Don't fold gitstuff.
-	let &foldlevel = 99
-	call FugitiveBindings()
-endfunction
-
-autocmd FileType gitcommit call GITCSettings()
-" --------------------
-" ---- [5.14] MARKDOWN ----
-function! MDSettings()
-	setlocal foldexpr=MDFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-autocmd FileType markdown call MDSettings()
-" --------------------
-" --------------------
-" ---- [6] BINDINGS ----
-" ---- [6.0] NORMAL ----
-"Not vi-compatible but more logical. Y yanks to end of line.
-noremap Y y$
-
-"Switches repeat f/F, feels more logical on swedish keyboard.
-noremap , ;
-noremap ; ,
-
-" perform math on cursor
-noremap å viw"xc<C-R>=getreg('x')
-
-" Open files using unite. Shows all current buffers and a history of latest files.
-noremap ö :Unite -no-split buffer file_mru<CR>
-
-" Filebrowser.
-noremap Ö :VimFiler<CR>
-
-noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
-
-noremap <C-J> <C-]>
-
-" Close everything except current fold.
-noremap zV zMzv
-
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
-noremap <S-Space> :call SmartJump()<CR>
-noremap <S-BS> :call SmartJumpBack()<CR>
-
-" Do last recording. (Removes exmode which I never use.)
-noremap Q @@
-
-" Show the my normal and insert bindings.
-noremap g? :enew <bar> :r ~/git/vim/.vimrc <bar> :set buftype=help<bar> :set filetype=help<bar> /\[6.0\]<CR> :0,.-1d<CR>/\[6.2\]<CR> :.,$d<CR>gg 
-
-" Good avaliable binds
-" ´
-" Enter
-" Backspace
-" Shift enter
-" ä
-" Ä
-" H (doesn't do anything since cursor always in middle for me)
-" M (doesn't do anything since cursor always in middle for me)
-" L (doesn't do anything since cursor always in middle for me)
-" s (synonym for cl)
-" S (synonym for cc)
-" --------------------
-" ---- [6.1] INSERT ----
-" Run my tabcompletion.
-inoremap <TAB> <C-R>=NeoTab()<CR>
-
-" Ctrl + del and Ctrl + bs like normal editors in insert
-inoremap <C-BS> <C-W>
-inoremap <C-Del> <C-O>de
-
-" Shift-Enter acts like O in normal
-inoremap <S-CR> <C-O>O
-
-" Autocomplete filename.
-inoremap <C-F> <C-X><C-F>
-
-" Autocomplete spelling
-inoremap <C-S> <C-X><C-S>
-
-" Autocomplete line.
-inoremap <C-L> <C-X><C-L>
-
-" Force manual completion.
-inoremap <expr><C-M>  neocomplcache#start_manual_complete()
-
-" Pressing enter chooses completion if completion window is up, else normal enter.
-inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
-
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
-inoremap <S-Space> <C-R>=SmartJump()<CR>
-inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
-
-" Readline bindings.
-inoremap <C-A> <home>
-inoremap <C-E> <end>
-inoremap <C-K> <C-O>D
-
-" Matching delimiters
-inoremap "" ""<left>
-inoremap () ()<left>
-inoremap {} {}<left>
-inoremap '' ''<left>
-inoremap [] []<left>
-inoremap <> <><left>
-" --------------------
-" ---- [6.2] LEADER ----
-let mapleader="\<space>"
-
-" A
-" B
-" C
-map <leader>c :cd %:h<CR>
-" D
-map <leader>d :bn\|bd #<CR>
-" E
-" F
-" G
-map <leader>gg :Gstatus<CR>
-map <leader>gc :Gcommit<CR>
-map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
-map <leader>gd :Gdiff<CR>
-
-map <leader>g? :enew <bar> :r ~/git/vim/.vimrc <bar> :set buftype=help<bar> :set filetype=help<bar> /\[6.2\]<CR> :0,.+2d<CR>/\[6.3\]<CR> :.-1,$d<CR>gg 
-" H
-" I
-" J
-" K
-" L
-" I
-" M
-map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make<CR>
-" N 
-map <leader>n :bn <CR>
-" O
-" P 
-map <leader>p :bp <CR>
-" Q
-map <leader>q :call QFix()<CR>
-" R 
-autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
-autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
-autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
-" S
-map <leader>se :setlocal spell spelllang=en_us <CR>
-map <leader>ss :setlocal spell spelllang=sv <CR>
-map <leader>so :setlocal nospell <CR>
-map <leader>sn :setlocal nospell <CR>
-map <leader>sc :setlocal nospell <CR>
-map <leader>sd :setlocal nospell <CR>
-" T
-map <leader>t :TagbarToggle <CR>
-" U
-map <leader>ue :UltiSnipsEdit <CR>
-map <leader>uu :Unite -no-split file:~/vimfiles/Ultisnips <CR>
-map <leader>us :Unite -no-split ultisnips <CR>
-map <leader>ur :Unite -no-split register<CR>
-map <leader>ut :Unite -no-split tag<CR>
-" V
-" W
-" X
-" Y
-" Z
-map <leader>z :Unite -no-split session<CR>
-" !
-" ?
-" -
-" /
-" --------------------
-" ---- [6.3] VISUAL ----
-
-" When you press TAB and have something selected in visual mode, it saves it for
-" ultisnips and then removes it.
-xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
-
-" Remapped s to vim-surround.
-xmap s S
-
-" --------------------
-" ---- [6.4] COMMAND ----
-cnoremap <C-BS> <C-W>
-
-" Readline bindings.
-cnoremap <C-A> <home>
-cnoremap <C-E> <end>
-cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
-
-" Open help in current window.
-cnoreabbrev h enew <bar> :set buftype=help <bar> :h
-
-" I tend to write :Git instead of :GIt
-cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
-" --------------------
-" ---- [6.5] UNITE ----
-function! UniteBinds()
-	nmap <buffer> <S-Space> <Plug>(unite_redraw)
-	nmap <buffer> <ESC> <Plug>(unite_all_exit)
-	nnoremap <buffer> <BS> <Plug>()
-	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-	nnoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-	nnoremap <silent><buffer><expr> <C-t> unite#do_action('tab')
-	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
-	imap <buffer> <TAB> <Plug>(unite_select_next_line)
-	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
-	inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-	inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
-endfunction
-autocmd FileType unite call UniteBinds()
-" --------------------
-" ---- [6.6] VIMFILER ----
-function! VimFilerBinds()
-	nmap <buffer> <ESC> <Plug>(vimfiler_exit)
-	" Show default bindings.
-	nmap <buffer> g? :h vimfiler <bar> :838<CR>
-endfunction
-autocmd FileType vimfiler call VimFilerBinds()
-" --------------------
-" ---- [6.7] FUGITIVE ----
-function! FugitiveBindings()
-	" Fast movement for :GStatus
-	nmap <buffer> j <C-N>
-	nmap <buffer> k <C-P>
-endfunction
-" --------------------
-" ---- [6.8] HELP ----
-function! HelpBinds()
-	nmap <buffer> <ESC> :bp<bar>bd! #<CR>
-endfunction
-autocmd FileType help call HelpBinds()
-" --------------------
-" --------------------
-" ---- [7] TABS ----
-function! Tabline()
-	let s = ''
-	for i in range(tabpagenr('$'))
-		let tab = i + 1
-		let winnr = tabpagewinnr(tab)
-		let buflist = tabpagebuflist(tab)
-
-		let bufname = fnamemodify(bufname(buflist[0]), ':t:r')
-
-		let bufmodified = 0
-		for buf in buflist
-			if !bufmodified
-				let bufmodified = getbufvar(buf, "&mod")
-			endif
-		endfor
-
-		let s .= '%' . tab . 'T'
-		let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
-		let s .= ' ' . tab . (bufmodified ? "+" : "") .' '
-		let s .= (bufname != '' ? bufname . ' ' : '- ')
-	endfor
-
-	let s .= '%#TabLineFill#'
-	return s
-endfunction
-
-set tabline=%!Tabline()
-" --------------------
-" ---- [8] OS SPECIFIC ----
-" ---- [8.0] Windows ----
-if(has("win32"))
-	au GUIEnter * simalt ~x
-endif
-" --------------------
-" ---- [8.1] Linux ----
-" --------------------
-" --------------------
-" ---- [9] STATUSLINE ----
+" ---- [6] STATUSLINE ----
 set laststatus=2
 set statusline=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
 
@@ -957,7 +875,36 @@ function! SlowStatusLine()
 	let b:statusLineVar = SlowStatusLineVar
 endfunction
 " --------------------
-" ---- [10] MINIMALMODE ----
+" ---- [7] TABLINE ----
+function! Tabline()
+	let s = ''
+	for i in range(tabpagenr('$'))
+		let tab = i + 1
+		let winnr = tabpagewinnr(tab)
+		let buflist = tabpagebuflist(tab)
+
+		let bufname = fnamemodify(bufname(buflist[0]), ':t:r')
+
+		let bufmodified = 0
+		for buf in buflist
+			if !bufmodified
+				let bufmodified = getbufvar(buf, "&mod")
+			endif
+		endfor
+
+		let s .= '%' . tab . 'T'
+		let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
+		let s .= ' ' . tab . (bufmodified ? "+" : "") .' '
+		let s .= (bufname != '' ? bufname . ' ' : '- ')
+	endfor
+
+	let s .= '%#TabLineFill#'
+	return s
+endfunction
+
+set tabline=%!Tabline()
+" --------------------
+" ---- [8] MINIMALMODE ----
 function! MinimalMode()
 	let s:CompletionCommand = "\<C-X>\<C-U>"
 	let g:PosBeforeCompletion = 0
@@ -986,7 +933,7 @@ function! MinimalMode()
 	inoremap <TAB> <C-R>=SmartTab()<CR>
 endfunction
 " --------------------
-" ---- [11] COLORSETTINGS ----
+" ---- [9] COLORSETTINGS ----
 colorscheme desert
 
 " Change to better colors when using a terminal
@@ -1025,7 +972,44 @@ hi TabLineFill term=underline cterm=underline gui=underline guibg=grey30
 hi TabLine term=underline cterm=underline gui=underline guibg=grey30
 hi TabLineSel term=none cterm=none gui=none
 " --------------------
-" ---- [12] VARIABLES AND FUNCTIONS ----
+" ---- [10] AUTOCMD ----
+autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
+autocmd BufEnter * call SlowStatusLine() 
+
+autocmd InsertEnter * hi StatusLine gui=reverse
+autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
+
+" To make FastFold calculate the folds when you open a file.
+autocmd BufReadPost * let &foldlevel=0
+" --------------------
+" ---- [11] FUNCTIONS ----
+" ---- [11.0] TABCOMPLETION ----
+function! NeoTab()
+	if getline('.') =~ '\S'
+		call UltiSnips#ExpandSnippet()
+		if g:ulti_expand_res == 1
+			return ""
+		endif
+		let longestCommon = neocomplcache#complete_common_string()
+		if longestCommon == ""
+			return pumvisible() ? "" : "\<TAB>"
+		endif
+		return longestCommon
+	endif
+	return "\<TAB>"
+endfunction
+
+function! FilterOmni(words, findstart, base)
+	if a:findstart
+		return a:words
+	elseif type(a:words) == 0 && a:words < 0
+		return a:words
+	else
+		return filter(a:words, 'match(v:val["word"], a:base)==0')
+	endif
+endfunction
+" --------------------
+" ---- [11.1] SESSION ----
 function! SaveSession()
 	let sessionName = getcwd()
 	let sessionName = substitute(sessionName, "\\", "-", "g")
@@ -1034,7 +1018,8 @@ function! SaveSession()
 	let sessionName = "~/.cache/unite/session/" . sessionName . ".vim"
 	exe "mksession! " . sessionName
 endfunction
-
+" --------------------
+" ---- [11.2] QUICKFIX TOGGLE ----
 function! QFix()
 	if !exists("t:qFixWin")
 		let t:qFixWin = 0
@@ -1052,7 +1037,8 @@ function! QFixClose()
 	ccl
 	let t:qFixWin = 0
 endfunction
-
+" --------------------
+" ---- [11.3] JUMP ----
 " Jumps you to the next/previous ultisnips location if exists.
 " Else it jumps to the next/previous delimiter.
 " Default delimiters: "'(){}[]
@@ -1103,6 +1089,16 @@ function! SmartJumpBack()
 	call setpos('.', cursorPos)
 	return ""
 endfunction
+" --------------------
+" --------------------
+" ---- [12] OS SPECIFIC ----
+" ---- [12.0] Windows ----
+if(has("win32"))
+	au GUIEnter * simalt ~x
+endif
+" --------------------
+" ---- [12.1] Linux ----
+" --------------------
 " --------------------
 " ---- [13] AFTER VIMRC ----
 if !exists("g:reload")

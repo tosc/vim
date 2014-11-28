@@ -79,6 +79,7 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
+* Change my omnifuncs into a single omnifunc that uses a local variable to store the omnifunction it will use.
 * Add async compiling of tex using vimproc.
 * Change binds for Vimfiler. Use vimfiler_expand_tree instead of edit.
 * Find a good bind for za, use it so often. Maybe s?
@@ -86,7 +87,6 @@ Add a pentadactylrc with the line:
 * Do I use unite tag?
 * Do I use dispath?
 * Do I use vim-misc?
-* Think of better order for my sections in vimrc and move them around.
 * Make eclim start by itself.
 * Look into vim-org
 * Check if ECLIM is a viable option for C and C++ code-completion.
