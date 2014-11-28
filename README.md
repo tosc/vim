@@ -26,8 +26,10 @@ My vim settings.
 2. Add ctags to path.
 3. Link Ultisnips snippetfolder  
 ``mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
-4. Build omnisharp.  
+4. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
+5. Compile Vimproc.   
+`` make -f make_mingw32.mak`` 
 
 ##### (Optional)
 
@@ -42,6 +44,13 @@ My vim settings.
 
 1. Link Ultisnips snippetfolder  
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
+2. Compile Vimproc.   
+`` make -f make_unix.mak `` 
+
+#### MAC
+
+1. Compile Vimproc.   
+`` mac : make -f make_mac.mak``
 
 ## TROUBLESHOOTING
 ### Code-Completion
@@ -70,6 +79,7 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
+* Add async compiling of tex using vimproc.
 * Change binds for Vimfiler. Use vimfiler_expand_tree instead of edit.
 * Find a good bind for za, use it so often. Maybe s?
 * Find a good bind for $.

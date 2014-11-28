@@ -49,6 +49,7 @@ if !exists("g:reload")
 	Plugin 'Shougo/neomru.vim'
 	Plugin 'Shougo/unite.vim'
 	Plugin 'Shougo/unite-session'
+	Bundle 'Shougo/unite-build'
 	Plugin 'tsukkee/unite-tag'
 	Plugin 'skeept/ultisnips-unite'
 	Plugin 'Shougo/neocomplcache'
@@ -64,6 +65,7 @@ if !exists("g:reload")
 	Plugin 'xolox/vim-misc'
 	Plugin 'Konfekt/FastFold'
 	Plugin 'Shougo/vimfiler.vim'
+	Bundle 'Shougo/vimproc.vim'
 
 	" Required by vundle
 	call vundle#end()
@@ -756,6 +758,7 @@ map <leader>gd :Gdiff<CR>
 " L
 " I
 " M
+map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make<CR>
 " N 
 map <leader>n :bn <CR>
 " O
