@@ -38,7 +38,7 @@ syntax on
 " ---------
 " ---- [2] PLUGINS ----
 " ---- [2.0] VUNDLE ----
-if !exists("g:reload")
+if !exists("g:reload") && !exists("g:disablePlugins")
 	" Required by vundle
 	filetype off
 	set rtp+=~/.vim/bundle/Vundle.vim/
@@ -104,14 +104,13 @@ let g:unite_cursor_line_highlight = 'TabLine'
 
 let s:bufferaction = {'description' : 'verbose', 'is_selectable' : 1,}
 
-call unite#custom#default_action('buffer', 'goto')
-
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#sorter_default#use(['sorter_rank'])
+if !exists("g:disablePlugins")
+	call unite#custom#default_action('buffer', 'goto')
+	call unite#filters#matcher_default#use(['matcher_fuzzy'])
+	call unite#filters#sorter_default#use(['sorter_rank'])
+endif
 " --------------------
-" ---- [2.5] FUGITIVE ----
-" --------------------
-" ---- [2.6] NEOCOMPLCACHE ----
+" ---- [2.5] NEOCOMPLCACHE ----
 let g:neocomplcache_enable_at_startup = 1
 
 " Required for clang_complete to play nice with NEOCOMPLCACHE.
@@ -141,14 +140,14 @@ let g:neocomplcache_enable_auto_close_preview = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 " --------------------
-" ---- [2.7] VIMFILER ----
+" ---- [2.6] VIMFILER ----
 let g:vimfiler_expand_jump_to_first_child = 0
 " --------------------
-" ---- [2.8] EASYTAGS ----
+" ---- [2.7] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
-" ---- [2.9] FASTFOLD ----
+" ---- [2.8] FASTFOLD ----
 let g:fastfold_savehook = 1
 let g:fastfold_togglehook = 0
 let g:fastfold_map = 1
@@ -171,13 +170,24 @@ noremap zV zMzv
 " perform math on cursor
 noremap å viw"xc<C-R>=getreg('x')
 
-" Search file using unite.
-noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
+if !exists("g:disablePlugins")
+	" Search file using unite.
+	noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
 
-" Open files using unite. Shows all current buffers and a history of latest files.
-noremap ö :Unite -no-split buffer file_mru<CR>
-" Filebrowser.
-noremap Ö :VimFiler<CR>
+	" Open files using unite. Shows all current buffers and a history of latest files.
+	noremap ö :Unite -no-split buffer file_mru<CR>
+
+	" Filebrowser.
+	noremap Ö :VimFiler<CR>
+else
+	noremap ä /
+	noremap ö :e 
+	noremap Ö :e 
+endif
+
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+noremap <S-Space> :call SmartJump()<CR>
+noremap <S-BS> :call SmartJumpBack()<CR>
 
 "Switches repeat f/F, feels more logical on swedish keyboard.
 noremap , ;
@@ -186,9 +196,6 @@ noremap ; ,
 " Jump to tag. C-T to jump back.
 noremap <C-J> <C-]>
 
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
-noremap <S-Space> :call SmartJump()<CR>
-noremap <S-BS> :call SmartJumpBack()<CR>
 
 " Good avaliable binds
 " ´
@@ -204,9 +211,6 @@ noremap <S-BS> :call SmartJumpBack()<CR>
 " S (synonym for cc)
 " --------------------
 " ---- [3.1] INSERT ----
-" Run my tabcompletion.
-inoremap <TAB> <C-R>=NeoTab()<CR>
-
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
 inoremap <C-Del> <C-O>de
@@ -223,8 +227,16 @@ inoremap <C-S> <C-X><C-S>
 " Autocomplete line.
 inoremap <C-L> <C-X><C-L>
 
-" Force manual completion.
-inoremap <expr><C-M>  neocomplcache#start_manual_complete()
+if !exists("g:disablePlugins")
+	" Run my tabcompletion.
+	inoremap <TAB> <C-R>=NeoTab()<CR>
+	" Force manual completion.
+	inoremap <expr><C-M>  neocomplcache#start_manual_complete()
+else
+	" Simple tabcompletion.
+	inoremap <expr><TAB> getline('.') =~ '\S' ? '<C-X><C-N>' : '<TAB>'
+	inoremap <C-M> <C-X><C-N>
+endif
 
 " Pressing enter chooses completion if completion window is up, else normal enter.
 inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
@@ -258,10 +270,17 @@ map <leader>d :bn<bar>bd #<CR>
 " E
 " F
 " G
-map <leader>gg :Gstatus<CR>
-map <leader>gc :Gcommit<CR>
-map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
-map <leader>gd :Gdiff<CR>
+if !exists("g:disablePlugins")
+	map <leader>gg :Gstatus<CR>
+	map <leader>gc :Gcommit<CR>
+	map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
+	map <leader>gd :Gdiff<CR>
+else
+	map <leader>gg :!git -C %:h status<CR>
+	map <leader>gc :!git -C %:h commit<CR>
+	map <leader>gp :!git -C %:h push<CR> :call SlowStatusLine()<CR>
+	map <leader>gd :!git -C %:h diff<CR>
+endif
 
 map <leader>g? :enew <bar> r ~/git/vim/.vimrc <bar> set buftype=help <bar> set filetype=help<CR> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg 
 " H
@@ -271,7 +290,11 @@ map <leader>g? :enew <bar> r ~/git/vim/.vimrc <bar> set buftype=help <bar> set f
 " L
 " I
 " M
-map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make<CR>
+if !exists("g:disablePlugins")
+	map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make<CR>
+else
+	map <leader>m :!make<CR>
+endif
 " N 
 map <leader>n :bn <CR>
 " O
@@ -291,19 +314,26 @@ map <leader>sn :setlocal nospell <CR>
 map <leader>sc :setlocal nospell <CR>
 map <leader>sd :setlocal nospell <CR>
 " T
-map <leader>t :TagbarToggle <CR>
+if !exists("g:disablePlugins")
+	map <leader>t :TagbarToggle <CR>
+endif
 " U
-map <leader>ue :UltiSnipsEdit <CR>
-map <leader>uu :Unite -no-split file:~/vimfiles/Ultisnips <CR>
-map <leader>us :Unite -no-split ultisnips <CR>
-map <leader>ur :Unite -no-split register<CR>
-map <leader>ut :Unite -no-split tag<CR>
+if !exists("g:disablePlugins")
+	map <leader>ue :UltiSnipsEdit <CR>
+	map <leader>uu :Unite -no-split file:~/vimfiles/Ultisnips <CR>
+	map <leader>us :Unite -no-split ultisnips <CR>
+	map <leader>ur :Unite -no-split register<CR>
+	map <leader>ut :Unite -no-split tag<CR>
+endif
 " V
+map <leader>v :e ~/git/vim/.vimrc<CR>
 " W
 " X
 " Y
 " Z
-map <leader>z :Unite -no-split session<CR>
+if !exists("g:disablePlugins")
+	map <leader>z :Unite -no-split session<CR>
+endif
 " !
 " ?
 " -
@@ -311,13 +341,16 @@ map <leader>z :Unite -no-split session<CR>
 " --------------------
 " ---- [3.3] VISUAL ----
 
-" When you press TAB and have something selected in visual mode, it saves it for
-" ultisnips and then removes it.
-xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+if !exists("g:disablePlugins")
+	" When you press TAB and have something selected in visual mode, it saves it for
+	" ultisnips and then removes it.
+	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+endif
 
-" Remapped s to vim-surround.
-xmap s S
-
+if !exists("g:disablePlugins")
+	" Remapped s to vim-surround.
+	xmap s S
+endif
 " --------------------
 " ---- [3.4] COMMAND ----
 cnoremap <C-BS> <C-W>
@@ -330,8 +363,13 @@ cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 " Open help in current window.
 cnoreabbrev h enew <bar> :set buftype=help <bar> :h
 
-" I tend to write :Git instead of :GIt
-cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
+if !exists("g:disablePlugins")
+	" I tend to write :git instead of :Git
+	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
+else
+	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "!git" : "git"
+	cnoreabbrev <expr> Git getcmdtype() == ":" && getcmdline() == "Git" ? "!git" : "Git"
+endif
 " --------------------
 " ---- [3.5] UNITE ----
 function! UniteBinds()
@@ -381,10 +419,12 @@ autocmd FileType help call HelpBinds()
 " ---- [4.1] JAVA ----
 function! JavaSettings()
 	setlocal omnifunc=JavaOmni
-	let g:neocomplcache_omni_patterns.java = '.*'
-	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
+	if !exists("g:disablePlugins")
+		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+		let g:neocomplcache_omni_patterns.java = '.*'
+	endif
 endfunction
 
 function! JavaOmni(findstart, base)
@@ -397,10 +437,12 @@ autocmd Filetype java call JavaSettings()
 " ---- [4.2] C# ----
 function! CSSettings()
 	setlocal omnifunc=CSOmni
-	let g:neocomplcache_omni_patterns.cs = '.*'
-	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
+	if !exists("g:disablePlugins")
+		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+		let g:neocomplcache_omni_patterns.cs = '.*'
+	endif
 endfunction
 
 function! CSOmni(findstart, base)
@@ -1043,12 +1085,14 @@ endfunction
 " Default delimiters: "'(){}[]
 " To change default delimiters just change b:smartJumpElements
 function! SmartJump()
-	call UltiSnips#JumpForwards()
 	if !exists("b:smartJumpElements")
 		let b:smartJumpElements = "[]'\"(){}<>\[]"
 	endif
-	if g:ulti_jump_forwards_res == 1
-		return ""
+	if !exists("g:disablePlugins")
+		call UltiSnips#JumpForwards()
+		if g:ulti_jump_forwards_res == 1
+			return ""
+		endif
 	endif
 	let cursorPos = getpos('.')
 	let pos = match(getline('.'), b:smartJumpElements, cursorPos[2] - 1)
@@ -1062,12 +1106,14 @@ function! SmartJump()
 	return ""
 endfunction
 function! SmartJumpBack()
-	call UltiSnips#JumpBackwards()
 	if !exists("b:smartJumpElements")
 		let b:smartJumpElements = "[]'\"(){}<>\[]"
 	endif
-	if g:ulti_jump_backwards_res == 1
-		return ""
+	if !exists("g:disablePlugins")
+		call UltiSnips#JumpBackwards()
+		if g:ulti_jump_backwards_res == 1
+			return ""
+		endif
 	endif
 	let cursorPos = getpos('.')
 	let newPos = match(getline('.'), b:smartJumpElements)

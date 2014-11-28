@@ -52,11 +52,12 @@ My vim settings.
 1. Compile Vimproc.   
 `` mac : make -f make_mac.mak``
 
-## Options
+## OPTIONS
 
 Add any of these lines to your vimrc to disable certain parts of the vimrc.  
 These lines must be above ``source ~/git/vim/.vimrc``  
-`` let g:minimalMode = 1 ``  - If you are on a slow computer but still want most of the functionality.
+`` let g:minimalMode = 1 ``  - If you are on a slow computer but still want most of the functionality.  
+`` let g:disablePlugins = 1 ``  - Don't use any plugins.
 
 ## TROUBLESHOOTING
 ### Code-Completion
@@ -77,7 +78,7 @@ These lines must be above ``source ~/git/vim/.vimrc``
 
 * If Unite binding doesn't work then check that you are using the right encoding for ssh.
 
-## Pentadactyl
+## PENTADACTYL
 
 Firefox pentadactyl settings.  
 Add a pentadactylrc with the line:  
@@ -85,7 +86,6 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
-* Add global variables that allow you to choose different parts of my vimrc. Ex choose to not use any plugins. Run minimalmode etc. Set these in your local vimrc. 
 * Make tags project specific. Currently language specific.
 * Add async compiling of tex using vimproc.
 * Change binds for Vimfiler. Use vimfiler_expand_tree instead of edit.
@@ -101,4 +101,5 @@ Add a pentadactylrc with the line:
 * Add SCALA ECLIM completion.
 * Make vim create required directories by itself.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
+* Check if plugin is loaded instead of checking if disablePlugin.
 
