@@ -666,6 +666,8 @@ noremap ö :Unite -no-split buffer file_mru<CR>
 " Filebrowser.
 noremap Ö :VimFiler<CR>
 
+noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
+
 noremap <C-J> <C-]>
 
 " Close everything except current fold.
@@ -677,6 +679,9 @@ noremap <S-BS> :call SmartJumpBack()<CR>
 
 " Do last recording. (Removes exmode which I never use.)
 noremap Q @@
+
+" Show the leader bindings. (Opens a new buffer makes it look like a help buffer. Fills it with my vimrc and deletes everything but the leader bindings.)
+noremap g? :enew <bar> :r ~/git/vim/.vimrc <bar> :set buftype=help<bar> :set filetype=help<bar> /\[6.2\]<CR> :0,.+2d<CR>/\[6.3\]<CR> :.-1,$d<CR>gg 
 
 " Good avaliable binds
 " ´
@@ -690,7 +695,6 @@ noremap Q @@
 " L (doesn't do anything since cursor always in middle for me)
 " s (synonym for cl)
 " S (synonym for cc)
-
 " --------------------
 " ---- [6.1] INSERT ----
 " Run my tabcompletion.
@@ -792,6 +796,7 @@ map <leader>ut :Unite -no-split tag<CR>
 " Z
 map <leader>z :Unite -no-split session<CR>
 " !
+" ?
 " -
 " /
 " --------------------
@@ -813,10 +818,10 @@ cnoremap <C-A> <home>
 cnoremap <C-E> <end>
 cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 
-" Open help in new tab
-cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? "tab h" : "h"
+" Open help in current window.
+cnoreabbrev h enew <bar> :set buftype=help <bar> :h
 
-" I tend to write :git instead of :Git
+" I tend to write :Git instead of :GIt
 cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
 " --------------------
 " ---- [6.5] UNITE ----
@@ -841,6 +846,8 @@ autocmd FileType unite call UniteBinds()
 " ---- [6.6] VIMFILER ----
 function! VimFilerBinds()
 	nmap <buffer> <ESC> <Plug>(vimfiler_exit)
+	" Show default bindings.
+	nmap <buffer> g? :h vimfiler <bar> :838<CR>
 endfunction
 autocmd FileType vimfiler call VimFilerBinds()
 " --------------------
@@ -850,6 +857,12 @@ function! FugitiveBindings()
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
 endfunction
+" --------------------
+" ---- [6.8] HELP ----
+function! HelpBinds()
+	nmap <buffer> <ESC> :bp<bar>bd! #<CR>
+endfunction
+autocmd FileType help call HelpBinds()
 " --------------------
 " --------------------
 " ---- [7] TABS ----
