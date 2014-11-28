@@ -251,12 +251,18 @@ inoremap <C-E> <end>
 inoremap <C-K> <C-O>D
 
 " Matching delimiters
-inoremap "" ""<left>
-inoremap () ()<left>
-inoremap {} {}<left>
-inoremap '' ''<left>
-inoremap [] []<left>
-inoremap <> <><left>
+function! BindDelim(kMap)
+	execute 'inoremap ' . a:kMap . ' ' . a:kMap . '<left>' 
+	execute 'inoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>' 
+	execute 'inoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>' 
+endfunction
+call BindDelim('""')
+call BindDelim('()')
+call BindDelim('{}')
+call BindDelim("''")
+call BindDelim('[]')
+call BindDelim('<>')
+inoremap {{ {<cr><cr>}<up><TAB>
 " --------------------
 " ---- [3.2] LEADER ----
 let mapleader="\<space>"
@@ -810,7 +816,7 @@ endfunction
 " ---- [5.1.9] MARKDOWN ----
 function! MDFolding(lnum)
 	let line = getline(a:lnum)
-	if line =~ "##"
+	if line =~ "#"
 		let ind = strlen(substitute(line, "[^#]", "", "g")) - 1
 		return '>' . ind
 	else

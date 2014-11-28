@@ -5,7 +5,7 @@ My vim settings.
 ## FRESH INSTALL
 #### ALL
 
-1. Create a vimrc with the line:  
+1. Create a vimrc with the lines:  
 ```VimL
 "let g:minimalMode = 1
 "let g:disablePlugins = 1
@@ -84,7 +84,7 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 
 * If Unite binding doesn't work then check that you are using the right encoding for ssh.
 
-## PENTADACTYL
+# PENTADACTYL
 
 Firefox pentadactyl settings.  
 Add a pentadactylrc with the line:  
@@ -92,7 +92,7 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
-* BUG: Writing () and then now pressing a letter should put you at the end of the ()
+* BUG: g:disableExternal doesn't disable omnisharp.
 * Make tags project specific. Currently language specific.
 * Add async compiling of tex using vimproc.
 * Find a good bind for $.
@@ -105,5 +105,5 @@ Add a pentadactylrc with the line:
 * Make vim create required directories by itself.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
 * Check if plugin is loaded instead of checking if disablePlugin.
-* Make eclimd start in background instead of taking focus from window.
+* Improve my gitstatusline. Use vimproc or dispatch to refresh it more often.
 
