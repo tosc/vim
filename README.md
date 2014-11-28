@@ -52,6 +52,12 @@ My vim settings.
 1. Compile Vimproc.   
 `` mac : make -f make_mac.mak``
 
+## Options
+
+Add any of these lines to your vimrc to disable certain parts of the vimrc.  
+These lines must be above ``source ~/git/vim/.vimrc``  
+`` let g:minimalMode = 1 ``  - If you are on a slow computer but still want most of the functionality.
+
 ## TROUBLESHOOTING
 ### Code-Completion
 #### C

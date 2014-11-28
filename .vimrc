@@ -904,7 +904,7 @@ endfunction
 set tabline=%!Tabline()
 " --------------------
 " ---- [8] MINIMALMODE ----
-function! MinimalMode()
+if exists("g:minimalMode")
 	let s:CompletionCommand = "\<C-X>\<C-U>"
 	let g:PosBeforeCompletion = 0
 	function! SmartTab()
@@ -930,7 +930,7 @@ function! MinimalMode()
 	" No complete-as-you-type, instead tab autocompletes/open completion window.
 	let g:neocomplcache_disable_auto_complete = 1
 	inoremap <TAB> <C-R>=SmartTab()<CR>
-endfunction
+endif
 " --------------------
 " ---- [9] COLORSETTINGS ----
 colorscheme desert
