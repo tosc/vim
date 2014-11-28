@@ -680,8 +680,8 @@ noremap <S-BS> :call SmartJumpBack()<CR>
 " Do last recording. (Removes exmode which I never use.)
 noremap Q @@
 
-" Show the leader bindings. (Opens a new buffer makes it look like a help buffer. Fills it with my vimrc and deletes everything but the leader bindings.)
-noremap g? :enew <bar> :r ~/git/vim/.vimrc <bar> :set buftype=help<bar> :set filetype=help<bar> /\[6.2\]<CR> :0,.+2d<CR>/\[6.3\]<CR> :.-1,$d<CR>gg 
+" Show the my normal and insert bindings.
+noremap g? :enew <bar> :r ~/git/vim/.vimrc <bar> :set buftype=help<bar> :set filetype=help<bar> /\[6.0\]<CR> :0,.-1d<CR>/\[6.2\]<CR> :.,$d<CR>gg 
 
 " Good avaliable binds
 " ´
@@ -755,6 +755,8 @@ map <leader>gg :Gstatus<CR>
 map <leader>gc :Gcommit<CR>
 map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
 map <leader>gd :Gdiff<CR>
+
+map <leader>g? :enew <bar> :r ~/git/vim/.vimrc <bar> :set buftype=help<bar> :set filetype=help<bar> /\[6.2\]<CR> :0,.+2d<CR>/\[6.3\]<CR> :.-1,$d<CR>gg 
 " H
 " I
 " J
