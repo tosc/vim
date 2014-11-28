@@ -17,6 +17,7 @@ My vim settings.
 5. Build clang_complete. Go into clang_complete folder and run make install.
 6. Install Eclipse.
 7. Install ECLIM.
+8. Add eclim to path.
 8. Download LaTex.
 9. Install ctags.
 
@@ -86,14 +87,11 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
+* BUG: Writing () and then now pressing a letter should put you at the end of the ()
 * Make tags project specific. Currently language specific.
 * Add async compiling of tex using vimproc.
-* Change binds for Vimfiler. Use vimfiler_expand_tree instead of edit.
-* Find a good bind for za, use it so often. Maybe s?
 * Find a good bind for $.
 * Do I use unite tag?
-* Do I use dispath?
-* Make eclim start by itself.
 * Look into vim-org
 * Check if ECLIM is a viable option for C and C++ code-completion.
 * Add RUBY ECLIM completion.
@@ -102,4 +100,5 @@ Add a pentadactylrc with the line:
 * Make vim create required directories by itself.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
 * Check if plugin is loaded instead of checking if disablePlugin.
+* Make eclimd start in background instead of taking focus from window.
 

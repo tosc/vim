@@ -87,6 +87,14 @@ let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 " ---- [2.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
+
+function! RunEclimd()
+	if !exists("g:EclimdRunning")
+		ShutdownEclim
+		call vimproc#system_bg('eclimd')
+		let g:EclimdRunning = 1
+	endif
+endfunction
 " -----
 " ---- [2.3] OMNISHARP (C# OMNICOMPLETE) ---- 
 let g:OmniSharp_typeLookupInPreview = 1
@@ -424,6 +432,7 @@ function! JavaSettings()
 	if !exists("g:disablePlugins")
 		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 		let g:neocomplcache_omni_patterns.java = '.*'
+		call RunEclimd()
 	endif
 endfunction
 
@@ -506,10 +515,13 @@ autocmd Filetype todo call TODOSettings()
 " ---- [4.7] PYTHON ----
 function! PythonSettings()
 	setlocal omnifunc=PythonOmni
-	let g:neocomplcache_omni_patterns.python = '.*'
-	let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
+	if !exists("g:disablePlugins")
+		let g:neocomplcache_omni_patterns.python = '.*'
+		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+		call RunEclimd()
+	endif
 endfunction
 
 function! PythonOmni(findstart, base)
@@ -1022,6 +1034,16 @@ autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
 
 " To make FastFold calculate the folds when you open a file.
 autocmd BufReadPost * let &foldlevel=0
+
+function! KillAllExternal()
+	if exists("g:EclimdRunning")
+		ShutdownEclim
+	endif
+	" Required in order to stop omnisharp.
+	set filetype=cs
+	OmniSharpStopServer
+endfunction
+autocmd VimLeave * call KillAllExternal()
 " --------------------
 " ---- [11] FUNCTIONS ----
 " ---- [11.0] TABCOMPLETION ----
