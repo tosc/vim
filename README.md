@@ -79,14 +79,14 @@ Add a pentadactylrc with the line:
 
 ## TODO
 
-* Change my omnifuncs into a single omnifunc that uses a local variable to store the omnifunction it will use.
+* Add global variables that allow you to choose different parts of my vimrc. Ex choose to not use any plugins. Run minimalmode etc. Set these in your local vimrc. 
+* Make tags project specific. Currently language specific.
 * Add async compiling of tex using vimproc.
 * Change binds for Vimfiler. Use vimfiler_expand_tree instead of edit.
 * Find a good bind for za, use it so often. Maybe s?
 * Find a good bind for $.
 * Do I use unite tag?
 * Do I use dispath?
-* Do I use vim-misc?
 * Make eclim start by itself.
 * Look into vim-org
 * Check if ECLIM is a viable option for C and C++ code-completion.

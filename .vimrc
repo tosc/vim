@@ -354,9 +354,8 @@ autocmd FileType unite call UniteBinds()
 " --------------------
 " ---- [3.6] VIMFILER ----
 function! VimFilerBinds()
+	nmap <buffer> za t
 	nmap <buffer> <ESC> <Plug>(vimfiler_exit)
-	" Show default bindings.
-	nmap <buffer> g? :h vimfiler <bar> :838<CR>
 endfunction
 autocmd FileType vimfiler call VimFilerBinds()
 " --------------------
