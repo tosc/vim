@@ -87,14 +87,6 @@ let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 " ---- [2.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
-
-function! RunEclimd()
-	if !exists("g:EclimdRunning")
-		ShutdownEclim
-		call vimproc#system_bg('eclimd')
-		let g:EclimdRunning = 1
-	endif
-endfunction
 " -----
 " ---- [2.3] OMNISHARP (C# OMNICOMPLETE) ---- 
 let g:OmniSharp_typeLookupInPreview = 1
@@ -432,7 +424,6 @@ function! JavaSettings()
 	if !exists("g:disablePlugins")
 		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 		let g:neocomplcache_omni_patterns.java = '.*'
-		call RunEclimd()
 	endif
 endfunction
 
@@ -520,7 +511,6 @@ function! PythonSettings()
 	if !exists("g:disablePlugins")
 		let g:neocomplcache_omni_patterns.python = '.*'
 		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-		call RunEclimd()
 	endif
 endfunction
 
@@ -1041,7 +1031,9 @@ function! KillAllExternal()
 	endif
 	call OmniSharp#StopServer()
 endfunction
-autocmd VimLeave * call KillAllExternal()
+if !exists("g:disableExternal")
+	autocmd VimLeave * call KillAllExternal()
+endif
 " --------------------
 " ---- [11] FUNCTIONS ----
 " ---- [11.0] TABCOMPLETION ----
@@ -1168,5 +1160,10 @@ endif
 " ---- [13] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
+endif
+
+if !exists("g:EclimdRunning") && !exists("g:disableExternal")
+	let g:EclimdRunning = 1
+	call vimproc#system_bg('eclimd')
 endif
 " --------------------

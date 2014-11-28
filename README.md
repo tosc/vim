@@ -6,7 +6,12 @@ My vim settings.
 #### ALL
 
 1. Create a vimrc with the line:  
-``source ~/git/vim/.vimrc``  
+```VimL
+"let g:minimalMode = 1
+"let g:disablePlugins = 1
+"let g:disableExternal = 1
+source ~/git/vim/.vimrc
+```  
 2. Create folders  
 ``.vim/tmp``  
 ``.vim/tags``  
@@ -55,10 +60,10 @@ My vim settings.
 
 ## OPTIONS
 
-Add any of these lines to your vimrc to disable certain parts of the vimrc.  
-These lines must be above ``source ~/git/vim/.vimrc``  
+Uncomment any of these lines from your vimrc to disable certain parts of the vimrc.  
 `` let g:minimalMode = 1 ``  - If you are on a slow computer but still want most of the functionality.  
-`` let g:disablePlugins = 1 ``  - Don't use any plugins.
+`` let g:disablePlugins = 1 ``  - Don't use any plugins.  
+`` let g:disableExternal = 1 ``  - Don't autostart external completion engines. (Eclim and omnisharp)  
 
 ## TROUBLESHOOTING
 ### Code-Completion
