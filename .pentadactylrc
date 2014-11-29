@@ -32,7 +32,7 @@ noremap b <C-A-b>
 noremap y ;y
 
 " Fixes a bug where pentadactyl won't run : after insert.
-inoremap : <esc>:
+"inoremap : <esc>:
 
 inoremap <c-v> <C-v><C-v>
 " --------------------

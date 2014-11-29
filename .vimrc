@@ -285,6 +285,7 @@ if !exists("g:disablePlugins")
 	map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
 	map <leader>gP :Git push --force<CR> :call SlowStatusLine()<CR>
 	map <leader>gd :Gdiff<CR>
+	map <leader>gj :Gpull<CR>
 else
 	map <leader>gg :!git -C %:h status<CR>
 	map <leader>gc :!git -C %:h commit<CR>
