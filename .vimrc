@@ -247,6 +247,8 @@ inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 " Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
 inoremap <S-Space> <C-R>=SmartJump()<CR>
 inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
+inoremap <pageup> <C-R>=SmartJump()<CR>
+inoremap <pagedown> <C-R>=SmartJumpBack()<CR>
 
 " Readline bindings.
 inoremap <C-A> <home>
@@ -272,6 +274,7 @@ let mapleader="\<space>"
 
 " A
 " B
+map <leader>b :b #<CR>
 " C
 map <leader>c :cd %:h<CR>
 " D
@@ -358,6 +361,8 @@ endif
 " Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
 snoremap <S-Space> <ESC>:call SmartJump()<CR>
 snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
+snoremap <pageup> <ESC>:call SmartJump()<CR>
+snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
 
 if !exists("g:disablePlugins")
 	" When you press TAB and have something selected in visual mode, it saves it for

@@ -1,9 +1,9 @@
 # vim
 
-My vim settings.
+Vim settings.
 
-## FRESH INSTALL
-#### ALL
+## INSTALL
+### ALL
 
 1. Create a vimrc with the lines:  
 ```VimL
@@ -22,11 +22,11 @@ source ~/git/vim/.vimrc
 5. Build clang_complete. Go into clang_complete folder and run make install.
 6. Install Eclipse.
 7. Install ECLIM.
-8. Add eclim to path.
+8. Add eclimd to path.
 8. Download LaTex.
 9. Install ctags.
 
-#### WINDOWS
+### WINDOWS
 
 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
 2. Add ctags to path.
@@ -46,14 +46,14 @@ source ~/git/vim/.vimrc
 ``[HKEY_CLASSES_ROOT\No Extension\Shell\Open]``  
 ``[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"``
 
-#### LINUX
+### LINUX
 
 1. Link Ultisnips snippetfolder  
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
 2. Compile Vimproc.   
 `` make -f make_unix.mak `` 
 
-#### MAC
+### MAC
 
 1. Compile Vimproc.   
 `` mac : make -f make_mac.mak``
@@ -63,9 +63,12 @@ source ~/git/vim/.vimrc
 Uncomment any of these lines from your vimrc to disable certain parts of the vimrc.  
 `` let g:minimalMode = 1 ``  - If you are on a slow computer but still want most of the functionality.  
 `` let g:disablePlugins = 1 ``  - Don't use any plugins.  
-`` let g:disableExternal = 1 ``  - Don't autostart external completion engines. (Eclim and omnisharp)  
+`` let g:disableExternal = 1 ``  - Don't autostart external scripts. (Eclimd and texcompiler)  
 
 ## TROUBLESHOOTING
+### ERROR
+* If vim complains about the statusline then you might be using an old git version. I use the -C flag and older version don't have it.
+
 ### Code-Completion
 #### C
 * clang_complete might have been updated. Try running make install on it.
@@ -87,14 +90,18 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 # PENTADACTYL
 
 Firefox pentadactyl settings.  
+
+## INSTALL
 Add a pentadactylrc with the line:  
 `` source ~/git/vim/.pentadactylrc `` 
 
-## TODO
+# TODO
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
 
+* Fix eclim in terminal vim.
+* Fix omnisharp in terminal vim.
 * Create a "dictionary" of keywords that every language should have a snippet of. Maybe create a skeleton-snippet where all those keyboards are initialized but empty and then you can fill them out. 
 Ex: snippet elem "Get element of list"
 snippet fori "For 0-x with counter i" b
