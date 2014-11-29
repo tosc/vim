@@ -275,7 +275,7 @@ let mapleader="\<space>"
 " C
 map <leader>c :cd %:h<CR>
 " D
-map <leader>d :bn<bar>bd #<CR>
+map <leader>d :b #<bar>bd #<CR>
 " E
 " F
 " G
@@ -283,11 +283,13 @@ if !exists("g:disablePlugins")
 	map <leader>gg :Gstatus<CR>
 	map <leader>gc :Gcommit<CR>
 	map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
+	map <leader>gP :Git push --force<CR> :call SlowStatusLine()<CR>
 	map <leader>gd :Gdiff<CR>
 else
 	map <leader>gg :!git -C %:h status<CR>
 	map <leader>gc :!git -C %:h commit<CR>
 	map <leader>gp :!git -C %:h push<CR> :call SlowStatusLine()<CR>
+	map <leader>gP :!git -C %:h push --force<CR> :call SlowStatusLine()<CR>
 	map <leader>gd :!git -C %:h diff<CR>
 endif
 
@@ -323,6 +325,9 @@ map <leader>so :setlocal nospell <CR>
 map <leader>sn :setlocal nospell <CR>
 map <leader>sc :setlocal nospell <CR>
 map <leader>sd :setlocal nospell <CR>
+if !exists("g:disablePlugins")
+	map <leader>S :Unite -no-split ultisnips <CR>
+endif
 " T
 if !exists("g:disablePlugins")
 	map <leader>t :TagbarToggle <CR>
@@ -419,7 +424,7 @@ endfunction
 " --------------------
 " ---- [3.8] HELP ----
 function! HelpBinds()
-	nmap <buffer> <ESC> :bp<bar>bd! #<CR>
+	nmap <buffer> <ESC> :b #<bar>bd! #<CR>
 endfunction
 autocmd FileType help call HelpBinds()
 " --------------------

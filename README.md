@@ -94,7 +94,12 @@ Add a pentadactylrc with the line:
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
+* BUG: Empty buffers appear from time to time, think it has something to do with my custom-unite behaviour.
 
+* Change my custom unite behaviour. Instead of making them help buftypes, just add a esc bind that removes and closes oneself.
+* Create a special ä mode for stuff like g?.
+
+* Fix snippet snippets with visual made, should have a default value also.
 * Find way to send texcompiling error to vim and hide the texcompiling window.
 * Find way to kill autotexcompiling when closing tex buffer.
 * Open pdfviewer with vim / texcompiler.
