@@ -193,6 +193,9 @@ noremap <S-BS> :call SmartJumpBack()<CR>
 noremap , ;
 noremap ; ,
 
+" I've always found $ hard to hit, § easier with swedish layout.
+noremap § $
+
 " Jump to tag. C-T to jump back.
 noremap <C-J> <C-]>
 
@@ -297,7 +300,7 @@ map <leader>g? :enew <bar> r ~/git/vim/.vimrc <bar> set buftype=help <bar> set f
 " I
 " M
 if !exists("g:disablePlugins")
-	map <leader>m :Unite -no-split -auto-preview -no-start-insert build:make<CR>
+	map <leader>m :cd %:h<CR>:Unite -no-split -auto-preview -no-start-insert build:make<CR>
 else
 	map <leader>m :!make<CR>
 endif
@@ -312,6 +315,7 @@ map <leader>q :call QFix()<CR>
 autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
 autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
+autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
 " S
 map <leader>se :setlocal spell spelllang=en_us <CR>
 map <leader>ss :setlocal spell spelllang=sv <CR>
@@ -346,6 +350,8 @@ endif
 " /
 " --------------------
 " ---- [3.3] VISUAL ----
+" I've always found $ hard to hit, § easier with swedish layout.
+noremap § $
 
 if !exists("g:disablePlugins")
 	" When you press TAB and have something selected in visual mode, it saves it for
@@ -445,6 +451,7 @@ function! CSSettings()
 	setlocal omnifunc=CSOmni
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
+	let g:unite_builder_make_command = "msbuild"
 	if !exists("g:disablePlugins")
 		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 		let g:neocomplcache_omni_patterns.cs = '.*'
@@ -585,12 +592,23 @@ function! TEXSettings()
 	setlocal foldexpr=IndentFolding2(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	setlocal spell spelllang=en_us
+	if !exists("g:minimalMode") && !exists("g:disableExternal")
+		call StartTexBuilder()
+	endif
+	
 endfunction
 
+if !exists("g:minimalMode") && !exists("g:disableExternal")
+	autocmd TextChanged,TextChangedI *.tex write
+else
+	" Compile latex to a pdf when you save
+	autocmd BufWritePre *.tex call vimproc#system("rm -f " . expand('%:r') . ".aux")
+	autocmd BufWritePost *.tex call vimproc#system("pdflatex -halt-on-error -output-directory=" . expand('%:h') . " " . expand('%'))
+endif
 
-" Compile latex to a pdf when you save
-autocmd BufWritePre *.tex silent !start /min rm -f %:r.aux
-autocmd BufWritePost *.tex silent !start /min pdflatex -halt-on-error -output-directory=%:h %
+function! StartTexBuilder()
+	Start python texbuilder.py %:h %
+endfunction
 
 autocmd Filetype tex call TEXSettings()
 " --------------------
