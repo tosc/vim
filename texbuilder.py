@@ -2,7 +2,6 @@ import os
 import time
 import sys
 import subprocess
-import time
 
 while 1:
 	timeStart = time.time()
@@ -21,3 +20,4 @@ while 1:
 	timeEnd = time.time() - timeStart
 	print("Done! %.2fs" % timeEnd)
 	time.sleep(1)
+	os.system("ls -la")

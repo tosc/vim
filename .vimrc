@@ -80,7 +80,7 @@ let g:ulti_jump_backwards_res = 0
 
 " Remove default ultisnips bindings.
 let g:UltiSnipsExpandTrigger="<Nop>"
-let g:UltiSnipsListSnippets = "<Nop>"
+let g:UltiSnipsListSnippets ="<Nop>"
 let g:UltiSnipsJumpForwardTrigger="<Nop>"
 let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 " --------
@@ -350,9 +350,6 @@ endif
 " /
 " --------------------
 " ---- [3.3] VISUAL ----
-" I've always found $ hard to hit, § easier with swedish layout.
-noremap § $
-
 if !exists("g:disablePlugins")
 	" When you press TAB and have something selected in visual mode, it saves it for
 	" ultisnips and then removes it.
@@ -607,7 +604,9 @@ else
 endif
 
 function! StartTexBuilder()
+	cd ~\git\vim
 	Start python texbuilder.py %:h %
+	cd %:h
 endfunction
 
 autocmd Filetype tex call TEXSettings()

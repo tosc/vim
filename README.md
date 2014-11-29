@@ -93,19 +93,19 @@ Add a pentadactylrc with the line:
 ## TODO
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
-* Find way to kill autotexcompiling when closing window.
-* Open pdfviewer with vim / texcompiler.
-* Improve my gitstatusline. Use vimproc or dispatch to refresh it more often.
-* Do I use unite tag?
-* Look into vim-org
-* Check if ECLIM is a viable option for C and C++ code-completion.
-* Add RUBY ECLIM completion.
-* Add PHP ECLIM completion.
-* Add SCALA ECLIM completion.
-* Make vim create required directories by itself.
-* Eclim - find way of adding source directories using vim instead of having to open eclipse.
-* Check if plugin is loaded instead of checking if disablePlugin.
-* Make tags project specific. Currently language specific.
-* Rename repo to something more fitting, ex dotfiles.
 * BUG: g:disableExternal doesn't disable omnisharp.
 
+* Find way to send texcompiling error to vim and hide the texcompiling window.
+* Find way to kill autotexcompiling when closing tex buffer.
+* Open pdfviewer with vim / texcompiler.
+* Look into vim-org
+* Check if ECLIM is a viable option for C and C++ code-completion.
+* Make vim create required directories by itself.
+* Eclim - find way of adding source directories using vim instead of having to open eclipse.
+* Make tags project specific. Currently language specific.
+* Rename repo to something more fitting, ex dotfiles.
+* Improve my gitstatusline. Use vimproc or dispatch to refresh it more often.
+* Turn all my external helpers into one big one with easy ways to increase functionality.
+	Have my helper in a terminal. Keybinding in vim builds and runs in that terminal and shows all output there.
+	Have my git status stuff update in there.
+	Have my texstuff building in there.

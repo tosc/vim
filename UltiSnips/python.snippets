@@ -73,3 +73,22 @@ Parameters:
 ${3:Returns:}
 """
 endsnippet
+
+snippet contains "If a string is in another string"
+if ${1:"bla"} in ${2:"blabla"}:
+	${0:${VISUAL}}
+endsnippet
+
+snippet runOnly "Run external program, import os"
+os.system(${1:"ls -la"})$0
+endsnippet
+
+snippet runPipe "Run external and get output, import subprocess"
+cmd = subprocess.Popen(${1:"ls -la"}, stdout=subprocess.PIPE)	
+for row in cmd.stdout:
+	${0}
+endsnippet
+
+snippet getTime "Get current time, import time"
+time.time()
+endsnippet
