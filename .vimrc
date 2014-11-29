@@ -350,6 +350,10 @@ endif
 " /
 " --------------------
 " ---- [3.3] VISUAL ----
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+snoremap <S-Space> <ESC>:call SmartJump()<CR>
+snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
+
 if !exists("g:disablePlugins")
 	" When you press TAB and have something selected in visual mode, it saves it for
 	" ultisnips and then removes it.
