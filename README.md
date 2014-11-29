@@ -94,11 +94,10 @@ Add a pentadactylrc with the line:
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
-* BUG: Empty buffers appear from time to time, think it has something to do with my custom-unite behaviour.
 
-* Change my custom unite behaviour. Instead of making them help buftypes, just add a esc bind that removes and closes oneself.
-* Create a special ä mode for stuff like g?.
-
+* Create a "dictionary" of keywords that every language should have a snippet of. Maybe create a skeleton-snippet where all those keyboards are initialized but empty and then you can fill them out. 
+Ex: snippet elem "Get element of list"
+snippet fori "For 0-x with counter i" b
 * Fix snippet snippets with visual made, should have a default value also.
 * Find way to send texcompiling error to vim and hide the texcompiling window.
 * Find way to kill autotexcompiling when closing tex buffer.

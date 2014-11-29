@@ -156,7 +156,7 @@ let g:fastfold_map = 1
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
 " Show the my normal and insert bindings.
-noremap g? :enew <bar> r ~/git/vim/.vimrc <bar> set buftype=help <bar> set filetype=help<CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg 
+noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg 
 
 " Do last recording. (Removes exmode which I never use.)
 noremap Q @@
@@ -293,7 +293,7 @@ else
 	map <leader>gd :!git -C %:h diff<CR>
 endif
 
-map <leader>g? :enew <bar> r ~/git/vim/.vimrc <bar> set buftype=help <bar> set filetype=help<CR> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg 
+map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg 
 " H
 " I
 " J
@@ -378,8 +378,7 @@ cnoremap <C-A> <home>
 cnoremap <C-E> <end>
 cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 
-" Open help in current window.
-cnoreabbrev h enew <bar> :set buftype=help <bar> :h
+cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? 'call FullScreenHelp(" ")<left><left><left>' : "h"
 
 if !exists("g:disablePlugins")
 	" I tend to write :git instead of :Git
@@ -422,11 +421,11 @@ function! FugitiveBindings()
 	nmap <buffer> k <C-P>
 endfunction
 " --------------------
-" ---- [3.8] HELP ----
-function! HelpBinds()
-	nmap <buffer> <ESC> :b #<bar>bd! #<CR>
+" ---- [3.8] OPOHBUFFER ----
+function! OpohBinds()
+	nmap <buffer> <ESC> :execute("b " . g:bufferBeforeOpoh)<CR>
 endfunction
-autocmd FileType help call HelpBinds()
+autocmd FileType opoh call OpohBinds()
 " --------------------
 " --------------------
 " ---- [4] FILETYPE SPECIFIC ----
@@ -761,9 +760,10 @@ endfunction
 " ---- [5.1.4] SNIPPETS ----
 function! SnippetFolding(lnum)
 	let line = getline(a:lnum)
+	let prevline = getline(a:lnum - 1)
 	if line =~ '^snippet'
 		return ">1"
-	elseif line =~ '^endsnippet'
+	elseif prevline =~ '^endsnippet'
 		return "<1"
 	else
 		return '='
@@ -1177,6 +1177,36 @@ function! SmartJumpBack()
 	let cursorPos[2] = pos + 1
 	call setpos('.', cursorPos)
 	return ""
+endfunction
+" --------------------
+" ---- [11.4] TEMPBUFFER ----
+let g:bufferBeforeOpoh = ""
+function! OpohBuffer()
+	let g:bufferBeforeOpoh = expand('%')
+	if bufexists("[Opoh]")
+		b Opoh
+	else
+		e [Opoh]
+		setlocal nobuflisted
+		setlocal filetype=opoh
+		setlocal buftype=nofile
+	endif  
+	execute("0,$d")
+endfunction
+
+function! FullScreenHelp(search)
+	let curPath = expand('%')
+	execute("keepalt h " . a:search) 
+	let helpPath = expand('%')
+	if curPath != helpPath
+		let curPos = getpos('.')
+		keepalt close
+		call OpohBuffer()
+		execute("keepalt r " . helpPath) 
+		call setpos(".",curPos)
+		setlocal syntax=help
+		setlocal nobuflisted
+	endif
 endfunction
 " --------------------
 " --------------------
