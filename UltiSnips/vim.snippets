@@ -5,3 +5,15 @@ snippet " "New block"
 $0${VISUAL}
 " --------------------
 endsnippet
+
+snippet if "if" b
+if ${1:1}
+	${0:${VISUAL}}
+endif
+endsnippet
+
+snippet function "function" b
+function! ${1:FunctionName}(${2:param})
+	${0:${VISUAL}}
+endfunction
+endsnippet

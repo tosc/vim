@@ -15,7 +15,7 @@ endsnippet
 snippet if "if" b
 <MISSING SNIPPET>
 endsnippet
-snippet elif "else if" b
+snippet "(elif|eif)|(else if|elseif)" "else if" br
 <MISSING SNIPPET>
 endsnippet
 snippet else "else" b
@@ -31,6 +31,9 @@ endsnippet
 snippet for "for" b
 <MISSING SNIPPET>
 endsnippet
+snippet "for((?!e)\w+)" "for + match.group(1) as variable" r
+<MISSING SNIPPET>
+endsnippet
 snippet fore "for each element in collection" b
 <MISSING SNIPPET>
 endsnippet
@@ -41,6 +44,19 @@ snippet do "do while" b
 <MISSING SNIPPET>
 endsnippet
 
+snippet "func?t?i?o?n?|method" "function" br
+<MISSING SNIPPET>
+endsnippet
+snippet "(\w+)(func?t?i?o?n?|method)" "function with type as match.group(1)" br
+<MISSING SNIPPET>
+endsnippet
+
+snippet "[sS]tr(ing)?" "string variable" br
+<MISSING SNIPPET>
+endsnippet
+snippet "[iI]nt" "int variable" br
+<MISSING SNIPPET>
+endsnippet
 snippet enum "enum" b
 <MISSING SNIPPET>
 endsnippet
