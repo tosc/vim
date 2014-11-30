@@ -1,34 +1,8 @@
-snippet CC "New C-class" b
-int main(int argc, char* argv[])
-{
-	return 0;
-}
-endsnippet
+priority 1
 
-snippet if "if" b
-if(${1:condition})
-{
-	${VISUAL}
-	$0
-}
+snippet include "include" b
+#include <${1:stdio.h}>
 endsnippet
-
-snippet elif "else if" b
-else if(${1:condition})
-{
-	${VISUAL}
-	$0
-}
-endsnippet
-
-snippet else "else" b
-else
-{
-	${VISUAL}
-	$0
-}
-endsnippet
-
 snippet header "New C-header" b
 #ifndef `!v toupper(expand('%:r'))`_H_
 #define `!v toupper(expand('%:r'))`_H_
@@ -38,10 +12,27 @@ $0
 #endif
 endsnippet
 
-snippet include "include" b
-#include <${1:stdio.h}>
+snippet if "if" b
+if(${1:condition})
+{
+	${VISUAL}
+	$0
+}
 endsnippet
-
+snippet elif "else if" b
+else if(${1:condition})
+{
+	${VISUAL}
+	$0
+}
+endsnippet
+snippet else "else" b
+else
+{
+	${VISUAL}
+	$0
+}
+endsnippet
 snippet switch
 switch(${1:var})
 {
@@ -50,13 +41,18 @@ switch(${1:var})
 		break;
 }
 endsnippet
-
 snippet case
 case ${1:val}:
 	${0:${VISUAL}}
 	break;
 endsnippet
 
+snippet main "New C-class" b
+int main(int argc, char* argv[])
+{
+	return 0;
+}
+endsnippet
 snippet tcpclient "" b
 #include <sys/socket.h>
 #include <sys/types.h>

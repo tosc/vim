@@ -100,6 +100,7 @@ Add a pentadactylrc with the line:
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
 
+* Replace omnicomplcache with omnicompl. Apparently faster.
 * Fix eclim in terminal vim.
 * Fix omnisharp in terminal vim.
 * Create a "dictionary" of keywords that every language should have a snippet of. Maybe create a skeleton-snippet where all those keyboards are initialized but empty and then you can fill them out. 

@@ -260,6 +260,7 @@ function! BindDelim(kMap)
 	execute 'inoremap ' . a:kMap . ' ' . a:kMap . '<left>' 
 	execute 'inoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>' 
 	execute 'inoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>' 
+	execute 'inoremap ' . a:kMap . '<left> ' . a:kMap . '<left>'
 endfunction
 call BindDelim('""')
 call BindDelim('()')
@@ -288,6 +289,7 @@ if !exists("g:disablePlugins")
 	map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
 	map <leader>gP :Git push --force<CR> :call SlowStatusLine()<CR>
 	map <leader>gd :Gdiff<CR>
+	map <leader>gD :!git -C %:h diff<CR>
 	map <leader>gj :Gpull<CR>
 else
 	map <leader>gg :!git -C %:h status<CR>
@@ -295,6 +297,8 @@ else
 	map <leader>gp :!git -C %:h push<CR> :call SlowStatusLine()<CR>
 	map <leader>gP :!git -C %:h push --force<CR> :call SlowStatusLine()<CR>
 	map <leader>gd :!git -C %:h diff<CR>
+	map <leader>gD :!git -C %:h diff<CR>
+	map <leader>gj :!git -C %:h pull<CR>
 endif
 
 map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg 
@@ -494,10 +498,9 @@ endfunction
 autocmd Filetype c,cpp call CSettings()
 " --------------------
 " ---- [4.4] VIMRC ----
-function! VIMSettings()
+function! VimSettings()
 	setlocal foldexpr=VimrcFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
-	set textwidth=0
 endfunction
 
 " Pentadactyl file is a vim file.
@@ -506,15 +509,16 @@ autocmd BufRead .pentadactylrc set filetype=vim
 " Runs the new vimrc when you save it.
 autocmd BufWritePost .vimrc so ~/git/vim/.vimrc
 
-autocmd Filetype vim call VIMSettings()
+autocmd Filetype vim call VimSettings()
 " -------------
 " ---- [4.5] SNIPPET ----
-function! SNIPPETSSettings()
+function! SnippetSettings()
 	setlocal foldexpr=SnippetFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
+	setlocal foldmethod=expr
 endfunction
 
-autocmd Filetype snippets call SNIPPETSSettings()
+autocmd Filetype snippets call SnippetSettings()
 " --------------------
 " ---- [4.6] TODO ----
 function! TODOSettings()
@@ -766,11 +770,10 @@ endfunction
 " ---- [5.1.4] SNIPPETS ----
 function! SnippetFolding(lnum)
 	let line = getline(a:lnum)
-	let prevline = getline(a:lnum - 1)
 	if line =~ '^snippet'
-		return ">1"
-	elseif prevline =~ '^endsnippet'
-		return "<1"
+		return '>1'
+	elseif line =~ '^endsnippet'
+		return '<1'
 	else
 		return '='
 	endif
@@ -865,7 +868,7 @@ function! NormalFoldText()
 	let line = substitute(getline(v:foldstart),'^\s*','','')
 	let indent_level = indent(v:foldstart)
 	let indent = repeat(' ', indent_level)
-	if line =~ 'import'
+	if line =~ '^import'
 	       let line = "import"	
 	endif
 	return indent . line
