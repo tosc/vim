@@ -6,14 +6,75 @@ $0${VISUAL}
 " --------------------
 endsnippet
 
+snippet "\|\||or" "or" br
+||
+endsnippet
+snippet "&&|and" "and" br
+&&
+endsnippet
+
 snippet if "if" b
 if ${1:1}
 	${0:${VISUAL}}
 endif
+endsnippet
+snippet "(elif|eif)|(else if|elseif)" "else if" br
+elseif ${1:1}
+	${0:${VISUAL}}
+endsnippet
+snippet else "else" b
+else
+	${0:${VISUAL}}
+endsnippet
+
+snippet "for((?!e)\w+)" "for + match.group(1) as variable" r
+for `!p snip.rv = match.group(1)` in range(${1:10})
+	${0:${VISUAL}}
+endfor
+endsnippet
+snippet for "for" b
+for ${1:var} in range(${2:10})
+	${0:${VISUAL}}
+endfor
+endsnippet
+snippet fore "for each" b
+for ${1:thing} in ${2:collectionOfThings}
+	${0:${VISUAL}}
+endfor
+endsnippet
+snippet while "while" b
+while(${1:1})
+	${0:${VISUAL}}
+endwhile
 endsnippet
 
 snippet "func?t?i?o?n?|method" "function" br
 function! ${1:FunctionName}(${2:param})
 	${0:${VISUAL}}
 endfunction
+endsnippet
+snippet "(\w+)(func?t?i?o?n?|method)" "function with type as match.group(1)" br
+function! ${1:FunctionName}(${2:param})
+	${0:${VISUAL}}
+endfunction
+endsnippet
+
+snippet "[sS]tr(ing)?" "string variable" br
+let ${1:var} = ${0:${VISUAL}}
+endsnippet
+snippet "[iI]nt" "int variable" br
+let ${1:var} = ${0:${VISUAL}}
+endsnippet
+snippet "[dD]ouble" "double variable" br
+let ${1:var} = ${0:${VISUAL}}
+endsnippet
+snippet "[fF]loat" "float variable" br
+let ${1:var} = ${0:${VISUAL}}
+endsnippet
+snippet "[bB]ool(ean)?" "float variable" br
+let ${1:var} = ${0:${VISUAL}}
+endsnippet
+
+snippet print "print" b
+echo ${0:${VISUAL}}
 endsnippet

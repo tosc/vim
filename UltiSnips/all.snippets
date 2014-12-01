@@ -1,21 +1,24 @@
-snippet import "import" b
+# Header
+snippet "import|include" "import" br
 <MISSING SNIPPET>
 endsnippet
 snippet header "header" b
 <MISSING SNIPPET>
 endsnippet
 
-snippet || "or" b
+# Logical operations
+snippet "\|\||or" "or" br
 <MISSING SNIPPET>
 endsnippet
-snippet && "and" b
+snippet "&&|and" "and" br
 <MISSING SNIPPET>
 endsnippet
 
+# Conditional snippets
 snippet if "if" b
 <MISSING SNIPPET>
 endsnippet
-snippet "(elif|eif)|(else if|elseif)" "else if" br
+snippet "elif|eif|(else if)|elseif" "else if" br
 <MISSING SNIPPET>
 endsnippet
 snippet else "else" b
@@ -27,14 +30,15 @@ endsnippet
 snippet case "case" b
 <MISSING SNIPPET>
 endsnippet
-
+	
+# Loop snippets
 snippet for "for" b
 <MISSING SNIPPET>
 endsnippet
 snippet "for((?!e)\w+)" "for + match.group(1) as variable" r
 <MISSING SNIPPET>
 endsnippet
-snippet fore "for each element in collection" b
+snippet "fore(ach)?" "for each element in collection" br
 <MISSING SNIPPET>
 endsnippet
 snippet while "while" b
@@ -51,9 +55,27 @@ snippet "(\w+)(func?t?i?o?n?|method)" "function with type as match.group(1)" br
 <MISSING SNIPPET>
 endsnippet
 
+# String snippets
 snippet "[sS]tr(ing)?" "string variable" br
 <MISSING SNIPPET>
 endsnippet
+snippet "contains|in" "string contains/is in another string" br
+<MISSING SNIPPET>
+endsnippet
+snippet "([a-zA-Z0-9."']+) contains" "string contains match.group(1)" br
+<MISSING SNIPPET>
+endsnippet
+snippet "([a-zA-Z0-9."']+) in" "match.group(1) in string" br
+<MISSING SNIPPET>
+endsnippet
+snippet "[tT]o[sS]tring\(?\)?" "Description" br
+<MISSING SNIPPET>
+endsnippet
+snippet "((\([^"]*\))|[a-zA-Z0-9.,]+)+.[tT]o[sS]tring\(?\)?" "match.group(1) to string" br
+<MISSING SNIPPET>
+endsnippet
+
+# Variable snippets
 snippet "[iI]nt" "int variable" br
 <MISSING SNIPPET>
 endsnippet
@@ -66,15 +88,25 @@ endsnippet
 snippet "[bB]ool(ean)?" "float variable" br
 <MISSING SNIPPET>
 endsnippet
+
+# Datatype snippets
 snippet enum "enum" b
 <MISSING SNIPPET>
 endsnippet
 snippet list "list" b
 <MISSING SNIPPET>
 endsnippet
-snippet class "New class" b
+snippet "(\w+) ?list" "list of type match.group(1)" br
+<MISSING SNIPPET>
 endsnippet
 
+# Documentation snippets
+snippet "\"|#|//" "comment" br
+<MISSING SNIPPET>
+endsnippet
+snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines " br
+<MISSING SNIPPET>
+endsnippet
 snippet comment "comment" b
 <MISSING SNIPPET>
 endsnippet
@@ -82,10 +114,18 @@ snippet print "print" b
 <MISSING SNIPPET>
 endsnippet
 
+# Special snippets
 snippet sleep "Sleep program" b
 <MISSING SNIPPET>
 endsnippet
+snippet time "current time in milliseconds" b
+<MISSING SNIPPET>
+endsnippet
 
+# New code snippets
 snippet main "runnable script" b
+<MISSING SNIPPET>
+endsnippet
+snippet class "new class" b
 <MISSING SNIPPET>
 endsnippet

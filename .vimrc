@@ -259,6 +259,7 @@ function! BindDelim(kMap)
 	execute 'inoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>' 
 	execute 'inoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>' 
 	execute 'inoremap ' . a:kMap . '<left> ' . a:kMap . '<left>'
+	execute 'inoremap ' . a:kMap . '. ' . a:kMap . '.'
 endfunction
 call BindDelim('""')
 call BindDelim('()')
@@ -288,7 +289,8 @@ if !exists("g:disablePlugins")
 	map <leader>gP :Git push --force<CR> :call SlowStatusLine()<CR>
 	map <leader>gd :Gdiff<CR>
 	map <leader>gD :!git -C %:h diff<CR>
-	map <leader>gj :Gpull<CR>
+	map <leader>gf :Gfetch<CR>
+	map <leader>gF :Gpull<CR>
 else
 	map <leader>gg :!git -C %:h status<CR>
 	map <leader>gc :!git -C %:h commit<CR>
@@ -296,7 +298,8 @@ else
 	map <leader>gP :!git -C %:h push --force<CR> :call SlowStatusLine()<CR>
 	map <leader>gd :!git -C %:h diff<CR>
 	map <leader>gD :!git -C %:h diff<CR>
-	map <leader>gj :!git -C %:h pull<CR>
+	map <leader>gf :!git -C %:h fetch<CR>
+	map <leader>gF :!git -C %:h pull<CR>
 endif
 
 map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg 

@@ -1,23 +1,117 @@
 priority 1
 
+# Header
+snippet "import|include" "import" br
+import ${1:package}
+endsnippet
+
+# Logical operations
+snippet "\|\||or" "or" br
+or
+endsnippet
+snippet "&&|and" "and" br
+and
+endsnippet
+
+# Conditional snippets
 snippet if "if" b
 if ${1:True}:
 	${0:${VISUAL}}
 endsnippet
-snippet elif "else if" b
+snippet "elif|eif|(else if)|elseif" "else if" br
 elif ${1:True}:
 	${0:${VISUAL}}
 endsnippet
-snippet else:
+snippet else "else" b
+else:
 	${0:${VISUAL}}
 endsnippet
-
-snippet for "" b
-for ${1:tempVar} in ${2:list}:
-	$0
+snippet switch "switch" b
+No switch in python. Use if,elif, else.
+endsnippet
+snippet case "case" b
+No switch in python. Use if,elif, else.
 endsnippet
 
-snippet comment
+# Loop snippets
+snippet for "for" b
+for ${1:var} in range(0,${2:10}):
+	${0:${VISUAL}}
+endsnippet
+snippet "for((?!e)\w+)" "for + match.group(1) as variable" r
+for `!p snip.rv = match.group(1)` in range(0,${1:10}):
+	${0:${VISUAL}}
+endsnippet
+snippet "fore(ach)?" "for each element in collection" br
+for ${1:thing} in ${2:collection}:
+	$0
+endsnippet
+snippet while "while" b
+while ${1:True}:
+	${0:${VISUAL}}
+endsnippet
+snippet do "do while" b
+while True:
+	${0:${VISUAL}}	
+	if ${1:fail_condition}:
+		break
+endsnippet
+
+# String snippets
+snippet "[sS]tr(ing)?" "string variable" br
+${1:var} = "${2:string}"
+endsnippet
+snippet "contains|in" "string contains/is in another string" br
+${1:"another string"} in ${2:"string"}
+endsnippet
+snippet "([a-zA-Z0-9."']+) contains" "string contains match.group(1)" br
+${1:"another string"} in `!p snip.rv = match.group(1)`
+endsnippet
+snippet "([a-zA-z0-9."']+) in" "match.group(1) in string" br
+`!p snip.rv = match.group(1)` in ${1:"another string"}
+endsnippet
+snippet "[tT]o[sS]tring\(?\)?" "Description" br
+str(${VISUAL}${0})
+endsnippet
+snippet "((\([^"]*\))|[a-zA-Z0-9.,]+)+.[tT]o[sS]tring\(?\)?" "match.group(1) to string" br
+str(`!p snip.rv = match.group(1)`)
+endsnippet
+
+# Variable snippets
+snippet "[iI]nt" "int variable" br
+${1:var} = ${2:${10}}
+endsnippet
+snippet "[dD]ouble" "double variable" br
+${1:var} = ${2:2.0}
+endsnippet
+snippet "[fF]loat" "float variable" br
+${1:var} = ${2:2.0}
+endsnippet
+snippet "[bB]ool(ean)?" "float variable" br
+${1:var} = ${2:True}
+endsnippet
+
+# Datatype snippets
+snippet enum "enum, requires from enum import Enum" b
+${1:EnumName} = Enum('${2:item}')
+endsnippet
+snippet list "list" b
+${1:listName} = [${0:item}]
+endsnippet
+snippet "(\w+) ?list" "list of type match.group(1)" br
+${1:listName} = [${0:item}]
+endsnippet
+
+# Documentation snippets
+snippet "\"|#|//" "comment" br
+# ${VISUAL}${0}
+endsnippet
+snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines " br
+'''
+${VISUAL}${0}
+'''
+endsnippet
+snippet comment "comment" b
 """
 ${1:What it does.}
 
@@ -27,14 +121,34 @@ Parameters:
 ${3:Returns:}
 """
 endsnippet
+snippet print "print" b
+print ${VISUAL:"}${0}`!p 
+if snip.v.text == "":
+	snip.rv = '"'
+else:
+	snip.rv = "" `
+endsnippet
 
-snippet class "" b
+# Special snippets
+snippet time "current time in milliseconds, import time" b
+time.time()
+endsnippet
+snippet sleep "sleep, import time" b
+time.sleep(${0:seconds})
+endsnippet
+
+# New code snippets
+snippet main "main" b
+Python does not need a main. Just write the code in an empty document.
+endsnippet
+snippet class "New class" b
 class ${1:NewClass}:
 	def __init__(self):
 		pass
 	${VISUAL}$0
 endsnippet
 
+# Language specific
 snippet gui "A gui" b
 from Tkinter import *
 
@@ -69,10 +183,6 @@ $1.grid(row = ${3:rowNr}, column = ${4:columnNr})
 self.$1Var.set("${5:Starttext for label}")
 $0
 endsnippet
-snippet contains "If a string is in another string"
-if ${1:"bla"} in ${2:"blabla"}:
-	${0:${VISUAL}}
-endsnippet
 snippet runOnly "Run external program, import os"
 os.system(${1:"ls -la"})$0
 endsnippet
@@ -81,7 +191,3 @@ cmd = subprocess.Popen(${1:"ls -la"}, stdout=subprocess.PIPE)
 for row in cmd.stdout:
 	${0}
 endsnippet
-snippet getTime "Get current time, import time"
-time.time()
-endsnippet
-
