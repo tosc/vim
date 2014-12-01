@@ -167,9 +167,6 @@ noremap Y y$
 " Close everything except current fold.
 noremap zV zMzv
 
-" perform math on cursor
-noremap å viw"xc<C-R>=getreg('x')
-
 if !exists("g:disablePlugins")
 	" Search file using unite.
 	noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
@@ -198,6 +195,7 @@ noremap § $
 
 " Jump to tag. C-T to jump back.
 noremap <C-J> <C-]>
+
 
 
 " Good avaliable binds
@@ -363,6 +361,8 @@ endif
 " /
 " --------------------
 " ---- [3.3] VISUAL ----
+xnoremap å c<C-R>=PythonMath()<CR>
+
 " Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
 snoremap <S-Space> <ESC>:call SmartJump()<CR>
 snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
@@ -1216,6 +1216,16 @@ function! FullScreenHelp(search)
 		setlocal syntax=help
 		setlocal nobuflisted
 	endif
+endfunction
+" --------------------
+" ---- [11.5] EVALUATE MATH ----
+function! PythonMath()
+let l:vimMath = getreg('"')
+python << endpy
+math = eval(vim.eval("l:vimMath"))
+vim.command("let l:pythonMath = '" + str(math) + "'")
+endpy
+return l:pythonMath
 endfunction
 " --------------------
 " --------------------

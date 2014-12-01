@@ -19,10 +19,10 @@ source ~/git/vim/.vimrc
 3. Download Vundle  
 `` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
 `` :BundleInstall ``  
-5. Build clang_complete. Go into clang_complete folder and run make install.
-6. Install Eclipse.
-7. Install ECLIM.
-8. Add eclimd to path.
+4. Build clang_complete. Go into clang_complete folder and run make install.
+5. Install Eclipse.
+6. Install ECLIM.
+7. Add eclimd to path.
 8. Download LaTex.
 9. Install ctags.
 
