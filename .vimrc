@@ -1,3 +1,14 @@
+" ---- [0] FRESH INSTALL ----
+if !isdirectory(expand('~') . "/.vim/tmp")
+" If that folder doesn't exists then this is the first time running vim
+	call mkdir(expand('~') . "/.vim/tmp")
+	call mkdir(expand('~') . "/.vim/tags")
+	call mkdir(expand('~') . "/.cache/unite/session")
+
+	let g:disablePlugins = 1
+	let g:disableExternal = 1
+endif
+" --------------------
 " ---- [1] VIMSETTINGS ----
 autocmd!
 set nocompatible
@@ -253,6 +264,9 @@ inoremap <C-A> <home>
 inoremap <C-E> <end>
 inoremap <C-K> <C-O>D
 
+" Easier delimiters.
+inoremap {{ {<cr><cr>}<up><TAB>
+
 " Matching delimiters
 function! BindDelim(kMap)
 	execute 'inoremap ' . a:kMap . ' ' . a:kMap . '<left>' 
@@ -267,7 +281,6 @@ call BindDelim('{}')
 call BindDelim("''")
 call BindDelim('[]')
 call BindDelim('<>')
-inoremap {{ {<cr><cr>}<up><TAB>
 " --------------------
 " ---- [3.2] LEADER ----
 let mapleader="\<space>"
@@ -278,7 +291,7 @@ map <leader>b :b #<CR>
 " C
 map <leader>c :cd %:h<CR>
 " D
-map <leader>d :b #<bar>bd #<CR>
+map <leader>d :bd<CR>
 " E
 " F
 " G

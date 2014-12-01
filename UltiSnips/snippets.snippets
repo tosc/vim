@@ -5,7 +5,7 @@ snippet "\"|#|//" "comment" br
 endsnippet
 
 snippet "sni\S*" "Snippet definition" br
-`!p snip.rv = "snippet"` ${1:trigger} "${2:Description}" ${3:b}
+`!p snip.rv = "snippet"` ${1:trigger} "${2:Description}" ${3:r}
 ${0:${VISUAL}}
 `!p snip.rv = "endsnippet"`
 endsnippet
@@ -19,3 +19,19 @@ snippet "(\d+)v" "Tabstop with nr and visual" ir
 \${`!p snip.rv = match.group(1)`:\${VISUAL}}$0
 endsnippet
 
+snippet "e(nclosing)?p(arentheses)?" "regex for something enclosed in parentheses" r
+(\([^()]*\))
+endsnippet
+
+snippet "(\d+)m(atch)?(.)?g(roup)?" "get the matched pattern" br
+\`!p snip.rv = match.group(1)\`
+endsnippet
+snippet "m(atch)?(.)?g(roup)?" "get the matched pattern" br
+\`!p snip.rv = match.group(${1:1})\`${0}
+endsnippet
+snippet "e(nclosing)?q(uotes)?" "matches quotes" r
+(\"[^""]*\")
+endsnippet
+snippet "v(ariable)?n(ame)?" "matches a variable name" r
+[a-zA-Z0-9.,\-]
+endsnippet

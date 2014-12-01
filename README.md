@@ -12,19 +12,15 @@ Vim settings.
 "let g:disableExternal = 1
 source ~/git/vim/.vimrc
 ```  
-2. Create folders  
-``.vim/tmp``  
-``.vim/tags``  
-``.cache/unite/session``  
-3. Download Vundle  
+2. Download Vundle  
 `` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
 `` :BundleInstall ``  
-4. Build clang_complete. Go into clang_complete folder and run make install.
-5. Install Eclipse.
-6. Install ECLIM.
-7. Add eclimd to path.
-8. Download LaTex.
-9. Install ctags.
+3. Build clang_complete. Go into clang_complete folder and run make install.
+4. Install Eclipse.
+5. Install ECLIM.
+6. Add eclimd to path.
+7. Download LaTex.
+8. Install ctags.
 
 ### WINDOWS
 
@@ -100,24 +96,22 @@ Add a pentadactylrc with the line:
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
 
+* Look at neobundle to make installation easier.
 * Replace omnicomplcache with omnicompl. Apparently faster.
 * Fix eclim in terminal vim.
 * Fix omnisharp in terminal vim.
-* Create a "dictionary" of keywords that every language should have a snippet of. Maybe create a skeleton-snippet where all those keyboards are initialized but empty and then you can fill them out. 
-Ex: snippet elem "Get element of list"
-snippet fori "For 0-x with counter i" b
-* Fix snippet snippets with visual made, should have a default value also.
 * Find way to send texcompiling error to vim and hide the texcompiling window.
 * Find way to kill autotexcompiling when closing tex buffer.
 * Open pdfviewer with vim / texcompiler.
 * Look into vim-org
 * Check if ECLIM is a viable option for C and C++ code-completion.
-* Make vim create required directories by itself.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
 * Make tags project specific. Currently language specific.
 * Rename repo to something more fitting, ex dotfiles.
 * Improve my gitstatusline. Use vimproc or dispatch to refresh it more often.
+
 * Turn all my external helpers into one big one with easy ways to increase functionality.
 	Have my helper in a terminal. Keybinding in vim builds and runs in that terminal and shows all output there.
 	Have my git status stuff update in there.
 	Have my texstuff building in there.
+* Change my keyboardlayout using <leader>se and <leader>so.
