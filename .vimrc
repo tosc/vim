@@ -40,7 +40,10 @@ set formatoptions-=cro
 set updatetime=1000
 set backspace=indent,eol,start
 let $LANG = 'en'
-set listchars=tab:>\ ,trail:-,extends:>,precedes:<,nbsp:+
+
+" Shows whitespaces and tabs when using list.
+set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ 
+set list
 
 set sessionoptions-=options
 set sessionoptions+=folds
@@ -99,7 +102,7 @@ let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
 " -----
-" ---- [2.3] OMNISHARP (C# OMNICOMPLETE) ---- 
+" ---- [2.3] OMNISHARP (C# OMNICOMPLETE) ----
 let g:OmniSharp_typeLookupInPreview = 1
 " Sets the sln file to the first file avaliable
 let g:OmniSharp_sln_list_index = 1
@@ -167,7 +170,7 @@ let g:fastfold_map = 1
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
 " Show the my normal and insert bindings.
-noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg 
+noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg
 
 " Do last recording. (Removes exmode which I never use.)
 noremap Q @@
@@ -189,11 +192,11 @@ if !exists("g:disablePlugins")
 	noremap Ö :VimFiler<CR>
 else
 	noremap ä /
-	noremap ö :e 
-	noremap Ö :e 
+	noremap ö :e
+	noremap Ö :e
 endif
 
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter.
 noremap <S-Space> :call SmartJump()<CR>
 noremap <S-BS> :call SmartJumpBack()<CR>
 
@@ -253,7 +256,7 @@ endif
 " Pressing enter chooses completion if completion window is up, else normal enter.
 inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter.
 inoremap <S-Space> <C-R>=SmartJump()<CR>
 inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
 inoremap <pageup> <C-R>=SmartJump()<CR>
@@ -269,9 +272,9 @@ inoremap {{ {<cr><cr>}<up><TAB>
 
 " Matching delimiters
 function! BindDelim(kMap)
-	execute 'inoremap ' . a:kMap . ' ' . a:kMap . '<left>' 
-	execute 'inoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>' 
-	execute 'inoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>' 
+	execute 'inoremap ' . a:kMap . ' ' . a:kMap . '<left>'
+	execute 'inoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>'
+	execute 'inoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>'
 	execute 'inoremap ' . a:kMap . '<left> ' . a:kMap . '<left>'
 	execute 'inoremap ' . a:kMap . '<bs> ' . a:kMap . '<bs>'
 	execute 'inoremap ' . a:kMap . '. ' . a:kMap . '.'
@@ -317,7 +320,7 @@ else
 	map <leader>gF :!git -C %:h pull<CR>
 endif
 
-map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg 
+map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg
 " H
 " I
 " J
@@ -330,14 +333,14 @@ if !exists("g:disablePlugins")
 else
 	map <leader>m :!make<CR>
 endif
-" N 
+" N
 map <leader>n :bn <CR>
 " O
-" P 
+" P
 map <leader>p :bp <CR>
 " Q
 map <leader>q :call QFix()<CR>
-" R 
+" R
 autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
 autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
@@ -357,6 +360,8 @@ map <leader>ts :set expandtab <CR>
 map <leader>tt :set noexpandtab <CR>
 map <leader>t4 :set tabstop=4 <CR> :set shiftwidth=4 <CR>
 map <leader>t8 :set tabstop=8 <CR> :set shiftwidth=8 <CR>
+map <leader>ts :set listchars=tab:>\ ,trail:#,extends:>,precedes:<,nbsp:+ <CR>
+map <leader>th :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
 " U
 if !exists("g:disablePlugins")
 	map <leader>ue :UltiSnipsEdit <CR>
@@ -382,7 +387,7 @@ endif
 " ---- [3.3] VISUAL ----
 xnoremap å c<C-R>=PythonMath()<CR>
 
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter. 
+" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter.
 snoremap <S-Space> <ESC>:call SmartJump()<CR>
 snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
 snoremap <pageup> <ESC>:call SmartJump()<CR>
@@ -727,7 +732,7 @@ function! OneIndentBraceFolding(lnum)
 		else
 			if line =~ '^\s*/\*' && line =~ '\*/$'
 				return '='
-			elseif line =~ '^\s*/\*' 
+			elseif line =~ '^\s*/\*'
 				let g:InsideComment = 1
 				return '>1'
 			elseif line =~ '{' && indent(a:lnum)/8 == 1
@@ -917,7 +922,7 @@ endfunction
 " --------------------
 " ---- [5.2.2] PASS ----
 " name pass username
-" name ------------- 
+" name -------------
 function! PassFoldText()
 	let line = getline(v:foldstart)
 	let words = split(line, '\t')
@@ -938,7 +943,7 @@ function! MyStatusLine()
 	return b:statusLineVar
 endfunction
 
-" Updates gitinfo for the statusline. 
+" Updates gitinfo for the statusline.
 " m - Nr of [m]odified [f]iles.
 " +/- - Nr of rows added / deleted.
 function! SlowStatusLine()
@@ -947,9 +952,9 @@ function! SlowStatusLine()
 		let gitTemp = system("git -C " . expand("%:h") . " status -b -s")
 		let gitTemp = substitute(gitTemp, "##" , "", "")
 		let gitTemp = substitute(gitTemp, "\\.\\.\\." , "->", "")
-		if gitTemp !~ "fatal" 
+		if gitTemp !~ "fatal"
 			let gitList = split(gitTemp, "\n")
-			if len(gitList) > 0 
+			if len(gitList) > 0
 				let branchName = gitList[0]
 				let branchName = substitute(branchName, " ", "[", "")
 				let beforeSub = branchName
@@ -1077,7 +1082,7 @@ hi TabLineSel term=none cterm=none gui=none
 " --------------------
 " ---- [10] AUTOCMD ----
 autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
-autocmd BufEnter * call SlowStatusLine() 
+autocmd BufEnter * call SlowStatusLine()
 
 autocmd InsertEnter * hi StatusLine gui=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
@@ -1218,19 +1223,19 @@ function! OpohBuffer()
 		setlocal nobuflisted
 		setlocal filetype=opoh
 		setlocal buftype=nofile
-	endif  
+	endif
 	execute("0,$d")
 endfunction
 
 function! FullScreenHelp(search)
 	let curPath = expand('%')
-	execute("keepalt h " . a:search) 
+	execute("keepalt h " . a:search)
 	let helpPath = expand('%')
 	if curPath != helpPath
 		let curPos = getpos('.')
 		keepalt close
 		call OpohBuffer()
-		execute("keepalt r " . helpPath) 
+		execute("keepalt r " . helpPath)
 		call setpos(".",curPos)
 		setlocal syntax=help
 		setlocal nobuflisted
