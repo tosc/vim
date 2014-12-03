@@ -273,6 +273,7 @@ function! BindDelim(kMap)
 	execute 'inoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>' 
 	execute 'inoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>' 
 	execute 'inoremap ' . a:kMap . '<left> ' . a:kMap . '<left>'
+	execute 'inoremap ' . a:kMap . '<bs> ' . a:kMap . '<bs>'
 	execute 'inoremap ' . a:kMap . '. ' . a:kMap . '.'
 endfunction
 call BindDelim('""')
@@ -292,6 +293,7 @@ map <leader>b :b #<CR>
 map <leader>c :cd %:h<CR>
 " D
 map <leader>d :bd<CR>
+map <leader>D :bd!<CR>
 " E
 " F
 " G
@@ -351,9 +353,10 @@ if !exists("g:disablePlugins")
 	map <leader>S :Unite -no-split ultisnips <CR>
 endif
 " T
-if !exists("g:disablePlugins")
-	map <leader>t :TagbarToggle <CR>
-endif
+map <leader>ts :set expandtab <CR>
+map <leader>tt :set noexpandtab <CR>
+map <leader>t4 :set tabstop=4 <CR> :set shiftwidth=4 <CR>
+map <leader>t8 :set tabstop=8 <CR> :set shiftwidth=8 <CR>
 " U
 if !exists("g:disablePlugins")
 	map <leader>ue :UltiSnipsEdit <CR>

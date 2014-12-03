@@ -7,10 +7,13 @@ snippet header "header" b
 endsnippet
 
 # Logical operations
-snippet "\|\||or" "or" br
+snippet "\|\||or" "or" r
 <MISSING SNIPPET>
 endsnippet
-snippet "&&|and" "and" br
+snippet "&&|and" "and" r
+<MISSING SNIPPET>
+endsnippet
+snippet "!([a-zA-Z0-9.,\-]+)|not" "not" r
 <MISSING SNIPPET>
 endsnippet
 
@@ -48,10 +51,15 @@ snippet do "do while" b
 <MISSING SNIPPET>
 endsnippet
 
-snippet "func?t?i?o?n?|method" "function" br
+# Methods/functinos
+snippet "func?t?i?o?n?|meth?o?d?" "function" br
 <MISSING SNIPPET>
 endsnippet
-snippet "(\w+)(func?t?i?o?n?|method)" "function with type as match.group(1)" br
+snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
+<MISSING SNIPPET>
+endsnippet
+snippet "const?r?u?c?t?o?r?" "Description" br
+asd
 <MISSING SNIPPET>
 endsnippet
 
@@ -75,10 +83,18 @@ snippet "((\([^()]*\))|[a-zA-Z0-9.,\-]+)+.[tT]o[sS]tring\(?\)?" "match.group(1) 
 <MISSING SNIPPET>
 endsnippet
 
-# Variable snippets
+# int snippets
 snippet "[iI]nt" "int variable" br
 <MISSING SNIPPET>
 endsnippet
+snippet "(\w+)\+\+" "Description" r
+<MISSING SNIPPET>
+endsnippet
+snippet "(\w+)\-\-" "Description" r
+<MISSING SNIPPET>
+endsnippet
+
+# Variable snippets
 snippet "[dD]ouble" "double variable" br
 <MISSING SNIPPET>
 endsnippet
@@ -119,6 +135,9 @@ snippet sleep "Sleep program" b
 <MISSING SNIPPET>
 endsnippet
 snippet time "current time in milliseconds" b
+<MISSING SNIPPET>
+endsnippet
+snippet kill "kill current script" br
 <MISSING SNIPPET>
 endsnippet
 

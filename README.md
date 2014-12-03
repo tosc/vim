@@ -70,7 +70,9 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 * clang_complete might have been updated. Try running make install on it.
 
 #### CS
-* Check omnisharp github for installation. If it still doesn't work you may have to build the server component again. If you are on linux then you have to update your .slnfiles with the correct paths. Make sure the omnisharp daemon is running and has initialized, it should start automatically.
+* You may have to build the server component. 
+* If you are on linux then you have to update your .slnfiles with the correct paths.
+* Make sure the omnisharp daemon is running and has initialized.
 
 #### Java and Python
 * Make sure you have the ECLIM deamon running. If it still doesn't work then make sure that you are in an eclipse project. To create a new one run:  
@@ -96,8 +98,7 @@ Add a pentadactylrc with the line:
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
 
-* Look at neobundle to make installation easier.
-* Replace omnicomplcache with omnicompl. Apparently faster.
+* Look into setting if_lua in vim so I can use neocomplete instead of neocomplcache.
 * Fix eclim in terminal vim.
 * Fix omnisharp in terminal vim.
 * Find way to send texcompiling error to vim and hide the texcompiling window.
@@ -109,6 +110,7 @@ Add a pentadactylrc with the line:
 * Make tags project specific. Currently language specific.
 * Rename repo to something more fitting, ex dotfiles.
 * Improve my gitstatusline. Use vimproc or dispatch to refresh it more often.
+* Look at neobundle to make installation easier.
 
 * Turn all my external helpers into one big one with easy ways to increase functionality.
 	Have my helper in a terminal. Keybinding in vim builds and runs in that terminal and shows all output there.
