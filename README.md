@@ -98,22 +98,20 @@ Add a pentadactylrc with the line:
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
 
-* Look into setting if_lua in vim so I can use neocomplete instead of neocomplcache.
-* Fix eclim in terminal vim.
-* Fix omnisharp in terminal vim.
-* Find way to send texcompiling error to vim and hide the texcompiling window.
-* Find way to kill autotexcompiling when closing tex buffer.
-* Open pdfviewer with vim / texcompiler.
-* Look into vim-org
+* Change how I use my snippets. Make things that require alot of computing power, like finding variables and so on and make those into a global python snippet. In the snippets we pick out the things we want to complete it to.
+* Look into setting if_lua in vim so I can use neocomplete instead of neocomplcache. (Download premade binaries?)
 * Check if ECLIM is a viable option for C and C++ code-completion.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
 * Make tags project specific. Currently language specific.
 * Rename repo to something more fitting, ex dotfiles.
-* Improve my gitstatusline. Use vimproc or dispatch to refresh it more often.
 * Look at neobundle to make installation easier.
 
+* Improve my gitstatusline. Use vimproc or dispatch to refresh it more often.
 * Turn all my external helpers into one big one with easy ways to increase functionality.
 	Have my helper in a terminal. Keybinding in vim builds and runs in that terminal and shows all output there.
 	Have my git status stuff update in there.
 	Have my texstuff building in there.
 * Change my keyboardlayout using <leader>se and <leader>so.
+* Find way to send texcompiling error to vim and hide the texcompiling window.
+* Find way to kill autotexcompiling when closing tex buffer.
+* Open pdfviewer with vim / texcompiler.
