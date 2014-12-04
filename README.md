@@ -5,22 +5,24 @@ Vim settings.
 ## INSTALL
 ### ALL
 
-1. Create a vimrc with the lines:  
+1. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
+2. Install python27.
+3. Create a vimrc with the lines:  
 ```VimL
 "let g:minimalMode = 1
 "let g:disablePlugins = 1
 "let g:disableExternal = 1
 source ~/git/vim/.vimrc
 ```  
-2. Download Vundle  
+4. Download Vundle  
 `` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
 `` :BundleInstall ``  
-3. Build clang_complete. Go into clang_complete folder and run make install.
-4. Install Eclipse.
-5. Install ECLIM.
-6. Add eclimd to path.
-7. Download LaTex.
-8. Install ctags.
+5. Build clang_complete. Go into clang_complete folder and run make install.
+6. Install Eclipse.
+7. Install ECLIM.
+8. Add eclimd to path.
+9. Download LaTex.
+10. Install ctags.
 
 ### WINDOWS
 
@@ -30,8 +32,9 @@ source ~/git/vim/.vimrc
 ``mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
 4. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
-5. Compile Vimproc.   
-`` make -f make_mingw32.mak`` 
+5. Compile Vimproc (Different for 32/64bit).   
+`` make -f make_mingw32.mak``  
+`` make -f make_mingw64.mak``  
 
 ##### (Optional)
 
@@ -64,6 +67,7 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 ## TROUBLESHOOTING
 ### ERROR
 * If vim complains about the statusline then you might be using an old git version. I use the -C flag and older version don't have it.
+* Missing python27.dll. You might be using a 64bit vim with 32bit python. Install 64bit python and it should work.
 
 ### Code-Completion
 #### C
@@ -98,8 +102,8 @@ Add a pentadactylrc with the line:
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
 
-* Change how I use my snippets. Make things that require alot of computing power, like finding variables and so on and make those into a global python snippet. In the snippets we pick out the things we want to complete it to.
-* Look into setting if_lua in vim so I can use neocomplete instead of neocomplcache. (Download premade binaries?)
+* Change how I use my snippets. Make things that require a lot of computing power, like finding variables and so on and make those into a global python snippet. In the snippets we pick out the things we want to complete it to.
+* Look into setting if_lua in vim so I can use neocomplete instead of neocomplcache. (Download remade binaries?)
 * Check if ECLIM is a viable option for C and C++ code-completion.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
 * Make tags project specific. Currently language specific.
@@ -111,7 +115,7 @@ Add a pentadactylrc with the line:
 	Have my helper in a terminal. Keybinding in vim builds and runs in that terminal and shows all output there.
 	Have my git status stuff update in there.
 	Have my texstuff building in there.
-* Change my keyboardlayout using <leader>se and <leader>so.
+* Change my keyboard layout using <leader>se and <leader>so.
 * Find way to send texcompiling error to vim and hide the texcompiling window.
 * Find way to kill autotexcompiling when closing tex buffer.
 * Open pdfviewer with vim / texcompiler.
