@@ -18,6 +18,13 @@ if ${1:1}
 	${0:${VISUAL}}
 endif
 endsnippet
+snippet "ifel?s?e?" "if else" br
+if ${1:1}
+	${2:${VISUAL}}
+else
+	${3}
+endif
+endsnippet
 snippet "(elif|eif)|(else if|elseif)" "else if" br
 elseif ${1:1}
 	${0:${VISUAL}}
@@ -27,7 +34,7 @@ else
 	${0:${VISUAL}}
 endsnippet
 
-snippet "for((?!e)\w+)" "for + match.group(1) as variable" r
+snippet "for((?!e)\w+)" "for + match.group(1) as variable" br
 for `!p snip.rv = match.group(1)` in range(${1:10})
 	${0:${VISUAL}}
 endfor

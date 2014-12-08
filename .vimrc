@@ -66,8 +66,12 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Bundle 'Shougo/unite-build'
 	Plugin 'tsukkee/unite-tag'
 	Plugin 'skeept/ultisnips-unite'
+if has('lua')
+	Plugin 'Shougo/neocomplete.vim'
+else
 	Plugin 'Shougo/neocomplcache'
 	Plugin 'JazzCore/neocomplcache-ultisnips'
+endif
 	Plugin 'SirVer/ultisnips'
 	Plugin 'OmniSharp/omnisharp-vim'
 	Plugin 'tpope/vim-dispatch'
@@ -166,6 +170,41 @@ let g:fastfold_savehook = 1
 let g:fastfold_togglehook = 0
 let g:fastfold_map = 1
 " --------------------
+" ---- [2.9] NEOCOMPLETE ----
+let g:neocomplete#enable_at_startup = 1
+
+" Required for clang_complete to play nice with NEOCOMPLCACHE.
+if !exists('g:neocomplete#omni_functions')
+	    let g:neocomplete#omni_functions = {}
+endif
+
+if !exists('g:neocomplete#sources#omni#input_patterns')
+	    let g:neocomplete#sources#omni#input_patterns = {}
+endif
+
+let g:neocomplete#force_overwrite_completefunc = 1
+let g:neocomplete#sources#omni#input_patterns.c =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplete#sources#omni#input_patterns.cpp =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplete#sources#omni#input_patterns.objc =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplete#sources#omni#input_patterns.objcpp =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+let g:neocomplete#sources#omni#input_patterns.java = '.*'
+let g:neocomplete#sources#omni#input_patterns.cs = '.*'
+let g:neocomplete#sources#omni#input_patterns.python = '.*'
+
+let g:neocomplete#enable_smart_case = 0
+let g:neocomplete#enable_camel_case_completion = 0
+let g:neocomplete#enable_ignore_case = 0
+let g:neocomplete#min_syntax_length = 3
+let g:neocomplete#enable_auto_close_preview = 0
+let g:neocomplete#enable_fuzzy_completion = 0
+
+let g:clang_complete_auto = 0
+let g:clang_auto_select = 0
+" --------------------
 " --------------------
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
@@ -246,7 +285,11 @@ if !exists("g:disablePlugins")
 	" Run my tabcompletion.
 	inoremap <TAB> <C-R>=NeoTab()<CR>
 	" Force manual completion.
-	inoremap <expr><C-M>  neocomplcache#start_manual_complete()
+	if has('lua')
+		inoremap <expr><C-M>  neocomplete#start_manual_complete()
+	else
+		inoremap <expr><C-M>  neocomplcache#start_manual_complete()
+	endif
 else
 	" Simple tabcompletion.
 	inoremap <expr><TAB> getline('.') =~ '\S' ? '<C-X><C-N>' : '<TAB>'
@@ -473,8 +516,12 @@ function! JavaSettings()
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
 	if !exists("g:disablePlugins")
-		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-		let g:neocomplcache_omni_patterns.java = '.*'
+		if has('lua')
+			let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+		else
+			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+			let g:neocomplcache_omni_patterns.java = '.*'
+		endif
 	endif
 endfunction
 
@@ -492,8 +539,12 @@ function! CSSettings()
 	setlocal foldtext=SpecialBraceFoldText()
 	let g:unite_builder_make_command = "msbuild"
 	if !exists("g:disablePlugins")
-		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-		let g:neocomplcache_omni_patterns.cs = '.*'
+		if has('lua')
+			let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+		else
+			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+			let g:neocomplcache_omni_patterns.cs = '.*'
+		endif
 	endif
 endfunction
 
@@ -561,8 +612,12 @@ function! PythonSettings()
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	if !exists("g:disablePlugins")
-		let g:neocomplcache_omni_patterns.python = '.*'
-		let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+		if has('lua')
+			let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+		else
+			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+			let g:neocomplcache_omni_patterns.python = '.*'
+		endif
 	endif
 endfunction
 
@@ -1037,7 +1092,11 @@ if exists("g:minimalMode")
 	endfunction
 
 	" No complete-as-you-type, instead tab autocompletes/open completion window.
-	let g:neocomplcache_disable_auto_complete = 1
+	if has('lua')
+		let g:neocomplete#disable_auto_complete = 1
+	else
+		let g:neocomplcache_disable_auto_complete = 1
+	endif
 	inoremap <TAB> <C-R>=SmartTab()<CR>
 endif
 " --------------------
@@ -1108,7 +1167,19 @@ function! NeoTab()
 		if g:ulti_expand_res == 1
 			return ""
 		endif
-		let longestCommon = neocomplcache#complete_common_string()
+		if has('lua')
+			let neocomplete = neocomplete#get_current_neocomplete()
+			let complete_str = neocomplete#helper#match_word(neocomplete#get_cur_text(1))[1]
+			let candidates = neocomplete#filters#matcher_head#define().filter(
+				\ { 'candidates' : copy(neocomplete.candidates),
+				\ 'complete_str' : complete_str})
+			if pumvisible() && len(candidates) == 1
+				return "\<C-N>"
+			endif
+			let longestCommon = neocomplete#mappings#complete_common_string()
+		else
+			let longestCommon = neocomplcache#complete_common_string()
+		endif
 		if longestCommon == ""
 			return pumvisible() ? "" : "\<TAB>"
 		endif
