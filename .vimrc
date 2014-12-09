@@ -1175,8 +1175,21 @@ function! NeoTab()
 				\ 'complete_str' : complete_str})
 			if pumvisible() && len(candidates) == 1
 				return "\<C-N>"
+			else
+				
+				let longestCommon = candidates[0].word
+				for keyword in candidates[1:]
+					while !neocomplete#head_match(keyword.word,longestCommon)
+						let longestCommon = longestCommon[:-2]
+					endwhile
+				endfor
+				if len(longestCommon) > len(complete_str)
+					let longestCommon = substitute(longestCommon,complete_str, "", "")
+				endif
+				if longestCommon == complete_str
+					let longestCommon = ""
+				endif
 			endif
-			let longestCommon = neocomplete#mappings#complete_common_string()
 		else
 			let longestCommon = neocomplcache#complete_common_string()
 		endif

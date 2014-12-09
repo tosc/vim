@@ -104,6 +104,8 @@ Add a pentadactylrc with the line:
 * BUG: g:disableExternal doesn't disable omnisharp.
 * BUG: Ultisnips sometimes throws an error. Look into it. (Does it stop if I disable all.snippets?)
 
+* Move from using my omnifunctions to making an own complete common function. With this I can use fuzzy but still have my tabcompletion.
+* Look into neocomplete sources and use them better.
 * Change my buildcommands to use vimproc and output all the information to a buffer. Add a leader binding to kill the process and also make sure to kill it when you run something new.
 * Check if ECLIM is a viable option for C and C++ code-completion.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
