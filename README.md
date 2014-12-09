@@ -33,9 +33,9 @@ source ~/git/vim/.vimrc
 ``mklink /D "%HOME%/vimfiles/UltiSnips" "%HOME%/git/vim/UltiSnips"``  
 4. Link my dictionary folder  
 ``mklink /D "%HOME%/.vim/dict" "%HOME%/git/vim/dict"``  
-4. Compile omnisharp.  
+5. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
-5. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
+6. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
 `` make -f make_mingw32.mak``  
 `` make -f make_mingw64.mak``  
 
@@ -52,8 +52,10 @@ source ~/git/vim/.vimrc
 
 1. Link Ultisnips snippetfolder  
 ``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
-2. Compile Vimproc.   
-`` make -f make_unix.mak `` 
+2. Link my dictionary folder  
+``ln -s ~/git/vim/dict ~/.vim/dict``  
+3. Compile Vimproc.  
+`` make -f make_unix.mak ``  
 
 ### MAC
 

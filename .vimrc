@@ -68,6 +68,7 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'skeept/ultisnips-unite'
 if has('lua')
 	Plugin 'Shougo/neocomplete.vim'
+	Plugin 'tosc/neocomplete-spell'
 else
 	Plugin 'Shougo/neocomplcache'
 	Plugin 'JazzCore/neocomplcache-ultisnips'
@@ -84,7 +85,6 @@ endif
 	Plugin 'Konfekt/FastFold'
 	Plugin 'Shougo/vimfiler.vim'
 	Plugin 'Shougo/vimproc.vim'
-	Plugin 'tosc/neocomplete-spell'
 
 	" Required by vundle
 	call vundle#end()
