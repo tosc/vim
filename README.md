@@ -102,7 +102,6 @@ Add a pentadactylrc with the line:
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: g:disableExternal doesn't disable omnisharp.
-* BUG: Ultisnips sometimes throws an error. Look into it. (Does it stop if I disable all.snippets?)
 
 * Move from using my omnifunctions to making an own complete common function. With this I can use fuzzy but still have my tabcompletion.
 * Look into neocomplete sources and use them better.
