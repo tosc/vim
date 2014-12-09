@@ -934,7 +934,8 @@ function! NormalFoldText()
 	if line =~ '^import'
 	       let line = "import"	
 	endif
-	return indent . line
+	let endText = v:foldend - v:foldstart
+	return indent . line . repeat(" ", winwidth(0)-strlen(indent . line . endText) - 5) . endText
 endfunction
 " --------------------
 " ---- [5.2.1] CS JAVA ----
