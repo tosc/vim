@@ -173,32 +173,22 @@ let g:fastfold_map = 1
 " ---- [2.9] NEOCOMPLETE ----
 let g:neocomplete#enable_at_startup = 1
 
-" Required for clang_complete to play nice with NEOCOMPLCACHE.
-if !exists('g:neocomplete#omni_functions')
-	    let g:neocomplete#omni_functions = {}
+if !exists('g:neocomplete#keyword_patterns')
+	let g:neocomplete#keyword_patterns = {}
 endif
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 
 if !exists('g:neocomplete#sources#omni#input_patterns')
-	    let g:neocomplete#sources#omni#input_patterns = {}
+	let g:neocomplete#sources#omni#input_patterns = {}
 endif
-
-let g:neocomplete#force_overwrite_completefunc = 1
-let g:neocomplete#sources#omni#input_patterns.c =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplete#sources#omni#input_patterns.cpp =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-let g:neocomplete#sources#omni#input_patterns.objc =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplete#sources#omni#input_patterns.objcpp =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-let g:neocomplete#sources#omni#input_patterns.java = '.*'
-let g:neocomplete#sources#omni#input_patterns.cs = '.*'
 let g:neocomplete#sources#omni#input_patterns.python = '.*'
+let g:neocomplete#sources#omni#input_patterns.cs = '.*'
+let g:neocomplete#sources#omni#input_patterns.java = '.*'
 
 let g:neocomplete#enable_smart_case = 0
 let g:neocomplete#enable_camel_case_completion = 0
 let g:neocomplete#enable_ignore_case = 0
-let g:neocomplete#min_syntax_length = 3
+let g:neocomplete#sources#syntax#min_keyword_length = 3
 let g:neocomplete#enable_auto_close_preview = 0
 let g:neocomplete#enable_fuzzy_completion = 0
 
@@ -516,9 +506,7 @@ function! JavaSettings()
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
 	if !exists("g:disablePlugins")
-		if has('lua')
-			let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-		else
+		if !has('lua')
 			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 			let g:neocomplcache_omni_patterns.java = '.*'
 		endif
@@ -539,9 +527,7 @@ function! CSSettings()
 	setlocal foldtext=SpecialBraceFoldText()
 	let g:unite_builder_make_command = "msbuild"
 	if !exists("g:disablePlugins")
-		if has('lua')
-			let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-		else
+		if !has('lua')
 			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 			let g:neocomplcache_omni_patterns.cs = '.*'
 		endif
@@ -612,9 +598,7 @@ function! PythonSettings()
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	if !exists("g:disablePlugins")
-		if has('lua')
-			let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-		else
+		if !has('lua')
 			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
 			let g:neocomplcache_omni_patterns.python = '.*'
 		endif
@@ -1176,17 +1160,20 @@ function! NeoTab()
 			if pumvisible() && len(candidates) == 1
 				return "\<C-N>"
 			else
-				
-				let longestCommon = candidates[0].word
-				for keyword in candidates[1:]
-					while !neocomplete#head_match(keyword.word,longestCommon)
-						let longestCommon = longestCommon[:-2]
-					endwhile
-				endfor
-				if len(longestCommon) > len(complete_str)
-					let longestCommon = substitute(longestCommon,complete_str, "", "")
-				endif
-				if longestCommon == complete_str
+				if len(candidates) > 1
+					let longestCommon = candidates[0].word
+					for keyword in candidates[1:]
+						while !neocomplete#head_match(keyword.word,longestCommon)
+							let longestCommon = longestCommon[:-2]
+						endwhile
+					endfor
+					if len(longestCommon) > len(complete_str)
+						let longestCommon = substitute(longestCommon,complete_str, "", "")
+					endif
+					if longestCommon == complete_str
+						let longestCommon = ""
+					endif
+				else
 					let longestCommon = ""
 				endif
 			endif
