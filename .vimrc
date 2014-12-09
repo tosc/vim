@@ -380,13 +380,21 @@ autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
 " S
-map <leader>se :setlocal spell spelllang=en_us <bar> :let b:neocomplete_spell_file = 'american-english' <CR>
-map <leader>ss :setlocal spell spelllang=sv <bar> :let b:neocomplete_spell_file = 'swedish' <CR>
-map <leader>so :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
-map <leader>sn :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
-map <leader>sc :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
-map <leader>sd :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
-
+if !exists("g:disablePlugins") && has('lua')
+	map <leader>se :setlocal spell spelllang=en_us <bar> :let b:neocomplete_spell_file = 'american-english' <CR>
+	map <leader>ss :setlocal spell spelllang=sv <bar> :let b:neocomplete_spell_file = 'swedish' <CR>
+	map <leader>so :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
+	map <leader>sn :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
+	map <leader>sc :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
+	map <leader>sd :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
+else
+	map <leader>se :setlocal spell spelllang=en_us <CR>
+	map <leader>ss :setlocal spell spelllang=sv <CR>
+	map <leader>so :setlocal nospell <CR>
+	map <leader>sn :setlocal nospell <CR>
+	map <leader>sc :setlocal nospell <CR>
+	map <leader>sd :setlocal nospell <CR>
+endif
 if !exists("g:disablePlugins")
 	map <leader>S :Unite -no-split ultisnips <CR>
 endif
