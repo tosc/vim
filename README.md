@@ -30,7 +30,9 @@ source ~/git/vim/.vimrc
 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
 2. Add ctags to path.
 3. Link Ultisnips snippetfolder  
-``mklink /D ~/vimfiles/UltiSnips ~/git/vim/UltiSnips``  
+``mklink /D "%HOME%/vimfiles/UltiSnips" "%HOME%/git/vim/UltiSnips"``  
+4. Link my dictionary folder  
+``mklink /D "%HOME%/.vim/dict" "%HOME%/git/vim/dict"``  
 4. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
 5. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  

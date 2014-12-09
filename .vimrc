@@ -63,7 +63,7 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'Shougo/neomru.vim'
 	Plugin 'Shougo/unite.vim'
 	Plugin 'Shougo/unite-session'
-	Bundle 'Shougo/unite-build'
+	Plugin 'Shougo/unite-build'
 	Plugin 'tsukkee/unite-tag'
 	Plugin 'skeept/ultisnips-unite'
 if has('lua')
@@ -83,7 +83,8 @@ endif
 	Plugin 'xolox/vim-misc'
 	Plugin 'Konfekt/FastFold'
 	Plugin 'Shougo/vimfiler.vim'
-	Bundle 'Shougo/vimproc.vim'
+	Plugin 'Shougo/vimproc.vim'
+	Plugin 'tosc/neocomplete-spell'
 
 	" Required by vundle
 	call vundle#end()
@@ -379,12 +380,13 @@ autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
 " S
-map <leader>se :setlocal spell spelllang=en_us <CR>
-map <leader>ss :setlocal spell spelllang=sv <CR>
-map <leader>so :setlocal nospell <CR>
-map <leader>sn :setlocal nospell <CR>
-map <leader>sc :setlocal nospell <CR>
-map <leader>sd :setlocal nospell <CR>
+map <leader>se :setlocal spell spelllang=en_us <bar> :let b:neocomplete_spell_file = 'american-english' <CR>
+map <leader>ss :setlocal spell spelllang=sv <bar> :let b:neocomplete_spell_file = 'swedish' <CR>
+map <leader>so :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
+map <leader>sn :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
+map <leader>sc :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
+map <leader>sd :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
+
 if !exists("g:disablePlugins")
 	map <leader>S :Unite -no-split ultisnips <CR>
 endif
@@ -935,7 +937,7 @@ function! NormalFoldText()
 	       let line = "import"	
 	endif
 	let endText = v:foldend - v:foldstart
-	return indent . line . repeat(" ", winwidth(0)-strlen(indent . line . endText) - 5) . endText
+	return indent . line . repeat(" ", winwidth(0)-strlen(indent . line . endText) - 4) . endText
 endfunction
 " --------------------
 " ---- [5.2.1] CS JAVA ----
@@ -1324,6 +1326,12 @@ endpy
 return l:pythonMath
 endfunction
 " --------------------
+" ---- [11.6] START ECLIMD ----
+function! StartEclim()
+	let g:EclimdRunning = 1
+	call vimproc#system_bg('eclimd')
+endfunction
+" --------------------
 " --------------------
 " ---- [12] OS SPECIFIC ----
 " ---- [12.0] Windows ----
@@ -1337,10 +1345,5 @@ endif
 " ---- [13] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
-endif
-
-if !exists("g:EclimdRunning") && !exists("g:disableExternal")
-	let g:EclimdRunning = 1
-	call vimproc#system_bg('eclimd')
 endif
 " --------------------
