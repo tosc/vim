@@ -380,21 +380,12 @@ autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
 " S
-if !exists("g:disablePlugins") && has('lua')
-	map <leader>se :setlocal spell spelllang=en_us <bar> :let b:neocomplete_spell_file = 'american-english' <CR>
-	map <leader>ss :setlocal spell spelllang=sv <bar> :let b:neocomplete_spell_file = 'swedish' <CR>
-	map <leader>so :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
-	map <leader>sn :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
-	map <leader>sc :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
-	map <leader>sd :setlocal nospell <bar> :let b:neocomplete_spell_file = '' <CR>
-else
-	map <leader>se :setlocal spell spelllang=en_us <CR>
-	map <leader>ss :setlocal spell spelllang=sv <CR>
-	map <leader>so :setlocal nospell <CR>
-	map <leader>sn :setlocal nospell <CR>
-	map <leader>sc :setlocal nospell <CR>
-	map <leader>sd :setlocal nospell <CR>
-endif
+map <leader>se :call EnglishSpellCheck() <CR>
+map <leader>ss :call SwedishSpellCheck() <CR>
+map <leader>so :call NoSpellCheck() <CR>
+map <leader>sn :call NoSpellCheck() <CR>
+map <leader>sc :call NoSpellCheck() <CR>
+map <leader>sd :call NoSpellCheck() <CR>
 if !exists("g:disablePlugins")
 	map <leader>S :Unite -no-split ultisnips <CR>
 endif
@@ -679,14 +670,8 @@ autocmd Filetype jp call JAPANESESettings()
 function! TEXSettings()
 	setlocal foldexpr=IndentFolding2(v:lnum)
 	setlocal foldtext=NormalFoldText()
-	setlocal spell spelllang=en_us
-	if !exists("g:disablePlugins") && has('lua')
-		let b:neocomplete_spell_file = 'american-english'
-	endif
-	if !exists("g:minimalMode") && !exists("g:disableExternal")
-		call StartTexBuilder()
-	endif
-	
+	call EnglishSpellCheck()
+	call StartTexBuilder()
 endfunction
 
 if !exists("g:minimalMode") && !exists("g:disableExternal")
@@ -697,12 +682,6 @@ else
 	autocmd BufWritePost *.tex call vimproc#system("pdflatex -halt-on-error -output-directory=" . expand('%:h') . " " . expand('%'))
 endif
 
-function! StartTexBuilder()
-	cd ~\git\vim
-	Start python texbuilder.py %:h %
-	cd %:h
-endfunction
-
 autocmd Filetype tex call TEXSettings()
 " --------------------
 " ---- [4.13] GITCOMMIT ----
@@ -710,10 +689,7 @@ function! GITCSettings()
 	" Don't fold gitstuff.
 	let &foldlevel = 99
 	call FugitiveBindings()
-	setlocal spell spelllang=en_us
-	if !exists("g:disablePlugins") && has('lua')
-		let b:neocomplete_spell_file = 'american-english'
-	endif
+	call EnglishSpellCheck()
 endfunction
 
 autocmd FileType gitcommit call GITCSettings()
@@ -722,10 +698,7 @@ autocmd FileType gitcommit call GITCSettings()
 function! MDSettings()
 	setlocal foldexpr=MDFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
-	setlocal spell spelllang=en_us
-	if !exists("g:disablePlugins") && has('lua')
-		let b:neocomplete_spell_file = 'american-english'
-	endif
+	call EnglishSpellCheck()
 endfunction
 
 autocmd FileType markdown call MDSettings()
@@ -1345,10 +1318,40 @@ endpy
 return l:pythonMath
 endfunction
 " --------------------
-" ---- [11.6] START ECLIMD ----
+" ---- [11.6] START EXTERNAL ----
 function! StartEclim()
 	let g:EclimdRunning = 1
 	call vimproc#system_bg('eclimd')
+endfunction
+
+function! StartTexBuilder()
+	if !exists("g:minimalMode") && !exists("g:disableExternal")
+		cd ~\git\vim
+		Start python texbuilder.py %:h %
+		cd %:h
+	endif
+endfunction
+" --------------------
+" ---- [11.7] SPELLCHECK ----
+function! EnglishSpellCheck()
+	setlocal spell spelllang=en_us
+	if !exists("g:disablePlugins") && has('lua')
+		let b:neocomplete_spell_file = 'american-english'
+	endif
+endfunction
+
+function! SwedishSpellCheck()
+	setlocal spell spelllang=sv
+	if !exists("g:disablePlugins") && has('lua')
+		let b:neocomplete_spell_file = 'swedish'
+	endif
+endfunction
+
+function! NoSpellCheck()
+	setlocal nospell
+	if !exists("g:disablePlugins") && has('lua')
+		let b:neocomplete_spell_file = ''
+	endif
 endfunction
 " --------------------
 " --------------------
