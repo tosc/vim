@@ -105,7 +105,6 @@ Add a pentadactylrc with the line:
 # TODO
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
-* BUG: g:disableExternal doesn't disable omnisharp.
 
 * Fix my delimiterstuff. Dislike the fact that you don't see any typing until the entire thing is done. Maybe save last character to a global thing. If last key = new key then do the delimiterthing.
 * Move from using my omnifunctions to making an own complete common function. With this I can use fuzzy but still have my tabcompletion.

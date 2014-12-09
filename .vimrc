@@ -375,6 +375,7 @@ autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
 autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
+autocmd Filetype vim map <leader>r :so ~/git/vim/.vimrc <cr>
 " S
 map <leader>se :call EnglishSpellCheck() <CR>
 map <leader>ss :call SwedishSpellCheck() <CR>
@@ -556,10 +557,6 @@ endfunction
 
 " Pentadactyl file is a vim file.
 autocmd BufRead .pentadactylrc set filetype=vim
-
-" Runs the new vimrc when you save it.
-autocmd BufWritePost .vimrc so ~/git/vim/.vimrc
-
 autocmd Filetype vim call VimSettings()
 " -------------
 " ---- [4.5] SNIPPET ----
@@ -918,7 +915,7 @@ function! NormalFoldText()
 	       let line = "import"	
 	endif
 	let endText = v:foldend - v:foldstart
-	return indent . line . repeat(" ", winwidth(0)-strlen(indent . line . endText) - 4) . endText
+	return indent . line . repeat(" ", winwidth(0)-strlen(indent . line . endText) - 5) . endText . " "
 endfunction
 " --------------------
 " ---- [5.2.1] CS JAVA ----
@@ -972,27 +969,24 @@ endfunction
 function! SlowStatusLine()
 	let SlowStatusLineVar = ""
 	if &modifiable
-		let gitTemp = system("git -C " . expand("%:h") . " status -b -s")
-		let gitTemp = substitute(gitTemp, "##" , "", "")
-		let gitTemp = substitute(gitTemp, "\\.\\.\\." , "->", "")
+		let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
+		if exists("*vimproc#system")
+			let gitTemp = vimproc#system("git -C " . currentFolder . " status -b -s")
+			let rowsTemp = split(vimproc#system("git -C " . currentFolder . " diff --numstat"), "\n")
+		else
+			let rowsTemp = split(system("git -C " . currentFolder . " diff --numstat"), "\n")
+			let gitTemp = system("git -C " . currentFolder . " status -b -s")
+		endif
 		if gitTemp !~ "fatal"
+		let gitTemp = substitute(gitTemp[2:], "\\.\\.\\.", '->', '')
 			let gitList = split(gitTemp, "\n")
 			if len(gitList) > 0
-				let branchName = gitList[0]
-				let branchName = substitute(branchName, " ", "[", "")
-				let beforeSub = branchName
-				let branchName = substitute(branchName, " ", "] ", "")
-				if beforeSub == branchName
-					let branchName .= "]"
-				endif
-				let SlowStatusLineVar .= branchName
+				let SlowStatusLineVar .= "[" . substitute(gitList[0], " ", "", "g") . "]"
 			endif
 			if len(gitList) > 1
 				let SlowStatusLineVar .= " [m " . (len(gitList) -1) . "]"
 			endif
-
 			let changedRows = []
-			let rowsTemp = split(system("git -C " . expand("%:h") . " diff --numstat"), "\n")
 			for row in rowsTemp
 				if row =~ escape(expand('%:t'), ".")
 					let changedRows = split(row, "\t")
@@ -1011,26 +1005,15 @@ function! Tabline()
 	let s = ''
 	for i in range(tabpagenr('$'))
 		let tab = i + 1
-		let winnr = tabpagewinnr(tab)
-		let buflist = tabpagebuflist(tab)
-
-		let bufname = fnamemodify(bufname(buflist[0]), ':t:r')
-
-		let bufmodified = 0
-		for buf in buflist
-			if !bufmodified
-				let bufmodified = getbufvar(buf, "&mod")
-			endif
+		let bufname = ''
+		for buf in tabpagebuflist(tab)
+			let bufname .= (bufname != '' ? ' | ' : '')
+			let bufname .= fnamemodify(bufname(buf), ':t') . (getbufvar(buf, "&mod") ? "[+]" : "")
 		endfor
-
-		let s .= '%' . tab . 'T'
-		let s .= (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
-		let s .= ' ' . tab . (bufmodified ? "+" : "") .' '
-		let s .= (bufname != '' ? bufname . ' ' : '- ')
+		let s .= '%' . tab . 'T' . (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
+		let s .= ' ' . tab . ' ' . (bufname != '' ? bufname . ' ' : '- ')
 	endfor
-
-	let s .= '%#TabLineFill#'
-	return s
+	return s . '%#TabLineFill#'
 endfunction
 
 set tabline=%!Tabline()
@@ -1108,7 +1091,9 @@ hi TabLine term=underline cterm=underline gui=underline guibg=grey30
 hi TabLineSel term=none cterm=none gui=none
 " --------------------
 " ---- [10] AUTOCMD ----
-autocmd BufWritePost * call SaveSession() | call SlowStatusLine()
+autocmd BufWritePost * call SaveSession()
+autocmd BufWritePost * call SlowStatusLine()
+
 autocmd BufEnter * call SlowStatusLine()
 
 autocmd InsertEnter * hi StatusLine gui=reverse
@@ -1345,8 +1330,6 @@ endfunction
 if(has("win32"))
 	au GUIEnter * simalt ~x
 endif
-" --------------------
-" ---- [12.1] Linux ----
 " --------------------
 " --------------------
 " ---- [13] AFTER VIMRC ----
