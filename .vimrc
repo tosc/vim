@@ -59,7 +59,6 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	call vundle#begin()
 	Plugin 'gmarik/Vundle.vim'
 
-	" Vundle addons"
 	Plugin 'Shougo/neomru.vim'
 	Plugin 'Shougo/unite.vim'
 	Plugin 'Shougo/unite-session'
@@ -240,14 +239,11 @@ noremap § $
 " Jump to tag. C-T to jump back.
 noremap <C-J> <C-]>
 
-
-
 " Good avaliable binds
 " ´
 " Enter
 " Backspace
 " Shift enter
-" ä
 " Ä
 " H (doesn't do anything since cursor always in middle for me)
 " M (doesn't do anything since cursor always in middle for me)
@@ -383,7 +379,6 @@ autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
 map <leader>se :call EnglishSpellCheck() <CR>
 map <leader>ss :call SwedishSpellCheck() <CR>
 map <leader>so :call NoSpellCheck() <CR>
-map <leader>sn :call NoSpellCheck() <CR>
 map <leader>sc :call NoSpellCheck() <CR>
 map <leader>sd :call NoSpellCheck() <CR>
 if !exists("g:disablePlugins")
@@ -413,10 +408,6 @@ map <leader>v :e ~/git/vim/.vimrc<CR>
 if !exists("g:disablePlugins")
 	map <leader>z :Unite -no-split session<CR>
 endif
-" !
-" ?
-" -
-" /
 " --------------------
 " ---- [3.3] VISUAL ----
 xnoremap å c<C-R>=PythonMath()<CR>
@@ -428,8 +419,6 @@ snoremap <pageup> <ESC>:call SmartJump()<CR>
 snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
 
 if !exists("g:disablePlugins")
-	" When you press TAB and have something selected in visual mode, it saves it for
-	" ultisnips and then removes it.
 	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 endif
 
@@ -1195,12 +1184,8 @@ endfunction
 " --------------------
 " ---- [11.1] SESSION ----
 function! SaveSession()
-	let sessionName = getcwd()
-	let sessionName = substitute(sessionName, "\\", "-", "g")
-	let sessionName = substitute(sessionName, ":", "-", "g")
-	let sessionName = substitute(sessionName, "/", "-", "g")
-	let sessionName = "~/.cache/unite/session/" . sessionName . ".vim"
-	exe "mksession! " . sessionName
+	let sessionName = substitute(getcwd(), "[\\:/]", "-", "g")
+	exe "mksession! ~/.cache/unite/session/" . sessionName . ".vim"
 endfunction
 " --------------------
 " ---- [11.2] QUICKFIX TOGGLE ----
