@@ -680,6 +680,9 @@ function! TEXSettings()
 	setlocal foldexpr=IndentFolding2(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	setlocal spell spelllang=en_us
+	if !exists("g:disablePlugins") && has('lua')
+		let b:neocomplete_spell_file = 'american-english'
+	endif
 	if !exists("g:minimalMode") && !exists("g:disableExternal")
 		call StartTexBuilder()
 	endif
@@ -707,6 +710,10 @@ function! GITCSettings()
 	" Don't fold gitstuff.
 	let &foldlevel = 99
 	call FugitiveBindings()
+	setlocal spell spelllang=en_us
+	if !exists("g:disablePlugins") && has('lua')
+		let b:neocomplete_spell_file = 'american-english'
+	endif
 endfunction
 
 autocmd FileType gitcommit call GITCSettings()
@@ -715,6 +722,10 @@ autocmd FileType gitcommit call GITCSettings()
 function! MDSettings()
 	setlocal foldexpr=MDFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
+	setlocal spell spelllang=en_us
+	if !exists("g:disablePlugins") && has('lua')
+		let b:neocomplete_spell_file = 'american-english'
+	endif
 endfunction
 
 autocmd FileType markdown call MDSettings()
