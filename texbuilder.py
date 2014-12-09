@@ -18,6 +18,6 @@ while 1:
 			print(row)
 			nextRow = 0
 	timeEnd = time.time() - timeStart
+	os.system("rm temp.tex")
 	print("Done! %.2fs" % timeEnd)
 	time.sleep(1)
-	os.system("ls -la")
