@@ -393,6 +393,8 @@ map <leader>t4 :set tabstop=4 <CR> :set shiftwidth=4 <CR>
 map <leader>t8 :set tabstop=8 <CR> :set shiftwidth=8 <CR>
 map <leader>ts :set listchars=tab:>\ ,trail:#,extends:>,precedes:<,nbsp:+ <CR>
 map <leader>th :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
+map <leader>tc :tabclose <CR>
+map <leader>tn :tabnew <CR>
 " U
 if !exists("g:disablePlugins")
 	map <leader>ue :UltiSnipsEdit <CR>
@@ -438,6 +440,8 @@ cnoremap <C-E> <end>
 cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 
 cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? 'call FullScreenHelp(" ")<left><left><left>' : "h"
+cnoreabbrev <expr> tn getcmdtype() == ":" && getcmdline() == "tn" ? 'tabnew' : "tn"
+cnoreabbrev <expr> tc getcmdtype() == ":" && getcmdline() == "tc" ? 'tabc' : "tc"
 
 if !exists("g:disablePlugins")
 	" I tend to write :git instead of :Git
@@ -1074,8 +1078,8 @@ hi Pmenu ctermfg=15 ctermbg=13 cterm=bold
 hi PmenuSel ctermfg=15 cterm=bold
 hi PmenuSbar ctermfg=NONE ctermbg=13
 hi PmenuThumb ctermfg=NONE ctermbg=13
-hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold
-hi StatusLine gui=underline cterm=underline
+hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold guibg=grey40 guifg=NONE
+hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
 
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
