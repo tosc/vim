@@ -65,7 +65,7 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'Shougo/unite-build'
 	Plugin 'tsukkee/unite-tag'
 	Plugin 'skeept/ultisnips-unite'
-if has('lua')
+if has('lua') && !exists('g:minimalMode')
 	Plugin 'Shougo/neocomplete.vim'
 	Plugin 'tosc/neocomplete-spell'
 else
@@ -271,12 +271,6 @@ inoremap <C-L> <C-X><C-L>
 if !exists("g:disablePlugins")
 	" Run my tabcompletion.
 	inoremap <TAB> <C-R>=NeoTab()<CR>
-	" Force manual completion.
-	if has('lua')
-		inoremap <expr><C-M>  neocomplete#start_manual_complete()
-	else
-		inoremap <expr><C-M>  neocomplcache#start_manual_complete()
-	endif
 else
 	" Simple tabcompletion.
 	inoremap <expr><TAB> getline('.') =~ '\S' ? '<C-X><C-N>' : '<TAB>'
@@ -1013,7 +1007,8 @@ function! Tabline()
 		let s .= '%' . tab . 'T' . (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
 		let s .= ' ' . tab . ' ' . (bufname != '' ? bufname . ' ' : '- ')
 	endfor
-	return s . '%#TabLineFill#'
+	let s .= '%#TabLineFill#'
+	return s
 endfunction
 
 set tabline=%!Tabline()
@@ -1021,34 +1016,8 @@ set tabline=%!Tabline()
 " ---- [8] MINIMALMODE ----
 if exists("g:minimalMode")
 	let s:CompletionCommand = "\<C-X>\<C-U>"
-	let g:PosBeforeCompletion = 0
-	function! SmartTab()
-		"if getline(line(".")) =~ '\S'
-		if getline(".")[col('.') - 2] =~ '\S'
-			call UltiSnips#ExpandSnippet()
-			if g:ulti_expand_res
-				return ""
-			else
-				if pumvisible()
-					let g:PosBeforeCompletion = col('.')
-					return "\<C-E>" . s:CompletionCommand
-				else
-					let g:PosBeforeCompletion = col('.')
-					return s:CompletionCommand
-				endif
-			endif
-		else
-			return "\<TAB>"
-		endif
-	endfunction
-
-	" No complete-as-you-type, instead tab autocompletes/open completion window.
-	if has('lua')
-		let g:neocomplete#disable_auto_complete = 1
-	else
-		let g:neocomplcache_disable_auto_complete = 1
-	endif
-	inoremap <TAB> <C-R>=SmartTab()<CR>
+	let g:neocomplcache_disable_auto_complete = 1
+	inoremap <TAB> <C-R>=MinimalTab()<CR>
 endif
 " --------------------
 " ---- [9] COLORSETTINGS ----
@@ -1121,31 +1090,7 @@ function! NeoTab()
 			return ""
 		endif
 		if has('lua')
-			let neocomplete = neocomplete#get_current_neocomplete()
-			let complete_str = neocomplete#helper#match_word(neocomplete#get_cur_text(1))[1]
-			let candidates = neocomplete#filters#matcher_head#define().filter(
-				\ { 'candidates' : copy(neocomplete.candidates),
-				\ 'complete_str' : complete_str})
-			if pumvisible() && len(candidates) == 1
-				return "\<C-N>"
-			else
-				if len(candidates) > 1
-					let longestCommon = candidates[0].word
-					for keyword in candidates[1:]
-						while !neocomplete#head_match(keyword.word,longestCommon)
-							let longestCommon = longestCommon[:-2]
-						endwhile
-					endfor
-					if len(longestCommon) > len(complete_str)
-						let longestCommon = substitute(longestCommon,complete_str, "", "")
-					endif
-					if longestCommon == complete_str
-						let longestCommon = ""
-					endif
-				else
-					let longestCommon = ""
-				endif
-			endif
+			let longestCommon = NeoLongestCommon()
 		else
 			let longestCommon = neocomplcache#complete_common_string()
 		endif
@@ -1155,6 +1100,48 @@ function! NeoTab()
 		return longestCommon
 	endif
 	return "\<TAB>"
+endfunction
+
+function! NeoLongestCommon()
+	let neocomplete = neocomplete#get_current_neocomplete()
+	let complete_str = neocomplete#helper#match_word(neocomplete#get_cur_text(1))[1]
+	let candidates = neocomplete#filters#matcher_head#define().filter(
+		\ { 'candidates' : copy(neocomplete.candidates),
+		\ 'complete_str' : complete_str})
+	if pumvisible() && len(candidates) == 1
+		return "\<C-N>"
+	else
+		if len(candidates) > 1
+			let longestCommon = candidates[0].word
+			for keyword in candidates[1:]
+				while !neocomplete#head_match(keyword.word,longestCommon)
+					let longestCommon = longestCommon[:-2]
+				endwhile
+			endfor
+			if len(longestCommon) > len(complete_str)
+				let longestCommon = substitute(longestCommon,complete_str, "", "")
+			endif
+			if longestCommon == complete_str
+				let longestCommon = ""
+			endif
+		else
+			let longestCommon = ""
+		endif
+	endif
+	return longestCommon
+endfunction
+
+function! MinimalTab()
+	if getline(".")[col('.') - 2] =~ '\S'
+		call UltiSnips#ExpandSnippet()
+		if g:ulti_expand_res
+			return ""
+		else
+			return (pumvisible() ? "\<C-E>" : "") . s:CompletionCommand
+		endif
+	else
+		return "\<TAB>"
+	endif
 endfunction
 
 function! FilterOmni(words, findstart, base)
