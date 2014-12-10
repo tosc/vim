@@ -302,6 +302,13 @@ function! BindDelim(kMap)
 	execute 'inoremap ' . a:kMap . '<left> ' . a:kMap . '<left>'
 	execute 'inoremap ' . a:kMap . '<bs> ' . a:kMap . '<bs>'
 	execute 'inoremap ' . a:kMap . '. ' . a:kMap . '.'
+
+	execute 'cnoremap ' . a:kMap . ' ' . a:kMap . '<left>'
+	execute 'cnoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>'
+	execute 'cnoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>'
+	execute 'cnoremap ' . a:kMap . '<left> ' . a:kMap . '<left>'
+	execute 'cnoremap ' . a:kMap . '<bs> ' . a:kMap . '<bs>'
+	execute 'cnoremap ' . a:kMap . '. ' . a:kMap . '.'
 endfunction
 call BindDelim('""')
 call BindDelim('()')
@@ -380,7 +387,7 @@ if !exists("g:disablePlugins")
 	map <leader>S :Unite -no-split ultisnips <CR>
 endif
 " T
-map <leader>ts :set expandtab <CR>
+map <leader>te :set expandtab <CR>
 map <leader>tt :set noexpandtab <CR>
 map <leader>t4 :set tabstop=4 <CR> :set shiftwidth=4 <CR>
 map <leader>t8 :set tabstop=8 <CR> :set shiftwidth=8 <CR>
@@ -439,6 +446,8 @@ else
 	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "!git" : "git"
 	cnoreabbrev <expr> Git getcmdtype() == ":" && getcmdline() == "Git" ? "!git" : "Git"
 endif
+
+" See insert for delimiterbindings.
 " --------------------
 " ---- [3.5] UNITE ----
 function! UniteBinds()
@@ -1024,28 +1033,42 @@ endif
 colorscheme desert
 
 " Change to better colors when using a terminal
+" http://misc.flogisoft.com/_media/bash/colors_format/256_colors_bg.png
 if has("terminfo")
 	let &t_Co=256
-	set background=dark
-	hi Title ctermfg=209
+	set background=light
+	hi Normal ctermbg=236
+	hi Identifier ctermfg=120 cterm=bold
+	hi Title ctermfg=203 cterm=bold
 	hi SpecialKey ctermfg=242
 	hi NonText ctermfg=7 ctermbg=8
 	hi IncSearch ctermfg=191 ctermbg=8
 	hi Search ctermfg=15 ctermbg=172
 	hi MoreMsg ctermfg=22
-	hi Visual ctermbg=15 ctermfg=70
-	hi Folded ctermbg=236 ctermfg=11
+	hi Visual ctermbg=228 ctermfg=64
+	hi Folded ctermbg=239 ctermfg=11 cterm=bold
 	hi FoldColumn ctermbg=8 ctermfg=178
-	hi Constant ctermfg=174
-	hi Idetifier ctermfg=47
-	hi Statement ctermfg=11 cterm=bold
-	hi PreProc ctermfg=209
-	hi Type ctermfg=3 cterm=bold
+	hi Constant ctermfg=174 cterm=bold
+	hi Statement ctermfg=228 cterm=bold
+	hi PreProc ctermfg=9
+	hi Type ctermfg=185 cterm=bold
 	hi Todo ctermfg=9 cterm=bold
-	hi Special ctermfg=11
-	hi Identifier ctermfg=47
+	hi Special ctermfg=229 cterm=bold
 	hi Normal ctermfg=15
+	hi SpellBad ctermbg=NONE cterm=underline ctermfg=NONE
+	hi SpellCap ctermbg=NONE cterm=underline ctermfg=NONE
+	hi SpellLocal ctermbg=NONE cterm=underline ctermfg=NONE
+	hi SpellRare ctermbg=NONE cterm=underline ctermfg=NONE
+	hi Pmenu ctermbg=236 ctermfg=11
+	hi PmenuSel ctermbg=NONE ctermfg=11
+	hi PmenuSbar ctermbg=236
+	hi PmenuThumb ctermbg=236
+	hi Comment ctermfg=123
+	hi TabLineFill ctermbg=239 
+	hi TabLine ctermbg=239 ctermfg=NONE
+	hi TabLineSel ctermbg=NONE
 endif
+
 
 
 " More discreet color for whitespaces.
