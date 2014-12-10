@@ -1037,50 +1037,49 @@ colorscheme desert
 if has("terminfo")
 	let &t_Co=256
 	set background=light
-	hi Normal ctermbg=236
-	hi Identifier ctermfg=120 cterm=bold
-	hi Title ctermfg=203 cterm=bold
-	hi SpecialKey ctermfg=242
-	hi NonText ctermfg=7 ctermbg=8
-	hi IncSearch ctermfg=191 ctermbg=8
-	hi Search ctermfg=15 ctermbg=172
-	hi MoreMsg ctermfg=22
-	hi Visual ctermbg=228 ctermfg=64
-	hi Folded ctermbg=239 ctermfg=11 cterm=bold
-	hi FoldColumn ctermbg=8 ctermfg=178
-	hi Constant ctermfg=174 cterm=bold
-	hi Statement ctermfg=228 cterm=bold
-	hi PreProc ctermfg=9
-	hi Type ctermfg=185 cterm=bold
-	hi Todo ctermfg=9 cterm=bold
-	hi Special ctermfg=229 cterm=bold
-	hi Normal ctermfg=15
-	hi SpellBad ctermbg=NONE cterm=underline ctermfg=NONE
-	hi SpellCap ctermbg=NONE cterm=underline ctermfg=NONE
-	hi SpellLocal ctermbg=NONE cterm=underline ctermfg=NONE
-	hi SpellRare ctermbg=NONE cterm=underline ctermfg=NONE
-	hi Pmenu ctermbg=236 ctermfg=11
-	hi PmenuSel ctermbg=NONE ctermfg=11
-	hi PmenuSbar ctermbg=236
-	hi PmenuThumb ctermbg=236
-	hi Comment ctermfg=123
-	hi TabLineFill ctermbg=239 
-	hi TabLine ctermbg=239 ctermfg=NONE
-	hi TabLineSel ctermbg=NONE
 endif
 
+hi Normal ctermbg=236 ctermfg=15 cterm=bold
+hi Identifier ctermfg=120 cterm=bold
+hi Title ctermfg=203 cterm=bold
+hi SpecialKey ctermfg=8 cterm=bold guifg=grey40
+hi NonText ctermfg=7 ctermbg=8
+hi IncSearch ctermfg=191 ctermbg=8
+hi Search ctermfg=15 ctermbg=172
+hi MoreMsg ctermfg=22
+hi Visual ctermbg=228 ctermfg=64
+hi Folded ctermbg=239 ctermfg=11 cterm=bold
+hi FoldColumn ctermbg=8 ctermfg=178
+hi Constant ctermfg=174 cterm=bold
+hi Statement ctermfg=228 cterm=bold
+hi PreProc ctermfg=9 cterm=bold
+hi Type ctermfg=185 cterm=bold
+hi Todo ctermfg=9 cterm=bold
+hi Special ctermfg=229 cterm=bold
+hi Normal ctermfg=15
+hi SpellBad ctermbg=NONE cterm=underline ctermfg=NONE
+hi SpellCap ctermbg=NONE cterm=underline ctermfg=NONE
+hi SpellLocal ctermbg=NONE cterm=underline ctermfg=NONE
+hi SpellRare ctermbg=NONE cterm=underline ctermfg=NONE
+hi Comment ctermfg=123 cterm=bold
+hi TabLineFill cterm=underline gui=underline guibg=grey30 ctermbg=239
+hi TabLine cterm=underline gui=underline guibg=grey30 ctermbg=239 ctermfg=NONE
+hi TabLineSel cterm=none gui=none ctermbg=NONE
+hi MoreMsg cterm=bold ctermfg=41
+hi ModeMsg cterm=bold
+hi LineNr cterm=bold
+hi CursorLineNr cterm=bold
+hi Directory cterm=bold
+hi Pmenu ctermfg=15 ctermbg=13 cterm=bold
+hi PmenuSel ctermfg=15 cterm=bold
+hi PmenuSbar ctermfg=NONE ctermbg=13
+hi PmenuThumb ctermfg=NONE ctermbg=13
 
-
-" More discreet color for whitespaces.
-hi SpecialKey guifg=grey40
 " Better color for the column that appears on the side.
 hi SignColumn guibg=bg
 
 hi clear StatusLine
-hi StatusLine gui=underline
-hi TabLineFill term=underline cterm=underline gui=underline guibg=grey30
-hi TabLine term=underline cterm=underline gui=underline guibg=grey30
-hi TabLineSel term=none cterm=none gui=none
+hi StatusLine gui=underline cterm=underline
 " --------------------
 " ---- [10] AUTOCMD ----
 autocmd BufWritePost * call SaveSession()
@@ -1088,8 +1087,8 @@ autocmd BufWritePost * call SlowStatusLine()
 
 autocmd BufEnter * call SlowStatusLine()
 
-autocmd InsertEnter * hi StatusLine gui=reverse
-autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline
+autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
+autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=NONE
 
 " To make FastFold calculate the folds when you open a file.
 autocmd BufReadPost * let &foldlevel=0
