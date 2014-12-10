@@ -1074,21 +1074,17 @@ hi Pmenu ctermfg=15 ctermbg=13 cterm=bold
 hi PmenuSel ctermfg=15 cterm=bold
 hi PmenuSbar ctermfg=NONE ctermbg=13
 hi PmenuThumb ctermfg=NONE ctermbg=13
-
-" Better color for the column that appears on the side.
-hi SignColumn guibg=bg
-
-hi clear StatusLine
+hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold
 hi StatusLine gui=underline cterm=underline
+
+autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
+autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
 " --------------------
 " ---- [10] AUTOCMD ----
 autocmd BufWritePost * call SaveSession()
 autocmd BufWritePost * call SlowStatusLine()
 
 autocmd BufEnter * call SlowStatusLine()
-
-autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
-autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=NONE
 
 " To make FastFold calculate the folds when you open a file.
 autocmd BufReadPost * let &foldlevel=0
