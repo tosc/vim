@@ -189,6 +189,10 @@ if !exists('g:neocomplete#force_omni_input_patterns')
         let g:neocomplete#force_omni_input_patterns = {}
 endif
 let g:neocomplete#force_omni_input_patterns.python = '\h\w*\|[^.\t]\.\w*'
+let g:neocomplete#force_omni_input_patterns.c =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)'
+let g:neocomplete#force_omni_input_patterns.cpp =
+			\ '[^.[:digit:] *\t]\%(\.\|->\)'
 
 let g:neocomplete#enable_smart_case = 0
 let g:neocomplete#enable_camel_case_completion = 0
@@ -561,7 +565,7 @@ function! CSettings()
 endfunction
 
 function! COmni(findstart, base)
-	let words = UltiSnips#SnippetsInCurrentScope()
+	let words = ccomplete#Complete(a:findstart, a:base)
 	return FilterOmni(words, a:findstart, a:base)
 endfunction
 

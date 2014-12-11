@@ -24,6 +24,8 @@ source ~/git/vim/.vimrc
 9. Add eclimd to path.
 10. Download LaTex.
 11. Install ctags.
+12. Build clang_complete.  
+`` make install ``
 
 ### WINDOWS
 
@@ -83,7 +85,7 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 * If you are on linux then you have to update your .slnfiles with the correct paths.
 * Make sure the omnisharp daemon is running and has initialized.
 
-#### Java and Python
+#### Java
 * Make sure you have the ECLIM deamon running. If it still doesn't work then make sure that you are in an eclipse project. To create a new one run:  
 ``:ProjectCreate path -n language``  
 ``Ex :ProjectCreate ~\git\test -n java``  
