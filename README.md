@@ -13,17 +13,18 @@ Vim settings.
 6. Install LaTex.
 7. Install Eclipse.
 8. Install ECLIM.
-9. Create a vimrc with the lines:  
+9. Install Mono-develop. (http://www.mono-project.com/)
+10. Create a vimrc with the lines:  
 ```VimL
 "let g:minimalMode = 1
 "let g:disablePlugins = 1
 "let g:disableExternal = 1
 source ~/git/vim/.vimrc
 ```  
-10. Download Vundle  
+11. Download Vundle  
 `` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
 `` :BundleInstall ``  
-11. Build clang_complete.  
+12. Build clang_complete.  
 `` make install ``
 
 ### WINDOWS
@@ -114,6 +115,7 @@ Add a pentadactylrc with the line:
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: Missing space in statusline.
 * BUG: Slowdowns when typing sometimes. I think it's ultisnips fault. Happend every time I tried to add a autocmd for TextChanged, TextChangedI * 
+* BUG: Really slow when using syntastic and editing my vimrc. Split my vimrc into smaller parts?
 
 * Try autosave for everything.
 * Add option to disable git draw.

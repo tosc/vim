@@ -1,150 +1,143 @@
 # Header
 snippet "import|include" "import" br
-<MISSING SNIPPET>
+<MISSING import|include>
 endsnippet
 snippet header "header" b
-<MISSING SNIPPET>
+<MISSING header>
 endsnippet
 
 # Logical operations
 snippet "\|\||or" "or" r
-<MISSING SNIPPET>
+<MISSING or|||>
 endsnippet
 snippet "&&|and" "and" r
-<MISSING SNIPPET>
+<MISSING and|&&>
 endsnippet
 snippet "!([a-zA-Z0-9.,\-]+)|not" "not" r
-<MISSING SNIPPET>
+<MISSING !|not>
 endsnippet
 
 # Conditional snippets
 snippet if "if" b
-<MISSING SNIPPET>
+<MISSING if>
 endsnippet
 snippet "ifel?s?e?" "if else" br
-<MISSING SNIPPET>
+<MISSING ifelse>
+endsnippet
+snippet "(elif|eif)|(else if|elseif)" "else if" br
+<MISSING elif>
 endsnippet
 snippet else "else" b
-<MISSING SNIPPET>
+<MISSING else>
 endsnippet
 snippet switch "switch" b
-<MISSING SNIPPET>
+<MISSING switch>
 endsnippet
 snippet case "case" b
-<MISSING SNIPPET>
+<MISSING case>
 endsnippet
 	
 # Loop snippets
 snippet for "for" b
-<MISSING SNIPPET>
+<MISSING for>
 endsnippet
 snippet "for((?!e)\w+)" "for + match.group(1) as variable" br
-<MISSING SNIPPET>
+<MISSING for var>
 endsnippet
 snippet "fore(ach)?" "for each element in collection" br
-<MISSING SNIPPET>
+<MISSING foreach>
 endsnippet
 snippet while "while" b
-<MISSING SNIPPET>
+<MISSING white>
 endsnippet
 snippet do "do while" b
-<MISSING SNIPPET>
+<MISSING do>
 endsnippet
 
 # Methods/functinos
 snippet "func?t?i?o?n?|meth?o?d?" "function" br
-<MISSING SNIPPET>
+<MISSING func|method>
 endsnippet
 snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
-<MISSING SNIPPET>
+<MISSING var func|method>
 endsnippet
 snippet "const?r?u?c?t?o?r?" "Description" br
-asd
-<MISSING SNIPPET>
+<MISSING constructor>
 endsnippet
 
 # String snippets
 snippet "[sS]tr(ing)?" "string variable" br
-<MISSING SNIPPET>
+<MISSING string var>
 endsnippet
-snippet "contains|in" "string contains/is in another string" br
-<MISSING SNIPPET>
-endsnippet
-snippet "([a-zA-Z0-9."']+) contains" "string contains match.group(1)" br
-<MISSING SNIPPET>
-endsnippet
-snippet "([a-zA-Z0-9."']+) in" "match.group(1) in string" br
-<MISSING SNIPPET>
+snippet "contains|in" "string contains/is in another string" r
+<MISSING contains|in>
 endsnippet
 snippet "[tT]o[sS]tring\(?\)?" "Description" br
-<MISSING SNIPPET>
-endsnippet
-snippet "((\([^()]*\))|[a-zA-Z0-9.,\-]+)+.[tT]o[sS]tring\(?\)?" "match.group(1) to string" br
-<MISSING SNIPPET>
+<MISSING ToString>
 endsnippet
 
 # int snippets
 snippet "[iI]nt" "int variable" br
-<MISSING SNIPPET>
+<MISSING int var>
 endsnippet
 snippet "(\w+)\+\+" "Description" r
-<MISSING SNIPPET>
+<MISSING ++>
 endsnippet
 snippet "(\w+)\-\-" "Description" r
-<MISSING SNIPPET>
+<MISSING -->
 endsnippet
 
 # Variable snippets
 snippet "[dD]ouble" "double variable" br
-<MISSING SNIPPET>
+<MISSING double var>
 endsnippet
 snippet "[fF]loat" "float variable" br
-<MISSING SNIPPET>
+<MISSING float var>
 endsnippet
 snippet "[bB]ool(ean)?" "float variable" br
-<MISSING SNIPPET>
+<MISSING bool var>
 endsnippet
 
 # Datatype snippets
 snippet enum "enum" b
-<MISSING SNIPPET>
+<MISSING enum>
 endsnippet
 snippet list "list" b
-<MISSING SNIPPET>
+<MISSING list>
 endsnippet
 snippet "(\w+) ?list" "list of type match.group(1)" br
-<MISSING SNIPPET>
+<MISSING list with type>
 endsnippet
 
 # Documentation snippets
 snippet "\"|#|//" "comment" br
-<MISSING SNIPPET>
+<MISSING comment>
 endsnippet
 snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines " br
-<MISSING SNIPPET>
+<MISSING multiline comment>
 endsnippet
 snippet comment "comment" b
-<MISSING SNIPPET>
+<MISSING documentation>
 endsnippet
 snippet print "print" b
-<MISSING SNIPPET>
+<MISSING print>
 endsnippet
 
 # Special snippets
 snippet sleep "Sleep program" b
-<MISSING SNIPPET>
+<MISSING sleep>
 endsnippet
 snippet time "current time in milliseconds" b
-<MISSING SNIPPET>
+<MISSING time>
 endsnippet
 snippet "kill" "kill current script" br
-<MISSING SNIPPET>
+<MISSING kill>
 endsnippet
 
 # New code snippets
 snippet main "runnable script" b
-<MISSING SNIPPET>
+<MISSING main>
 endsnippet
 snippet class "new class" b
-<MISSING SNIPPET>
+<MISSING class>
 endsnippet

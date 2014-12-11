@@ -238,6 +238,11 @@ let g:jedi#documentation_command = "<NOP>"
 let g:jedi#goto_definitions_command = "<NOP>"
 let g:jedi#goto_assignments_command = "<NOP>"
 " --------------------
+" ---- [2.11] SYNTASTIC ----
+let g:syntastic_mode_map = { "mode": "active",
+			   \ "active_filetypes": [],
+			   \ "passive_filetypes": ["vim"] }
+" --------------------
 " --------------------
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
@@ -1145,6 +1150,7 @@ autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
 " ---- [10] AUTOCMD ----
 autocmd BufWritePost * call SaveSession()
 autocmd BufWritePost * call SlowStatusLine()
+autocmd BufWritePost * Errors
 
 autocmd BufEnter * call SlowStatusLine()
 
