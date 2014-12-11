@@ -84,6 +84,7 @@ endif
 	Plugin 'Konfekt/FastFold'
 	Plugin 'Shougo/vimfiler.vim'
 	Plugin 'Shougo/vimproc.vim'
+	Plugin 'davidhalter/jedi-vim'
 
 	" Required by vundle
 	call vundle#end()
@@ -181,9 +182,13 @@ let g:neocomplete#keyword_patterns['default'] = '\h\w*'
 if !exists('g:neocomplete#sources#omni#input_patterns')
 	let g:neocomplete#sources#omni#input_patterns = {}
 endif
-let g:neocomplete#sources#omni#input_patterns.python = '.*'
 let g:neocomplete#sources#omni#input_patterns.cs = '.*'
 let g:neocomplete#sources#omni#input_patterns.java = '.*'
+
+if !exists('g:neocomplete#force_omni_input_patterns')
+        let g:neocomplete#force_omni_input_patterns = {}
+endif
+let g:neocomplete#force_omni_input_patterns.python = '\h\w*\|[^.\t]\.\w*'
 
 let g:neocomplete#enable_smart_case = 0
 let g:neocomplete#enable_camel_case_completion = 0
@@ -194,6 +199,12 @@ let g:neocomplete#enable_fuzzy_completion = 0
 
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
+" --------------------
+" ---- [2.10] JEDI ----
+"let g:jedi#auto_initialization = 0
+let g:jedi#auto_vim_configuration = 0
+let g:jedi#completions_enabled = 0
+let g:jedi#popup_select_first = 0
 " --------------------
 " --------------------
 " ---- [3] BINDINGS ----
@@ -600,7 +611,8 @@ function! PythonSettings()
 endfunction
 
 function! PythonOmni(findstart, base)
-	let words = eclim#python#complete#CodeComplete(a:findstart, a:base)
+	call jedi#complete_string(0)
+	let words = jedi#completions(a:findstart, a:base)
 	return FilterOmni(words, a:findstart, a:base)
 endfunction
 
