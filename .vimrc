@@ -242,6 +242,7 @@ let g:jedi#goto_assignments_command = "<NOP>"
 let g:syntastic_mode_map = { "mode": "active",
 			   \ "active_filetypes": [],
 			   \ "passive_filetypes": ["vim"] }
+let g:syntastic_auto_loc_list = 1
 " --------------------
 " --------------------
 " ---- [3] BINDINGS ----
@@ -377,7 +378,9 @@ map <leader>c :cd %:h<CR>
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
 " E
-map <leader>e :Errors<CR>
+map <leader>eo :Errors<CR>
+map <leader>ec :SyntasticCheck<CR>
+map <leader>ee :SyntasticCheck<CR>
 " F
 " G
 map <leader>gg :!git -C %:h status<CR>
@@ -1088,6 +1091,9 @@ if exists("g:minimalMode")
 	let s:CompletionCommand = "\<C-X>\<C-U>"
 	let g:neocomplcache_disable_auto_complete = 1
 	inoremap <TAB> <C-R>=MinimalTab()<CR>
+	let g:syntastic_mode_map = { "mode": "passive",
+				   \ "active_filetypes": [],
+				   \ "passive_filetypes": [] }
 endif
 " --------------------
 " ---- [9] COLORSETTINGS ----
@@ -1150,7 +1156,6 @@ autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
 " ---- [10] AUTOCMD ----
 autocmd BufWritePost * call SaveSession()
 autocmd BufWritePost * call SlowStatusLine()
-autocmd BufWritePost * Errors
 
 autocmd BufEnter * call SlowStatusLine()
 

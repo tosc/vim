@@ -36,6 +36,7 @@ source ~/git/vim/.vimrc
 5. Add clang to path.
 6. Add python27 to path.
 7. Add lua to path.
+8: Add mono/bin to path.
 8. Link Ultisnips snippetfolder  
 ``mklink /D "%HOME%/vimfiles/UltiSnips" "%HOME%/git/vim/UltiSnips"``  
 9. Link my dictionary folder  
@@ -113,14 +114,13 @@ Add a pentadactylrc with the line:
 # TODO
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
-* BUG: Missing space in statusline.
-* BUG: Slowdowns when typing sometimes. I think it's ultisnips fault. Happend every time I tried to add a autocmd for TextChanged, TextChangedI * 
-* BUG: Really slow when using syntastic and editing my vimrc. Split my vimrc into smaller parts?
+* BUG: Missing space in statusline. ahead, behind
 
-* Try autosave for everything.
-* Add option to disable git draw.
+* Create own ultisnips source for neocomplete (and unite?) since snippets with regex doesn't show up. Write a string that you know will expand to the snippet in the description. Maybe use a delimiter to seperate the normal description from the name of the snippet.
+* Look at syntastics spellchecker.
+* Add option to disable git draw. Already exists?
 * Fix my delimiterstuff. Dislike the fact that you don't see any typing until the entire thing is done. Maybe save last character to a global thing. If last key = new key then do the delimiterthing.
-* Move from using my omnifunctions to making an own complete common function. With this I can use fuzzy but still have my tabcompletion.
+* Move from using my filteromni to making an own complete longest common function. With this I can use fuzzy but still have my tabcompletion.
 * Look into neocomplete sources and use them better.
 * Change my buildcommands to use vimproc and output all the information to a buffer. Add a leader binding to kill the process and also make sure to kill it when you run something new.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
@@ -128,8 +128,9 @@ Add a pentadactylrc with the line:
 * Rename repo to something more fitting, ex dotfiles.
 * Look at neobundle to make installation easier.
 * Add definition jedi usages and stuff like that.
+* Try autosave for everything. (How will stuff like statusline,syntastic and git get updated?)
 
-* Change how I use my snippets. Make things that require a lot of computing power, like finding variables and so on and make those into a global python snippet. In the snippets we pick out the things we want to complete it to.
+* Really slow when using syntastic and editing my vimrc. Split my vimrc into smaller parts?
 * Turn all my external helpers into one big one with easy ways to increase functionality.
 	Have my helper in a terminal. Keybinding in vim builds and runs in that terminal and shows all output there.
 	Have my git status stuff update in there.
