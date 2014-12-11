@@ -59,12 +59,21 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	call vundle#begin()
 	Plugin 'gmarik/Vundle.vim'
 
+	" Unite and unite plugins.
 	Plugin 'Shougo/neomru.vim'
 	Plugin 'Shougo/unite.vim'
 	Plugin 'Shougo/unite-session'
 	Plugin 'Shougo/unite-build'
 	Plugin 'tsukkee/unite-tag'
 	Plugin 'skeept/ultisnips-unite'
+
+	" File explorer.
+	Plugin 'Shougo/vimfiler.vim'
+
+	" Snippets
+	Plugin 'SirVer/ultisnips'
+
+	" Code-completion
 if has('lua') && !exists('g:minimalMode')
 	Plugin 'Shougo/neocomplete.vim'
 	Plugin 'tosc/neocomplete-spell'
@@ -72,20 +81,27 @@ else
 	Plugin 'Shougo/neocomplcache'
 	Plugin 'JazzCore/neocomplcache-ultisnips'
 endif
-	Plugin 'SirVer/ultisnips'
+	" Omnicomplete engines.
+	Plugin 'davidhalter/jedi-vim'
+	Plugin 'Rip-Rip/clang_complete'
 	Plugin 'OmniSharp/omnisharp-vim'
+
+	" Async external commands
 	Plugin 'tpope/vim-dispatch'
+	Plugin 'Shougo/vimproc.vim'
+
+	" Syntax checker and syntax engines.
+	Plugin 'scrooloose/syntastic'
+	Plugin 'syngan/vim-vimlint'
+	Plugin 'ynkdir/vim-vimlparser'
+
+	" Div
 	Plugin 'tpope/vim-fugitive'
 	Plugin 'tpope/vim-surround'
+	Plugin 'Konfekt/FastFold'
 	Plugin 'majutsushi/tagbar'
 	Plugin 'xolox/vim-easytags'
 	Plugin 'xolox/vim-misc'
-	Plugin 'Konfekt/FastFold'
-	Plugin 'Shougo/vimfiler.vim'
-	Plugin 'Shougo/vimproc.vim'
-	Plugin 'scrooloose/syntastic'
-	Plugin 'davidhalter/jedi-vim'
-	Plugin 'Rip-Rip/clang_complete'
 
 	" Required by vundle
 	call vundle#end()
@@ -345,7 +361,7 @@ call BindDelim('[]')
 call BindDelim('<>')
 " --------------------
 " ---- [3.2] LEADER ----
-let mapleader="\<space>"
+let g:mapleader="\<space>"
 
 " A
 " B
@@ -656,6 +672,8 @@ endfunction
 
 function! GenPass(...)
 let l:passLen = (a:0 > 0 ? a:1 : 8)
+let l:password = ""
+if l:passLen > 0
 python << endpy
 import random, string, vim, sys
 characters = string.ascii_letters + string.digits + '@&-_=+?!'
@@ -663,7 +681,8 @@ passLen = int(vim.eval("l:passLen"))
 password = "".join(random.choice(characters) for x in range(0,passLen))
 vim.command("let l:password = '" + str(password) + "'")
 endpy
-execute "normal a".l:password
+endif
+execute "normal a" . l:password
 endfunction
 
 " Files that end with .pass are now password files.
@@ -738,8 +757,7 @@ let g:InsideComment = 0
 function! OneIndentBraceFolding(lnum)
 	let line = getline(a:lnum)
 	let nextline = getline(a:lnum+1)
-	let lastline = getline(a:lnum-1)
-	if lnum == 1
+	if a:lnum == 1
 		let g:InsideBrace = 0
 		let g:InsideVar = 0
 	endif
@@ -759,8 +777,8 @@ function! OneIndentBraceFolding(lnum)
 			if line =~ '^\s*}' && indent(a:lnum)/8 == 1
 				let g:InsideBrace = 0
 				if  nextline =~ '^\s*$'
-					return '1'
 					let g:InsideVar = 1
+					return '1'
 				else
 					return '<1'
 				endif
@@ -771,8 +789,8 @@ function! OneIndentBraceFolding(lnum)
 			if line =~ '\*/$'
 				let g:InsideComment = 0
 				if  nextline =~ '^\s*$'
-					return '1'
 					let g:InsideVar = 1
+					return '1'
 				else
 					return '<1'
 				endif
@@ -1332,6 +1350,10 @@ endfunction
 " ---- [11.5] EVALUATE MATH ----
 function! PythonMath()
 let l:vimMath = getreg('"')
+if l:vimMath == ''
+	return ''
+endif
+let l:pythonMath = ''
 python << endpy
 math = eval(vim.eval("l:vimMath"))
 vim.command("let l:pythonMath = '" + str(math) + "'")
@@ -1391,7 +1413,6 @@ function! DrawGit()
 		let addCommand = ''
 		let remCommand = ''
 		let cngCommand = ''
-		let first = 1
 		for line in gitList
 			if line =~ '^@@ '
 				let al = split(substitute(substitute(line, '^[^+]*+', '', ''), ' .*', '', ''), ',')
