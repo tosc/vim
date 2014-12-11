@@ -1119,7 +1119,7 @@ hi SignColumn guibg=NONE ctermbg=NONE
 
 hi GitAdd guibg=#002211 guifg=green
 hi GitRem guibg=#660000 guifg=red
-hi GitCng guibg=blue
+hi GitCng guibg=#000066 guifg=#00DDFF
 
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline

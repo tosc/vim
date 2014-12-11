@@ -112,8 +112,10 @@ Add a pentadactylrc with the line:
 # TODO
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
+* BUG: Missing space in statusline.
+* BUG: Slowdowns when typing sometimes. I think it's ultisnips fault. Happend every time I tried to add a autocmd for TextChanged, TextChangedI * 
 
-* Lookup why autosave is a bad idea.
+* Try autosave for everything.
 * Add option to disable git draw.
 * Fix my delimiterstuff. Dislike the fact that you don't see any typing until the entire thing is done. Maybe save last character to a global thing. If last key = new key then do the delimiterthing.
 * Move from using my omnifunctions to making an own complete common function. With this I can use fuzzy but still have my tabcompletion.
