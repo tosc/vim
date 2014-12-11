@@ -188,11 +188,16 @@ let g:neocomplete#sources#omni#input_patterns.java = '.*'
 if !exists('g:neocomplete#force_omni_input_patterns')
         let g:neocomplete#force_omni_input_patterns = {}
 endif
+let g:neocomplete#force_overwrite_completefunc = 1
 let g:neocomplete#force_omni_input_patterns.python = '\h\w*\|[^.\t]\.\w*'
 let g:neocomplete#force_omni_input_patterns.c =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)'
+	\ '[^.[:digit:] *\t]\%(\.\|->\)\w*'
 let g:neocomplete#force_omni_input_patterns.cpp =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)'
+	\ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
+let g:neocomplete#force_omni_input_patterns.objc =
+	\ '\[\h\w*\s\h\?\|\h\w*\%(\.\|->\)'
+let g:neocomplete#force_omni_input_patterns.objcpp =
+	\ '\[\h\w*\s\h\?\|\h\w*\%(\.\|->\)\|\h\w*::\w*'
 
 let g:neocomplete#enable_smart_case = 0
 let g:neocomplete#enable_camel_case_completion = 0
@@ -1089,6 +1094,7 @@ hi MoreMsg cterm=bold ctermfg=41
 hi ModeMsg cterm=bold
 hi LineNr cterm=bold
 hi CursorLineNr cterm=bold
+hi Ignore cterm=bold ctermfg=236
 hi Directory cterm=bold
 hi Pmenu ctermfg=15 ctermbg=13 cterm=bold
 hi PmenuSel ctermfg=15 cterm=bold

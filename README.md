@@ -8,36 +8,39 @@ Vim settings.
 1. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
 2. Install python27.
 3. Install lua.
-4. Create a vimrc with the lines:  
+4. Install clang.
+5. Install ctags.
+6. Install LaTex.
+7. Install Eclipse.
+8. Install ECLIM.
+9. Create a vimrc with the lines:  
 ```VimL
 "let g:minimalMode = 1
 "let g:disablePlugins = 1
 "let g:disableExternal = 1
 source ~/git/vim/.vimrc
 ```  
-5. Download Vundle  
+10. Download Vundle  
 `` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
 `` :BundleInstall ``  
-6. Build clang_complete. Go into clang_complete folder and run make install.
-7. Install Eclipse.
-8. Install ECLIM.
-9. Add eclimd to path.
-10. Download LaTex.
-11. Install ctags.
-12. Build clang_complete.  
+11. Build clang_complete.  
 `` make install ``
 
 ### WINDOWS
 
 1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
-2. Add ctags to path.
-3. Link Ultisnips snippetfolder  
+2. Link Ultisnips snippetfolder  
 ``mklink /D "%HOME%/vimfiles/UltiSnips" "%HOME%/git/vim/UltiSnips"``  
-4. Link my dictionary folder  
+3. Link my dictionary folder  
 ``mklink /D "%HOME%/.vim/dict" "%HOME%/git/vim/dict"``  
-5. Compile omnisharp.  
+4. Add ctags to path.
+5. Add eclimd to path.
+6. Add clang to path.
+7. Add python27 to path.
+8. Add lua to path.
+9. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
-6. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
+10. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
 `` make -f make_mingw32.mak``  
 `` make -f make_mingw64.mak``  
 
