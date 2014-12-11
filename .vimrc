@@ -367,6 +367,8 @@ map <leader>gd :!git -C %:h diff<CR>
 map <leader>gD :!git -C %:h diff<CR>
 map <leader>gf :!git -C %:h fetch<CR> :call SlowStatusLine()<CR>
 map <leader>gF :!git -C %:h pull<CR> :call SlowStatusLine()<CR>
+" Opens a interactive menu that lets you pick what commits to use/squash.
+map <leader>gr :!git -C %:h rebase -i HEAD~
 map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg
 
 if !exists("g:disablePlugins")
@@ -384,7 +386,7 @@ endif
 map <leader>m :!make<CR>
 if !exists("g:disablePlugins")
 	map <leader>m :cd %:h<CR>:Unite -no-split -auto-preview -no-start-insert build:make<CR>
-else
+endif
 " N
 map <leader>n :bn <CR>
 " O
@@ -1005,6 +1007,7 @@ endfunction
 " m - Nr of [m]odified [f]iles.
 " +/- - Nr of rows added / deleted.
 function! SlowStatusLine()
+	call DrawGit()
 	let SlowStatusLineVar = ""
 	if &modifiable
 		let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
@@ -1114,6 +1117,10 @@ hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold guibg=grey40 guifg=NONE
 hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
 hi SignColumn guibg=NONE ctermbg=NONE
 
+hi GitAdd guibg=#002211 guifg=green
+hi GitRem guibg=#660000 guifg=red
+hi GitCng guibg=blue
+
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
 " --------------------
@@ -1125,6 +1132,8 @@ autocmd BufEnter * call SlowStatusLine()
 
 " To make FastFold calculate the folds when you open a file.
 autocmd BufReadPost * let &foldlevel=0
+
+autocmd TextChanged,TextChangedI * call clearmatches()
 
 function! KillAllExternal()
 	if exists("g:EclimdRunning")
@@ -1363,6 +1372,53 @@ function! NoSpellCheck()
 	setlocal nospell
 	if !exists("g:disablePlugins") && has('lua')
 		let b:neocomplete_spell_file = ''
+	endif
+endfunction
+" --------------------
+" ---- [11.8] DRAW GIT ----
+function! DrawGit()
+	call clearmatches()
+	let pattern = '^\(\t\|[^\t]\{,' . &l:tabstop . '}\)'
+	let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
+	let currentFile = expand('%:t')
+	if exists("*vimproc#system")
+		let gitTemp = vimproc#system("git -C " . currentFolder . " diff -U0 " . currentFile)
+	else
+		let gitTemp = system("git -C " . currentFolder . " diff -U0 " . currentFile)
+	endif
+	if gitTemp =~ '@@'
+		let gitList = split(gitTemp, "\n")[4:]
+		let addCommand = ''
+		let remCommand = ''
+		let cngCommand = ''
+		let first = 1
+		for line in gitList
+			if line =~ '^@@ '
+				let al = split(substitute(substitute(line, '^[^+]*+', '', ''), ' .*', '', ''), ',')
+				let rl = split(substitute(substitute(line, '^[^-]*-', '', ''), ' .*', '', ''), ',')
+				let add = (len(al) > 1 ? al[1] : '1')
+				let rem = (len(rl) > 1 ? rl[1] : '1')				
+				if rem == '0'
+					let addCommand .= (addCommand != '' ? '\|' : '')
+					let addCommand .= pattern . '\%>' . (al[0]-1) . 'l\%<' . (al[0] + add) . 'l'
+				elseif add == '0'
+					let remCommand .= (remCommand != '' ? '\|' : '')
+					let remCommand .= pattern . '\%' . (al[0] + 1) . 'l'
+				else
+					let cngCommand .= (cngCommand != '' ? '\|' : '')
+					let cngCommand .= pattern . '\%>' . (al[0]-1) . 'l\%<' . (al[0] + add) . 'l'
+				endif
+			endif	
+		endfor
+		if addCommand != ''
+			call matchadd('GitAdd', addCommand)
+		endif
+		if cngCommand != ''
+			call matchadd('GitCng', cngCommand)
+		endif
+		if remCommand != ''
+			call matchadd('GitRem', remCommand)
+		endif
 	endif
 endfunction
 " --------------------
