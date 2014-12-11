@@ -107,8 +107,7 @@ let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 " ---- [2.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
-let g:EclimPythonValidate = 0
-let g:EclimCValidate = 0
+let g:EclimFileTypeValidate = 0
 " -----
 " ---- [2.3] OMNISHARP (C# OMNICOMPLETE) ----
 let g:OmniSharp_typeLookupInPreview = 1
@@ -357,29 +356,24 @@ map <leader>c :cd %:h<CR>
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
 " E
+map <leader>e :Errors<CR>
 " F
 " G
+map <leader>gg :!git -C %:h status<CR>
+map <leader>gc :!git -C %:h commit<CR>
+map <leader>gp :!git -C %:h push<CR> :call SlowStatusLine()<CR>
+map <leader>gP :!git -C %:h push --force<CR> :call SlowStatusLine()<CR>
+map <leader>gd :!git -C %:h diff<CR>
+map <leader>gD :!git -C %:h diff<CR>
+map <leader>gf :!git -C %:h fetch<CR> :call SlowStatusLine()<CR>
+map <leader>gF :!git -C %:h pull<CR> :call SlowStatusLine()<CR>
+map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg
+
 if !exists("g:disablePlugins")
 	map <leader>gg :Gstatus<CR>
 	map <leader>gc :Gcommit<CR>
-	map <leader>gp :Git push<CR> :call SlowStatusLine()<CR>
-	map <leader>gP :Git push --force<CR> :call SlowStatusLine()<CR>
 	map <leader>gd :Gdiff<CR>
-	map <leader>gD :!git -C %:h diff<CR>
-	map <leader>gf :Gfetch<CR>
-	map <leader>gF :Gpull<CR>
-else
-	map <leader>gg :!git -C %:h status<CR>
-	map <leader>gc :!git -C %:h commit<CR>
-	map <leader>gp :!git -C %:h push<CR> :call SlowStatusLine()<CR>
-	map <leader>gP :!git -C %:h push --force<CR> :call SlowStatusLine()<CR>
-	map <leader>gd :!git -C %:h diff<CR>
-	map <leader>gD :!git -C %:h diff<CR>
-	map <leader>gf :!git -C %:h fetch<CR>
-	map <leader>gF :!git -C %:h pull<CR>
 endif
-
-map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg
 " H
 " I
 " J
@@ -387,11 +381,10 @@ map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/gi
 " L
 " I
 " M
+map <leader>m :!make<CR>
 if !exists("g:disablePlugins")
 	map <leader>m :cd %:h<CR>:Unite -no-split -auto-preview -no-start-insert build:make<CR>
 else
-	map <leader>m :!make<CR>
-endif
 " N
 map <leader>n :bn <CR>
 " O
@@ -989,13 +982,9 @@ endfunction
 " --------------------
 " ---- [6] STATUSLINE ----
 set laststatus=2
+set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
 if !exists("g:disablePlugins")
-	set statusline=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
-	set statusline+=%#warningmsg#
-	set statusline+=%{SyntasticStatuslineFlag()}
-	set statusline+=%*
-else
-	set statusline+=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
+	set statusline+=%#warningmsg#%{SyntasticStatuslineFlag()}%*
 endif
 
 " Gets the gitinfo for the statusline.
