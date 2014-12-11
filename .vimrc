@@ -77,14 +77,15 @@ endif
 	Plugin 'tpope/vim-dispatch'
 	Plugin 'tpope/vim-fugitive'
 	Plugin 'tpope/vim-surround'
-	Plugin 'Rip-Rip/clang_complete'
 	Plugin 'majutsushi/tagbar'
 	Plugin 'xolox/vim-easytags'
 	Plugin 'xolox/vim-misc'
 	Plugin 'Konfekt/FastFold'
 	Plugin 'Shougo/vimfiler.vim'
 	Plugin 'Shougo/vimproc.vim'
+	Plugin 'scrooloose/syntastic'
 	Plugin 'davidhalter/jedi-vim'
+	Plugin 'Rip-Rip/clang_complete'
 
 	" Required by vundle
 	call vundle#end()
@@ -106,6 +107,8 @@ let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 " ---- [2.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
+let g:EclimPythonValidate = 0
+let g:EclimCValidate = 0
 " -----
 " ---- [2.3] OMNISHARP (C# OMNICOMPLETE) ----
 let g:OmniSharp_typeLookupInPreview = 1
@@ -214,6 +217,11 @@ let g:clang_auto_select = 0
 let g:jedi#auto_vim_configuration = 0
 let g:jedi#completions_enabled = 0
 let g:jedi#popup_select_first = 0
+let g:jedi#usages_command = "<NOP>"
+let g:jedi#rename_command = "<NOP>"
+let g:jedi#documentation_command = "<NOP>"
+let g:jedi#goto_definitions_command = "<NOP>"
+let g:jedi#goto_assignments_command = "<NOP>"
 " --------------------
 " --------------------
 " ---- [3] BINDINGS ----
@@ -981,13 +989,26 @@ endfunction
 " --------------------
 " ---- [6] STATUSLINE ----
 set laststatus=2
-set statusline=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
+if !exists("g:disablePlugins")
+	set statusline=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
+	set statusline+=%#warningmsg#
+	set statusline+=%{SyntasticStatuslineFlag()}
+	set statusline+=%*
+else
+	set statusline+=%<\[%f\]\ %{MyStatusLine()}\ %y\ %m%=%-14.(%l-%c%)\ %P
+endif
 
 " Gets the gitinfo for the statusline.
 function! MyStatusLine()
 	if !exists("b:statusLineVar")
 		call SlowStatusLine()
 	endif
+	if !exists("g:disablePlugins") && SyntasticStatuslineFlag() == ""
+		hi StatusLine guibg=NONE
+	else
+		hi StatusLine guibg=red
+	endif
+
 	return b:statusLineVar
 endfunction
 
@@ -1102,6 +1123,7 @@ hi PmenuSbar ctermfg=NONE ctermbg=13
 hi PmenuThumb ctermfg=NONE ctermbg=13
 hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold guibg=grey40 guifg=NONE
 hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
+hi SignColumn guibg=NONE ctermbg=NONE
 
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline

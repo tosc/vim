@@ -28,19 +28,20 @@ source ~/git/vim/.vimrc
 
 ### WINDOWS
 
-1. Install mingw, make sure you select packages for msys. Add mingw/bin and mingw/msys/ * /bin to path.
-2. Link Ultisnips snippetfolder  
+1. Install mingw, make sure you select packages for msys. 
+2. Add mingw/bin and mingw/msys/ * /bin to path.
+3. Add ctags to path.
+4. Add eclimd to path.
+5. Add clang to path.
+6. Add python27 to path.
+7. Add lua to path.
+8. Link Ultisnips snippetfolder  
 ``mklink /D "%HOME%/vimfiles/UltiSnips" "%HOME%/git/vim/UltiSnips"``  
-3. Link my dictionary folder  
-``mklink /D "%HOME%/.vim/dict" "%HOME%/git/vim/dict"``  
-4. Add ctags to path.
-5. Add eclimd to path.
-6. Add clang to path.
-7. Add python27 to path.
-8. Add lua to path.
-9. Compile omnisharp.  
+9. Link my dictionary folder  
+``mklink /D "%HOME%/.vim/dict" "%HOME%/git/vim/dict"`` 
+10. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
-10. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
+11. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
 `` make -f make_mingw32.mak``  
 `` make -f make_mingw64.mak``  
 
@@ -82,6 +83,7 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 ### Code-Completion
 #### C
 * clang_complete might have been updated. Try running make install on it.
+* Make sure clang is installed and if on windows make sure clang is in path.
 
 #### CS
 * You may have to build the server component. 
@@ -111,17 +113,17 @@ Add a pentadactylrc with the line:
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
+* Remove signcolumn for syntastic.
 * Fix my delimiterstuff. Dislike the fact that you don't see any typing until the entire thing is done. Maybe save last character to a global thing. If last key = new key then do the delimiterthing.
 * Move from using my omnifunctions to making an own complete common function. With this I can use fuzzy but still have my tabcompletion.
 * Look into neocomplete sources and use them better.
 * Change my buildcommands to use vimproc and output all the information to a buffer. Add a leader binding to kill the process and also make sure to kill it when you run something new.
-* Check if ECLIM is a viable option for C and C++ code-completion.
 * Eclim - find way of adding source directories using vim instead of having to open eclipse.
 * Make tags project specific. Currently language specific.
 * Rename repo to something more fitting, ex dotfiles.
 * Look at neobundle to make installation easier.
+* Add leader jedi usages and stuff like that.
 
-* Improve my gitstatusline. Use vimproc or dispatch to refresh it more often.
 * Change how I use my snippets. Make things that require a lot of computing power, like finding variables and so on and make those into a global python snippet. In the snippets we pick out the things we want to complete it to.
 * Turn all my external helpers into one big one with easy ways to increase functionality.
 	Have my helper in a terminal. Keybinding in vim builds and runs in that terminal and shows all output there.
@@ -129,5 +131,5 @@ Add a pentadactylrc with the line:
 	Have my texstuff building in there.
 * Change my keyboard layout using <leader>se and <leader>so.
 * Find way to send texcompiling error to vim and hide the texcompiling window.
-* Find way to kill autotexcompiling when closing tex buffer.
 * Open pdfviewer with vim / texcompiler.
+* Kill autotexcompiling when closing tex buffer.
