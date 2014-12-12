@@ -118,6 +118,8 @@ Add a pentadactylrc with the line:
 * BUG: ö works in insert but not normal when using juicyssh.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
+* Find way to disable default US source for neocmplete.
+* Use vimproc for gitcommands so vim doesn't freeze.
 * Add option to disable git draw. Already exists?
 * Move from using my filteromni to making an own complete longest common function. With this I can use fuzzy but still have my tabcompletion.
 * Find way of getting my delimiters to show right away and not when the entire keycommand is pressed. I might have to change my approach.

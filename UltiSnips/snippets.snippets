@@ -1,9 +1,37 @@
 priority 1
 
+# Header
+# Logical operations
+# Conditional snippets
+# Loop snippets
+# Methods/functions
+# String snippets
+# int snippets
+# Variable snippets
+# Datatype snippets
+# Documentation snippets
 snippet "\"|#|//" "comment" br
-# 
+#
 endsnippet
+# Special snippets
+# New code snippets
+snippet file "new snippet file:file" b
+priority 1
 
+# Header
+# Logical operations
+# Conditional snippets
+# Loop snippets
+# Methods/functions
+# String snippets
+# int snippets
+# Variable snippets
+# Datatype snippets
+# Documentation snippets
+# Special snippets
+# New code snippets
+endsnippet
+# Snippet snippets
 snippet "sni\S*" "Snippet definition:snippet" br
 `!p snip.rv = "snippet"` ${1:trigger} "${2:Description}${3::Trigger1|Trigger2}" ${4:r}
 ${0:${VISUAL}}
@@ -19,15 +47,16 @@ snippet "(\d+)v" "Tabstop with nr and visual" ir
 \${`!p snip.rv = match.group(1)`:\${VISUAL}}$0
 endsnippet
 
-snippet "e(nclosing)? ?p(arentheses)?" "regex for something enclosed in parentheses:ep|enclosingparentheses|enclosing parentheses" r
-(\([^()]*\))
-endsnippet
-
 snippet "(\d+)m(atch)?(.)?g(roup)?" "get the matched pattern" br
 \`!p snip.rv = match.group(1)\`
 endsnippet
 snippet "m(atch)? ?g(roup)?" "get the matched pattern:mg|matchgroup|" br
 \`!p snip.rv = match.group(${1:1})\`${0}
+endsnippet
+
+# Regex
+snippet "e(nclosing)? ?p(arentheses)?" "regex for something enclosed in parentheses:ep|enclosingparentheses|enclosing parentheses" r
+(\([^()]*\))
 endsnippet
 snippet "e(nclosing)? ?q(uotes)?" "matches quotes:eq|enclosingquotes" r
 (\"[^""]*\")

@@ -1,9 +1,7 @@
 priority 1
 
 # Header
-
 # Logical operations
-
 # Conditional snippets
 snippet if "if:if" b
 \ifnum\\${1:x = 1}
@@ -20,7 +18,6 @@ snippet "ifel?s?e?" "if else:ifelse" br
 	$0
 \fi
 endsnippet
-
 # Loop snippets
 snippet for "for:for" b
 \foreach \\${1:i} in {${2:0},...,${3:10}}
@@ -28,30 +25,107 @@ snippet for "for:for" b
 	${VISUAL}$0
 }
 endsnippet
-
 # Methods/functions
-
 # String snippets
-
 # int snippets
-
 # Variable snippets
-
 # Datatype snippets
-
 # Documentation snippets
-
 # Special snippets
-
 # New code snippets
+snippet filemath "new math document:filemath" b
+\documentclass[11pt]{article}
+	\usepackage{amsmath}
+	\usepackage{amsthm}
+	\usepackage{amssymb}
+	\usepackage{enumitem}
+	\usepackage{graphicx}
+	\usepackage[latin1]{inputenc}
+	\usepackage{tikz}
+	\usepackage[framemethod=tikz]{mdframed}
+	\usepackage{lipsum}
+	\usepackage[none]{hyphenat}
+	\usepackage[margin=1in]{geometry}
+	
+	\newtheoremstyle{customtheorem}
+		{\topsep}
+		{\topsep}
+		{}
+		{0pt}
+		{\bfseries}
+		{\\*[3pt]}
+		{0mm}
+		{\thmname{#1}\thmnumber{ #2}\thmnote{ - #3}}
+	
+	\theoremstyle{customtheorem}
+	\newtheorem{theorem}{Theorem}[section]
+	\newtheorem{definition}{Definition}[section]
+	\newtheoremstyle{nonumstyle}
+		{\topsep}
+		{\topsep}
+		{}
+		{0pt}
+		{\bfseries}
+		{}
+		{3mm}
+		{\thmname{#1}\thmnote{ - #3}}
+	
+	\theoremstyle{nonumstyle}
+	\newtheorem{nonumtheorem}{Theorem}
+	\newtheorem{solution}{Solution}
+	\newtheorem{myproof}{Proof}
+	
+	\newmdenv[
+		frametitle={Example},
+		topline=true,
+		bottomline=true,
+		leftline=false, 
+		rightline=false, 
+		skipabove=1em,
+		frametitlerule=true,
+		]{exampleframe}
+	
+	\newmdenv[
+		frametitle={},
+		backgroundcolor=gray!25,
+		linecolor=gray!25,
+		skipabove=1em,
+		]{theoremframe}
+	
+	\newmdenv[
+		skipabove=1em,
+		]{definitionframe}
+	
+	
+	\begin{document}
+	\title{${1:Title}}
+	\author{Tobias Schwalbe}
+	
+	\maketitle
 
-snippet italic "Italic" 
-\textit{${VISUAL}$1}$0
-endsnippet
-snippet bold "Bold" 
-\textbf{${VISUAL}$1}$0
-endsnippet
+\section{${2:First section}}
 
+$0
+
+\end{document}
+
+endsnippet
+snippet file "new document:file" b
+\documentclass[11pt]{article}
+
+	\begin{document}
+	\title{${1:Title}}
+	\author{Tobias Schwalbe}
+	
+	\maketitle
+
+\section{${2:First section}}
+
+$0
+
+\end{document}
+endsnippet
+# Lists
 snippet list "normal list:list" b
 \begin{itemize}
 	\item ${1:Item description}
@@ -85,33 +159,10 @@ snippet itemdescription "new entry in a description list:itemdescription" b
 \item[${1:Item}] ${2:Item description}
 endsnippet
 
+# Normal latex
 snippet "ne?w?li?n?e?|\\n" "New line:nl|newline" r
 \\*
 endsnippet 
-snippet frame
-\begin{mdframed}[frametitle={${1:Title}}, skipabove=1em]
-${VISUAL}$0
-\end{mdframed}
-endsnippet
-snippet grayframe
-\begin{mdframed}[frametitle={${1:Title}}, backgroundcolor=gray!25, linecolor=gray!25, skipabove=1em]
-${VISUAL}$0
-\end{mdframed}
-endsnippet
-snippet theorem "theorem"
-\begin{theoremframe}
-	\begin{theorem}[$1]
-		${VISUAL}$0
-	\end{theorem}
-\end{theoremframe}
-endsnippet
-snippet definition "definition"
-\begin{definitionframe}
-	\begin{definition}[$1]
-		${VISUAL}$0
-	\end{definition}
-\end{definitionframe}
-endsnippet
 snippet lipsum "Lorem ipsum \usepackage{lipsum}"
 \lipsum[100]
 endsnippet
@@ -136,6 +187,93 @@ snippet sssection
 $0
 endsnippet
 
+# Frames
+snippet frame
+\begin{mdframed}[frametitle={${1:Title}}, skipabove=1em]
+${VISUAL}$0
+\end{mdframed}
+endsnippet
+snippet grayframe
+\begin{mdframed}[frametitle={${1:Title}}, backgroundcolor=gray!25, linecolor=gray!25, skipabove=1em]
+${VISUAL}$0
+\end{mdframed}
+endsnippet
+snippet definition "definition"
+\begin{definitionframe}
+	\begin{definition}[$1]
+		${VISUAL}$0
+	\end{definition}
+\end{definitionframe}
+endsnippet
+
+# Graphs and diagrams
+snippet venn "Venn diagram" b
+\begin{center}
+	\begin{tikzpicture}
+		\draw (0,0) rectangle (6,3.2) node[below left]{$U$};
+		\begin{scope}
+		\clip (2.2,1.5) circle (1cm);
+		\draw [fill=gray] (3.8,1.5) circle (1cm);
+		\end{scope}
+		\draw (2.2,1.5) circle (1cm) node {$A$};
+		\draw (3.8,1.5) circle (1cm) node {$B$};
+		\draw (3,2.9) node {$A \cup B$};
+	\end{tikzpicture}
+\end{center}
+endsnippet
+
+# Math modes
+snippet "ma?t?h?mo?d?e?" "Math:mathmode|mm" br
+$ ${VISUAL}$1 $$0
+endsnippet
+snippet solution
+\begin{solution}
+	${VISUAL}$2
+\end{solution}
+endsnippet
+snippet equation
+\[
+	${VISUAL}$0
+\]
+endsnippet
+snippet nequation
+\begin{equation}
+	${VISUAL}$0
+\end{equation}
+endsnippet
+snippet aequation "A align equation, \\ - new line, &= - align this ="
+\begin{align*}
+	${VISUAL}$0
+\end{align*}
+endsnippet
+snippet proof
+\begin{myproof}
+	${VISUAL}$2
+	\hfill$ \qed $ 
+\end{myproof}
+endsnippet
+snippet example
+\begin{exampleframe}
+	${VISUAL}$2
+\end{exampleframe}
+endsnippet
+snippet theorem "theorem"
+\begin{theoremframe}
+	\begin{theorem}[$1]
+		${VISUAL}$0
+	\end{theorem}
+\end{theoremframe}
+endsnippet
+snippet notheorem
+\begin{nonumtheorem}
+	${VISUAL}$2
+\end{nonumtheorem}
+endsnippet
+snippet text
+\text{${VISUAL}$1}$0
+endsnippet
+
+# Symbols
 snippet " (\S{1})" "Variable matchgroup as math" r
  $ `!p snip.rv = match.group(1)` $
 endsnippet
@@ -263,41 +401,7 @@ snippet otimes
 \otimes
 endsnippet
 
-snippet "ma?t?h?mo?d?e?" "Math:mathmode|mm" br
-$ ${VISUAL}$1 $$0
-endsnippet
-snippet equation
-\[
-	${VISUAL}$0
-\]
-endsnippet
-snippet nequation
-\begin{equation}
-	${VISUAL}$0
-\end{equation}
-endsnippet
-snippet aequation "A align equation, \\ - new line, &= - align this ="
-\begin{align*}
-	${VISUAL}$0
-\end{align*}
-endsnippet
-snippet venn "Venn diagram" b
-\begin{center}
-	\begin{tikzpicture}
-		\draw (0,0) rectangle (6,3.2) node[below left]{$U$};
-		\begin{scope}
-		\clip (2.2,1.5) circle (1cm);
-		\draw [fill=gray] (3.8,1.5) circle (1cm);
-		\end{scope}
-		\draw (2.2,1.5) circle (1cm) node {$A$};
-		\draw (3.8,1.5) circle (1cm) node {$B$};
-		\draw (3,2.9) node {$A \cup B$};
-	\end{tikzpicture}
-\end{center}
-endsnippet
-snippet text
-\text{${VISUAL}$1}$0
-endsnippet
+# Unsorted
 snippet table
 \begin{center}
 	\begin{tabular}{${1:c c c}}
@@ -318,117 +422,10 @@ snippet grid
 	\end{tikzpicture}
 \end{center}
 endsnippet
-snippet solution
-\begin{solution}
-	${VISUAL}$2
-\end{solution}
+snippet italic "Italic" 
+\textit{${VISUAL}$1}$0
 endsnippet
-snippet proof
-\begin{myproof}
-	${VISUAL}$2
-	\hfill$ \qed $ 
-\end{myproof}
-endsnippet
-snippet example
-\begin{exampleframe}
-	${VISUAL}$2
-\end{exampleframe}
-endsnippet
-snippet notheorem
-\begin{nonumtheorem}
-	${VISUAL}$2
-\end{nonumtheorem}
+snippet bold "Bold" 
+\textbf{${VISUAL}$1}$0
 endsnippet
 
-snippet filemath "new math document:filemath" b
-\documentclass[11pt]{article}
-	\usepackage{amsmath}
-	\usepackage{amsthm}
-	\usepackage{amssymb}
-	\usepackage{enumitem}
-	\usepackage{graphicx}
-	\usepackage[latin1]{inputenc}
-	\usepackage{tikz}
-	\usepackage[framemethod=tikz]{mdframed}
-	\usepackage{lipsum}
-	\usepackage[none]{hyphenat}
-	\usepackage[margin=1in]{geometry}
-	
-	\newtheoremstyle{customtheorem}
-		{\topsep}
-		{\topsep}
-		{}
-		{0pt}
-		{\bfseries}
-		{\\*[3pt]}
-		{0mm}
-		{\thmname{#1}\thmnumber{ #2}\thmnote{ - #3}}
-	
-	\theoremstyle{customtheorem}
-	\newtheorem{theorem}{Theorem}[section]
-	\newtheorem{definition}{Definition}[section]
-	\newtheoremstyle{nonumstyle}
-		{\topsep}
-		{\topsep}
-		{}
-		{0pt}
-		{\bfseries}
-		{}
-		{3mm}
-		{\thmname{#1}\thmnote{ - #3}}
-	
-	\theoremstyle{nonumstyle}
-	\newtheorem{nonumtheorem}{Theorem}
-	\newtheorem{solution}{Solution}
-	\newtheorem{myproof}{Proof}
-	
-	\newmdenv[
-		frametitle={Example},
-		topline=true,
-		bottomline=true,
-		leftline=false, 
-		rightline=false, 
-		skipabove=1em,
-		frametitlerule=true,
-		]{exampleframe}
-	
-	\newmdenv[
-		frametitle={},
-		backgroundcolor=gray!25,
-		linecolor=gray!25,
-		skipabove=1em,
-		]{theoremframe}
-	
-	\newmdenv[
-		skipabove=1em,
-		]{definitionframe}
-	
-	
-	\begin{document}
-	\title{${1:Title}}
-	\author{Tobias Schwalbe}
-	
-	\maketitle
-
-\section{${2:First section}}
-
-$0
-
-\end{document}
-
-endsnippet
-snippet file "new document:file" b
-\documentclass[11pt]{article}
-
-	\begin{document}
-	\title{${1:Title}}
-	\author{Tobias Schwalbe}
-	
-	\maketitle
-
-\section{${2:First section}}
-
-$0
-
-\end{document}
-endsnippet

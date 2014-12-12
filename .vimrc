@@ -863,11 +863,18 @@ endfunction
 " --------------------
 " ---- [5.1.4] SNIPPETS ----
 function! SnippetFolding(lnum)
+	if a:lnum == 1
+		let g:InsideBrace = 0
+	endif
 	let line = getline(a:lnum)
-	if line =~ '^snippet'
+	if line =~ '^# ' && !g:InsideBrace
 		return '>1'
+	elseif line =~ '^snippet'
+		let g:InsideBrace = 1
+		return '>2'
 	elseif line =~ '^endsnippet'
-		return '<1'
+		let g:InsideBrace = 0
+		return '<2'
 	else
 		return '='
 	endif
@@ -961,6 +968,9 @@ endfunction
 function! NormalFoldText()
 	let line = substitute(getline(v:foldstart),'^\s*','','')
 	let indent_level = indent(v:foldstart)
+	if line =~ '^snippet'
+		let indent_level = &l:tabstop
+	endif
 	let indent = repeat(' ', indent_level)
 	if line =~ '^import'
 	       let line = "import"	
