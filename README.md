@@ -115,6 +115,7 @@ Add a pentadactylrc with the line:
 
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: Missing space in statusline. ahead, behind
+* BUG: My gitdiff doesn't disable when opening unite.
 
 * Create own ultisnips source for neocomplete (and unite?) since snippets with regex doesn't show up. Write a string that you know will expand to the snippet in the description. Maybe use a delimiter to seperate the normal description from the name of the snippet.
 * Look at syntastics spellchecker.
@@ -128,14 +129,9 @@ Add a pentadactylrc with the line:
 * Rename repo to something more fitting, ex dotfiles.
 * Look at neobundle to make installation easier.
 * Add definition jedi usages and stuff like that.
-* Try autosave for everything. (How will stuff like statusline,syntastic and git get updated?)
 
+* Try autosave for everything. (How will stuff like statusline,syntastic and git get updated?)
 * Really slow when using syntastic and editing my vimrc. Split my vimrc into smaller parts?
-* Turn all my external helpers into one big one with easy ways to increase functionality.
-	Have my helper in a terminal. Keybinding in vim builds and runs in that terminal and shows all output there.
-	Have my git status stuff update in there.
-	Have my texstuff building in there.
 * Change my keyboard layout using <leader>se and <leader>so.
 * Find way to send texcompiling error to vim and hide the texcompiling window.
-* Open pdfviewer with vim / texcompiler.
 * Kill autotexcompiling when closing tex buffer.

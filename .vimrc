@@ -77,6 +77,7 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 if has('lua') && !exists('g:minimalMode')
 	Plugin 'Shougo/neocomplete.vim'
 	Plugin 'tosc/neocomplete-spell'
+	Plugin 'tosc/neocomplete-ultisnips'
 else
 	Plugin 'Shougo/neocomplcache'
 	Plugin 'JazzCore/neocomplcache-ultisnips'
@@ -373,14 +374,14 @@ let g:mapleader="\<space>"
 " B
 map <leader>b :b #<CR>
 " C
-map <leader>c :cd %:h<CR>
+map <leader>co :Errors<CR>
+map <leader>cc :SyntasticCheck<CR>
+map <leader>ce :SyntasticCheck<CR>
 " D
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
 " E
-map <leader>eo :Errors<CR>
-map <leader>ec :SyntasticCheck<CR>
-map <leader>ee :SyntasticCheck<CR>
+autocmd Filetype tex map <buffer><leader>e :call StartTexBuilder() <cr>
 " F
 " G
 map <leader>gg :!git -C %:h status<CR>
@@ -414,6 +415,7 @@ endif
 " N
 map <leader>n :bn <CR>
 " O
+map <leader>o :Unite -no-split buffer file_mru<CR>
 " P
 map <leader>p :bp <CR>
 " Q
@@ -453,6 +455,7 @@ endif
 " V
 map <leader>v :e ~/git/vim/.vimrc<CR>
 " W
+map <leader>w :w <CR>
 " X
 " Y
 " Z
@@ -715,7 +718,6 @@ function! TEXSettings()
 	setlocal foldexpr=IndentFolding2(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	call EnglishSpellCheck()
-	call StartTexBuilder()
 endfunction
 
 if !exists("g:minimalMode") && !exists("g:disableExternal")

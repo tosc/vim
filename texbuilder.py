@@ -3,6 +3,7 @@ import time
 import sys
 import subprocess
 
+firstRun = 1
 while 1:
 	timeStart = time.time()
 	os.system("cd " + sys.argv[1])
@@ -20,4 +21,7 @@ while 1:
 	timeEnd = time.time() - timeStart
 	os.system("rm temp.tex")
 	print("Done! %.2fs" % timeEnd)
+        if firstRun:
+                os.system("start" + sys.argv[1] +  "/temp.pdf")
+                firstRun = 0
 	time.sleep(1)
