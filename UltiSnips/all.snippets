@@ -1,108 +1,108 @@
 # Header
-snippet "import|include" "import" br
+snippet "import|include" "import:import|include" br
 <MISSING import|include>
 endsnippet
-snippet header "header" b
+snippet header "header:header" b
 <MISSING header>
 endsnippet
 
 # Logical operations
-snippet "\|\||or" "or" r
+snippet "\|\||or" "or:or" r
 <MISSING or|||>
 endsnippet
-snippet "&&|and" "and" r
+snippet "&&|and" "and:and" r
 <MISSING and|&&>
 endsnippet
-snippet "!([a-zA-Z0-9.,\-]+)|not" "not" r
+snippet "!([a-zA-Z0-9.,\-]+)|not" "not:not" r
 <MISSING !|not>
 endsnippet
 
 # Conditional snippets
-snippet if "if" b
+snippet if "if:if" b
 <MISSING if>
 endsnippet
-snippet "ifel?s?e?" "if else" br
+snippet "ifel?s?e?" "if else:ife|ifelse" br
 <MISSING ifelse>
 endsnippet
-snippet "(elif|eif)|(else if|elseif)" "else if" br
+snippet "(elif|eif)|(else if|elseif)" "else if:elif|elseif|else if" br
 <MISSING elif>
 endsnippet
-snippet else "else" b
+snippet else "else:else" b
 <MISSING else>
 endsnippet
-snippet switch "switch" b
+snippet switch "switch:switch" b
 <MISSING switch>
 endsnippet
-snippet case "case" b
+snippet case "case:case" b
 <MISSING case>
 endsnippet
 	
 # Loop snippets
-snippet for "for" b
+snippet for "for:for" b
 <MISSING for>
 endsnippet
 snippet "for((?!e)\w+)" "for + match.group(1) as variable" br
 <MISSING for var>
 endsnippet
-snippet "fore(ach)?" "for each element in collection" br
+snippet "fore(ach)?" "for each element in collection:fore|foreach" br
 <MISSING foreach>
 endsnippet
-snippet while "while" b
+snippet while "while:while" b
 <MISSING white>
 endsnippet
-snippet do "do while" b
+snippet do "do while:do" b
 <MISSING do>
 endsnippet
 
 # Methods/functinos
-snippet "func?t?i?o?n?|meth?o?d?" "function" br
+snippet "func?t?i?o?n?|meth?o?d?" "function:fun|function|met|method" br
 <MISSING func|method>
 endsnippet
 snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
 <MISSING var func|method>
 endsnippet
-snippet "const?r?u?c?t?o?r?" "Description" br
+snippet "const?r?u?c?t?o?r?" "constructor:cons|constructor" br
 <MISSING constructor>
 endsnippet
 
 # String snippets
-snippet "[sS]tr(ing)?" "string variable" br
+snippet "[sS]tr(ing)?" "string variable:string|String|str|Str" br
 <MISSING string var>
 endsnippet
-snippet "contains|in" "string contains/is in another string" r
+snippet "contains|in" "string contains/is in another string:contains|in" r
 <MISSING contains|in>
 endsnippet
-snippet "[tT]o[sS]tring\(?\)?" "Description" br
+snippet "[tT]o[sS]tring\(?\)?" "to string:tostring|ToString|toString" br
 <MISSING ToString>
 endsnippet
 
 # int snippets
-snippet "[iI]nt" "int variable" br
+snippet "[iI]nt" "int variable:int|Int" br
 <MISSING int var>
 endsnippet
-snippet "(\w+)\+\+" "Description" r
+snippet "(\w+)\+\+" "increment:++" r
 <MISSING ++>
 endsnippet
-snippet "(\w+)\-\-" "Description" r
+snippet "(\w+)\-\-" "decrement:--" r
 <MISSING -->
 endsnippet
 
 # Variable snippets
-snippet "[dD]ouble" "double variable" br
+snippet "[dD]ouble" "double variable:double|Double" br
 <MISSING double var>
 endsnippet
-snippet "[fF]loat" "float variable" br
+snippet "[fF]loat" "float variable:float|Float" br
 <MISSING float var>
 endsnippet
-snippet "[bB]ool(ean)?" "float variable" br
+snippet "[bB]ool(ean)?" "bool variable:bool|Bool|Boolean|boolean" br
 <MISSING bool var>
 endsnippet
 
 # Datatype snippets
-snippet enum "enum" b
+snippet enum "enum:enum" b
 <MISSING enum>
 endsnippet
-snippet list "list" b
+snippet list "list:list" b
 <MISSING list>
 endsnippet
 snippet "(\w+) ?list" "list of type match.group(1)" br
@@ -113,31 +113,31 @@ endsnippet
 snippet "\"|#|//" "comment" br
 <MISSING comment>
 endsnippet
-snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines " br
+snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines:mlc|multilinecomment" br
 <MISSING multiline comment>
 endsnippet
-snippet comment "comment" b
+snippet comment "comment:comment" b
 <MISSING documentation>
 endsnippet
-snippet print "print" b
+snippet print "print:print" b
 <MISSING print>
 endsnippet
 
 # Special snippets
-snippet sleep "Sleep program" b
+snippet sleep "Sleep program:sleep" b
 <MISSING sleep>
 endsnippet
-snippet time "current time in milliseconds" b
+snippet time "current time in milliseconds:time" b
 <MISSING time>
 endsnippet
-snippet "kill" "kill current script" br
+snippet "kill" "kill current script:kill" br
 <MISSING kill>
 endsnippet
 
 # New code snippets
-snippet main "runnable script" b
+snippet main "runnable script:main" b
 <MISSING main>
 endsnippet
-snippet class "new class" b
+snippet class "new class:class" b
 <MISSING class>
 endsnippet
