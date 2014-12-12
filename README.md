@@ -118,9 +118,6 @@ Add a pentadactylrc with the line:
 * BUG: ö works in insert but not normal when using juicyssh.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
-* Don't use static git/vim/Ultisnips folder for us source.
-* Check snippetfile for filetype if you should inherit snippets for us source.
-* Create own ultisnips source for neocomplete (and unite?) since snippets with regex doesn't show up. Write a string that you know will expand to the snippet in the description. Maybe use a delimiter to seperate the normal description from the name of the snippet.
 * Add option to disable git draw. Already exists?
 * Move from using my filteromni to making an own complete longest common function. With this I can use fuzzy but still have my tabcompletion.
 * Find way of getting my delimiters to show right away and not when the entire keycommand is pressed. I might have to change my approach.

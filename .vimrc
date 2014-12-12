@@ -420,7 +420,7 @@ autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
 autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
-autocmd Filetype vim map <leader>r :so ~/git/vim/.vimrc <cr>
+autocmd Filetype vim map <leader>r :so % <cr>
 " S
 map <leader>se :call EnglishSpellCheck() <CR>
 map <leader>ss :call SwedishSpellCheck() <CR>
@@ -709,7 +709,7 @@ function! TEXSettings()
 endfunction
 
 if !exists("g:minimalMode") && !exists("g:disableExternal")
-	autocmd TextChanged,TextChangedI *.tex write
+	autocmd TextChanged,TextChangedI *.tex silent! call SaveIfPossible()
 else
 	" Compile latex to a pdf when you save
 	autocmd BufWritePre *.tex call vimproc#system("rm -f " . expand('%:r') . ".aux")
@@ -717,6 +717,10 @@ else
 endif
 
 autocmd Filetype tex call TEXSettings()
+
+function! SaveIfPossible()
+	write
+endfunction
 " --------------------
 " ---- [4.13] GITCOMMIT ----
 function! GITCSettings()

@@ -1,14 +1,19 @@
 priority 1
 
-snippet if
+# Header
+
+# Logical operations
+
+# Conditional snippets
+snippet if "if:if" b
 \ifnum\\${1:x = 1}
 	${VISUAL}$0
 \fi
 endsnippet
-snippet ifor
+snippet ifor "if or:ifor" b
 \ifnum\ifnum\\${1:x} ${2:= 0} 1\else\ifnum\\$1 ${3:= 3} 1\else0\fi\fi
 endsnippet
-snippet ifelse
+snippet "ifel?s?e?" "if else:ifelse" br
 \ifnum\\${1:x = 1}
 	${VISUAL}$2
 \else
@@ -16,12 +21,29 @@ snippet ifelse
 \fi
 endsnippet
 
-snippet for
+# Loop snippets
+snippet for "for:for" b
 \foreach \\${1:i} in {${2:0},...,${3:10}}
 {
 	${VISUAL}$0
 }
 endsnippet
+
+# Methods/functions
+
+# String snippets
+
+# int snippets
+
+# Variable snippets
+
+# Datatype snippets
+
+# Documentation snippets
+
+# Special snippets
+
+# New code snippets
 
 snippet italic "Italic" 
 \textit{${VISUAL}$1}$0
@@ -30,34 +52,40 @@ snippet bold "Bold"
 \textbf{${VISUAL}$1}$0
 endsnippet
 
-snippet list "Lista med förklaringar" 
+snippet list "normal list:list" b
 \begin{itemize}
 	\item ${1:Item description}
 	$0
 \end{itemize}
 endsnippet
-snippet dlist "Lista med förklaringar" 
+snippet listdescription "list with keyword and description:listdescription" b
 \begin{description}
 	\item[${1:Item}] ${2:Item description}
 	$0
 \end{description}
 endsnippet
-snippet nlist "Nummerlista, \begin{enumerate}[resume] för att fortsätta tidig räkning" 
+snippet "numb?e?r?e?d?list" "numbered list, \begin{enumerate}[resume] to continue count:numberedlist" br
 \begin{enumerate}
 	\item ${1:Item description}
 	$0
 \end{enumerate}
 endsnippet
+snippet "numb?e?r?e?d?listdescription" "numbered list, \begin{enumerate}[resume] to continue count:numberedlistdescription" br
+\begin{enumerate}
+	\item[${1:Item}] ${2:Item description}
+	$0
+\end{enumerate}
+endsnippet
 
-snippet item
+snippet item "new entry in a list:item" b
 \item ${1:Item description}
 $0
 endsnippet
-snippet ditem
+snippet itemdescription "new entry in a description list:itemdescription" b
 \item[${1:Item}] ${2:Item description}
 endsnippet
 
-snippet nl "New line" 
+snippet "ne?w?li?n?e?|\\n" "New line:nl|newline" r
 \\*
 endsnippet 
 snippet frame
@@ -108,31 +136,13 @@ snippet sssection
 $0
 endsnippet
 
-snippet a
-$ a $
-endsnippet
-snippet s
-$ s $
-endsnippet
-snippet r
-$ r $
-endsnippet
-snippet p
-$ p $
-endsnippet
-snippet x
-$ x $
-endsnippet
-snippet y
-$ y $
-endsnippet
-snippet m
-$ m $
+snippet " (\S{1})" "Variable matchgroup as math" r
+ $ `!p snip.rv = match.group(1)` $
 endsnippet
 snippet ... "Mathdots" i
 \ldots
 endsnippet 
-snippet omega "Omega" 
+snippet "[oO]mega" "Omega:omega|Omega" r
 \Omega
 endsnippet
 snippet tillhör 
@@ -253,7 +263,7 @@ snippet otimes
 \otimes
 endsnippet
 
-snippet M "Math" 
+snippet "ma?t?h?mo?d?e?" "Math:mathmode|mm" br
 $ ${VISUAL}$1 $$0
 endsnippet
 snippet equation
@@ -330,7 +340,7 @@ snippet notheorem
 \end{nonumtheorem}
 endsnippet
 
-snippet MD "New math document" b
+snippet filemath "new math document:filemath" b
 \documentclass[11pt]{article}
 	\usepackage{amsmath}
 	\usepackage{amsthm}
@@ -407,7 +417,7 @@ $0
 \end{document}
 
 endsnippet
-snippet main "runnable script:main" b
+snippet file "new document:file" b
 \documentclass[11pt]{article}
 
 	\begin{document}
