@@ -67,9 +67,6 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'tsukkee/unite-tag'
 	Plugin 'skeept/ultisnips-unite'
 
-	" File explorer.
-	Plugin 'Shougo/vimfiler.vim'
-
 	" Snippets
 	Plugin 'SirVer/ultisnips'
 
@@ -178,19 +175,16 @@ let g:neocomplcache_enable_auto_close_preview = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 " --------------------
-" ---- [2.6] VIMFILER ----
-let g:vimfiler_expand_jump_to_first_child = 0
-" --------------------
-" ---- [2.7] EASYTAGS ----
+" ---- [2.6] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
-" ---- [2.8] FASTFOLD ----
+" ---- [2.7] FASTFOLD ----
 let g:fastfold_savehook = 1
 let g:fastfold_togglehook = 0
 let g:fastfold_map = 1
 " --------------------
-" ---- [2.9] NEOCOMPLETE ----
+" ---- [2.8] NEOCOMPLETE ----
 let g:neocomplete#enable_at_startup = 1
 
 if !exists('g:neocomplete#keyword_patterns')
@@ -228,7 +222,7 @@ let g:neocomplete#enable_fuzzy_completion = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 " --------------------
-" ---- [2.10] JEDI ----
+" ---- [2.9] JEDI ----
 "let g:jedi#auto_initialization = 0
 let g:jedi#auto_vim_configuration = 0
 let g:jedi#completions_enabled = 0
@@ -239,7 +233,7 @@ let g:jedi#documentation_command = "<NOP>"
 let g:jedi#goto_definitions_command = "<NOP>"
 let g:jedi#goto_assignments_command = "<NOP>"
 " --------------------
-" ---- [2.11] SYNTASTIC ----
+" ---- [2.10] SYNTASTIC ----
 let g:syntastic_mode_map = { "mode": "active",
 			   \ "active_filetypes": [],
 			   \ "passive_filetypes": ["vim"] }
@@ -268,7 +262,7 @@ if !exists("g:disablePlugins")
 	noremap ö :Unite -no-split buffer file_mru<CR>
 
 	" Filebrowser.
-	noremap Ö :VimFiler<CR>
+	noremap Ö :Unite -no-split file file/new directory/new<CR>
 else
 	noremap ä /
 	noremap ö :e
@@ -416,6 +410,7 @@ endif
 map <leader>n :bn <CR>
 " O
 map <leader>o :Unite -no-split buffer file_mru<CR>
+map <leader>O :Unite -no-split file file/new directory/new<CR>
 " P
 map <leader>p :bp <CR>
 " Q
@@ -522,21 +517,14 @@ function! UniteBinds()
 endfunction
 autocmd FileType unite call UniteBinds()
 " --------------------
-" ---- [3.6] VIMFILER ----
-function! VimFilerBinds()
-	nmap <buffer> za t
-	nmap <buffer> <ESC> <Plug>(vimfiler_exit)
-endfunction
-autocmd FileType vimfiler call VimFilerBinds()
-" --------------------
-" ---- [3.7] FUGITIVE ----
+" ---- [3.6] FUGITIVE ----
 function! FugitiveBindings()
 	" Fast movement for :GStatus
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
 endfunction
 " --------------------
-" ---- [3.8] OPOHBUFFER ----
+" ---- [3.7] OPOHBUFFER ----
 function! OpohBinds()
 	nmap <buffer> <ESC> :execute("b " . g:bufferBeforeOpoh)<CR>
 endfunction
@@ -1280,14 +1268,14 @@ endfunction
 " Default delimiters: "'(){}[]
 " To change default delimiters just change b:smartJumpElements
 function! SmartJump()
-	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}<>\[]"
-	endif
 	if !exists("g:disablePlugins")
 		call UltiSnips#JumpForwards()
 		if g:ulti_jump_forwards_res == 1
 			return ""
 		endif
+	endif
+	if !exists("b:smartJumpElements")
+		let b:smartJumpElements = "[]'\"(){}<>\[]"
 	endif
 	let cursorPos = getpos('.')
 	let pos = match(getline('.'), b:smartJumpElements, cursorPos[2] - 1)
@@ -1301,14 +1289,14 @@ function! SmartJump()
 	return ""
 endfunction
 function! SmartJumpBack()
-	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}<>\[]"
-	endif
 	if !exists("g:disablePlugins")
 		call UltiSnips#JumpBackwards()
 		if g:ulti_jump_backwards_res == 1
 			return ""
 		endif
+	endif
+	if !exists("b:smartJumpElements")
+		let b:smartJumpElements = "[]'\"(){}<>\[]"
 	endif
 	let cursorPos = getpos('.')
 	let newPos = match(getline('.'), b:smartJumpElements)

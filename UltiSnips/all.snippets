@@ -1,3 +1,17 @@
+# Description triggers:
+# 	Always use the longest common string for the name since the user will tab to complete it anyway.
+# 		Ex: snippet "func?t?i?o?n" "a function:function" br
+# 	List all triggers that aren't substrings of eachother.
+# 		Ex: snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines:mlc|multilinecomment" br
+#  	Case sensitive.
+# 		Ex: snippet "[sS]tr(ing)?" "string variable:string|String" br
+# 	If a trigger works with or without spaces then use the one without.
+# 		Ex: snippet "elif|(else if|elseif)" "else if:elif|elseif" br
+# 	Don't add triggers for snippets that start with user input.
+# 		Ex: snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
+# 	Triggers should be atleast 2 characters.
+# 		Ex: snippet "!([a-zA-Z0-9.,\-]+)| not" "not:not" r
+
 # Header
 snippet "import|include" "import:import|include" br
 <MISSING import|include>
@@ -13,7 +27,7 @@ endsnippet
 snippet "&&|and" "and:and" r
 <MISSING and|&&>
 endsnippet
-snippet "!([a-zA-Z0-9.,\-]+)|not" "not:not" r
+snippet "!([a-zA-Z0-9.,\-]+)| not" "not:not" r
 <MISSING !|not>
 endsnippet
 
@@ -21,10 +35,10 @@ endsnippet
 snippet if "if:if" b
 <MISSING if>
 endsnippet
-snippet "ifel?s?e?" "if else:ife|ifelse" br
+snippet "ifel?s?e?" "if else:ifelse" br
 <MISSING ifelse>
 endsnippet
-snippet "(elif|eif)|(else if|elseif)" "else if:elif|elseif|else if" br
+snippet "elif|(else if|elseif)" "else if:elif|elseif" br
 <MISSING elif>
 endsnippet
 snippet else "else:else" b
@@ -44,7 +58,7 @@ endsnippet
 snippet "for((?!e)\w+)" "for + match.group(1) as variable" br
 <MISSING for var>
 endsnippet
-snippet "fore(ach)?" "for each element in collection:fore|foreach" br
+snippet "forea?c?h?" "for each element in collection:foreach" br
 <MISSING foreach>
 endsnippet
 snippet while "while:while" b
@@ -55,18 +69,18 @@ snippet do "do while:do" b
 endsnippet
 
 # Methods/functinos
-snippet "func?t?i?o?n?|meth?o?d?" "function:fun|function|met|method" br
+snippet "func?t?i?o?n?|meth?o?d?" "function:function|method" br
 <MISSING func|method>
 endsnippet
 snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
 <MISSING var func|method>
 endsnippet
-snippet "const?r?u?c?t?o?r?" "constructor:cons|constructor" br
+snippet "const?r?u?c?t?o?r?" "constructor:constructor" br
 <MISSING constructor>
 endsnippet
 
 # String snippets
-snippet "[sS]tr(ing)?" "string variable:string|String|str|Str" br
+snippet "[sS]tr(ing)?" "string variable:string|String" br
 <MISSING string var>
 endsnippet
 snippet " contains| in" "string contains/is in another string:contains|in" r
@@ -94,7 +108,7 @@ endsnippet
 snippet "[fF]loat" "float variable:float|Float" br
 <MISSING float var>
 endsnippet
-snippet "[bB]ool(ean)?" "bool variable:bool|Bool|Boolean|boolean" br
+snippet "[bB]ool" "bool variable:bool|Bool" br
 <MISSING bool var>
 endsnippet
 

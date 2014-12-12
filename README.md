@@ -113,23 +113,25 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: Missing space in statusline. ahead, behind
 * BUG: My gitdiff doesn't disable when opening unite.
+* BUG: ö works in insert but not normal when using juicyssh.
+* BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
+* Don't use static git/vim/Ultisnips folder for us source.
+* Check snippetfile for filetype if you should inherit snippets for us source.
 * Create own ultisnips source for neocomplete (and unite?) since snippets with regex doesn't show up. Write a string that you know will expand to the snippet in the description. Maybe use a delimiter to seperate the normal description from the name of the snippet.
-* Look at syntastics spellchecker.
 * Add option to disable git draw. Already exists?
-* Fix my delimiterstuff. Dislike the fact that you don't see any typing until the entire thing is done. Maybe save last character to a global thing. If last key = new key then do the delimiterthing.
 * Move from using my filteromni to making an own complete longest common function. With this I can use fuzzy but still have my tabcompletion.
-* Look into neocomplete sources and use them better.
-* Change my buildcommands to use vimproc and output all the information to a buffer. Add a leader binding to kill the process and also make sure to kill it when you run something new.
-* Eclim - find way of adding source directories using vim instead of having to open eclipse.
-* Make tags project specific. Currently language specific.
-* Rename repo to something more fitting, ex dotfiles.
+* Find way of getting my delimiters to show right away and not when the entire keycommand is pressed. I might have to change my approach.
+* Rename neocomplete-ultisnips to neocomplete-us. Ultisnips.vim was taken so us.vim would be a good alternative.
 * Look at neobundle to make installation easier.
 * Add definition jedi usages and stuff like that.
+* Look at async syntax checker.
+* Look at syntastics spellchecker.
+* Make tags project specific. Currently language specific.
 
+* Change my buildcommands to use vimproc and output all the information to a buffer. Add a leader binding to kill the process and also make sure to kill it when you run something new. (Doesn't unite make basically do this?)
 * Try autosave for everything. (How will stuff like statusline,syntastic and git get updated?)
 * Really slow when using syntastic and editing my vimrc. Split my vimrc into smaller parts?
 * Change my keyboard layout using <leader>se and <leader>so.
