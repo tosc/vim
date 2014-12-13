@@ -144,112 +144,112 @@ if !exists("g:disablePlugins")
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 	call unite#filters#sorter_default#use(['sorter_rank'])
-endif
 
-let custom_open = {
-      \ 'description' : 'open files or open directory',
-      \ 'is_quit' : 0,
-      \ 'is_start' : 1,
-      \ }
-" Open a directory.
-function! custom_open.func(candidate)
-	if a:candidate.word =~ '\.\.$' 
-		if g:unite_path =~ '^[A-Z]:$'
-			let g:unite_path = ''
+	let custom_open = {
+	      \ 'description' : 'open files or open directory',
+	      \ 'is_quit' : 0,
+	      \ 'is_start' : 1,
+	      \ }
+	" Open a directory.
+	function! custom_open.func(candidate)
+		if a:candidate.word =~ '\.\.$' 
+			if g:unite_path =~ '^[A-Z]:$'
+				let g:unite_path = ''
+			else
+
+				let folders = split(g:unite_path, '/')
+				let folders = folders[:-2]
+				let newpath = join(folders, '/')
+				let g:unite_path = newpath
+			endif
 		else
-
-			let folders = split(g:unite_path, '/')
-			let folders = folders[:-2]
-			let newpath = join(folders, '/')
-			let g:unite_path = newpath
+			let folders = split(a:candidate.word, '/')
+			let g:unite_path .= (a:candidate.word =~ '^[A-Z]:$' ? '' : '/') . folders[-1]
 		endif
-	else
-		let folders = split(a:candidate.word, '/')
-		let g:unite_path .= (a:candidate.word =~ '^[A-Z]:$' ? '' : '/') . folders[-1]
-	endif
 
-	call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
-	\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
-endfunction
-call unite#custom#action('directory', 'custom-open', custom_open)
-call unite#custom#default_action('directory', 'custom-open')
+		call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
+		\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
+	endfunction
+	call unite#custom#action('directory', 'custom-open', custom_open)
+	call unite#custom#default_action('directory', 'custom-open')
 
-let dir_matcher = {
-      \ 'name' : 'dir_matcher',
-      \ 'description' : 'matches dirs',
-      \}
-" Highlight as you type
-function! dir_matcher.pattern(input)
-	let filter = unite#get_filters('matcher_fuzzy')
-	return filter.pattern(a:input)
-endfunction
-" Filter directories.
-function! dir_matcher.filter(candidates, context)
-	let folders = a:candidates
-	" Add ../ as an option if you are in the root of a drive.
-	if g:unite_path =~ '^[A-Z]:$'
-		call add(folders, {'word' : '..', 'abbr' : '../', 'action__path' : ''})
-	" If you are in the root of computer add drives as options.
-	elseif g:unite_path == ''
-		let folders = []
-		let abc = "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"
-		let drives = split(abc, '\s')
-		for drive in drives
-			if isdirectory(drive . ':')
-				call add(folders, {'word' : drive . ':', 'abbr' : drive . ':/', 'action__path' : drive . ':'})
+	let dir_matcher = {
+	      \ 'name' : 'dir_matcher',
+	      \ 'description' : 'matches dirs',
+	      \}
+	" Highlight as you type
+	function! dir_matcher.pattern(input)
+		let filter = unite#get_filters('matcher_fuzzy')
+		return filter.pattern(a:input)
+	endfunction
+	" Filter directories.
+	function! dir_matcher.filter(candidates, context)
+		let folders = a:candidates
+		" Add ../ as an option if you are in the root of a drive.
+		if g:unite_path =~ '^[A-Z]:$'
+			call add(folders, {'word' : '..', 'abbr' : '../', 'action__path' : ''})
+		" If you are in the root of computer add drives as options.
+		elseif g:unite_path == ''
+			let folders = []
+			let abc = "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"
+			let drives = split(abc, '\s')
+			for drive in drives
+				if isdirectory(drive . ':')
+					call add(folders, {'word' : drive . ':', 'abbr' : drive . ':/', 'action__path' : drive . ':'})
+				endif
+			endfor
+		endif
+		" Show only the folder and not absolute path to folder.
+		for candidate in folders
+			let splitWord = split(candidate.word, '/')
+			let folder = splitWord[-1]
+			let candidate.abbr = folder
+		endfor
+		" Filter directories using fuzzy matcher.
+		let filter = unite#get_filters('matcher_fuzzy')
+		if !empty(filter)
+			let candidates = filter.filter(folders, a:context)
+		endif
+		return candidates
+	endfunction
+	call unite#define_filter(dir_matcher)
+	call unite#custom#source('directory', 'matchers', ['dir_matcher'])
+
+	let file_matcher = {
+	      \ 'name' : 'file_matcher',
+	      \ 'description' : 'matches files only',
+	      \}
+	" Highlight as you type
+	function! file_matcher.pattern(input)
+		let filter = unite#get_filters('matcher_fuzzy')
+		return filter.pattern(a:input)
+	endfunction
+	" Filter files
+	function! file_matcher.filter(candidates, context)
+		let files = []
+		let lines = []
+		" ls to get files
+		if g:unite_path != ''
+			let lsoutput = system('ls -a ' . g:unite_path)
+			let lines = split(lsoutput, '\n')
+		endif
+		" Add all non-directories as a file
+		for candidate in lines
+			let path = g:unite_path . '\' . candidate
+			if !isdirectory(path)
+				call add(files, {'word' : candidate . " ", 'action__path' : path})
 			endif
 		endfor
-	endif
-	" Show only the folder and not absolute path to folder.
-	for candidate in folders
-		let splitWord = split(candidate.word, '/')
-		let folder = splitWord[-1]
-		let candidate.abbr = folder
-	endfor
-	" Filter directories using fuzzy matcher.
-	let filter = unite#get_filters('matcher_fuzzy')
-	if !empty(filter)
-		let candidates = filter.filter(folders, a:context)
-	endif
-	return candidates
-endfunction
-call unite#define_filter(dir_matcher)
-call unite#custom#source('directory', 'matchers', ['dir_matcher'])
-
-let file_matcher = {
-      \ 'name' : 'file_matcher',
-      \ 'description' : 'matches files only',
-      \}
-" Highlight as you type
-function! file_matcher.pattern(input)
-	let filter = unite#get_filters('matcher_fuzzy')
-	return filter.pattern(a:input)
-endfunction
-" Filter files
-function! file_matcher.filter(candidates, context)
-	let files = []
-	let lines = []
-	" ls to get files
-	if g:unite_path != ''
-		let lsoutput = system('ls -a ' . g:unite_path)
-		let lines = split(lsoutput, '\n')
-	endif
-	" Add all non-directories as a file
-	for candidate in lines
-		let path = g:unite_path . '\' . candidate
-		if !isdirectory(path)
-			call add(files, {'word' : candidate . " ", 'action__path' : path})
+		" Filer files using fuzzy mather.
+		let filter = unite#get_filters('matcher_fuzzy')
+		if !empty(filter)
+			let candidates = filter.filter(files, a:context)
 		endif
-	endfor
-	" Filer files using fuzzy mather.
-	let filter = unite#get_filters('matcher_fuzzy')
-	if !empty(filter)
-		let candidates = filter.filter(files, a:context)
-	endif
-	return candidates
-endfunction
-call unite#define_filter(file_matcher)
-call unite#custom#source('file', 'matchers', ['file_matcher'])
+		return candidates
+	endfunction
+	call unite#define_filter(file_matcher)
+	call unite#custom#source('file', 'matchers', ['file_matcher'])
+endif
 
 function! UniteExplorer()
 	" Needed for file and directory filtering.

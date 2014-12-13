@@ -118,6 +118,11 @@ Add a pentadactylrc with the line:
 * BUG: ö works in insert but not normal when using juicyssh.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
+* Simplify file filter by setting input as . and filtering, add those result to the other results.
+* Change unite bookmarks to work like my folders do. Add them to ö.
+* ö and o should be mapped to a function instead. Use that function.
+* Change my file and directory to own sources instead.
+* Make sure my unite works with linux.
 * Find way to disable default US source for neocmplete.
 * Use vimproc for gitcommands so vim doesn't freeze.
 * Move from using my filteromni to making an own complete longest common function. With this I can use fuzzy but still have my tabcompletion.
