@@ -118,7 +118,9 @@ Add a pentadactylrc with the line:
 * BUG: ö works in insert but not normal when using juicyssh.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
-* Simplify file filter by setting input as . and filtering, add those result to the other results.
+* <C-D> & <C-U> in unite.
+* Add move in unite. Press move on candidate and save that path. Move around using unite and press m on where to put it. Prompt with new path and yes /no.
+* Find or create a unite help source.
 * Change unite bookmarks to work like my folders do. Add them to ö.
 * ö and o should be mapped to a function instead. Use that function.
 * Change my file and directory to own sources instead.
@@ -134,6 +136,7 @@ Add a pentadactylrc with the line:
 * Make tags project specific. Currently language specific.
 * Add option to disable git draw. Already exists?
 
+* Create a orgmode. Use something like vims help file and save all information I find useful with easy search tags. Save links to where information was found and description of thing and location of where I used it.
 * Change my buildcommands to use vimproc and output all the information to a buffer. Add a leader binding to kill the process and also make sure to kill it when you run something new. (Doesn't unite make basically do this?)
 * Try autosave for everything. (How will stuff like statusline,syntastic and git get updated?)
 * Really slow when using syntastic and editing my vimrc. Split my vimrc into smaller parts?
