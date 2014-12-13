@@ -1,18 +1,14 @@
 priority 1
 
-snippet " "New block"
-" ---- [${1:0.0}] ${2:Name} ----
-$0${VISUAL}
-" --------------------
-endsnippet
-
+# Header
+# Logical operations
 snippet "\|\||or" "or" br
 ||
 endsnippet
 snippet "&&|and" "and" br
 &&
 endsnippet
-
+# Conditional snippets
 snippet if "if" b
 if ${1:1}
 	${0:${VISUAL}}
@@ -33,7 +29,7 @@ snippet else "else" b
 else
 	${0:${VISUAL}}
 endsnippet
-
+# Loop snippets
 snippet "for((?!e)\w+)" "for + match.group(1) as variable" br
 for `!p snip.rv = match.group(1)` in range(${1:10})
 	${0:${VISUAL}}
@@ -54,34 +50,39 @@ while(${1:1})
 	${0:${VISUAL}}
 endwhile
 endsnippet
-
+# Methods/functions
 snippet "func?t?i?o?n?|method" "function" br
 function! ${1:FunctionName}(${2:param})
 	${0:${VISUAL}}
 endfunction
 endsnippet
 snippet "(\w+)(func?t?i?o?n?|method)" "function with type as match.group(1)" br
-function! ${1:FunctionName}(${2:param})
-	${0:${VISUAL}}
-endfunction
+`!p snip.rv = match.group()`
 endsnippet
-
+# String snippets
 snippet "[sS]tr(ing)?" "string variable" br
 let ${1:var} = ${0:${VISUAL}}
 endsnippet
+# int snippets
 snippet "[iI]nt" "int variable" br
 let ${1:var} = ${0:${VISUAL}}
 endsnippet
-snippet "[dD]ouble" "double variable" br
-let ${1:var} = ${0:${VISUAL}}
-endsnippet
+# Variable snippets
 snippet "[fF]loat" "float variable" br
 let ${1:var} = ${0:${VISUAL}}
 endsnippet
 snippet "[bB]ool(ean)?" "float variable" br
 let ${1:var} = ${0:${VISUAL}}
 endsnippet
-
+# Datatype snippets
+# Documentation snippets
+snippet " "New block"
+" ---- [${1:0.0}] ${2:Name} ----
+$0${VISUAL}
+" --------------------
+endsnippet
+# Special snippets
 snippet print "print" b
 echo ${0:${VISUAL}}
 endsnippet
+# New code snippets

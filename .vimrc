@@ -171,6 +171,8 @@ if !exists("g:disablePlugins")
 	endfunction
 	call unite#custom#action('directory', 'custom-open', custom_open)
 	call unite#custom#default_action('directory', 'custom-open')
+	" Make bookmarks behave like a directory.
+	call unite#custom#default_action('bookmark', 'custom-open')
 
 	let dir_matcher = {
 	      \ 'name' : 'dir_matcher',
@@ -236,9 +238,11 @@ if !exists("g:disablePlugins")
 		endif
 		" Add all non-directories as a file
 		for candidate in lines
-			let path = g:unite_path . '\' . candidate
+			let path = g:unite_path . '/' . candidate
 			if !isdirectory(path)
-				call add(files, {'word' : candidate . " ", 'action__path' : path})
+				let splitWord = split(candidate, '/')
+				let file = splitWord[-1]
+				call add(files, {'word' : path . " ", 'action__path' : path, 'abbr' : path})
 			endif
 		endfor
 		" Filer files using fuzzy mather.
@@ -250,13 +254,33 @@ if !exists("g:disablePlugins")
 	endfunction
 	call unite#define_filter(file_matcher)
 	call unite#custom#source('file', 'matchers', ['file_matcher'])
+
+
+	let custom_edit = {
+	      \ 'description' : 'open files or open directory',
+	      \ 'is_quit' : 0,
+	      \ 'is_start' : 1,
+	      \ }
+	" Open a directory.
+	function! custom_edit.func(candidate)
+		let filepath = a:candidate.action__path
+		execute 'e' . filepath
+	endfunction
+	call unite#custom#action('file', 'custom-edit', custom_edit)
+	call unite#custom#default_action('file', 'custom-edit')
 endif
+
 
 function! UniteExplorer()
 	" Needed for file and directory filtering.
 	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
 
 	execute "Unite -no-split -no-resize -prompt=" . g:unite_path . "> -path=" . g:unite_path . " directory file file/new directory/new"
+endfunction
+function! UniteFileSwitcher()
+	" Needed for file and directory filtering.
+	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
+	execute 'Unite -no-split -no-resize bookmark buffer file_mru'
 endfunction
 " --------------------
 " ---- [2.5] NEOCOMPLCACHE ----
@@ -373,8 +397,7 @@ if !exists("g:disablePlugins")
 	noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
 
 	" Open files using unite. Shows all current buffers and a history of latest files.
-	noremap ö :Unite -no-split -no-resize buffer file_mru<CR>
-
+	noremap ö :call UniteFileSwitcher()<CR>
 	" Filebrowser.
 	noremap Ö :call UniteExplorer()<CR>
 else
@@ -523,7 +546,7 @@ endif
 " N
 map <leader>n :bn <CR>
 " O
-map <leader>o :Unite -no-split -no-resize buffer file_mru<CR>
+map <leader>o :call UniteFileSwitcher()<CR>
 map <leader>O :call UniteExplorer()<CR>
 " P
 map <leader>p :bp <CR>
@@ -562,7 +585,8 @@ if !exists("g:disablePlugins")
 	map <leader>ut :Unite -no-split tag<CR>
 endif
 " V
-map <leader>v :e ~/git/vim/.vimrc<CR>
+map <leader>vv :e ~/git/vim/.vimrc<CR>
+map <leader>vd :w !diff % -<CR>
 " W
 map <leader>w :w <CR>
 " X
