@@ -139,11 +139,124 @@ let g:unite_cursor_line_highlight = 'TabLine'
 
 let s:bufferaction = {'description' : 'verbose', 'is_selectable' : 1,}
 
+let g:unite_path = ''
 if !exists("g:disablePlugins")
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 	call unite#filters#sorter_default#use(['sorter_rank'])
 endif
+
+let custom_open = {
+      \ 'description' : 'open files or open directory',
+      \ 'is_quit' : 0,
+      \ 'is_start' : 1,
+      \ }
+" Open a directory.
+function! custom_open.func(candidate)
+	if a:candidate.word =~ '\.\.$' 
+		if g:unite_path =~ '^[A-Z]:$'
+			let g:unite_path = ''
+		else
+
+			let folders = split(g:unite_path, '/')
+			let folders = folders[:-2]
+			let newpath = join(folders, '/')
+			let g:unite_path = newpath
+		endif
+	else
+		let folders = split(a:candidate.word, '/')
+		let g:unite_path .= (a:candidate.word =~ '^[A-Z]:$' ? '' : '/') . folders[-1]
+	endif
+
+	call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
+	\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
+endfunction
+call unite#custom#action('directory', 'custom-open', custom_open)
+call unite#custom#default_action('directory', 'custom-open')
+
+let dir_matcher = {
+      \ 'name' : 'dir_matcher',
+      \ 'description' : 'matches dirs',
+      \}
+" Highlight as you type
+function! dir_matcher.pattern(input)
+	let filter = unite#get_filters('matcher_fuzzy')
+	return filter.pattern(a:input)
+endfunction
+" Filter directories.
+function! dir_matcher.filter(candidates, context)
+	let folders = a:candidates
+	" Add ../ as an option if you are in the root of a drive.
+	if g:unite_path =~ '^[A-Z]:$'
+		call add(folders, {'word' : '..', 'abbr' : '../', 'action__path' : ''})
+	" If you are in the root of computer add drives as options.
+	elseif g:unite_path == ''
+		let folders = []
+		let abc = "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"
+		let drives = split(abc, '\s')
+		for drive in drives
+			if isdirectory(drive . ':')
+				call add(folders, {'word' : drive . ':', 'abbr' : drive . ':/', 'action__path' : drive . ':'})
+			endif
+		endfor
+	endif
+	" Show only the folder and not absolute path to folder.
+	for candidate in folders
+		let splitWord = split(candidate.word, '/')
+		let folder = splitWord[-1]
+		let candidate.abbr = folder
+	endfor
+	" Filter directories using fuzzy matcher.
+	let filter = unite#get_filters('matcher_fuzzy')
+	if !empty(filter)
+		let candidates = filter.filter(folders, a:context)
+	endif
+	return candidates
+endfunction
+call unite#define_filter(dir_matcher)
+call unite#custom#source('directory', 'matchers', ['dir_matcher'])
+
+let file_matcher = {
+      \ 'name' : 'file_matcher',
+      \ 'description' : 'matches files only',
+      \}
+" Highlight as you type
+function! file_matcher.pattern(input)
+	let filter = unite#get_filters('matcher_fuzzy')
+	return filter.pattern(a:input)
+endfunction
+" Filter files
+function! file_matcher.filter(candidates, context)
+	let files = []
+	let lines = []
+	" ls to get files
+	if g:unite_path != ''
+		let lsoutput = system('ls -a ' . g:unite_path)
+		let lines = split(lsoutput, '\n')
+	endif
+	" Add all non-directories as a file
+	for candidate in lines
+		let path = g:unite_path . '\' . candidate
+		if !isdirectory(path)
+			call add(files, {'word' : candidate . " ", 'action__path' : path})
+		endif
+	endfor
+	" Filer files using fuzzy mather.
+	let filter = unite#get_filters('matcher_fuzzy')
+	if !empty(filter)
+		let candidates = filter.filter(files, a:context)
+	endif
+	return candidates
+endfunction
+call unite#define_filter(file_matcher)
+call unite#custom#source('file', 'matchers', ['file_matcher'])
+
+function! UniteExplorer()
+	" Needed for file and directory filtering.
+	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
+
+	execute "Unite -no-split -no-resize -prompt=" . g:unite_path . "> -path=" . g:unite_path . " directory file file/new directory/new"
+endfunction
 " --------------------
 " ---- [2.5] NEOCOMPLCACHE ----
 let g:neocomplcache_enable_at_startup = 1
@@ -259,10 +372,10 @@ if !exists("g:disablePlugins")
 	noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
 
 	" Open files using unite. Shows all current buffers and a history of latest files.
-	noremap ö :Unite -no-split buffer file_mru<CR>
+	noremap ö :Unite -no-split -no-resize buffer file_mru<CR>
 
 	" Filebrowser.
-	noremap Ö :Unite -no-split file file/new directory/new<CR>
+	noremap Ö :call UniteExplorer()<CR>
 else
 	noremap ä /
 	noremap ö :e
@@ -404,13 +517,13 @@ endif
 " M
 map <leader>m :!make<CR>
 if !exists("g:disablePlugins")
-	map <leader>m :cd %:h<CR>:Unite -no-split -auto-preview -no-start-insert build:make<CR>
+	map <leader>m :cd %:h<CR>:Unite -no-split -auto-preview -no-start-insert -no-resize build:make<CR>
 endif
 " N
 map <leader>n :bn <CR>
 " O
-map <leader>o :Unite -no-split buffer file_mru<CR>
-map <leader>O :Unite -no-split file file/new directory/new<CR>
+map <leader>o :Unite -no-split -no-resize buffer file_mru<CR>
+map <leader>O :call UniteExplorer()<CR>
 " P
 map <leader>p :bp <CR>
 " Q

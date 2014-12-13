@@ -120,15 +120,14 @@ Add a pentadactylrc with the line:
 
 * Find way to disable default US source for neocmplete.
 * Use vimproc for gitcommands so vim doesn't freeze.
-* Add option to disable git draw. Already exists?
 * Move from using my filteromni to making an own complete longest common function. With this I can use fuzzy but still have my tabcompletion.
 * Find way of getting my delimiters to show right away and not when the entire keycommand is pressed. I might have to change my approach.
-* Rename neocomplete-ultisnips to neocomplete-us. Ultisnips.vim was taken so us.vim would be a good alternative.
 * Look at neobundle to make installation easier.
 * Add definition jedi usages and stuff like that.
 * Look at async syntax checker.
 * Look at syntastics spellchecker.
 * Make tags project specific. Currently language specific.
+* Add option to disable git draw. Already exists?
 
 * Change my buildcommands to use vimproc and output all the information to a buffer. Add a leader binding to kill the process and also make sure to kill it when you run something new. (Doesn't unite make basically do this?)
 * Try autosave for everything. (How will stuff like statusline,syntastic and git get updated?)
