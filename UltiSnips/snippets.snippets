@@ -48,7 +48,7 @@ snippet "(\d+)v" "Tabstop with nr and visual" ir
 endsnippet
 
 snippet "(\d+)m(atch)?(.)?g(roup)?" "get the matched pattern" br
-\`!p snip.rv = match.group(1)\`
+\`!p snip.rv = match.group(`!p snip.rv = match.group(1)`)\`
 endsnippet
 snippet "m(atch)? ?g(roup)?" "get the matched pattern:mg|matchgroup|" br
 \`!p snip.rv = match.group(${1:1})\`${0}
