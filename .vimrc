@@ -236,9 +236,11 @@ if !exists("g:disablePlugins")
 		endif
 		" Add all non-directories as a file
 		for candidate in lines
-			let path = g:unite_path . '\' . candidate
+			let path = g:unite_path . '/' . candidate
 			if !isdirectory(path)
-				call add(files, {'word' : candidate . " ", 'action__path' : path})
+				let splitWord = split(candidate, '/')
+				let file = splitWord[-1]
+				call add(files, {'word' : path . " ", 'action__path' : path, 'abbr' : path})
 			endif
 		endfor
 		" Filer files using fuzzy mather.
@@ -250,7 +252,23 @@ if !exists("g:disablePlugins")
 	endfunction
 	call unite#define_filter(file_matcher)
 	call unite#custom#source('file', 'matchers', ['file_matcher'])
+
+
+	let g:teet = {}
+	let custom_edit = {
+	      \ 'description' : 'open files or open directory',
+	      \ 'is_quit' : 0,
+	      \ 'is_start' : 1,
+	      \ }
+	" Open a directory.
+	function! custom_edit.func(candidate)
+		let filepath = a:candidate.action__path
+		execute 'e' . filepath
+	endfunction
+	call unite#custom#action('file', 'custom-edit', custom_edit)
+	call unite#custom#default_action('file', 'custom-edit')
 endif
+
 
 function! UniteExplorer()
 	" Needed for file and directory filtering.
