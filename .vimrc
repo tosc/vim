@@ -65,7 +65,6 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'Shougo/unite-session'
 	Plugin 'Shougo/unite-build'
 	Plugin 'tsukkee/unite-tag'
-	Plugin 'skeept/ultisnips-unite'
 
 	" Snippets
 	Plugin 'SirVer/ultisnips'
@@ -159,12 +158,12 @@ if !exists("g:disablePlugins")
 
 				let folders = split(g:unite_path, '/')
 				let folders = folders[:-2]
-				let newpath = join(folders, '/')
+				let newpath = (has('unix') ? '/' : '') . join(folders, '/')
 				let g:unite_path = newpath
 			endif
 		else
 			let folders = split(a:candidate.word, '/')
-			let g:unite_path .= (a:candidate.word =~ '^[A-Z]:$' ? '' : '/') . folders[-1]
+			let g:unite_path .= (a:candidate.word =~ '^[A-Z]:$' && has('win32') ? '' : '/') . folders[-1]
 		endif
 
 		call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
@@ -185,19 +184,21 @@ if !exists("g:disablePlugins")
 	" Filter directories.
 	function! dir_matcher.filter(candidates, context)
 		let folders = a:candidates
-		" Add ../ as an option if you are in the root of a drive.
-		if g:unite_path =~ '^[A-Z]:$'
-			call add(folders, {'word' : '..', 'abbr' : '../', 'action__path' : ''})
-		" If you are in the root of computer add drives as options.
-		elseif g:unite_path == ''
-			let folders = []
-			let abc = "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"
-			let drives = split(abc, '\s')
-			for drive in drives
-				if isdirectory(drive . ':')
-					call add(folders, {'word' : drive . ':', 'abbr' : drive . ':/', 'action__path' : drive . ':'})
-				endif
-			endfor
+		if has('win32')
+			" Add ../ as an option if you are in the root of a drive.
+			if g:unite_path =~ '^[A-Z]:$'
+				call add(folders, {'word' : '..', 'abbr' : '../', 'action__path' : ''})
+			" If you are in the root of computer add drives as options.
+			elseif g:unite_path == '' 
+				let folders = []
+				let abc = "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"
+				let drives = split(abc, '\s')
+				for drive in drives
+					if isdirectory(drive . ':')
+						call add(folders, {'word' : drive . ':', 'abbr' : drive . ':/', 'action__path' : drive . ':'})
+					endif
+				endfor
+			endif
 		endif
 		" Show only the folder and not absolute path to folder.
 		for candidate in folders
@@ -1573,9 +1574,13 @@ endfunction
 " --------------------
 " --------------------
 " ---- [12] OS SPECIFIC ----
-" ---- [12.0] Windows ----
+" ---- [12.0] WINDOWS ----
 if(has("win32"))
 	au GUIEnter * simalt ~x
+endif
+" --------------------
+" ---- [12.1] LINUX ----
+if has('unix')
 endif
 " --------------------
 " --------------------
