@@ -133,19 +133,19 @@ let g:OmniSharp_sln_list_index = 1
 let g:Omnisharp_stop_server = 0
 " -------
 " ---- [2.4] UNITE ----
-let g:unite_enable_start_insert = 1
-let g:unite_enable_ignore_case = 1
-let g:unite_enable_smart_case = 1
-let g:unite_update_time = 300
-let g:unite_cursor_line_highlight = 'TabLine'
-
-let s:bufferaction = {'description' : 'verbose', 'is_selectable' : 1,}
-
-let g:unite_path = ''
 if !exists("g:disablePlugins")
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 	call unite#filters#sorter_default#use(['sorter_rank'])
+	call unite#custom#profile('default', 'context', {
+				\ 'start_insert' : 1,
+				\ 'smartcase' : 1,
+				\ 'ignorecase' : 1,
+				\ 'no_split' : 1,
+				\ 'no_resize' : 1,
+				\ 'update_time' : 300,
+				\ 'cursor_line_highlight' : 'TabLine'
+				\ })
 
 	let custom_open = {
 	      \ 'description' : 'open files or open directory',
@@ -154,148 +154,17 @@ if !exists("g:disablePlugins")
 	      \ }
 	" Open a directory.
 	function! custom_open.func(candidate)
-		if a:candidate.word =~ '\.\.$' 
-			if g:unite_path =~ '^[A-Z]:$'
-				let g:unite_path = ''
-			else
-
-				let folders = split(g:unite_path, '/')
-				let folders = folders[:-2]
-				let newpath = (has('unix') ? '/' : '') . join(folders, '/')
-				let g:unite_path = newpath
-			endif
-		elseif a:candidate.word =~ '^['
-			let g:unite_path = a:candidate.action__path
-		else
-			let folders = split(a:candidate.word, '/')
-			let g:unite_path .= (a:candidate.word =~ '^[A-Z]:$' && has('win32') ? '' : '/') . folders[-1]
-		endif
-
-		call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
-		\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
+		call unite#start_temporary([
+			\ ['dir', a:candidate.action__path],
+			\ ['fil', a:candidate.action__path],
+			\ ['file/new'],
+	       	 	\ ['directory/new']],
+			\ {'prompt' : a:candidate.action__path . '>'})
 	endfunction
-	call unite#custom#action('directory', 'custom-open', custom_open)
-	call unite#custom#default_action('directory', 'custom-open')
 	" Make bookmarks behave like a directory.
 	call unite#custom#action('bookmark', 'custom-open', custom_open)
 	call unite#custom#default_action('bookmark', 'custom-open')
 
-	let dir_matcher = {
-	      \ 'name' : 'dir_matcher',
-	      \ 'description' : 'matches dirs',
-	      \}
-	" Highlight as you type
-	function! dir_matcher.pattern(input)
-		let filter = unite#get_filters('matcher_fuzzy')
-		return filter.pattern(a:input)
-	endfunction
-	" Filter directories.
-	function! dir_matcher.filter(candidates, context)
-		let folders = a:candidates
-		if has('win32')
-			" Add ../ as an option if you are in the root of a drive.
-			if g:unite_path =~ '^[A-Z]:$'
-				call add(folders, {'word' : '..', 'abbr' : '../', 'action__path' : ''})
-			" If you are in the root of computer add drives as options.
-			elseif g:unite_path == '' 
-				let folders = []
-				let abc = "A B C D E F G H I J K L M N O P Q R S T U V X Y Z"
-				let drives = split(abc, '\s')
-				for drive in drives
-					if isdirectory(drive . ':')
-						call add(folders, {'word' : drive . ':', 'abbr' : drive . ':/', 'action__path' : drive . ':'})
-					endif
-				endfor
-			endif
-		endif
-		" Show only the folder and not absolute path to folder.
-		for candidate in folders
-			let splitWord = split(candidate.word, '/')
-			let folder = splitWord[-1]
-			let candidate.abbr = folder
-		endfor
-		" Filter directories using fuzzy matcher.
-		let filter = unite#get_filters('matcher_fuzzy')
-		if !empty(filter)
-			let candidates = filter.filter(folders, a:context)
-		endif
-		return candidates
-	endfunction
-	call unite#define_filter(dir_matcher)
-	call unite#custom#source('directory', 'matchers', ['dir_matcher'])
-
-	let g:teet = []
-	let file_matcher = {
-	      \ 'name' : 'file_matcher',
-	      \ 'description' : 'matches files only',
-	      \}
-	" Highlight as you type
-	function! file_matcher.pattern(input)
-		let filter = unite#get_filters('matcher_fuzzy')
-		return filter.pattern(a:input)
-	endfunction
-	" Filter files
-	function! file_matcher.filter(candidates, context)
-		let files = []
-		let lines = []
-		" ls to get files
-		if g:unite_path != ''
-			let pathfolders = split(g:unite_path, '/')
-			let escapePath = ""
-			let first = 1
-			for folder in pathfolders
-				if folder =~ ' '
-					let folder = '"' . folder . '"'
-				endif					
-				if first && has('win32')
-					let first = 0
-				else
-					let folder = '/' . folder
-				endif
-				let escapePath .= folder
-			endfor
-			let pathcontent = glob(escapePath . '/*') .
-		       			\ glob(escapePath . '/.*')
-			let lines = split(pathcontent, '\n')
-		endif
-		" Add all non-directories as a file
-		for candidate in lines
-			let path = candidate
-			if !isdirectory(path)
-				if has('win32')
-					let splitWord = split(candidate, '\')
-				else
-					let splitWord = split(candidate, '/')
-				endif
-				let file = splitWord[-1]
-				let g:teet += [ file, path ]
-				call add(files, {'word' : path . " ", 'action__path' : path, 'abbr' : file})
-			endif
-		endfor
-		" Filer files using fuzzy mather.
-		let filter = unite#get_filters('matcher_fuzzy')
-		if !empty(filter)
-			let candidates = filter.filter(files, a:context)
-		endif
-		return candidates
-	endfunction
-	call unite#define_filter(file_matcher)
-	call unite#custom#source('file', 'matchers', ['file_matcher'])
-
-	let custom_edit = {
-	      \ 'description' : 'open files or open directory',
-	      \ 'is_quit' : 0,
-	      \ 'is_start' : 1,
-	      \ }
-	" Open a directory.
-	function! custom_edit.func(candidate)
-		let filepath = a:candidate.action__path
-		execute 'e ' . filepath
-	endfunction
-	call unite#custom#action('file', 'custom-edit', custom_edit)
-	call unite#custom#default_action('file', 'custom-edit')
-
-	let g:teet = []
 	let custom_help = {
 	      \ 'description' : 'open helpy',
 	      \ 'is_quit' : 0,
@@ -303,7 +172,6 @@ if !exists("g:disablePlugins")
 	      \ }
 	" Open a directory.
 	function! custom_help.func(candidate)
-		let g:teet += a:candidate
 	endfunction
 	call unite#custom#action('help', 'custom-help', custom_help)
 	call unite#custom#default_action('help', 'custom-help')
@@ -313,13 +181,13 @@ function! UniteExplorer()
 	" Needed for file and directory filtering.
 	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
 
-	execute "Unite -no-split -no-resize -prompt=" . g:unite_path . "> bookmark directory:" . g:unite_path . " file:" . g:unite_path . " file/new:" . g:unite_path . " directory/new:" . g:unite_path
+	execute "Unite -prompt=" . g:unite_path . "> bookmark dir:" . g:unite_path . " fil:" . g:unite_path . " file/new:" . g:unite_path . " directory/new:" . g:unite_path
 endfunction
 function! UniteFileSwitcher()
 	" Needed for file and directory filtering.
 	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
 
-	execute 'Unite -no-split -no-resize buffer file_mru'
+	execute 'Unite buffer file_mru'
 endfunction
 " --------------------
 " ---- [2.5] NEOCOMPLCACHE ----
@@ -420,7 +288,7 @@ let g:syntastic_auto_loc_list = 1
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
 " Show the my normal and insert bindings.
-noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg
+noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
 
 " Do last recording. (Removes exmode which I never use.)
 noremap Q @@
@@ -433,7 +301,7 @@ noremap zV zMzv
 
 if !exists("g:disablePlugins")
 	" Search file using unite.
-	noremap ä :Unite -no-split line -auto-preview -no-resize -custom-line-enable-highlight<CR>
+	noremap ä :Unite line -auto-preview -custom-line-enable-highlight<CR>
 
 	" Open files using unite. Shows all current buffers and a history of latest files.
 	noremap ö :call UniteFileSwitcher()<CR>
@@ -580,7 +448,7 @@ endif
 " M
 map <leader>m :!make<CR>
 if !exists("g:disablePlugins")
-	map <leader>m :cd %:h<CR>:Unite -no-split -auto-preview -no-start-insert -no-resize build:make<CR>
+	map <leader>m :cd %:h<CR>:Unite -auto-preview -no-start-insert build:make<CR>
 endif
 " N
 map <leader>n :bn <CR>
@@ -604,7 +472,7 @@ map <leader>so :call NoSpellCheck() <CR>
 map <leader>sc :call NoSpellCheck() <CR>
 map <leader>sd :call NoSpellCheck() <CR>
 if !exists("g:disablePlugins")
-	map <leader>S :Unite -no-split ultisnips <CR>
+	map <leader>S :Unite ultisnips <CR>
 endif
 " T
 map <leader>te :set expandtab <CR>
@@ -618,10 +486,10 @@ map <leader>tn :tabnew <CR>
 " U
 if !exists("g:disablePlugins")
 	map <leader>ue :UltiSnipsEdit <CR>
-	map <leader>uu :Unite -no-split file:~/vimfiles/Ultisnips <CR>
-	map <leader>us :Unite -no-split ultisnips <CR>
-	map <leader>ur :Unite -no-split register<CR>
-	map <leader>ut :Unite -no-split tag<CR>
+	map <leader>uu :Unite file:~/vimfiles/Ultisnips <CR>
+	map <leader>us :Unite ultisnips <CR>
+	map <leader>ur :Unite register<CR>
+	map <leader>ut :Unite tag<CR>
 endif
 " V
 map <leader>vv :e ~/git/vim/.vimrc<CR>
@@ -632,7 +500,7 @@ map <leader>w :w <CR>
 " Y
 " Z
 if !exists("g:disablePlugins")
-	map <leader>z :Unite -no-split session<CR>
+	map <leader>z :Unite session<CR>
 endif
 " --------------------
 " ---- [3.3] VISUAL ----
@@ -680,15 +548,10 @@ function! UniteBinds()
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <ESC> <Plug>(unite_all_exit)
 	nnoremap <buffer> <BS> <Plug>()
-	nnoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-	nnoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
-	nnoremap <silent><buffer><expr> <C-t> unite#do_action('tab')
 	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 	imap <buffer> <TAB> <Plug>(unite_select_next_line)
 	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
-	inoremap <silent><buffer><expr> <C-s> unite#do_action('split')
-	inoremap <silent><buffer><expr> <C-v> unite#do_action('vsplit')
 	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
 endfunction
