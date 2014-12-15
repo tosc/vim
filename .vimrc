@@ -224,6 +224,7 @@ if !exists("g:disablePlugins")
 	call unite#define_filter(dir_matcher)
 	call unite#custom#source('directory', 'matchers', ['dir_matcher'])
 
+	let g:teet = []
 	let file_matcher = {
 	      \ 'name' : 'file_matcher',
 	      \ 'description' : 'matches files only',
@@ -241,33 +242,20 @@ if !exists("g:disablePlugins")
 		if g:unite_path != ''
 			let pathfolders = split(g:unite_path, '/')
 			let escapePath = ""
-			let first = 1
 			for folder in pathfolders
-				if first
-					let first = 0
-				else
-					let folder = '/' . folder
-				endif
 				if folder =~ ' '
 					let folder = '"' . folder . '"'
 				endif					
+				let folder = '/' . folder
 				let escapePath .= folder
 			endfor
-			let lsoutput = glob(escapePath . "/*")
-			if lsoutput !~ 'Permission denied'
-				let lines = split(lsoutput, '\n')
-			else
-				let folders = split(g:unite_path, '/')
-				let folders = folders[:-2]
-				let newpath = (has('unix') ? '/' : '') . join(folders, '/')
-				let g:unite_path = newpath
-				call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
-				\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
-			endif
+			let pathcontent = glob(escapePath . '/*') .
+		       			\ glob(escapePath . '/.*')
+			let lines = split(pathcontent, '\n')
 		endif
 		" Add all non-directories as a file
 		for candidate in lines
-			let path = g:unite_path . '/' . candidate
+			let path = candidate
 			if !isdirectory(path)
 				let splitWord = split(candidate, '/')
 				let file = splitWord[-1]
@@ -1328,7 +1316,7 @@ hi PmenuThumb ctermfg=NONE ctermbg=13
 hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold guibg=grey40 guifg=NONE
 hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
 hi SignColumn guibg=NONE ctermbg=NONE
-hi ColorColumn guibg=grey30
+hi ColorColumn guibg=grey30 ctermbg=239
 
 hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
 hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
