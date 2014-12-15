@@ -1091,7 +1091,9 @@ function! SlowStatusLine()
 		let gitTemp = substitute(gitTemp[2:], "\\.\\.\\.", '->', '')
 			let gitList = split(gitTemp, "\n")
 			if len(gitList) > 0
-				let SlowStatusLineVar .= "[" . substitute(gitList[0], " ", "", "g") . "]"
+				let SlowStatusLineVar .=
+				\ "[" . substitute(substitute(gitList[0],
+				\ " ", "", ""), " ", "] ", "")
 			endif
 			if len(gitList) > 1
 				let SlowStatusLineVar .= " [m " . (len(gitList) -1) . "]"

@@ -114,7 +114,6 @@ Add a pentadactylrc with the line:
 # TODO
 
 * BUG: US2 doesn't show in python files.
-* BUG: Missing space in statusline. ahead, behind
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
 * Get vim to update after creating a new folder using vim.
