@@ -43,11 +43,11 @@ for ${1:var} in range(0,${2:10}):
 endsnippet
 snippet "for((?!e)\w+)" "for + match.group(1) as variable" br
 for `!p snip.rv = match.group(1)` in range(0,${1:10}):
-	${0:${VISUAL}}
+	${VISUAL}${0}
 endsnippet
 snippet "fore(ach)?" "for each element in collection" br
 for ${1:thing} in ${2:collection}:
-	$0
+	${VISUAL}${0}
 endsnippet
 snippet while "while" b
 while ${1:True}:
@@ -146,13 +146,6 @@ Parameters:
 ${3:Returns:}
 """
 endsnippet
-snippet print "print" b
-print ${VISUAL:"}${0}`!p 
-if snip.v.text == "":
-	snip.rv = '"'
-else:
-	snip.rv = "" `
-endsnippet
 
 # Special snippets
 snippet time "current time in milliseconds, import time" b
@@ -160,6 +153,16 @@ time.time()
 endsnippet
 snippet sleep "sleep, import time" b
 time.sleep(${0:seconds})
+endsnippet
+snippet print "print" b
+print ${VISUAL:"}${0}`!p 
+if snip.v.text == "":
+	snip.rv = '"'
+else:
+	snip.rv = "" `
+endsnippet
+snippet "printva?r?" "print a variable:printvar" r
+print ${0}
 endsnippet
 
 # New code snippets
@@ -215,4 +218,20 @@ snippet runPipe "Run external and get output, import subprocess"
 cmd = subprocess.Popen(${1:"ls -la"}, stdout=subprocess.PIPE)	
 for row in cmd.stdout:
 	${0}
+endsnippet
+# Stream snippets
+snippet streamopen "Open a stream:streamopen" b
+${1:newStream} = open('${2:filename}', '${3:#write - w, read - r, append to file - a, read and write - r+#}')
+endsnippet
+snippet streamclose "Close a stream:streamopen" b
+<MISSING streamclose>
+endsnippet
+snippet streamread "Read from a stream:streamread" b
+<MISSING streamread>
+endsnippet
+snippet streamreadline "Read a line from a stream:streamreadline" b
+<MISSING streamreadline>
+endsnippet
+snippet streamwrite "write to a stream:streamwrite" b
+<MISSING streamwrite>
 endsnippet

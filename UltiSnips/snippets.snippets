@@ -30,10 +30,11 @@ priority 1
 # Documentation snippets
 # Special snippets
 # New code snippets
+# Stream snippets
 endsnippet
 # Snippet snippets
 snippet "sni\S*" "Snippet definition:snippet" br
-`!p snip.rv = "snippet"` ${1:trigger} "${2:Description}${3::Trigger1|Trigger2}" ${4:r}
+`!p snip.rv = "snippet"` ${1:trigger} "${2:Description}${3::Trigger1|Trigger2}" ${4:br}
 ${0:${VISUAL}}
 `!p snip.rv = "endsnippet"`
 endsnippet
@@ -45,6 +46,12 @@ snippet "(\d+)" "Tabstop with nr" ir
 endsnippet
 snippet "(\d+)v" "Tabstop with nr and visual" ir
 \${`!p snip.rv = match.group(1)`:\${VISUAL}}$0
+endsnippet
+snippet "py?t?h?o?n?" "python block:python|Trigger2" br
+\`!p
+${VISUAL}${1}
+snip.rv = ${0}
+\`
 endsnippet
 
 snippet "(\d+)m(atch)?(.)?g(roup)?" "get the matched pattern" br

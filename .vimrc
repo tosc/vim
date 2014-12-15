@@ -65,6 +65,7 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'Shougo/unite-session'
 	Plugin 'Shougo/unite-build'
 	Plugin 'tsukkee/unite-tag'
+	Plugin 'tsukkee/unite-help'
 
 	" Snippets
 	Plugin 'SirVer/ultisnips'
@@ -144,6 +145,7 @@ if !exists("g:disablePlugins")
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 	call unite#filters#sorter_default#use(['sorter_rank'])
 
+	let g:teet = []
 	let custom_open = {
 	      \ 'description' : 'open files or open directory',
 	      \ 'is_quit' : 0,
@@ -161,17 +163,21 @@ if !exists("g:disablePlugins")
 				let newpath = (has('unix') ? '/' : '') . join(folders, '/')
 				let g:unite_path = newpath
 			endif
+		elseif a:candidate.word =~ '^['
+			let g:unite_path = a:candidate.action__path
 		else
 			let folders = split(a:candidate.word, '/')
 			let g:unite_path .= (a:candidate.word =~ '^[A-Z]:$' && has('win32') ? '' : '/') . folders[-1]
 		endif
+		let g:teet += [a:candidate]
 
-		call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
+		call unite#start_temporary([['directory'], ['bookmark'], ['file'], ['file/new'], ['directory/new']],
 		\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
 	endfunction
 	call unite#custom#action('directory', 'custom-open', custom_open)
 	call unite#custom#default_action('directory', 'custom-open')
 	" Make bookmarks behave like a directory.
+	call unite#custom#action('bookmark', 'custom-open', custom_open)
 	call unite#custom#default_action('bookmark', 'custom-open')
 
 	let dir_matcher = {
@@ -233,8 +239,31 @@ if !exists("g:disablePlugins")
 		let lines = []
 		" ls to get files
 		if g:unite_path != ''
-			let lsoutput = system('ls -a ' . g:unite_path)
-			let lines = split(lsoutput, '\n')
+			let pathfolders = split(g:unite_path, '/')
+			let escapePath = ""
+			let first = 1
+			for folder in pathfolders
+				if first
+					let first = 0
+				else
+					let folder = '/' . folder
+				endif
+				if folder =~ ' '
+					let folder = '"' . folder . '"'
+				endif					
+				let escapePath .= folder
+			endfor
+			let lsoutput = system('ls -a ' . escapePath)
+			if lsoutput !~ 'Permission denied'
+				let lines = split(lsoutput, '\n')
+			else
+				let folders = split(g:unite_path, '/')
+				let folders = folders[:-2]
+				let newpath = (has('unix') ? '/' : '') . join(folders, '/')
+				let g:unite_path = newpath
+				call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
+				\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
+			endif
 		endif
 		" Add all non-directories as a file
 		for candidate in lines
@@ -242,7 +271,7 @@ if !exists("g:disablePlugins")
 			if !isdirectory(path)
 				let splitWord = split(candidate, '/')
 				let file = splitWord[-1]
-				call add(files, {'word' : path . " ", 'action__path' : path, 'abbr' : path})
+				call add(files, {'word' : path . " ", 'action__path' : path, 'abbr' : file})
 			endif
 		endfor
 		" Filer files using fuzzy mather.
@@ -255,7 +284,6 @@ if !exists("g:disablePlugins")
 	call unite#define_filter(file_matcher)
 	call unite#custom#source('file', 'matchers', ['file_matcher'])
 
-
 	let custom_edit = {
 	      \ 'description' : 'open files or open directory',
 	      \ 'is_quit' : 0,
@@ -264,23 +292,36 @@ if !exists("g:disablePlugins")
 	" Open a directory.
 	function! custom_edit.func(candidate)
 		let filepath = a:candidate.action__path
-		execute 'e' . filepath
+		execute 'e ' . filepath
 	endfunction
 	call unite#custom#action('file', 'custom-edit', custom_edit)
 	call unite#custom#default_action('file', 'custom-edit')
-endif
 
+	let g:teet = []
+	let custom_help = {
+	      \ 'description' : 'open helpy',
+	      \ 'is_quit' : 0,
+	      \ 'is_start' : 1,
+	      \ }
+	" Open a directory.
+	function! custom_help.func(candidate)
+		let g:teet += a:candidate
+	endfunction
+	call unite#custom#action('help', 'custom-help', custom_help)
+	call unite#custom#default_action('help', 'custom-help')
+endif
 
 function! UniteExplorer()
 	" Needed for file and directory filtering.
 	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
 
-	execute "Unite -no-split -no-resize -prompt=" . g:unite_path . "> -path=" . g:unite_path . " directory file file/new directory/new"
+	execute "Unite -no-split -no-resize -prompt=" . g:unite_path . "> -path=" . g:unite_path . " directory bookmark file file/new directory/new"
 endfunction
 function! UniteFileSwitcher()
 	" Needed for file and directory filtering.
 	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
-	execute 'Unite -no-split -no-resize bookmark buffer file_mru'
+
+	execute 'Unite -no-split -no-resize buffer file_mru'
 endfunction
 " --------------------
 " ---- [2.5] NEOCOMPLCACHE ----
