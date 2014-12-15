@@ -112,6 +112,8 @@ Add a pentadactylrc with the line:
 
 # TODO
 
+* Create a recent tags mru source.
+* Use taggenerator to create helptags for vim.
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
 * Find more fitting sorter for file and dir sources.

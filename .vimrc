@@ -305,9 +305,7 @@ nnoremap L >>
 nnoremap + $
 
 " Show the my normal and insert bindings.
-noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> 
-	\ keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR>
-	\ :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg
+noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg
 
 " Do last recording. (Removes exmode which I never use.)
 nnoremap Q @@
@@ -507,9 +505,6 @@ map <leader>gf :!git -C %:h fetch<CR> :call SlowStatusLine()<CR>
 map <leader>gF :!git -C %:h pull<CR> :call SlowStatusLine()<CR>
 " Opens a interactive menu that lets you pick what commits to use/squash.
 map <leader>gr :!git -C %:h rebase -i HEAD~
-map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar>
-		\ keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR>
-		\ :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg
 
 if !exists("g:disablePlugins")
 	map <leader>gg :Gstatus<CR>
@@ -519,7 +514,8 @@ endif
 " H
 " Unite help when I get it working.
 " I
-" Add my infosources here.
+map <leader>ii :Unite dir/t:~/info/ <CR>
+map <leader>in :Unite dir/n:~/info/ <CR>
 " J
 " K
 " Kill program running with r
@@ -654,7 +650,7 @@ endfunction
 " --------------------
 " ---- [3.7] OPOHBUFFER ----
 function! OpohBinds()
-	nmap <buffer> <ESC> :execute("b " . g:bufferBeforeOpoh)<CR>
+	nnoremap <buffer> <ESC> :execute("b #")<CR>
 endfunction
 autocmd FileType opoh call OpohBinds()
 " --------------------
@@ -1459,11 +1455,12 @@ function! SmartJumpBack()
 endfunction
 " --------------------
 " ---- [11.3] TEMPBUFFER ----
-let g:bufferBeforeOpoh = ""
 function! OpohBuffer()
-	let g:bufferBeforeOpoh = expand('%')
 	if bufexists("[Opoh]")
 		b Opoh
+		setlocal nobuflisted
+		setlocal filetype=opoh
+		setlocal buftype=nofile
 	else
 		e [Opoh]
 		setlocal nobuflisted
@@ -1485,6 +1482,7 @@ function! FullScreenHelp(search)
 		call setpos(".",curPos)
 		setlocal syntax=help
 		setlocal nobuflisted
+		setlocal buftype=nofile
 	endif
 endfunction
 " --------------------
