@@ -180,7 +180,9 @@ endif
 function! UniteExplorer()
 	let unite_path = substitute(getcwd(), '\', '/', 'g')
 
-	execute "Unite -prompt=" . unite_path . "> bookmark dir:" . unite_path . " fil:" . unite_path . " fil/n:" . unite_path . " dir/n:" . unite_path
+	execute "Unite -prompt=" . unite_path . "> bookmark dir:" .
+		\ unite_path . " fil:" . unite_path . " fil/n:" .
+		\ unite_path . " dir/n:" . unite_path
 endfunction
 function! UniteFileSwitcher()
 	execute 'Unite buffer file_mru'
@@ -283,11 +285,23 @@ let g:syntastic_auto_loc_list = 1
 " --------------------
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
-" Wanted binds like cib ciB but for []
+" Wanted binds like cib ciB but for [] and <> "" ''
 noremap id i[
+noremap iD i>
+noremap ic i"
+noremap iC i'
+
+" I keep pressing << >> in the wrong order. HL are good for directions.
+noremap H << 
+noremap L >> 
+
+" Wanted a easier bind for $
+noremap + $
 
 " Show the my normal and insert bindings.
-noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
+noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> 
+	\ keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR>
+	\ :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg
 
 " Do last recording. (Removes exmode which I never use.)
 noremap Q @@
@@ -302,9 +316,7 @@ if !exists("g:disablePlugins")
 	" Search file using unite.
 	noremap ä :Unite line -auto-preview -custom-line-enable-highlight<CR>
 
-	" Open files using unite. Shows all current buffers and a history of latest files.
 	noremap ö :call UniteFileSwitcher()<CR>
-	" Filebrowser.
 	noremap Ö :call UniteExplorer()<CR>
 else
 	noremap ä /
@@ -312,7 +324,8 @@ else
 	noremap Ö :e
 endif
 
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter.
+" Jump to next(previous) ultisnips location if one exists, 
+" else jump to next(previous) delimiter.
 noremap <S-Space> :call SmartJump()<CR>
 noremap <S-BS> :call SmartJumpBack()<CR>
 
@@ -320,21 +333,16 @@ noremap <S-BS> :call SmartJumpBack()<CR>
 noremap , ;
 noremap ; ,
 
-" I've always found $ hard to hit, § easier with swedish layout.
-noremap § $
-
 " Jump to tag. C-T to jump back.
 noremap <C-J> <C-]>
 
 " Good avaliable binds
+" §
 " ´
 " Enter
 " Backspace
 " Shift enter
 " Ä
-" H (doesn't do anything since cursor always in middle for me)
-" M (doesn't do anything since cursor always in middle for me)
-" L (doesn't do anything since cursor always in middle for me)
 " s (synonym for cl)
 " S (synonym for cc)
 " --------------------
@@ -364,10 +372,11 @@ else
 	inoremap <C-M> <C-X><C-N>
 endif
 
-" Pressing enter chooses completion if completion window is up, else normal enter.
+" Pressing enter chooses completion if completion window is up.
 inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
 
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter.
+" Jump to next(previous) ultisnips location if one exists, 
+" else jump to next(previous) delimiter.
 inoremap <S-Space> <C-R>=SmartJump()<CR>
 inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
 inoremap <pageup> <C-R>=SmartJump()<CR>
@@ -431,7 +440,9 @@ map <leader>gf :!git -C %:h fetch<CR> :call SlowStatusLine()<CR>
 map <leader>gF :!git -C %:h pull<CR> :call SlowStatusLine()<CR>
 " Opens a interactive menu that lets you pick what commits to use/squash.
 map <leader>gr :!git -C %:h rebase -i HEAD~
-map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR> :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg
+map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar>
+		\ keepalt r ~/git/vim/.vimrc <bar> /\[3.2\]<CR>
+		\ :0,.+2d<CR>/\[3.3\]<CR> :.-1,$d<CR>gg
 
 if !exists("g:disablePlugins")
 	map <leader>gg :Gstatus<CR>
@@ -447,7 +458,8 @@ endif
 " M
 map <leader>m :!make<CR>
 if !exists("g:disablePlugins")
-	map <leader>m :cd %:h<CR>:Unite -auto-preview -no-start-insert build:make<CR>
+	map <leader>m :cd %:h<CR>:Unite -auto-preview -no-start-insert
+				\ build:make<CR>
 endif
 " N
 map <leader>n :bn <CR>
@@ -503,9 +515,13 @@ if !exists("g:disablePlugins")
 endif
 " --------------------
 " ---- [3.3] VISUAL ----
+vnoremap H < 
+vnoremap L > 
+
 xnoremap å c<C-R>=PythonMath()<CR>
 
-" Jump to next(previous) ultisnips location if one exists, else jump to next(previous) delimiter.
+" Jump to next(previous) ultisnips location if one exists,
+" else jump to next(previous) delimiter.
 snoremap <S-Space> <ESC>:call SmartJump()<CR>
 snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
 snoremap <pageup> <ESC>:call SmartJump()<CR>
