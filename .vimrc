@@ -242,11 +242,16 @@ if !exists("g:disablePlugins")
 		if g:unite_path != ''
 			let pathfolders = split(g:unite_path, '/')
 			let escapePath = ""
+			let first = 1
 			for folder in pathfolders
 				if folder =~ ' '
 					let folder = '"' . folder . '"'
 				endif					
-				let folder = '/' . folder
+				if first && has('win32')
+					let first = 0
+				else
+					let folder = '/' . folder
+				endif
 				let escapePath .= folder
 			endfor
 			let pathcontent = glob(escapePath . '/*') .
@@ -257,8 +262,13 @@ if !exists("g:disablePlugins")
 		for candidate in lines
 			let path = candidate
 			if !isdirectory(path)
-				let splitWord = split(candidate, '/')
+				if has('win32')
+					let splitWord = split(candidate, '\')
+				else
+					let splitWord = split(candidate, '/')
+				endif
 				let file = splitWord[-1]
+				let g:teet += [ file, path ]
 				call add(files, {'word' : path . " ", 'action__path' : path, 'abbr' : file})
 			endif
 		endfor
