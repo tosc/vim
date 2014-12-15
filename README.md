@@ -115,34 +115,35 @@ Add a pentadactylrc with the line:
 
 * BUG: Missing space in statusline. ahead, behind
 * BUG: My gitdiff doesn't disable when opening unite.
-* BUG: ö works in insert but not normal when using juicyssh.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: US2 doesn't show in python files.
 
 * Look into tpope/capslock
-* Add move in unite. Press move on candidate and save that path. Move around using unite and press m on where to put it. Prompt with new path and yes /no.
-* Find or create a unite help source.
+* Add move in unite. Press move on candidate and save that path. Move around
+using unite and press m on where to put it. Prompt with new path and yes /no.
 * Add tw to using style guides for each filetype.
-* Add tw to tobstatusline.
-* Show columnline at tw.
-* Add help source for unite.
-* Add programming documentation to help source.
-* Add todo to help source.
+* Add tw to to statusline.
+* Add todo i my tag generator.
 * Change spelling errors to something more discrete.
-* Change unite bookmarks to work like my folders do. Add them to ö.
-* Change my file and directory to own sources instead.
-* Find way to disable default US source for neocmplete.
+* Change my unite file and directory to own sources instead.
 * Use vimproc for gitcommands so vim doesn't freeze.
-* Move from using my filteromni to making an own complete longest common function. With this I can use fuzzy but still have my tabcompletion.
-* Find way of getting my delimiters to show right away and not when the entire keycommand is pressed. I might have to change my approach.
+* Move from using my filteromni to making an own complete longest common
+ function. With this I can use fuzzy but still have my tabcompletion.
+* Find way of getting my delimiters to show right away and not when the
+ entire keycommand is pressed. I might have to change my approach.
 * Look at neobundle to make installation easier.
 * Add definition jedi usages and stuff like that.
 * Look at syntastics spellchecker.
 * Add option to disable git draw. Already exists?
-* Create unite source for external commands. Switch to that unite buffer to get more output from program.
+* Create unite source for external commands. Switch to that unite buffer to 
+get more output from program.
 
-* Create a orgmode. Use something like vims help file and save all information I find useful with easy search tags. Save links to where information was found and description of thing and location of where I used it.
-* Change my buildcommands to use vimproc and output all the information to a buffer. Add a leader binding to kill the process and also make sure to kill it when you run something new. (Doesn't unite make basically do this?)
-* Try autosave for everything. (How will stuff like statusline,syntastic and git get updated?)
-* Really slow when using syntastic and editing my vimrc. Split my vimrc into smaller parts?
+* Find way to disable default US source for neocmplete.
+* Change my buildcommands to use vimproc and output all the information to a
+ buffer. Add a leader binding to kill the process and also make sure to kill
+ it when you run something new. (Doesn't unite make basically do this?)
+* Try autosave for everything. (How will stuff like statusline,syntastic and
+ git get updated?)
+* Really slow when using syntastic and editing my vimrc. Split my vimrc into
+ smaller parts?
 * Change my keyboard layout using <leader>se and <leader>so.

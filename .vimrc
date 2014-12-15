@@ -40,6 +40,7 @@ set formatoptions-=cro
 set updatetime=1000
 set backspace=indent,eol,start
 let $LANG = 'en'
+set colorcolumn=78
 
 " Shows whitespaces and tabs when using list.
 set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ 
@@ -64,8 +65,8 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'Shougo/unite.vim'
 	Plugin 'Shougo/unite-session'
 	Plugin 'Shougo/unite-build'
+	Plugin 'Shougo/unite-help'
 	Plugin 'tsukkee/unite-tag'
-	Plugin 'tsukkee/unite-help'
 
 	" Snippets
 	Plugin 'SirVer/ultisnips'
@@ -94,6 +95,7 @@ endif
 	Plugin 'ynkdir/vim-vimlparser'
 
 	" Div
+	Plugin 'tosc/vim-scripts'
 	Plugin 'tpope/vim-fugitive'
 	Plugin 'tpope/vim-surround'
 	Plugin 'Konfekt/FastFold'
@@ -145,7 +147,6 @@ if !exists("g:disablePlugins")
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 	call unite#filters#sorter_default#use(['sorter_rank'])
 
-	let g:teet = []
 	let custom_open = {
 	      \ 'description' : 'open files or open directory',
 	      \ 'is_quit' : 0,
@@ -169,7 +170,6 @@ if !exists("g:disablePlugins")
 			let folders = split(a:candidate.word, '/')
 			let g:unite_path .= (a:candidate.word =~ '^[A-Z]:$' && has('win32') ? '' : '/') . folders[-1]
 		endif
-		let g:teet += [a:candidate]
 
 		call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
 		\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
@@ -253,7 +253,7 @@ if !exists("g:disablePlugins")
 				endif					
 				let escapePath .= folder
 			endfor
-			let lsoutput = system('ls -a ' . escapePath)
+			let lsoutput = glob(escapePath . "/*")
 			if lsoutput !~ 'Permission denied'
 				let lines = split(lsoutput, '\n')
 			else
@@ -1328,6 +1328,7 @@ hi PmenuThumb ctermfg=NONE ctermbg=13
 hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold guibg=grey40 guifg=NONE
 hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
 hi SignColumn guibg=NONE ctermbg=NONE
+hi ColorColumn guibg=grey30
 
 hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
 hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
