@@ -6,7 +6,7 @@ Vim settings.
 ### ALL
 
 1. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
-2. Install python27.
+2. Install python.
 3. Install lua.
 4. Install clang.
 5. Install ctags.
@@ -116,19 +116,19 @@ Add a pentadactylrc with the line:
 * BUG: US2 doesn't show in python files.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
-* Get vim to update after creating a new folder using vim.
+* Add easy bind for / ? so I can use them more like f F.
+* Find more fitting sorter for file and dir sources.
 * Add move in unite. Press move on candidate and save that path. Move around
 using unite and press m on where to put it. Prompt with new path and yes /no.
 * Add todo in my tag generator.
 * Use vimproc for gitcommands so vim doesn't freeze.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
-* Find way of getting my delimiters to show right away and not when the
- entire keycommand is pressed. I might have to change my approach.
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
 * Look at neobundle to make installation easier.
 * Look into tpope/capslock
+* Make my delimiterfunction prettier.
 
 * Look at syntastics spellchecker.
-* Find way to disable default US source for neocmplete.
+* Find way to disable default US source for neocomplete.

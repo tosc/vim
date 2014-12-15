@@ -372,9 +372,6 @@ else
 	inoremap <C-M> <C-X><C-N>
 endif
 
-" Pressing enter chooses completion if completion window is up.
-inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : '<CR>'
-
 " Jump to next(previous) ultisnips location if one exists, 
 " else jump to next(previous) delimiter.
 inoremap <S-Space> <C-R>=SmartJump()<CR>
@@ -387,31 +384,80 @@ inoremap <C-A> <home>
 inoremap <C-E> <end>
 inoremap <C-K> <C-O>D
 
+" Pressing enter chooses completion if completion window is up.
+inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : StartDelim('CR', '')
+
 " Easier delimiters.
 inoremap {{ {<cr><cr>}<up><TAB>
+inoremap <expr> { StartDelim('{', '}')
+inoremap <expr> } StartDelim('}', 'opt')
+inoremap <expr> ( StartDelim('(', ')')
+inoremap <expr> ) StartDelim(')', 'opt')
+inoremap <expr> < StartDelim('<', '>')
+inoremap <expr> > StartDelim('>', 'opt')
+inoremap <expr> [ StartDelim('[', ']')
+inoremap <expr> ] StartDelim(']', 'opt')
+inoremap <expr> " StartDelim('"', '"')
+inoremap <expr> ' StartDelim("'", "'")
+inoremap <expr> <left> StartDelim('left', '')
+inoremap <expr> <space> StartDelim('space', '')
+inoremap <expr> <bs> StartDelim('bs', '')
+inoremap <expr> . StartDelim('dot', '')
 
-" Matching delimiters
-function! BindDelim(kMap)
-	execute 'inoremap ' . a:kMap . ' ' . a:kMap . '<left>'
-	execute 'inoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>'
-	execute 'inoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>'
-	execute 'inoremap ' . a:kMap . '<left> ' . a:kMap . '<left>'
-	execute 'inoremap ' . a:kMap . '<bs> ' . a:kMap . '<bs>'
-	execute 'inoremap ' . a:kMap . '. ' . a:kMap . '.'
+let g:stilldelim = 0
+let g:nextdelim = ''
+" kMap - first key of the delimiter, same as the button you will bind this to
+" nMap - the end of the delimiter. Special values are "opt" and "".
+" 		opt is for the last bind of the delimiter
+" 		'' is for keys you press after the end of a delimiter
+function! StartDelim(kMap, nMap)
+	let rv = ''
+	if g:nextdelim !~ '^$'
+		if g:stilldelim > 0
+			if g:nextdelim =~ a:kMap
+				let rv = a:kMap . "\<left>"
+			elseif g:nextdelim =~ 'opt'
+				if a:kMap =~ 'CR'
+					let rv = "\<right>\<CR>"
+				elseif a:kMap =~ 'space'
+					let rv = "\<right>\<space>"
+				elseif a:kMap =~ 'bs'
+					let rv = "\<right>\<bs>"
+				elseif a:kMap =~ 'dot'
+					let rv = "\<right>."
+				endif
+			endif
+		endif
+	endif
 
-	execute 'cnoremap ' . a:kMap . ' ' . a:kMap . '<left>'
-	execute 'cnoremap ' . a:kMap . '<CR> ' . a:kMap . '<CR>'
-	execute 'cnoremap ' . a:kMap . '<Space> ' . a:kMap . '<Space>'
-	execute 'cnoremap ' . a:kMap . '<left> ' . a:kMap . '<left>'
-	execute 'cnoremap ' . a:kMap . '<bs> ' . a:kMap . '<bs>'
-	execute 'cnoremap ' . a:kMap . '. ' . a:kMap . '.'
+	if rv =~ '^$'
+		if a:kMap =~ 'CR'
+			let rv = "\<CR>"
+		elseif a:kMap =~ 'left'
+ 			if g:nextdelim =~ 'opt'
+				let rv = ""
+			else
+				let rv = "\<left>"
+			endif
+		elseif a:kMap =~ 'space'
+			let rv = "\<space>"
+		elseif a:kMap =~ 'bs'
+			let rv = "\<bs>"
+		elseif a:kMap =~ 'dot'
+			let rv = "."
+		else
+			let rv = a:kMap
+		endif
+	endif
+	let g:stilldelim = 2
+	if (g:nextdelim =~ '"' && a:kMap =~ '"') ||
+	 \ (g:nextdelim =~ "'" && a:kMap =~ "'")
+		let g:nextdelim = 'opt'
+	else
+		let g:nextdelim = a:nMap
+	endif
+	return rv
 endfunction
-call BindDelim('""')
-call BindDelim('()')
-call BindDelim('{}')
-call BindDelim("''")
-call BindDelim('[]')
-call BindDelim('<>')
 " --------------------
 " ---- [3.2] LEADER ----
 let g:mapleader="\<space>"
@@ -1224,6 +1270,7 @@ autocmd BufEnter * call SlowStatusLine()
 autocmd BufReadPost * let &foldlevel=0
 
 autocmd TextChanged,TextChangedI * call clearmatches()
+autocmd TextChangedI * let g:stilldelim -= 1
 autocmd InsertEnter * call clearmatches()
 autocmd InsertLeave * call DrawGit()
 
