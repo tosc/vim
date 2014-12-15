@@ -113,37 +113,23 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* BUG: Missing space in statusline. ahead, behind
-* BUG: My gitdiff doesn't disable when opening unite.
-* BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * BUG: US2 doesn't show in python files.
+* BUG: Missing space in statusline. ahead, behind
+* BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
-* Look into tpope/capslock
+* Get vim to update after creating a new folder using vim.
 * Add move in unite. Press move on candidate and save that path. Move around
 using unite and press m on where to put it. Prompt with new path and yes /no.
-* Add tw to using style guides for each filetype.
-* Add tw to to statusline.
-* Add todo i my tag generator.
-* Change spelling errors to something more discrete.
-* Change my unite file and directory to own sources instead.
+* Add todo in my tag generator.
 * Use vimproc for gitcommands so vim doesn't freeze.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
 * Find way of getting my delimiters to show right away and not when the
  entire keycommand is pressed. I might have to change my approach.
-* Look at neobundle to make installation easier.
-* Add definition jedi usages and stuff like that.
-* Look at syntastics spellchecker.
-* Add option to disable git draw. Already exists?
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
+* Look at neobundle to make installation easier.
+* Look into tpope/capslock
 
+* Look at syntastics spellchecker.
 * Find way to disable default US source for neocmplete.
-* Change my buildcommands to use vimproc and output all the information to a
- buffer. Add a leader binding to kill the process and also make sure to kill
- it when you run something new. (Doesn't unite make basically do this?)
-* Try autosave for everything. (How will stuff like statusline,syntastic and
- git get updated?)
-* Really slow when using syntastic and editing my vimrc. Split my vimrc into
- smaller parts?
-* Change my keyboard layout using <leader>se and <leader>so.

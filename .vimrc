@@ -13,7 +13,7 @@ endif
 autocmd!
 set nocompatible
 set relativenumber
-set guioptions=
+set guioptions=c
 set incsearch
 set ruler
 set completeopt=menu,longest
@@ -157,8 +157,8 @@ if !exists("g:disablePlugins")
 		call unite#start_temporary([
 			\ ['dir', a:candidate.action__path],
 			\ ['fil', a:candidate.action__path],
-			\ ['file/new'],
-	       	 	\ ['directory/new']],
+			\ ['fil/n', a:candidate.action__path],
+	       	 	\ ['dir/n', a:candidate.action__path]],
 			\ {'prompt' : a:candidate.action__path . '>'})
 	endfunction
 	" Make bookmarks behave like a directory.
@@ -178,15 +178,11 @@ if !exists("g:disablePlugins")
 endif
 
 function! UniteExplorer()
-	" Needed for file and directory filtering.
-	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
+	let unite_path = substitute(getcwd(), '\', '/', 'g')
 
-	execute "Unite -prompt=" . g:unite_path . "> bookmark dir:" . g:unite_path . " fil:" . g:unite_path . " file/new:" . g:unite_path . " directory/new:" . g:unite_path
+	execute "Unite -prompt=" . unite_path . "> bookmark dir:" . unite_path . " fil:" . unite_path . " fil/n:" . unite_path . " dir/n:" . unite_path
 endfunction
 function! UniteFileSwitcher()
-	" Needed for file and directory filtering.
-	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
-
 	execute 'Unite buffer file_mru'
 endfunction
 " --------------------
@@ -287,6 +283,9 @@ let g:syntastic_auto_loc_list = 1
 " --------------------
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
+" Wanted binds like cib ciB but for []
+noremap id i[
+
 " Show the my normal and insert bindings.
 noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <bar> /\[3.0\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
 
@@ -1168,16 +1167,15 @@ hi Type ctermfg=185 cterm=bold
 hi Todo ctermfg=9 cterm=bold
 hi Special ctermfg=229 cterm=bold
 hi Normal ctermfg=15
-hi SpellBad ctermbg=NONE cterm=underline ctermfg=NONE
-hi SpellCap ctermbg=NONE cterm=underline ctermfg=NONE
-hi SpellLocal ctermbg=NONE cterm=underline ctermfg=NONE
-hi SpellRare ctermbg=NONE cterm=underline ctermfg=NONE
+hi SpellBad ctermbg=NONE cterm=underline ctermfg=NONE gui=underline
+hi SpellCap ctermbg=NONE cterm=underline ctermfg=NONE gui=underline
+hi SpellLocal ctermbg=NONE cterm=underline ctermfg=NONE gui=underline
+hi SpellRare ctermbg=NONE cterm=underline ctermfg=NONE gui=underline
 hi Comment ctermfg=123 cterm=bold
 hi TabLineFill cterm=underline gui=underline guibg=grey30 ctermbg=239
 hi TabLine cterm=underline gui=underline guibg=grey30 ctermbg=239 ctermfg=NONE
 hi TabLineSel cterm=none gui=none ctermbg=NONE
-hi MoreMsg cterm=bold ctermfg=41
-hi ModeMsg cterm=bold
+hi MoreMsg cterm=bold ctermfg=10 guifg=springgreen
 hi LineNr cterm=bold
 hi CursorLineNr cterm=bold
 hi Ignore cterm=bold ctermfg=236
@@ -1208,6 +1206,8 @@ autocmd BufEnter * call SlowStatusLine()
 autocmd BufReadPost * let &foldlevel=0
 
 autocmd TextChanged,TextChangedI * call clearmatches()
+autocmd InsertEnter * call clearmatches()
+autocmd InsertLeave * call DrawGit()
 
 function! KillAllExternal()
 	if exists("g:EclimdRunning")
