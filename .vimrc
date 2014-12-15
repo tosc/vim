@@ -171,7 +171,7 @@ if !exists("g:disablePlugins")
 		endif
 		let g:teet += [a:candidate]
 
-		call unite#start_temporary([['directory'], ['bookmark'], ['file'], ['file/new'], ['directory/new']],
+		call unite#start_temporary([['directory'], ['file'], ['file/new'], ['directory/new']],
 		\ {'path' : g:unite_path, 'prompt' : g:unite_path . '>'})
 	endfunction
 	call unite#custom#action('directory', 'custom-open', custom_open)
@@ -315,7 +315,7 @@ function! UniteExplorer()
 	" Needed for file and directory filtering.
 	let g:unite_path = substitute(getcwd(), '\', '/', 'g')
 
-	execute "Unite -no-split -no-resize -prompt=" . g:unite_path . "> -path=" . g:unite_path . " directory bookmark file file/new directory/new"
+	execute "Unite -no-split -no-resize -prompt=" . g:unite_path . "> bookmark directory:" . g:unite_path . " file:" . g:unite_path . " file/new:" . g:unite_path . " directory/new:" . g:unite_path
 endfunction
 function! UniteFileSwitcher()
 	" Needed for file and directory filtering.
