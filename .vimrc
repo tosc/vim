@@ -285,19 +285,17 @@ let g:syntastic_auto_loc_list = 1
 " --------------------
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
+function! BindInner(kMap, nMap)
+	execute "nnoremap ci" . a:kMap . " " . a:nMap
+	execute "nnoremap di" . a:kMap . " " . a:nMap
+	execute "nnoremap vi" . a:kMap . " " . a:nMap
+	execute "nnoremap yi" . a:kMap . " " . a:nMap
+endfunction
 " Wanted binds like cib ciB but for [] and <> "" ''
-nnoremap cid i[
-nnoremap did i[
-nnoremap vid i[
-nnoremap ciD i>
-nnoremap diD i>
-nnoremap viD i>
-nnoremap cic i"
-nnoremap dic i"
-nnoremap vic i"
-nnoremap ciC i'
-nnoremap diC i'
-nnoremap viC i'
+call BindInner('d', '[')
+call BindInner('D', '>')
+call BindInner('c', '"')
+call BindInner('C', "'")
 
 " I keep pressing << >> in the wrong order. HL are good for directions.
 nnoremap H << 
@@ -343,6 +341,9 @@ nnoremap ; ,
 
 " Jump to tag. C-T to jump back.
 nnoremap <C-J> <C-]>
+
+" Select pasted text.
+nnoremap <expr> gp '`[' . getregtype()[0] . '`]'
 
 " Good avaliable binds
 " §
@@ -569,8 +570,10 @@ if !exists("g:disablePlugins")
 endif
 " --------------------
 " ---- [3.3] VISUAL ----
-vnoremap H < 
-vnoremap L > 
+" I keep pressing << >> in the wrong order. HL are good for directions.
+" Also reselects after action.
+vnoremap H <gv
+vnoremap L >gv
 
 xnoremap å c<C-R>=PythonMath()<CR>
 

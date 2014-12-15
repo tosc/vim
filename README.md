@@ -112,7 +112,6 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* BUG: Since add id and so on insert now takes two keystrokes.
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
 * Find more fitting sorter for file and dir sources.
@@ -126,6 +125,7 @@ able to return the key afterwards. Will save a lot of code.)
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
+* Highlight marks
 
 * Add easy bind for / ? so I can use them more like f F.
 * Look into tpope/capslock
