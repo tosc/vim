@@ -126,6 +126,7 @@ able to return the key afterwards. Will save a lot of code.)
  function. With this I can use fuzzy but still have my tabcompletion.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * Highlight marks
+* BUG: Error when too many marks with my git diff.
 
 * Add easy bind for / ? so I can use them more like f F.
 * Look into tpope/capslock

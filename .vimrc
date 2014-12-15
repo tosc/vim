@@ -1530,16 +1530,23 @@ function! NoSpellCheck()
 endfunction
 " --------------------
 " ---- [11.8] DRAW GIT ----
+" Draws lines added/removed and edited since last commit.
+let g:teet =[]
 function! DrawGit()
+	" Clear all matches
 	call clearmatches()
+	" What part of the line to hightlight, currently a tabstop at start.
 	let pattern = '^\(\t\|[^\t]\{,' . &l:tabstop . '}\)'
+	" Get gitfolder.
 	let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
 	let currentFile = expand('%:t')
+	" Get info about changed lines from git, use vimproc if avaliable
 	if exists("*vimproc#system")
 		let gitTemp = vimproc#system("git -C " . currentFolder . " diff -U0 " . currentFile)
 	else
 		let gitTemp = system("git -C " . currentFolder . " diff -U0 " . currentFile)
 	endif
+	" lines with @@ denote information about a changed chunk
 	if gitTemp =~ '@@'
 		let gitList = split(gitTemp, "\n")[4:]
 		let addCommand = ''
@@ -1547,19 +1554,25 @@ function! DrawGit()
 		let cngCommand = ''
 		for line in gitList
 			if line =~ '^@@ '
+				" Regexmagic to get changes.
 				let al = split(substitute(substitute(line, '^[^+]*+', '', ''), ' .*', '', ''), ',')
 				let rl = split(substitute(substitute(line, '^[^-]*-', '', ''), ' .*', '', ''), ',')
 				let add = (len(al) > 1 ? al[1] : '1')
 				let rem = (len(rl) > 1 ? rl[1] : '1')				
 				if rem == '0'
+					let start = al[0] - 1
+					let end = al[0] + add
 					let addCommand .= (addCommand != '' ? '\|' : '')
-					let addCommand .= pattern . '\%>' . (al[0]-1) . 'l\%<' . (al[0] + add) . 'l'
+					let addCommand .= pattern . '\%>' . start . 'l\%<' . end . 'l'
+					let g:teet += [[start, end]]
 				elseif add == '0'
+					let start = al[0] + 1
 					let remCommand .= (remCommand != '' ? '\|' : '')
-					let remCommand .= pattern . '\%' . (al[0] + 1) . 'l'
+					let remCommand .= pattern . '\%' . start . 'l'
 				else
+					let end = al[0] + add
 					let cngCommand .= (cngCommand != '' ? '\|' : '')
-					let cngCommand .= pattern . '\%>' . (al[0]-1) . 'l\%<' . (al[0] + add) . 'l'
+					let cngCommand .= pattern . '\%>' . start . 'l\%<' . end . 'l'
 				endif
 			endif	
 		endfor
