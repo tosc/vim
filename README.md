@@ -120,13 +120,17 @@ using unite and press m on where to put it. Prompt with new path and yes /no.
 * Add todo in my tag generator.
 * BUG: US2 doesn't show in python files.
 * Split big functions into own script files in vim-script.
+	* DrawGit
+	* Jumps
+	* Tagcompletion
 * Make my delimiter function prettier. (Use key for comparison so I will be
 able to return the key afterwards. Will save a lot of code.)
+* BUG: Delimiter stops h abbrev from working. Currently disabled space delimiter.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * Highlight marks
-* BUG: Error when too many marks with my git diff.
+* Find way to bind drawgit to file movement.
 
 * Add easy bind for / ? so I can use them more like f F.
 * Look into tpope/capslock

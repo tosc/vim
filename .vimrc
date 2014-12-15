@@ -345,6 +345,17 @@ nnoremap <C-J> <C-]>
 " Select pasted text.
 nnoremap <expr> gp '`[' . getregtype()[0] . '`]'
 
+" Binds all fold bindings to update my gitdiff.
+function! BindZ()
+	let lower = split('a b c d e f g h i j k l m n o p q r s t u v x y z')
+	let upper = split('A B C D E F G H I J K L M N O P Q R S T U V X Y Z')
+	let chars = lower + upper
+	for char in chars
+		execute "nnoremap z" . char . " z" . char ":call DrawGit()<CR>"
+	endfor
+endfunction
+call BindZ()
+
 " Good avaliable binds
 " §
 " ´
@@ -398,20 +409,20 @@ inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : StartDelim('CR', '')
 
 " Easier delimiters.
 inoremap {{ {<cr><cr>}<up><TAB>
-inoremap <expr> { StartDelim('{', '}')
-inoremap <expr> } StartDelim('}', 'opt')
-inoremap <expr> ( StartDelim('(', ')')
-inoremap <expr> ) StartDelim(')', 'opt')
-inoremap <expr> < StartDelim('<', '>')
-inoremap <expr> > StartDelim('>', 'opt')
-inoremap <expr> [ StartDelim('[', ']')
-inoremap <expr> ] StartDelim(']', 'opt')
-inoremap <expr> " StartDelim('"', '"')
-inoremap <expr> ' StartDelim("'", "'")
-inoremap <expr> <left> StartDelim('left', '')
+noremap! <expr> { StartDelim('{', '}')
+noremap! <expr> } StartDelim('}', 'opt')
+noremap! <expr> ( StartDelim('(', ')')
+noremap! <expr> ) StartDelim(')', 'opt')
+noremap! <expr> < StartDelim('<', '>')
+noremap! <expr> > StartDelim('>', 'opt')
+noremap! <expr> [ StartDelim('[', ']')
+noremap! <expr> ] StartDelim(']', 'opt')
+noremap! <expr> " StartDelim('"', '"')
+noremap! <expr> ' StartDelim("'", "'")
+noremap! <expr> <left> StartDelim('left', '')
 inoremap <expr> <space> StartDelim('space', '')
-inoremap <expr> <bs> StartDelim('bs', '')
-inoremap <expr> . StartDelim('dot', '')
+noremap <expr> <bs> StartDelim('bs', '')
+noremap <expr> . StartDelim('dot', '')
 
 let g:stilldelim = 0
 let g:nextdelim = ''
@@ -1284,6 +1295,7 @@ autocmd TextChanged,TextChangedI * call clearmatches()
 autocmd TextChangedI * let g:stilldelim -= 1
 autocmd InsertEnter * call clearmatches()
 autocmd InsertLeave * call DrawGit()
+autocmd BufEnter * call DrawGit()
 
 function! KillAllExternal()
 	if exists("g:EclimdRunning")
@@ -1562,17 +1574,23 @@ function! DrawGit()
 				if rem == '0'
 					let start = al[0] - 1
 					let end = al[0] + add
-					let addCommand .= (addCommand != '' ? '\|' : '')
-					let addCommand .= pattern . '\%>' . start . 'l\%<' . end . 'l'
-					let g:teet += [[start, end]]
+					if end > line('w0') && start < line('w$') && foldclosed(start) == -1 && foldclosed(end) == -1
+						let addCommand .= (addCommand != '' ? '\|' : '')
+						let addCommand .= pattern . '\%>' . start . 'l\%<' . end . 'l'
+					endif
 				elseif add == '0'
 					let start = al[0] + 1
-					let remCommand .= (remCommand != '' ? '\|' : '')
-					let remCommand .= pattern . '\%' . start . 'l'
+					if start > line('w0') && start < line('w$') && foldclosed(start) == -1
+						let remCommand .= (remCommand != '' ? '\|' : '')
+						let remCommand .= pattern . '\%' . start . 'l'
+					endif
 				else
+					let start = al[0] - 1
 					let end = al[0] + add
-					let cngCommand .= (cngCommand != '' ? '\|' : '')
-					let cngCommand .= pattern . '\%>' . start . 'l\%<' . end . 'l'
+					if end > line('w0') && start < line('w$') && foldclosed(start) == -1 && foldclosed(end) == -1
+						let cngCommand .= (cngCommand != '' ? '\|' : '')
+						let cngCommand .= pattern . '\%>' . start . 'l\%<' . end . 'l'
+					endif
 				endif
 			endif	
 		endfor
@@ -1586,6 +1604,18 @@ function! DrawGit()
 			call matchadd('GitRem', remCommand)
 		endif
 	endif
+endfunction
+" --------------------
+" ---- [11.9] DRAW MARK ----
+function! DrawMark()
+	redir @z
+	silent marks
+	redir END
+	let linenrs = []
+	for line in split(getreg('z'), '\n')[1:]
+		let linenrs += [split(line)][0]
+	endfor
+	return linenrs
 endfunction
 " --------------------
 " --------------------
