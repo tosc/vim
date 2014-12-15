@@ -100,7 +100,6 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 * If vim complains about imports then add the location of that import in Eclipse to your project.
 
 ### SSH
-
 * If Unite binding doesn't work then check that you are using the right encoding for ssh.
 
 # PENTADACTYL
@@ -113,22 +112,23 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* BUG: US2 doesn't show in python files.
-* BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
-
-* Add easy bind for / ? so I can use them more like f F.
+* BUG: Since add id and so on insert now takes two keystrokes.
+* Create unite source for external commands. Switch to that unite buffer to 
+get more output from program.
 * Find more fitting sorter for file and dir sources.
 * Add move in unite. Press move on candidate and save that path. Move around
 using unite and press m on where to put it. Prompt with new path and yes /no.
 * Add todo in my tag generator.
-* Use vimproc for gitcommands so vim doesn't freeze.
+* BUG: US2 doesn't show in python files.
+* Split big functions into own script files in vim-script.
+* Make my delimiter function prettier. (Use key for comparison so I will be
+able to return the key afterwards. Will save a lot of code.)
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
-* Create unite source for external commands. Switch to that unite buffer to 
-get more output from program.
-* Look at neobundle to make installation easier.
-* Look into tpope/capslock
-* Make my delimiterfunction prettier.
+* BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 
+* Add easy bind for / ? so I can use them more like f F.
+* Look into tpope/capslock
+* Look at neobundle to make installation easier.
 * Look at syntastics spellchecker.
 * Find way to disable default US source for neocomplete.

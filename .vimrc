@@ -286,17 +286,25 @@ let g:syntastic_auto_loc_list = 1
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
 " Wanted binds like cib ciB but for [] and <> "" ''
-noremap id i[
-noremap iD i>
-noremap ic i"
-noremap iC i'
+nnoremap cid i[
+nnoremap did i[
+nnoremap vid i[
+nnoremap ciD i>
+nnoremap diD i>
+nnoremap viD i>
+nnoremap cic i"
+nnoremap dic i"
+nnoremap vic i"
+nnoremap ciC i'
+nnoremap diC i'
+nnoremap viC i'
 
 " I keep pressing << >> in the wrong order. HL are good for directions.
-noremap H << 
-noremap L >> 
+nnoremap H << 
+nnoremap L >> 
 
 " Wanted a easier bind for $
-noremap + $
+nnoremap + $
 
 " Show the my normal and insert bindings.
 noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> 
@@ -304,37 +312,37 @@ noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar>
 	\ :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg
 
 " Do last recording. (Removes exmode which I never use.)
-noremap Q @@
+nnoremap Q @@
 
 "Not vi-compatible but more logical. Y yanks to end of line.
-noremap Y y$
+nnoremap Y y$
 
 " Close everything except current fold.
-noremap zV zMzv
+nnoremap zV zMzv
 
 if !exists("g:disablePlugins")
 	" Search file using unite.
-	noremap ä :Unite line -auto-preview -custom-line-enable-highlight<CR>
+	nnoremap ä :Unite line -auto-preview -custom-line-enable-highlight<CR>
 
-	noremap ö :call UniteFileSwitcher()<CR>
-	noremap Ö :call UniteExplorer()<CR>
+	nnoremap ö :call UniteFileSwitcher()<CR>
+	nnoremap Ö :call UniteExplorer()<CR>
 else
-	noremap ä /
-	noremap ö :e
-	noremap Ö :e
+	nnoremap ä /
+	nnoremap ö :e
+	nnoremap Ö :e
 endif
 
 " Jump to next(previous) ultisnips location if one exists, 
 " else jump to next(previous) delimiter.
-noremap <S-Space> :call SmartJump()<CR>
-noremap <S-BS> :call SmartJumpBack()<CR>
+nnoremap <S-Space> :call SmartJump()<CR>
+nnoremap <S-BS> :call SmartJumpBack()<CR>
 
 "Switches repeat f/F, feels more logical on swedish keyboard.
-noremap , ;
-noremap ; ,
+nnoremap , ;
+nnoremap ; ,
 
 " Jump to tag. C-T to jump back.
-noremap <C-J> <C-]>
+nnoremap <C-J> <C-]>
 
 " Good avaliable binds
 " §
