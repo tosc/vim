@@ -495,6 +495,7 @@ map <leader>D :bd!<CR>
 " E
 autocmd Filetype tex map <buffer><leader>e :call StartTexBuilder() <cr>
 " F
+" Fetch new info from programming running with r
 " G
 map <leader>gg :!git -C %:h status<CR>
 map <leader>gc :!git -C %:h commit<CR>
@@ -516,11 +517,13 @@ if !exists("g:disablePlugins")
 	map <leader>gd :Gdiff<CR>
 endif
 " H
+" Unite help when I get it working.
 " I
+" Add my infosources here.
 " J
 " K
+" Kill program running with r
 " L
-" I
 " M
 map <leader>m :!make<CR>
 if !exists("g:disablePlugins")
@@ -535,7 +538,7 @@ map <leader>O :call UniteExplorer()<CR>
 " P
 map <leader>p :bp <CR>
 " Q
-map <leader>q :call QFix()<CR>
+map <leader>q :q <CR>
 " R
 autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
 autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
@@ -563,10 +566,8 @@ map <leader>tn :tabnew <CR>
 " U
 if !exists("g:disablePlugins")
 	map <leader>ue :UltiSnipsEdit <CR>
-	map <leader>uu :Unite file:~/vimfiles/Ultisnips <CR>
+	map <leader>uu :Unite fil:~/vimfiles/Ultisnips <CR>
 	map <leader>us :Unite ultisnips <CR>
-	map <leader>ur :Unite register<CR>
-	map <leader>ut :Unite tag<CR>
 endif
 " V
 map <leader>vv :e ~/git/vim/.vimrc<CR>
@@ -612,16 +613,20 @@ cnoremap <C-A> <home>
 cnoremap <C-E> <end>
 cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 
-cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? 'call FullScreenHelp(" ")<left><left><left>' : "h"
+cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? 
+		\ 'call FullScreenHelp(" ")<left><left><left>' : "h"
 cnoreabbrev <expr> tn getcmdtype() == ":" && getcmdline() == "tn" ? 'tabnew' : "tn"
 cnoreabbrev <expr> tc getcmdtype() == ":" && getcmdline() == "tc" ? 'tabc' : "tc"
 
 if !exists("g:disablePlugins")
 	" I tend to write :git instead of :Git
-	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "Git" : "git"
+	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? 
+						\ "Git" : "git"
 else
-	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? "!git" : "git"
-	cnoreabbrev <expr> Git getcmdtype() == ":" && getcmdline() == "Git" ? "!git" : "Git"
+	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ?
+						\ "!git" : "git"
+	cnoreabbrev <expr> Git getcmdtype() == ":" && getcmdline() == "Git" ?
+						\ "!git" : "Git"
 endif
 
 " See insert for delimiterbindings.
@@ -836,7 +841,9 @@ if !exists("g:minimalMode") && !exists("g:disableExternal")
 else
 	" Compile latex to a pdf when you save
 	autocmd BufWritePre *.tex call vimproc#system("rm -f " . expand('%:r') . ".aux")
-	autocmd BufWritePost *.tex call vimproc#system("pdflatex -halt-on-error -output-directory=" . expand('%:h') . " " . expand('%'))
+	autocmd BufWritePost *.tex call 
+		\ vimproc#system("pdflatex -halt-on-error -output-directory=" 
+		\ . expand('%:h') . " " . expand('%'))
 endif
 
 autocmd Filetype tex call TEXSettings()
@@ -1056,7 +1063,8 @@ function! IndentFolding2(lnum)
 		return '='
 	elseif indent(a:lnum)/8 < indent(a:lnum+1)/8
 		return ">" . indent(a:lnum+1)/8
-	elseif indent(a:lnum)/8 < indent(a:lnum-1)/8 && (line =~ '^\s*\\end' || line =~ '^\s*\\]')
+	elseif indent(a:lnum)/8 < indent(a:lnum-1)/8 && 
+		\ (line =~ '^\s*\\end' || line =~ '^\s*\\]')
 		return "<" . indent(a:lnum-1)/8
 	else
 		return indent(a:lnum)/8
@@ -1099,7 +1107,9 @@ function! NormalFoldText()
 	       let line = "import"	
 	endif
 	let endText = v:foldend - v:foldstart
-	return indent . line . repeat(" ", winwidth(0)-strlen(indent . line . endText) - 5) . endText . " "
+	return indent . line . repeat(" ", 
+		\ winwidth(0)-strlen(indent . line . endText) - 5) . 
+		\ endText . " "
 endfunction
 " --------------------
 " ---- [5.2.1] CS JAVA ----
@@ -1165,11 +1175,15 @@ function! SlowStatusLine()
 	if &modifiable
 		let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
 		if exists("*vimproc#system")
-			let gitTemp = vimproc#system("git -C " . currentFolder . " status -b -s")
-			let rowsTemp = split(vimproc#system("git -C " . currentFolder . " diff --numstat"), "\n")
+			let gitTemp = vimproc#system("git -C " . 
+				\ currentFolder . " status -b -s")
+			let rowsTemp = split(vimproc#system("git -C " . 
+				\ currentFolder . " diff --numstat"), "\n")
 		else
-			let rowsTemp = split(system("git -C " . currentFolder . " diff --numstat"), "\n")
-			let gitTemp = system("git -C " . currentFolder . " status -b -s")
+			let rowsTemp = split(system("git -C " .
+				\ currentFolder . " diff --numstat"), "\n")
+			let gitTemp = system("git -C " . 
+				\ currentFolder . " status -b -s")
 		endif
 		if gitTemp !~ "fatal"
 		let gitTemp = substitute(gitTemp[2:], "\\.\\.\\.", '->', '')
@@ -1189,7 +1203,8 @@ function! SlowStatusLine()
 				endif
 			endfor
 			if(len(changedRows) > 0)
-				let SlowStatusLineVar .= " [+" . changedRows[0] . " -" . changedRows[1] . "]"
+				let SlowStatusLineVar .= " [+" . changedRows[0] .
+							\ " -" . changedRows[1] . "]"
 			endif
 		endif
 	endif
@@ -1204,7 +1219,8 @@ function! Tabline()
 		let bufname = ''
 		for buf in tabpagebuflist(tab)
 			let bufname .= (bufname != '' ? ' | ' : '')
-			let bufname .= fnamemodify(bufname(buf), ':t') . (getbufvar(buf, "&mod") ? "[+]" : "")
+			let bufname .= fnamemodify(bufname(buf), ':t') . 
+					\ (getbufvar(buf, "&mod") ? "[+]" : "")
 		endfor
 		let s .= '%' . tab . 'T' . (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
 		let s .= ' ' . tab . ' ' . (bufname != '' ? bufname . ' ' : '- ')
@@ -1386,26 +1402,7 @@ function! SaveSession()
 	exe "mksession! ~/.cache/unite/session/" . sessionName . ".vim"
 endfunction
 " --------------------
-" ---- [11.2] QUICKFIX TOGGLE ----
-function! QFix()
-	if !exists("t:qFixWin")
-		let t:qFixWin = 0
-	endif
-	if t:qFixWin == 0
-		copen
-		let t:qFixWin = 1
-	else
-		ccl
-		let t:qFixWin = 0
-	endif
-endfunction
-
-function! QFixClose()
-	ccl
-	let t:qFixWin = 0
-endfunction
-" --------------------
-" ---- [11.3] JUMP ----
+" ---- [11.2] JUMP ----
 " Jumps you to the next/previous ultisnips location if exists.
 " Else it jumps to the next/previous delimiter.
 " Default delimiters: "'(){}[]
@@ -1461,7 +1458,7 @@ function! SmartJumpBack()
 	return ""
 endfunction
 " --------------------
-" ---- [11.4] TEMPBUFFER ----
+" ---- [11.3] TEMPBUFFER ----
 let g:bufferBeforeOpoh = ""
 function! OpohBuffer()
 	let g:bufferBeforeOpoh = expand('%')
@@ -1491,7 +1488,7 @@ function! FullScreenHelp(search)
 	endif
 endfunction
 " --------------------
-" ---- [11.5] EVALUATE MATH ----
+" ---- [11.4] EVALUATE MATH ----
 function! PythonMath()
 let l:vimMath = getreg('"')
 if l:vimMath == ''
@@ -1505,7 +1502,7 @@ endpy
 return l:pythonMath
 endfunction
 " --------------------
-" ---- [11.6] START EXTERNAL ----
+" ---- [11.5] START EXTERNAL ----
 function! StartEclim()
 	let g:EclimdRunning = 1
 	call vimproc#system_bg('eclimd')
@@ -1519,7 +1516,7 @@ function! StartTexBuilder()
 	endif
 endfunction
 " --------------------
-" ---- [11.7] SPELLCHECK ----
+" ---- [11.6] SPELLCHECK ----
 function! EnglishSpellCheck()
 	setlocal spell spelllang=en_us
 	if !exists("g:disablePlugins") && has('lua')
@@ -1541,7 +1538,7 @@ function! NoSpellCheck()
 	endif
 endfunction
 " --------------------
-" ---- [11.8] DRAW GIT ----
+" ---- [11.7] DRAW GIT ----
 " Draws lines added/removed and edited since last commit.
 let g:teet =[]
 function! DrawGit()
@@ -1606,7 +1603,7 @@ function! DrawGit()
 	endif
 endfunction
 " --------------------
-" ---- [11.9] DRAW MARK ----
+" ---- [11.8] DRAW MARK ----
 function! DrawMark()
 	redir @z
 	silent marks
