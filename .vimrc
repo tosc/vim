@@ -1262,10 +1262,10 @@ function! HighlightGitEnable()
 endfunction
 function! HighlightMarkEnable()
 	hi MarkA guibg=aquamarine guifg=blue
-	hi MarkB guibg=black guifg=white
+	hi MarkB guibg=brown guifg=black
 	hi MarkC guibg=coral guifg=brown
 	hi MarkD guibg=black guifg=cyan1
-	hi MarkE guibg=NONE guifg=red
+	hi MarkE guibg=black guifg=red
 	hi MarkF guibg=black guifg=yellow
 	hi MarkH guibg=lightpink guifg=hotpink
 	hi MarkI guibg=grey40 guifg=black
@@ -1279,11 +1279,11 @@ function! HighlightMarkEnable()
 	hi MarkQ guibg=darkcyan guifg=black
 	hi MarkR guibg=red guifg=black
 	hi MarkS guibg=black guifg=salmon
-	hi MarkT guibg=NONE guifg=tomato
+	hi MarkT guibg=tomato guifg=black
 	hi MarkU guibg=darkblue guifg=yellow1
 	hi MarkV guibg=blue1 guifg=white
 	hi MarkW guibg=white guifg=black
-	hi MarkX guibg=NONE guifg=black
+	hi MarkX guibg=black guifg=white
 	hi MarkY guibg=yellow guifg=black
 	hi MarkZ guibg=lightgreen guifg=black
 endfunction
@@ -1309,7 +1309,7 @@ endfunction
 " --------------------
 " ---- [9.2] MARK COLORNAMES ----
 "[a]quamarine
-"[b]lack
+"[b]rown
 "[c]oral
 "[d]iamant
 "[e]rror
@@ -1323,16 +1323,16 @@ endfunction
 "[n]eon green
 "[o]range
 "[p]urple
-"[q]
+"dar[q]cyan
 "[r]ed
 "[s]almon
 "[t]omato
 "[u]tomhus
 "[v]atten
 "[w]hite
-"[x]
+"black te[x]t
 "[y]ellow
-"[z]
+"[z] - weird color, weird letter
 " --------------------
 " --------------------
 " ---- [10] AUTOCMD ----
