@@ -112,13 +112,8 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* Add slow draw git command that runs git and then the normal one that filters
-	lines for matching. Slow git updates on save insert exit other one on
-	folds and movement. Add fast update to statusline.
-* Rename slow statusline to GitStatusLine().
-* Add button to hide my DrawFunctions().
+* BUG: All folds close on save sometimes. Fold stop working after save sometimes.
 * Add button to show my names and the colors of my marks. mg? Mg? ?
-* Should I filter marks?
 * Move my infostuff to server repo.
 * Shoud I highlight special marks?
 * TagGenerator

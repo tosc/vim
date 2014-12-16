@@ -46,6 +46,9 @@ set colorcolumn=78
 set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ 
 set list
 
+" Shows marks on autowrapped lines
+set showbreak=<<
+
 set sessionoptions-=options
 set sessionoptions+=folds
 
@@ -305,7 +308,7 @@ nnoremap L >>
 nnoremap + $
 
 " Show the my normal and insert bindings.
-noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.3\]<CR> :.,$d<CR>gg
+nnoremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg
 
 " Do last recording. (Removes exmode which I never use.)
 nnoremap Q @@
@@ -343,21 +346,10 @@ nnoremap <C-J> <C-]>
 " Select pasted text.
 nnoremap <expr> gp '`[' . getregtype()[0] . '`]'
 
-" Binds all fold bindings to update my gitdiff.
-noremap M m
-noremap m `
-function! BindZ()
-	let lower = split('a b c d e f g h i j k l m n o p q r s t u v x y z')
-	let upper = split('A B C D E F G H I J K L M N O P Q R S T U V X Y Z')
-	let chars = lower + upper
-	for char in chars
-		execute "nnoremap z" . char . " z" . char ":call DrawMatches()<CR>"
-	endfor
-endfunction
-call BindZ()
-
 " Reverse local and global marks and bind create mark to M
 " and goto mark ` to m.
+noremap M m
+noremap m `
 function! BindMark(lMap, uMap)
 	execute "nnoremap M" . a:lMap . " m" . a:uMap 
 	execute "nnoremap M" . a:uMap . " m" . a:lMap 
@@ -438,8 +430,8 @@ noremap! <expr> " StartDelim('"', '"')
 noremap! <expr> ' StartDelim("'", "'")
 noremap! <expr> <left> StartDelim('left', '')
 inoremap <expr> <space> StartDelim('space', '')
-noremap <expr> <bs> StartDelim('bs', '')
-noremap <expr> . StartDelim('dot', '')
+noremap! <expr> <bs> StartDelim('bs', '')
+noremap! <expr> . StartDelim('dot', '')
 
 let g:stilldelim = 0
 let g:nextdelim = ''
@@ -521,6 +513,8 @@ if !exists("g:disablePlugins")
 	" Remapped s to vim-surround.
 	xmap s S
 endif
+
+xnoremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.2\]<CR> :0,.-1d<CR>/\[3.3\]<CR> :.,$d<CR>gg
 " --------------------
 " ---- [3.3] LEADER ----
 let g:mapleader="\<space>"
@@ -542,12 +536,12 @@ autocmd Filetype tex map <buffer><leader>e :call StartTexBuilder() <cr>
 " G
 map <leader>gg :!git -C %:h status<CR>
 map <leader>gc :!git -C %:h commit<CR>
-map <leader>gp :!git -C %:h push<CR> :call SlowStatusLine()<CR>
-map <leader>gP :!git -C %:h push --force<CR> :call SlowStatusLine()<CR>
+map <leader>gp :!git -C %:h push<CR> :call UpdateGitInfo()<CR>
+map <leader>gP :!git -C %:h push --force<CR> :call UpdateGitInfo()<CR>
 map <leader>gd :!git -C %:h diff<CR>
 map <leader>gD :!git -C %:h diff<CR>
-map <leader>gf :!git -C %:h fetch<CR> :call SlowStatusLine()<CR>
-map <leader>gF :!git -C %:h pull<CR> :call SlowStatusLine()<CR>
+map <leader>gf :!git -C %:h fetch<CR> :call UpdateGitInfo()<CR>
+map <leader>gF :!git -C %:h pull<CR> :call UpdateGitInfo()<CR>
 " Opens a interactive menu that lets you pick what commits to use/squash.
 map <leader>gr :!git -C %:h rebase -i HEAD~
 
@@ -1180,7 +1174,7 @@ endif
 " Gets the gitinfo for the statusline.
 function! MyStatusLine()
 	if !exists("b:statusLineVar")
-		call SlowStatusLine()
+		call UpdateGitInfo()
 	endif
 	if !exists("g:disablePlugins") && SyntasticStatuslineFlag() == ""
 		hi StatusLine guibg=NONE
@@ -1194,8 +1188,7 @@ endfunction
 " Updates gitinfo for the statusline.
 " m - Nr of [m]odified [f]iles.
 " +/- - Nr of rows added / deleted.
-function! SlowStatusLine()
-	call DrawMatches()
+function! GitStatusLine()
 	let SlowStatusLineVar = ""
 	if &modifiable
 		let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
@@ -1267,6 +1260,7 @@ if exists("g:minimalMode")
 endif
 " --------------------
 " ---- [9] COLORSETTINGS ----
+" ---- [9.0] DEFAULT ----
 colorscheme desert
 
 " Change to better colors when using a terminal
@@ -1316,80 +1310,105 @@ hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
 hi SignColumn guibg=NONE ctermbg=NONE
 hi ColorColumn guibg=grey30 ctermbg=239
 
-hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
-hi GitAdd guibg=NONE guifg=NONE ctermbg=22 ctermfg=10
-hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
-hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
-"[a]quamarine
-hi MarkA guibg=aquamarine guifg=blue
-"[b]lack
-hi MarkB guibg=black guifg=white
-"[c]oral
-hi MarkC guibg=coral guifg=brown
-"[d]iamant
-hi MarkD guibg=black guifg=cyan1
-"[e]rror
-hi MarkE guibg=NONE guifg=red
-"[f]lourescent light
-hi MarkF guibg=black guifg=yellow
-"[g]ray
-hi MarkG guibg=gray guifg=gray40
-"[h]ot pink
-hi MarkH guibg=lightpink guifg=hotpink
-"[i]nvisible
-hi MarkI guibg=grey40 guifg=black
-"[j]ul
-hi MarkJ guibg=red guifg=green
-"[k]haki
-hi MarkK guibg=khaki4 guifg=white
-"[l]ime -
-hi MarkL guibg=limegreen guifg=darkgreen
-"[m]ustard
-hi MarkM guibg=goldenrod2 guifg=orange4
-"[n]eon green
-hi MarkN guibg=#002211 guifg=green
-"[o]range
-hi MarkO guibg=darkorange2 guifg=darkorange4
-"[p]urple
-hi MarkP guibg=purple guifg=white
-"[q]
-hi MarkQ guibg=darkcyan guifg=black
-"[r]ed
-hi MarkR guibg=red guifg=black
-"[s]almon
-hi MarkS guibg=black guifg=salmon
-"[t]omato
-hi MarkT guibg=NONE guifg=tomato
-"[u]tomhus
-hi MarkU guibg=darkblue guifg=yellow1
-"[v]atten
-hi MarkV guibg=blue1 guifg=white
-"[w]hite
-hi MarkW guibg=white guifg=black
-"[x]
-hi MarkX guibg=NONE guifg=black
-"[y]ellow
-hi MarkY guibg=yellow guifg=black
-"[z]
-hi MarkZ guibg=lightgreen guifg=black
-
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
 " --------------------
+" ---- [9.1] DRAW ----
+function! HighlightGitEnable()
+	hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
+	hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
+	hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
+endfunction
+function! HighlightMarkEnable()
+	"[a]quamarine
+	hi MarkA guibg=aquamarine guifg=blue
+	"[b]lack
+	hi MarkB guibg=black guifg=white
+	"[c]oral
+	hi MarkC guibg=coral guifg=brown
+	"[d]iamant
+	hi MarkD guibg=black guifg=cyan1
+	"[e]rror
+	hi MarkE guibg=NONE guifg=red
+	"[f]lourescent light
+	hi MarkF guibg=black guifg=yellow
+	"[g]ray
+	hi MarkG guibg=gray guifg=gray40
+	"[h]ot pink
+	hi MarkH guibg=lightpink guifg=hotpink
+	"[i]nvisible
+	hi MarkI guibg=grey40 guifg=black
+	"[j]ul
+	hi MarkJ guibg=red guifg=green
+	"[k]haki
+	hi MarkK guibg=khaki4 guifg=white
+	"[l]ime -
+	hi MarkL guibg=limegreen guifg=darkgreen
+	"[m]ustard
+	hi MarkM guibg=goldenrod2 guifg=orange4
+	"[n]eon green
+	hi MarkN guibg=#002211 guifg=green
+	"[o]range
+	hi MarkO guibg=darkorange2 guifg=darkorange4
+	"[p]urple
+	hi MarkP guibg=purple guifg=white
+	"[q]
+	hi MarkQ guibg=darkcyan guifg=black
+	"[r]ed
+	hi MarkR guibg=red guifg=black
+	"[s]almon
+	hi MarkS guibg=black guifg=salmon
+	"[t]omato
+	hi MarkT guibg=NONE guifg=tomato
+	"[u]tomhus
+	hi MarkU guibg=darkblue guifg=yellow1
+	"[v]atten
+	hi MarkV guibg=blue1 guifg=white
+	"[w]hite
+	hi MarkW guibg=white guifg=black
+	"[x]
+	hi MarkX guibg=NONE guifg=black
+	"[y]ellow
+	hi MarkY guibg=yellow guifg=black
+	"[z]
+	hi MarkZ guibg=lightgreen guifg=black
+endfunction
+function! HighlightDrawEnable()
+	call HighlightGitEnable()
+	call HighlightMarkEnable()
+endfunction
+
+function! HighlightGitDisable()
+	hi clear GitAdd		
+	hi clear GitRem
+	hi clear GitCng		
+endfunction
+function! HighlightMarkDisable()
+	let marks = split("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z")
+	for mark in marks
+		execute "hi clear Mark" . mark
+	endfor
+endfunction
+function! HighlightDrawDisable()
+	call HighlightGitDisable()
+	call HighlightMarkDisable()
+endfunction
+" --------------------
+" --------------------
 " ---- [10] AUTOCMD ----
 autocmd BufWritePost * call SaveSession()
-autocmd BufWritePost * call SlowStatusLine()
+autocmd BufWritePost * call UpdateGitInfo()
 
-autocmd BufEnter * call SlowStatusLine()
+autocmd BufEnter * call UpdateGitInfo()
 
 " To make FastFold calculate the folds when you open a file.
 autocmd BufReadPost * let &foldlevel=0
 
-autocmd TextChanged,TextChangedI * call clearmatches()
+autocmd TextChanged,TextChangedI * call HighlightGitDisable()
 autocmd TextChangedI * let g:stilldelim -= 1
-autocmd InsertEnter * call clearmatches()
-autocmd InsertLeave * call DrawMatches()
-autocmd BufEnter * call DrawMatches()
+autocmd InsertEnter * call HighlightDrawDisable()
+autocmd InsertLeave * call HighlightDrawEnable()
+autocmd BufEnter * call UpdateMatches()
 
 function! KillAllExternal()
 	if exists("g:EclimdRunning")
@@ -1400,6 +1419,11 @@ endfunction
 if !exists("g:disableExternal")
 	autocmd VimLeave * call KillAllExternal()
 endif
+
+function! UpdateGitInfo()
+	call UpdateMatches()
+	call GitStatusLine()
+endfunction
 " --------------------
 " ---- [11] FUNCTIONS ----
 " ---- [11.0] TABCOMPLETION ----
@@ -1617,21 +1641,23 @@ endfunction
 " --------------------
 " ---- [11.7] MATCH ----
 " Draws lines added/removed and edited since last commit.
-let g:teet =[]
-function! DrawMatches()
-	call clearmatches()
-	call DrawGit()
-	call DrawMark()
+let g:drawEnabled = 1
+function! UpdateMatches()
+	if g:drawEnabled
+		call clearmatches()
+		call HighlightDrawEnable()
+		call AddGitMatches()
+		call AddMarkMatches()
+	endif
 endfunction
-function! DrawMark()
+function! AddMarkMatches()
 	let marks = split("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z")
 	for mark in marks
 		call matchadd('Mark' . mark, "\\%'" . mark . '.')
 	endfor
 endfunction
-function! DrawGit()
-	" What part of the line to hightlight, currently a tabstop at start.
-	let pattern = '^\(\t\|[^\t]\{,' . &l:tabstop . '}\)'
+
+function! AddGitMatches()
 	" Get gitfolder.
 	let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
 	let currentFile = expand('%:t')
@@ -1644,9 +1670,6 @@ function! DrawGit()
 	" lines with @@ denote information about a changed chunk
 	if gitTemp =~ '@@'
 		let gitList = split(gitTemp, "\n")[4:]
-		let addCommand = ''
-		let remCommand = ''
-		let cngCommand = ''
 		for line in gitList
 			if line =~ '^@@ '
 				" Regexmagic to get changes.
@@ -1654,38 +1677,26 @@ function! DrawGit()
 				let rl = split(substitute(substitute(line, '^[^-]*-', '', ''), ' .*', '', ''), ',')
 				let add = (len(al) > 1 ? al[1] : '1')
 				let rem = (len(rl) > 1 ? rl[1] : '1')				
-				if rem == '0'
-					let start = al[0] - 1
-					let end = al[0] + add
-					if end > line('w0') && start < line('w$') && foldclosed(start) == -1 && foldclosed(end) == -1
-						let addCommand .= (addCommand != '' ? '\|' : '')
-						let addCommand .= pattern . '\%>' . start . 'l\%<' . end . 'l'
-					endif
-				elseif add == '0'
+				if add == '0'
 					let start = al[0] + 1
-					if start > line('w0') && start < line('w$') && foldclosed(start) == -1
-						let remCommand .= (remCommand != '' ? '\|' : '')
-						let remCommand .= pattern . '\%' . start . 'l'
+					if indent(start) == 0
+						call matchaddpos('GitRem', [[start, 1, &l:tabstop]])
+					else
+						call matchaddpos('GitRem', [[start, 1]])
 					endif
 				else
 					let start = al[0] - 1
 					let end = al[0] + add
-					if end > line('w0') && start < line('w$') && foldclosed(start) == -1 && foldclosed(end) == -1
-						let cngCommand .= (cngCommand != '' ? '\|' : '')
-						let cngCommand .= pattern . '\%>' . start . 'l\%<' . end . 'l'
-					endif
+					for line in range(start, end)
+						if indent(line) == 0
+							call matchaddpos('Git' . (rem == 0 ? 'Add' : 'Cng'), [[line,1,&l:tabstop]])
+						else
+							call matchaddpos('Git' . (rem == 0 ? 'Add' : 'Cng'), [[line,1]])
+						endif
+					endfor
 				endif
 			endif	
 		endfor
-		if addCommand != ''
-			call matchadd('GitAdd', addCommand)
-		endif
-		if cngCommand != ''
-			call matchadd('GitCng', cngCommand)
-		endif
-		if remCommand != ''
-			call matchadd('GitRem', remCommand)
-		endif
 	endif
 endfunction
 " --------------------
