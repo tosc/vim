@@ -226,7 +226,6 @@ let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
 " ---- [2.7] FASTFOLD ----
-let g:fastfold_savehook = 1
 let g:fastfold_togglehook = 0
 let g:fastfold_map = 1
 " --------------------
@@ -428,7 +427,7 @@ noremap! <expr> ] StartDelim(']', 'opt')
 noremap! <expr> " StartDelim('"', '"')
 noremap! <expr> ' StartDelim("'", "'")
 noremap! <expr> <left> StartDelim("\<left>", '')
-inoremap <expr> <space> StartDelim("\<space>", '')
+noremap! <expr> <space> StartDelim("\<space>", '')
 noremap! <expr> <bs> StartDelim("\<bs>", '')
 noremap! <expr> , StartDelim(",", '')
 noremap! <expr> . StartDelim('dot', '')
@@ -571,27 +570,22 @@ cnoremap <C-A> <home>
 cnoremap <C-E> <end>
 cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 
-cnoreabbrev <expr> h getcmdtype() == ":" && getcmdline() == "h" ? 
-		\ 'call FullScreenHelp(" ")<left><left><left>' : "h"
-cnoreabbrev <expr> tn getcmdtype() == ":" && getcmdline() == "tn" ? 'tabnew' : "tn"
-cnoreabbrev <expr> tc getcmdtype() == ":" && getcmdline() == "tc" ? 'tabc' : "tc"
+cnoremap <expr> h<space> getcmdtype() == ":" && getcmdline() == "" ? "call FullScreenHelp('')\<left>\<left>" : "h "
+cnoremap <expr> n getcmdtype() == ":" && getcmdline() == "t" ? 'abnew' : "n"
+cnoremap <expr> c getcmdtype() == ":" && getcmdline() == "t" ? 'abc' : "c"
 
 if !exists("g:disablePlugins")
 	" I tend to write :git instead of :Git
-	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ? 
-						\ "Git" : "git"
+	cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>Git" : "t"
 else
-	cnoreabbrev <expr> git getcmdtype() == ":" && getcmdline() == "git" ?
-						\ "!git" : "git"
-	cnoreabbrev <expr> Git getcmdtype() == ":" && getcmdline() == "Git" ?
-						\ "!git" : "Git"
+	cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>!git" : "t"
 endif
 
 " Show the my normal and insert bindings.
-cnoreabbrev <expr> g? getcmdtype() == ":" && getcmdline() == "g?" ? 
-			\ 'call OpohBuffer() <bar> setlocal syntax=vim <bar>
+cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ? 
+			\ "\<bs>" . 'call OpohBuffer() <bar> setlocal syntax=vim <bar>
 			\ keepalt r ~/git/vim/.vimrc <CR> /\[3.4\]<CR>
-			\ :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg' : 'g?'
+			\ :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg' : '?'
 
 " See insert for delimiterbindings.
 " --------------------
@@ -614,6 +608,7 @@ function! FugitiveBindings()
 	" Fast movement for :GStatus
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
+	nmap <buffer> <esc> q
 endfunction
 " --------------------
 " ---- [3.7] OPOHBUFFER ----
@@ -1254,13 +1249,17 @@ hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold guibg=grey40 guifg=NONE
 hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
 hi SignColumn guibg=NONE ctermbg=NONE
 hi ColorColumn guibg=grey30 ctermbg=239
+hi DiffAdd guibg=#002211 guifg=NONE ctermbg=22 ctermfg=10
+hi DiffChange guibg=#000066 guifg=NONE ctermbg=22 ctermfg=10
+hi DiffDelete guibg=#660000 guifg=red ctermbg=52 ctermfg=211
+hi DiffText guibg=dodgerblue4 guifg=NONE
 
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
 " --------------------
 " ---- [9.1] DRAW ----
 function! HighlightGitEnable()
-	hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
+	hi GitAdd guibg=#002211 guifg=green
 	hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
 	hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
 endfunction
@@ -1373,11 +1372,11 @@ endfunction
 " ---- [11] FUNCTIONS ----
 " ---- [11.0] TABCOMPLETION ----
 function! NeoTab()
+	call UltiSnips#ExpandSnippet()
+	if g:ulti_expand_res == 1
+		return ""
+	endif
 	if getline(".")[col('.') - 2] =~ '\w'
-		call UltiSnips#ExpandSnippet()
-		if g:ulti_expand_res == 1
-			return ""
-		endif
 		if has('lua')
 			let longestCommon = NeoLongestCommon()
 		else
@@ -1629,8 +1628,8 @@ function! AddGitMatches()
 						call matchaddpos('GitRem', [[start, 1]])
 					endif
 				else
-					let start = al[0] - 1
-					let end = al[0] + add
+					let start = al[0]
+					let end = al[0] + add - 1
 					for line in range(start, end)
 						let tabpos = match(getline(line), '\t')
 						if tabpos == -1 || tabpos >= 8
@@ -1650,26 +1649,31 @@ endfunction
 " ---- [11.8] AUTODELIMITER ----
 let g:stilldelim = 0
 let g:nextdelim = ''
+let g:prevdelim = ''
 " kMap - first key of the delimiter, same as the button you will bind this to
 " nMap - the end of the delimiter. Special values are "opt" and "".
 " 		opt is for the last bind of the delimiter
 " 		'' is for keys you press after the end of a delimiter
 function! StartDelim(kMap, nMap)
-	let stilldelim = g:stilldelim
 	let nextdelim = g:nextdelim
-	let g:stilldelim = 2
+	let prevdelim = g:prevdelim
+	let stilldelim = g:stilldelim
 	if (g:nextdelim =~ '"' && a:kMap =~ '"') ||
 	 \ (g:nextdelim =~ "'" && a:kMap =~ "'")
 		let g:nextdelim = 'opt'
 	else
 		let g:nextdelim = a:nMap
 	endif
+	let g:prevdelim = a:kMap
+	let g:stilldelim = 2
 	if nextdelim !~ '^$' && stilldelim > 0
 		if nextdelim =~ a:kMap
 			return a:kMap . "\<left>"
 		elseif nextdelim =~ 'opt'
 			if a:kMap =~ 'dot'
-				return "\<right>."
+				if prevdelim !~ '"'
+					return "\<right>."
+				endif
 			elseif a:nMap =~ '^$'
 				return "\<right>" . a:kMap
 			endif

@@ -112,7 +112,7 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* BUG: All folds close on save sometimes. Fold stop working after save sometimes.
+* Fixed? BUG: All folds close on save sometimes. Fold stop working after save sometimes.
 * Add button to show my names and the colors of my marks. mg? Mg? ?
 * Move my infostuff to server repo.
 * Shoud I highlight special marks?
@@ -129,10 +129,8 @@ using unite and press m on where to put it. Prompt with new path and yes /no.
 	* DrawGit
 	* Jumps
 	* Tagcompletion
-* BUG: Delimiter stops h abbrev from working. Currently disabled space delimiter.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
-* BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
 * Fix highlightcolors for marks in terminal.
 
 * Add easy bind for / ? so I can use them more like f F.
