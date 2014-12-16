@@ -1246,17 +1246,17 @@ hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold guibg=grey40 guifg=NONE
 hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
 hi SignColumn guibg=NONE ctermbg=NONE
 hi ColorColumn guibg=grey30 ctermbg=239
-hi DiffAdd guibg=#002211 guifg=NONE ctermbg=22 ctermfg=10
-hi DiffChange guibg=#000066 guifg=NONE ctermbg=22 ctermfg=10
+hi DiffAdd guibg=#002211 guifg=NONE ctermbg=22 ctermfg=NONE
+hi DiffChange guibg=#000066 guifg=NONE ctermbg=17 ctermfg=NONE
 hi DiffDelete guibg=#660000 guifg=red ctermbg=52 ctermfg=211
-hi DiffText guibg=dodgerblue4 guifg=NONE
+hi DiffText guibg=dodgerblue4 guifg=NONE ctermbg=23 ctermfg=NONE
 
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
 " --------------------
 " ---- [9.1] DRAW ----
 function! HighlightGitEnable()
-	hi GitAdd guibg=#002211 guifg=green
+	hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
 	hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
 	hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
 endfunction
