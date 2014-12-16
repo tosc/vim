@@ -305,7 +305,7 @@ nnoremap L >>
 nnoremap + $
 
 " Show the my normal and insert bindings.
-noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg
+noremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.3\]<CR> :.,$d<CR>gg
 
 " Do last recording. (Removes exmode which I never use.)
 nnoremap Q @@
@@ -496,7 +496,33 @@ function! StartDelim(kMap, nMap)
 	return rv
 endfunction
 " --------------------
-" ---- [3.2] LEADER ----
+" ---- [3.2] VISUAL ----
+" I keep pressing << >> in the wrong order. HL are good for directions.
+" Also reselects after action.
+vnoremap H <gv
+vnoremap L >gv
+
+xnoremap + $
+
+xnoremap å c<C-R>=PythonMath()<CR>
+
+" Jump to next(previous) ultisnips location if one exists,
+" else jump to next(previous) delimiter.
+snoremap <S-Space> <ESC>:call SmartJump()<CR>
+snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
+snoremap <pageup> <ESC>:call SmartJump()<CR>
+snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
+
+if !exists("g:disablePlugins")
+	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
+endif
+
+if !exists("g:disablePlugins")
+	" Remapped s to vim-surround.
+	xmap s S
+endif
+" --------------------
+" ---- [3.3] LEADER ----
 let g:mapleader="\<space>"
 
 " A
@@ -530,6 +556,8 @@ if !exists("g:disablePlugins")
 	map <leader>gc :Gcommit<CR>
 	map <leader>gd :Gdiff<CR>
 endif
+
+noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
 " H
 " Unite help when I get it working.
 " I
@@ -596,32 +624,6 @@ if !exists("g:disablePlugins")
 	map <leader>z :Unite session<CR>
 endif
 " --------------------
-" ---- [3.3] VISUAL ----
-" I keep pressing << >> in the wrong order. HL are good for directions.
-" Also reselects after action.
-vnoremap H <gv
-vnoremap L >gv
-
-xnoremap + $
-
-xnoremap å c<C-R>=PythonMath()<CR>
-
-" Jump to next(previous) ultisnips location if one exists,
-" else jump to next(previous) delimiter.
-snoremap <S-Space> <ESC>:call SmartJump()<CR>
-snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
-snoremap <pageup> <ESC>:call SmartJump()<CR>
-snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
-
-if !exists("g:disablePlugins")
-	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
-endif
-
-if !exists("g:disablePlugins")
-	" Remapped s to vim-surround.
-	xmap s S
-endif
-" --------------------
 " ---- [3.4] COMMAND ----
 cnoremap <C-BS> <C-W>
 
@@ -645,6 +647,12 @@ else
 	cnoreabbrev <expr> Git getcmdtype() == ":" && getcmdline() == "Git" ?
 						\ "!git" : "Git"
 endif
+
+" Show the my normal and insert bindings.
+cnoreabbrev <expr> g? getcmdtype() == ":" && getcmdline() == "g?" ? 
+			\ 'call OpohBuffer() <bar> setlocal syntax=vim <bar>
+			\ keepalt r ~/git/vim/.vimrc <CR> /\[3.4\]<CR>
+			\ :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg' : 'g?'
 
 " See insert for delimiterbindings.
 " --------------------
@@ -1532,16 +1540,13 @@ endfunction
 function! OpohBuffer()
 	if bufexists("[Opoh]")
 		b Opoh
-		setlocal nobuflisted
-		setlocal filetype=opoh
-		setlocal buftype=nofile
 	else
 		e [Opoh]
-		setlocal nobuflisted
-		setlocal filetype=opoh
-		setlocal buftype=nofile
 	endif
 	execute("0,$d")
+	setlocal nobuflisted
+	setlocal filetype=opoh
+	setlocal buftype=nofile
 endfunction
 
 function! FullScreenHelp(search)
