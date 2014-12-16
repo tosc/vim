@@ -112,7 +112,8 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* Fixed? BUG: All folds close on save sometimes. Fold stop working after save sometimes.
+* BUG: Backspace closes unite.
+* BUG: All folds close on save sometimes. Fold stop working after save sometimes.
 * Add button to show my names and the colors of my marks. mg? Mg? ?
 * Move my infostuff to server repo.
 * Shoud I highlight special marks?
@@ -121,14 +122,9 @@ Add a pentadactylrc with the line:
 	* todo
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
-* Find more fitting sorter for file and dir sources.
 * Add move file in unite. Press move on candidate and save that path. Move around
 using unite and press m on where to put it. Prompt with new path and yes /no.
 * BUG: US2 doesn't show in python files.
-* Split big functions into own script files in vim-script.
-	* DrawGit
-	* Jumps
-	* Tagcompletion
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
 * Fix highlightcolors for marks in terminal.

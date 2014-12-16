@@ -137,6 +137,8 @@ let g:Omnisharp_stop_server = 0
 " -------
 " ---- [2.4] UNITE ----
 if !exists("g:disablePlugins")
+	let g:osfiletypes = ["mkv","pdf","mp4","zip"]
+
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 	call unite#filters#sorter_default#use(['sorter_rank'])
@@ -158,32 +160,22 @@ if !exists("g:disablePlugins")
 	" Open a directory.
 	function! custom_open.func(candidate)
 		call unite#start_temporary([
-			\ ['dir', a:candidate.action__path],
-			\ ['fil', a:candidate.action__path],
-			\ ['fil/n', a:candidate.action__path],
-	       	 	\ ['dir/n', a:candidate.action__path]],
-			\ {'prompt' : a:candidate.action__path . '>'})
+		\ ['dir', a:candidate.action__path],
+		\ ['fil', a:candidate.action__path],
+		\ ['fil/n', a:candidate.action__path],
+		\ ['dir/n', a:candidate.action__path]],
+		\ {'prompt' : a:candidate.action__path . '>'})
 	endfunction
 	" Make bookmarks behave like a directory.
-	call unite#custom#action('bookmark', 'custom-open', custom_open)
-	call unite#custom#default_action('bookmark', 'custom-open')
-
-	let custom_help = {
-	      \ 'description' : 'open helpy',
-	      \ 'is_quit' : 0,
-	      \ 'is_start' : 1,
-	      \ }
-	" Open a directory.
-	function! custom_help.func(candidate)
-	endfunction
-	call unite#custom#action('help', 'custom-help', custom_help)
-	call unite#custom#default_action('help', 'custom-help')
+	call unite#custom#action('file', 'custom_open', custom_open)
+	call unite#custom#default_action('bookmark', 'custom_open')
 endif
 
 function! UniteExplorer()
 	let unite_path = substitute(getcwd(), '\', '/', 'g')
 
-	execute "Unite -prompt=" . unite_path . "> bookmark dir:" .
+	execute "Unite -prompt=" . unite_path .
+		\ "> bookmark -default-action=custom_open dir:" .
 		\ unite_path . " fil:" . unite_path . " fil/n:" .
 		\ unite_path . " dir/n:" . unite_path
 endfunction
@@ -478,21 +470,21 @@ autocmd Filetype tex map <buffer><leader>e :call StartTexBuilder() <cr>
 " F
 " Fetch new info from programming running with r
 " G
-map <leader>gg :!git -C %:h status<CR>
 map <leader>gc :!git -C %:h commit<CR>
-map <leader>gp :!git -C %:h push<CR> :call UpdateGitInfo()<CR>
-map <leader>gP :!git -C %:h push --force<CR> :call UpdateGitInfo()<CR>
 map <leader>gd :!git -C %:h diff<CR>
 map <leader>gD :!git -C %:h diff<CR>
 map <leader>gf :!git -C %:h fetch<CR> :call UpdateGitInfo()<CR>
 map <leader>gF :!git -C %:h pull<CR> :call UpdateGitInfo()<CR>
+map <leader>gg :!git -C %:h status<CR>
+map <leader>gp :!git -C %:h push<CR> :call UpdateGitInfo()<CR>
+map <leader>gP :!git -C %:h push --force<CR> :call UpdateGitInfo()<CR>
 " Opens a interactive menu that lets you pick what commits to use/squash.
 map <leader>gr :!git -C %:h rebase -i HEAD~
 
 if !exists("g:disablePlugins")
-	map <leader>gg :Gstatus<CR>
 	map <leader>gc :Gcommit<CR>
 	map <leader>gd :Gdiff<CR>
+	map <leader>gg :Gstatus<CR>
 endif
 
 noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
@@ -500,7 +492,7 @@ noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r 
 " Unite help when I get it working.
 " I
 map <leader>ii :Unite dir/t:~/info/ <CR>
-map <leader>in :Unite dir/n:~/info/ <CR>
+map <leader>in :Unite dir/notes:~/info/ <CR>
 " J
 " K
 " Kill program running with r
@@ -1116,10 +1108,12 @@ function! MyStatusLine()
 	if !exists("b:statusLineVar")
 		call UpdateGitInfo()
 	endif
-	if !exists("g:disablePlugins") && SyntasticStatuslineFlag() == ""
-		hi StatusLine guibg=NONE
-	else
-		hi StatusLine guibg=red
+	if !exists("g:disablePlugins")
+		if SyntasticStatuslineFlag() == ""
+			hi StatusLine guibg=NONE
+		else
+			hi StatusLine guibg=red
+		endif
 	endif
 
 	return b:statusLineVar
