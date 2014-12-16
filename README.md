@@ -114,7 +114,7 @@ Add a pentadactylrc with the line:
 
 * FIXED? BUG: All folds close on save sometimes. Fold stop working after save sometimes.
 * Move my infostuff to server repo.
-* Shoud I highlight special marks?
+* Should I highlight special marks?
 * TagGenerator
 	* helptags for vim
 	* todo
@@ -125,7 +125,6 @@ using unite and press m on where to put it. Prompt with new path and yes /no.
 * BUG: US2 doesn't show in python files.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
-* Fix highlightcolors for marks in terminal.
 
 * Add easy bind for / ? so I can use them more like f F.
 * Look at neobundle to make installation easier.

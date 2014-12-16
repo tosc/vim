@@ -1261,31 +1261,31 @@ function! HighlightGitEnable()
 	hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
 endfunction
 function! HighlightMarkEnable()
-	hi MarkA guibg=aquamarine guifg=blue
-	hi MarkB guibg=brown guifg=black
-	hi MarkC guibg=coral guifg=brown
-	hi MarkD guibg=black guifg=cyan1
-	hi MarkE guibg=black guifg=red
-	hi MarkF guibg=black guifg=yellow
-	hi MarkH guibg=lightpink guifg=hotpink
-	hi MarkI guibg=grey40 guifg=black
-	hi MarkJ guibg=red guifg=green
-	hi MarkK guibg=khaki4 guifg=white
-	hi MarkL guibg=limegreen guifg=darkgreen
-	hi MarkM guibg=goldenrod2 guifg=orange4
-	hi MarkN guibg=#002211 guifg=green
-	hi MarkO guibg=darkorange2 guifg=darkorange4
-	hi MarkP guibg=purple guifg=white
-	hi MarkQ guibg=darkcyan guifg=black
-	hi MarkR guibg=red guifg=black
-	hi MarkS guibg=black guifg=salmon
-	hi MarkT guibg=tomato guifg=black
-	hi MarkU guibg=darkblue guifg=yellow1
-	hi MarkV guibg=blue1 guifg=white
-	hi MarkW guibg=white guifg=black
-	hi MarkX guibg=black guifg=white
-	hi MarkY guibg=yellow guifg=black
-	hi MarkZ guibg=lightgreen guifg=black
+	hi MarkA guibg=aquamarine guifg=blue ctermbg=123 ctermfg=27
+	hi MarkB guibg=brown guifg=black ctermbg=130 ctermfg=0
+	hi MarkC guibg=coral guifg=brown ctermbg=173 ctermfg=130
+	hi MarkD guibg=black guifg=cyan1 ctermbg=0 ctermfg=14
+	hi MarkE guibg=black guifg=red ctermbg=0 ctermfg=1
+	hi MarkF guibg=black guifg=yellow ctermbg=0 ctermfg=11
+	hi MarkH guibg=lightpink guifg=hotpink ctermbg=211 ctermfg=201
+	hi MarkI guibg=grey40 guifg=black ctermbg=8 ctermfg=0
+	hi MarkJ guibg=red guifg=green ctermbg=9 ctermfg=40
+	hi MarkK guibg=khaki4 guifg=white ctermbg=65 ctermfg=255
+	hi MarkL guibg=limegreen guifg=darkgreen ctermbg=40 ctermfg=28
+	hi MarkM guibg=goldenrod2 guifg=orange4 ctermbg=136 ctermfg=94
+	hi MarkN guibg=#002211 guifg=green ctermbg=0 ctermfg=40
+	hi MarkO guibg=darkorange2 guifg=darkorange4 ctermbg=208 ctermfg=130
+	hi MarkP guibg=purple guifg=white ctermbg=129 ctermfg=255
+	hi MarkQ guibg=darkcyan guifg=black ctermbg=29 ctermfg=17
+	hi MarkR guibg=red guifg=black ctermbg=1 ctermfg=0
+	hi MarkS guibg=black guifg=salmon ctermbg=0 ctermfg=167
+	hi MarkT guibg=tomato guifg=black ctermbg=167 ctermfg=0
+	hi MarkU guibg=darkblue guifg=yellow1 ctermbg=19 ctermfg=11
+	hi MarkV guibg=blue1 guifg=white ctermbg=33 ctermfg=255
+	hi MarkW guibg=white guifg=black ctermbg=255 ctermfg=0
+	hi MarkX guibg=black guifg=white ctermbg=0 ctermfg=255
+	hi MarkY guibg=yellow guifg=black ctermbg=11 ctermfg=0
+	hi MarkZ guibg=lightgreen guifg=black ctermbg=156 ctermfg=0
 endfunction
 function! HighlightDrawEnable()
 	call HighlightGitEnable()
