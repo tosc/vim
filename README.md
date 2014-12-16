@@ -112,14 +112,16 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* Create a recent tags mru source.
-* Use taggenerator to create helptags for vim.
+* Move my infostuff to server repo.
+* Create a "recent tags" mru source.
+* TagGenerator
+	* helptags for vim
+	* todo
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
 * Find more fitting sorter for file and dir sources.
-* Add move in unite. Press move on candidate and save that path. Move around
+* Add move file in unite. Press move on candidate and save that path. Move around
 using unite and press m on where to put it. Prompt with new path and yes /no.
-* Add todo in my tag generator.
 * BUG: US2 doesn't show in python files.
 * Split big functions into own script files in vim-script.
 	* DrawGit
@@ -135,7 +137,6 @@ able to return the key afterwards. Will save a lot of code.)
 * Find way to bind drawgit to file movement.
 
 * Add easy bind for / ? so I can use them more like f F.
-* Look into tpope/capslock
 * Look at neobundle to make installation easier.
 * Look at syntastics spellchecker.
 * Find way to disable default US source for neocomplete.

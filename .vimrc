@@ -301,6 +301,10 @@ call BindInner('C', "'")
 nnoremap H << 
 nnoremap L >> 
 
+" Easier mark
+nnoremap M m
+nnoremap m `
+
 " Wanted a easier bind for $
 nnoremap + $
 
@@ -349,7 +353,7 @@ function! BindZ()
 	let upper = split('A B C D E F G H I J K L M N O P Q R S T U V X Y Z')
 	let chars = lower + upper
 	for char in chars
-		execute "nnoremap z" . char . " z" . char ":call DrawGit()<CR>"
+		execute "nnoremap z" . char . " z" . char ":call DrawMatches()<CR>"
 	endfor
 endfunction
 call BindZ()
@@ -582,6 +586,8 @@ endif
 " Also reselects after action.
 vnoremap H <gv
 vnoremap L >gv
+
+xnoremap + $
 
 xnoremap å c<C-R>=PythonMath()<CR>
 
@@ -1166,7 +1172,7 @@ endfunction
 " m - Nr of [m]odified [f]iles.
 " +/- - Nr of rows added / deleted.
 function! SlowStatusLine()
-	call DrawGit()
+	call DrawMatches()
 	let SlowStatusLineVar = ""
 	if &modifiable
 		let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
@@ -1288,8 +1294,61 @@ hi SignColumn guibg=NONE ctermbg=NONE
 hi ColorColumn guibg=grey30 ctermbg=239
 
 hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
+hi GitAdd guibg=NONE guifg=NONE ctermbg=22 ctermfg=10
 hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
 hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
+"[a]quamarine
+hi Marka guibg=aquamarine guifg=blue
+"[b]lack
+hi Markb guibg=black guifg=white
+"[c]oral
+hi Markc guibg=coral guifg=brown
+"[d]iamant
+hi Markd guibg=black guifg=cyan1
+"[e]rror
+hi Marke guibg=NONE guifg=red
+"[f]lourescent light
+hi Markf guibg=black guifg=yellow
+"[g]ray
+hi Markg guibg=gray guifg=gray40
+"[h]ot pink
+hi Markh guibg=lightpink guifg=hotpink
+"[i]nvisible
+hi Marki guibg=grey40 guifg=black
+"[j]ul
+hi Markj guibg=red guifg=green
+"[k]haki
+hi Markk guibg=khaki4 guifg=white
+"[l]ime -
+hi Markl guibg=limegreen guifg=darkgreen
+"[m]ustard
+hi Markm guibg=goldenrod2 guifg=orange4
+"[n]eon green
+hi Markn guibg=#002211 guifg=green
+"[o]range
+hi Marko guibg=darkorange2 guifg=darkorange4
+"[p]urple
+hi Markp guibg=purple guifg=white
+"[q]
+hi Markq guibg=darkcyan guifg=black
+"[r]ed
+hi Markr guibg=red guifg=black
+"[s]almon
+hi Marks guibg=black guifg=salmon
+"[t]omato
+hi Markt guibg=NONE guifg=tomato
+"[u]tomhus
+hi Marku guibg=darkblue guifg=yellow1
+"[v]atten
+hi Markv guibg=blue1 guifg=white
+"[w]hite
+hi Markw guibg=white guifg=black
+"[x]
+hi Markx guibg=NONE guifg=black
+"[y]ellow
+hi Marky guibg=yellow guifg=black
+"[z]
+hi Markz guibg=lightgreen guifg=black
 
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
@@ -1306,8 +1365,8 @@ autocmd BufReadPost * let &foldlevel=0
 autocmd TextChanged,TextChangedI * call clearmatches()
 autocmd TextChangedI * let g:stilldelim -= 1
 autocmd InsertEnter * call clearmatches()
-autocmd InsertLeave * call DrawGit()
-autocmd BufEnter * call DrawGit()
+autocmd InsertLeave * call DrawMatches()
+autocmd BufEnter * call DrawMatches()
 
 function! KillAllExternal()
 	if exists("g:EclimdRunning")
@@ -1536,12 +1595,21 @@ function! NoSpellCheck()
 	endif
 endfunction
 " --------------------
-" ---- [11.7] DRAW GIT ----
+" ---- [11.7] MATCH ----
 " Draws lines added/removed and edited since last commit.
 let g:teet =[]
-function! DrawGit()
-	" Clear all matches
+function! DrawMatches()
 	call clearmatches()
+	call DrawGit()
+	call DrawMark()
+endfunction
+function! DrawMark()
+	let marks = split("a b c d e f g h i j k l m n o p q r s t u v w x y z")
+	for mark in marks
+		call matchadd('Mark' . mark, "\\%'" . mark . '.')
+	endfor
+endfunction
+function! DrawGit()
 	" What part of the line to hightlight, currently a tabstop at start.
 	let pattern = '^\(\t\|[^\t]\{,' . &l:tabstop . '}\)'
 	" Get gitfolder.
@@ -1599,18 +1667,6 @@ function! DrawGit()
 			call matchadd('GitRem', remCommand)
 		endif
 	endif
-endfunction
-" --------------------
-" ---- [11.8] DRAW MARK ----
-function! DrawMark()
-	redir @z
-	silent marks
-	redir END
-	let linenrs = []
-	for line in split(getreg('z'), '\n')[1:]
-		let linenrs += [split(line)][0]
-	endfor
-	return linenrs
 endfunction
 " --------------------
 " --------------------
