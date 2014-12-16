@@ -337,21 +337,24 @@ nnoremap <C-J> <C-]>
 " Select pasted text.
 nnoremap <expr> gp '`[' . getregtype()[0] . '`]'
 
-" Reverse local and global marks and bind create mark to M
+" Reverse local and global marks and bind create mark to M (except for g)
 " and goto mark ` to m.
-noremap M m
-noremap m `
-function! BindMark(lMap, uMap)
-	execute "nnoremap M" . a:lMap . " m" . a:uMap 
-	execute "nnoremap M" . a:uMap . " m" . a:lMap 
-	execute "nnoremap m" . a:lMap . " `" . a:uMap 
-	execute "nnoremap m" . a:uMap . " `" . a:lMap 
+nnoremap M m
+nnoremap m `
+nnoremap mg? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r
+	\ ~/git/vim/.vimrc <CR> /\[9.2\]<CR>j :0,.-1d<CR>/" --------<CR>
+	\ :.,$d<CR>:call HelpMarkColor()<CR>
+function! BindMark(uMap)
+	let lMap = tolower(a:uMap)
+	execute "nnoremap M" . lMap . " m" . a:uMap 
+	execute "nnoremap M" . a:uMap . " m" . lMap 
+	execute "nnoremap m" . lMap . " `" . a:uMap 
+	execute "nnoremap m" . a:uMap . " `" . lMap 
 endfunction
+let g:marks = split("A B C D E F H I J K L M N O P Q R S T U V W X Y Z")
 function! StartBind()
-	let lower = split('a b c d e f g h i j k l m n o p q r s t u v w x y z')
-	let upper = split('A B C D E F G H I J K L M N O P Q R S T U V w X Y Z')
-	for i in range(len(lower))
-		call BindMark(lower[i], upper[i])	
+	for i in range(len(g:marks))
+		call BindMark(g:marks[i])	
 	endfor
 endfunction
 call StartBind()
@@ -829,7 +832,6 @@ autocmd FileType markdown call MDSettings()
 set foldmethod=expr
 set foldnestmax=2
 set foldopen=
-set foldlevelstart=0
 " --------------------
 " ---- [5.1] FOLDEXPR ----
 " ---- [5.1.0] GLOBAL VARIABLES ----
@@ -1259,57 +1261,30 @@ function! HighlightGitEnable()
 	hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
 endfunction
 function! HighlightMarkEnable()
-	"[a]quamarine
 	hi MarkA guibg=aquamarine guifg=blue
-	"[b]lack
 	hi MarkB guibg=black guifg=white
-	"[c]oral
 	hi MarkC guibg=coral guifg=brown
-	"[d]iamant
 	hi MarkD guibg=black guifg=cyan1
-	"[e]rror
 	hi MarkE guibg=NONE guifg=red
-	"[f]lourescent light
 	hi MarkF guibg=black guifg=yellow
-	"[g]ray
-	hi MarkG guibg=gray guifg=gray40
-	"[h]ot pink
 	hi MarkH guibg=lightpink guifg=hotpink
-	"[i]nvisible
 	hi MarkI guibg=grey40 guifg=black
-	"[j]ul
 	hi MarkJ guibg=red guifg=green
-	"[k]haki
 	hi MarkK guibg=khaki4 guifg=white
-	"[l]ime -
 	hi MarkL guibg=limegreen guifg=darkgreen
-	"[m]ustard
 	hi MarkM guibg=goldenrod2 guifg=orange4
-	"[n]eon green
 	hi MarkN guibg=#002211 guifg=green
-	"[o]range
 	hi MarkO guibg=darkorange2 guifg=darkorange4
-	"[p]urple
 	hi MarkP guibg=purple guifg=white
-	"[q]
 	hi MarkQ guibg=darkcyan guifg=black
-	"[r]ed
 	hi MarkR guibg=red guifg=black
-	"[s]almon
 	hi MarkS guibg=black guifg=salmon
-	"[t]omato
 	hi MarkT guibg=NONE guifg=tomato
-	"[u]tomhus
 	hi MarkU guibg=darkblue guifg=yellow1
-	"[v]atten
 	hi MarkV guibg=blue1 guifg=white
-	"[w]hite
 	hi MarkW guibg=white guifg=black
-	"[x]
 	hi MarkX guibg=NONE guifg=black
-	"[y]ellow
 	hi MarkY guibg=yellow guifg=black
-	"[z]
 	hi MarkZ guibg=lightgreen guifg=black
 endfunction
 function! HighlightDrawEnable()
@@ -1323,8 +1298,7 @@ function! HighlightGitDisable()
 	hi clear GitCng		
 endfunction
 function! HighlightMarkDisable()
-	let marks = split("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z")
-	for mark in marks
+	for mark in g:marks
 		execute "hi clear Mark" . mark
 	endfor
 endfunction
@@ -1332,6 +1306,33 @@ function! HighlightDrawDisable()
 	call HighlightGitDisable()
 	call HighlightMarkDisable()
 endfunction
+" --------------------
+" ---- [9.2] MARK COLORNAMES ----
+"[a]quamarine
+"[b]lack
+"[c]oral
+"[d]iamant
+"[e]rror
+"[f]lourescent light
+"[h]ot pink
+"[i]nvisible
+"[j]ul
+"[k]haki
+"[l]ime -
+"[m]ustard
+"[n]eon green
+"[o]range
+"[p]urple
+"[q]
+"[r]ed
+"[s]almon
+"[t]omato
+"[u]tomhus
+"[v]atten
+"[w]hite
+"[x]
+"[y]ellow
+"[z]
 " --------------------
 " --------------------
 " ---- [10] AUTOCMD ----
@@ -1589,9 +1590,13 @@ function! UpdateMatches()
 	endif
 endfunction
 function! AddMarkMatches()
-	let marks = split("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z")
-	for mark in marks
+	for mark in g:marks
 		call matchadd('Mark' . mark, "\\%'" . mark . '.')
+	endfor
+endfunction
+function! HelpMarkColor()
+	for i in range(len(g:marks))
+		call matchaddpos('Mark' . g:marks[i], [[i+1]])
 	endfor
 endfunction
 

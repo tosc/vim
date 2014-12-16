@@ -112,8 +112,7 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* BUG: All folds close on save sometimes. Fold stop working after save sometimes.
-* Add button to show my names and the colors of my marks. mg? Mg? ?
+* FIXED? BUG: All folds close on save sometimes. Fold stop working after save sometimes.
 * Move my infostuff to server repo.
 * Shoud I highlight special marks?
 * TagGenerator
