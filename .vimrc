@@ -432,61 +432,6 @@ noremap! <expr> <left> StartDelim('left', '')
 inoremap <expr> <space> StartDelim('space', '')
 noremap! <expr> <bs> StartDelim('bs', '')
 noremap! <expr> . StartDelim('dot', '')
-
-let g:stilldelim = 0
-let g:nextdelim = ''
-" kMap - first key of the delimiter, same as the button you will bind this to
-" nMap - the end of the delimiter. Special values are "opt" and "".
-" 		opt is for the last bind of the delimiter
-" 		'' is for keys you press after the end of a delimiter
-function! StartDelim(kMap, nMap)
-	let rv = ''
-	if g:nextdelim !~ '^$'
-		if g:stilldelim > 0
-			if g:nextdelim =~ a:kMap
-				let rv = a:kMap . "\<left>"
-			elseif g:nextdelim =~ 'opt'
-				if a:kMap =~ 'CR'
-					let rv = "\<right>\<CR>"
-				elseif a:kMap =~ 'space'
-					let rv = "\<right>\<space>"
-				elseif a:kMap =~ 'bs'
-					let rv = "\<right>\<bs>"
-				elseif a:kMap =~ 'dot'
-					let rv = "\<right>."
-				endif
-			endif
-		endif
-	endif
-
-	if rv =~ '^$'
-		if a:kMap =~ 'CR'
-			let rv = "\<CR>"
-		elseif a:kMap =~ 'left'
- 			if g:nextdelim =~ 'opt'
-				let rv = ""
-			else
-				let rv = "\<left>"
-			endif
-		elseif a:kMap =~ 'space'
-			let rv = "\<space>"
-		elseif a:kMap =~ 'bs'
-			let rv = "\<bs>"
-		elseif a:kMap =~ 'dot'
-			let rv = "."
-		else
-			let rv = a:kMap
-		endif
-	endif
-	let g:stilldelim = 2
-	if (g:nextdelim =~ '"' && a:kMap =~ '"') ||
-	 \ (g:nextdelim =~ "'" && a:kMap =~ "'")
-		let g:nextdelim = 'opt'
-	else
-		let g:nextdelim = a:nMap
-	endif
-	return rv
-endfunction
 " --------------------
 " ---- [3.2] VISUAL ----
 " I keep pressing << >> in the wrong order. HL are good for directions.
@@ -1688,16 +1633,75 @@ function! AddGitMatches()
 					let start = al[0] - 1
 					let end = al[0] + add
 					for line in range(start, end)
-						if indent(line) == 0
+						let tabpos = match(getline(line), '\t')
+						if tabpos == -1 || tabpos >= 8
 							call matchaddpos('Git' . (rem == 0 ? 'Add' : 'Cng'), [[line,1,&l:tabstop]])
-						else
+						elseif tabpos == 0
 							call matchaddpos('Git' . (rem == 0 ? 'Add' : 'Cng'), [[line,1]])
+						else
+							call matchaddpos('Git' . (rem == 0 ? 'Add' : 'Cng'), [[line,1,tabpos+1]])
 						endif
 					endfor
 				endif
 			endif	
 		endfor
 	endif
+endfunction
+" --------------------
+" ---- [11.8] AUTODELIMITER ----
+let g:stilldelim = 0
+let g:nextdelim = ''
+" kMap - first key of the delimiter, same as the button you will bind this to
+" nMap - the end of the delimiter. Special values are "opt" and "".
+" 		opt is for the last bind of the delimiter
+" 		'' is for keys you press after the end of a delimiter
+function! StartDelim(kMap, nMap)
+	let rv = ''
+	if g:nextdelim !~ '^$'
+		if g:stilldelim > 0
+			if g:nextdelim =~ a:kMap
+				let rv = a:kMap . "\<left>"
+			elseif g:nextdelim =~ 'opt'
+				if a:kMap =~ 'CR'
+					let rv = "\<right>\<CR>"
+				elseif a:kMap =~ 'space'
+					let rv = "\<right>\<space>"
+				elseif a:kMap =~ 'bs'
+					let rv = "\<right>\<bs>"
+				elseif a:kMap =~ 'dot'
+					let rv = "\<right>."
+				endif
+			endif
+		endif
+	endif
+
+	if rv =~ '^$'
+		if a:kMap =~ 'CR'
+			let rv = "\<CR>"
+		elseif a:kMap =~ 'left'
+ 			if g:nextdelim =~ 'opt'
+				let rv = ""
+			else
+				let rv = "\<left>"
+			endif
+		elseif a:kMap =~ 'space'
+			let rv = "\<space>"
+		elseif a:kMap =~ 'bs'
+			let rv = "\<bs>"
+		elseif a:kMap =~ 'dot'
+			let rv = "."
+		else
+			let rv = a:kMap
+		endif
+	endif
+	let g:stilldelim = 2
+	if (g:nextdelim =~ '"' && a:kMap =~ '"') ||
+	 \ (g:nextdelim =~ "'" && a:kMap =~ "'")
+		let g:nextdelim = 'opt'
+	else
+		let g:nextdelim = a:nMap
+	endif
+	return rv
 endfunction
 " --------------------
 " --------------------
