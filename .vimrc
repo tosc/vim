@@ -301,10 +301,6 @@ call BindInner('C', "'")
 nnoremap H << 
 nnoremap L >> 
 
-" Easier mark
-nnoremap M m
-nnoremap m `
-
 " Wanted a easier bind for $
 nnoremap + $
 
@@ -348,6 +344,8 @@ nnoremap <C-J> <C-]>
 nnoremap <expr> gp '`[' . getregtype()[0] . '`]'
 
 " Binds all fold bindings to update my gitdiff.
+noremap M m
+noremap m `
 function! BindZ()
 	let lower = split('a b c d e f g h i j k l m n o p q r s t u v x y z')
 	let upper = split('A B C D E F G H I J K L M N O P Q R S T U V X Y Z')
@@ -357,6 +355,23 @@ function! BindZ()
 	endfor
 endfunction
 call BindZ()
+
+" Reverse local and global marks and bind create mark to M
+" and goto mark ` to m.
+function! BindMark(lMap, uMap)
+	execute "nnoremap M" . a:lMap . " m" . a:uMap 
+	execute "nnoremap M" . a:uMap . " m" . a:lMap 
+	execute "nnoremap m" . a:lMap . " `" . a:uMap 
+	execute "nnoremap m" . a:uMap . " `" . a:lMap 
+endfunction
+function! StartBind()
+	let lower = split('a b c d e f g h i j k l m n o p q r s t u v w x y z')
+	let upper = split('A B C D E F G H I J K L M N O P Q R S T U V w X Y Z')
+	for i in range(len(lower))
+		call BindMark(lower[i], upper[i])	
+	endfor
+endfunction
+call StartBind()
 
 " Good avaliable binds
 " §
@@ -1298,57 +1313,57 @@ hi GitAdd guibg=NONE guifg=NONE ctermbg=22 ctermfg=10
 hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
 hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
 "[a]quamarine
-hi Marka guibg=aquamarine guifg=blue
+hi MarkA guibg=aquamarine guifg=blue
 "[b]lack
-hi Markb guibg=black guifg=white
+hi MarkB guibg=black guifg=white
 "[c]oral
-hi Markc guibg=coral guifg=brown
+hi MarkC guibg=coral guifg=brown
 "[d]iamant
-hi Markd guibg=black guifg=cyan1
+hi MarkD guibg=black guifg=cyan1
 "[e]rror
-hi Marke guibg=NONE guifg=red
+hi MarkE guibg=NONE guifg=red
 "[f]lourescent light
-hi Markf guibg=black guifg=yellow
+hi MarkF guibg=black guifg=yellow
 "[g]ray
-hi Markg guibg=gray guifg=gray40
+hi MarkG guibg=gray guifg=gray40
 "[h]ot pink
-hi Markh guibg=lightpink guifg=hotpink
+hi MarkH guibg=lightpink guifg=hotpink
 "[i]nvisible
-hi Marki guibg=grey40 guifg=black
+hi MarkI guibg=grey40 guifg=black
 "[j]ul
-hi Markj guibg=red guifg=green
+hi MarkJ guibg=red guifg=green
 "[k]haki
-hi Markk guibg=khaki4 guifg=white
+hi MarkK guibg=khaki4 guifg=white
 "[l]ime -
-hi Markl guibg=limegreen guifg=darkgreen
+hi MarkL guibg=limegreen guifg=darkgreen
 "[m]ustard
-hi Markm guibg=goldenrod2 guifg=orange4
+hi MarkM guibg=goldenrod2 guifg=orange4
 "[n]eon green
-hi Markn guibg=#002211 guifg=green
+hi MarkN guibg=#002211 guifg=green
 "[o]range
-hi Marko guibg=darkorange2 guifg=darkorange4
+hi MarkO guibg=darkorange2 guifg=darkorange4
 "[p]urple
-hi Markp guibg=purple guifg=white
+hi MarkP guibg=purple guifg=white
 "[q]
-hi Markq guibg=darkcyan guifg=black
+hi MarkQ guibg=darkcyan guifg=black
 "[r]ed
-hi Markr guibg=red guifg=black
+hi MarkR guibg=red guifg=black
 "[s]almon
-hi Marks guibg=black guifg=salmon
+hi MarkS guibg=black guifg=salmon
 "[t]omato
-hi Markt guibg=NONE guifg=tomato
+hi MarkT guibg=NONE guifg=tomato
 "[u]tomhus
-hi Marku guibg=darkblue guifg=yellow1
+hi MarkU guibg=darkblue guifg=yellow1
 "[v]atten
-hi Markv guibg=blue1 guifg=white
+hi MarkV guibg=blue1 guifg=white
 "[w]hite
-hi Markw guibg=white guifg=black
+hi MarkW guibg=white guifg=black
 "[x]
-hi Markx guibg=NONE guifg=black
+hi MarkX guibg=NONE guifg=black
 "[y]ellow
-hi Marky guibg=yellow guifg=black
+hi MarkY guibg=yellow guifg=black
 "[z]
-hi Markz guibg=lightgreen guifg=black
+hi MarkZ guibg=lightgreen guifg=black
 
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
@@ -1604,7 +1619,7 @@ function! DrawMatches()
 	call DrawMark()
 endfunction
 function! DrawMark()
-	let marks = split("a b c d e f g h i j k l m n o p q r s t u v w x y z")
+	let marks = split("A B C D E F G H I J K L M N O P Q R S T U V W X Y Z")
 	for mark in marks
 		call matchadd('Mark' . mark, "\\%'" . mark . '.')
 	endfor

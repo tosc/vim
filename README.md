@@ -112,8 +112,12 @@ Add a pentadactylrc with the line:
 
 # TODO
 
+* Add slow draw git command that runs git and then the normal one that filters
+	lines for matching. Slow git updates on save insert exit other one on
+	folds and movement.
+* Should I filter marks?
 * Move my infostuff to server repo.
-* Create a "recent tags" mru source.
+* Shoud I highlight special marks?
 * TagGenerator
 	* helptags for vim
 	* todo
@@ -133,8 +137,7 @@ able to return the key afterwards. Will save a lot of code.)
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
 * BUG: When saving xml vim gives an error. Seems to be eclim who's doing it.
-* Highlight marks
-* Find way to bind drawgit to file movement.
+* Fix highlightcolors for marks in terminal.
 
 * Add easy bind for / ? so I can use them more like f F.
 * Look at neobundle to make installation easier.
