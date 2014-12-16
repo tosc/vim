@@ -397,8 +397,7 @@ if !exists("g:disablePlugins")
 	inoremap <TAB> <C-R>=NeoTab()<CR>
 else
 	" Simple tabcompletion.
-	inoremap <expr><TAB> getline('.') =~ '\S' ? '<C-X><C-N>' : '<TAB>'
-	inoremap <C-M> <C-X><C-N>
+	inoremap <expr><TAB> getline(".")[col('.') - 2] =~ '\w' ? '<C-X><C-N>' : StartDelim("\<TAB>", "")
 endif
 
 " Jump to next(previous) ultisnips location if one exists, 
@@ -414,7 +413,7 @@ inoremap <C-E> <end>
 inoremap <C-K> <C-O>D
 
 " Pressing enter chooses completion if completion window is up.
-inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : StartDelim('CR', '')
+inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : StartDelim("\<CR>", '')
 
 " Easier delimiters.
 inoremap {{ {<cr><cr>}<up><TAB>
@@ -428,9 +427,10 @@ noremap! <expr> [ StartDelim('[', ']')
 noremap! <expr> ] StartDelim(']', 'opt')
 noremap! <expr> " StartDelim('"', '"')
 noremap! <expr> ' StartDelim("'", "'")
-noremap! <expr> <left> StartDelim('left', '')
-inoremap <expr> <space> StartDelim('space', '')
-noremap! <expr> <bs> StartDelim('bs', '')
+noremap! <expr> <left> StartDelim("\<left>", '')
+inoremap <expr> <space> StartDelim("\<space>", '')
+noremap! <expr> <bs> StartDelim("\<bs>", '')
+noremap! <expr> , StartDelim(",", '')
 noremap! <expr> . StartDelim('dot', '')
 " --------------------
 " ---- [3.2] VISUAL ----
@@ -1373,7 +1373,7 @@ endfunction
 " ---- [11] FUNCTIONS ----
 " ---- [11.0] TABCOMPLETION ----
 function! NeoTab()
-	if getline('.') =~ '\S'
+	if getline(".")[col('.') - 2] =~ '\w'
 		call UltiSnips#ExpandSnippet()
 		if g:ulti_expand_res == 1
 			return ""
@@ -1388,7 +1388,7 @@ function! NeoTab()
 		endif
 		return longestCommon
 	endif
-	return "\<TAB>"
+	return StartDelim("\<TAB>", "")
 endfunction
 
 function! NeoLongestCommon()
@@ -1419,9 +1419,8 @@ function! NeoLongestCommon()
 	endif
 	return longestCommon
 endfunction
-
 function! MinimalTab()
-	if getline(".")[col('.') - 2] =~ '\S'
+	if getline(".")[col('.') - 2] =~ '\w'
 		call UltiSnips#ExpandSnippet()
 		if g:ulti_expand_res
 			return ""
@@ -1429,7 +1428,7 @@ function! MinimalTab()
 			return (pumvisible() ? "\<C-E>" : "") . s:CompletionCommand
 		endif
 	else
-		return "\<TAB>"
+		return StartDelim("\<TAB>", "")
 	endif
 endfunction
 
@@ -1656,44 +1655,8 @@ let g:nextdelim = ''
 " 		opt is for the last bind of the delimiter
 " 		'' is for keys you press after the end of a delimiter
 function! StartDelim(kMap, nMap)
-	let rv = ''
-	if g:nextdelim !~ '^$'
-		if g:stilldelim > 0
-			if g:nextdelim =~ a:kMap
-				let rv = a:kMap . "\<left>"
-			elseif g:nextdelim =~ 'opt'
-				if a:kMap =~ 'CR'
-					let rv = "\<right>\<CR>"
-				elseif a:kMap =~ 'space'
-					let rv = "\<right>\<space>"
-				elseif a:kMap =~ 'bs'
-					let rv = "\<right>\<bs>"
-				elseif a:kMap =~ 'dot'
-					let rv = "\<right>."
-				endif
-			endif
-		endif
-	endif
-
-	if rv =~ '^$'
-		if a:kMap =~ 'CR'
-			let rv = "\<CR>"
-		elseif a:kMap =~ 'left'
- 			if g:nextdelim =~ 'opt'
-				let rv = ""
-			else
-				let rv = "\<left>"
-			endif
-		elseif a:kMap =~ 'space'
-			let rv = "\<space>"
-		elseif a:kMap =~ 'bs'
-			let rv = "\<bs>"
-		elseif a:kMap =~ 'dot'
-			let rv = "."
-		else
-			let rv = a:kMap
-		endif
-	endif
+	let stilldelim = g:stilldelim
+	let nextdelim = g:nextdelim
 	let g:stilldelim = 2
 	if (g:nextdelim =~ '"' && a:kMap =~ '"') ||
 	 \ (g:nextdelim =~ "'" && a:kMap =~ "'")
@@ -1701,7 +1664,21 @@ function! StartDelim(kMap, nMap)
 	else
 		let g:nextdelim = a:nMap
 	endif
-	return rv
+	if nextdelim !~ '^$' && stilldelim > 0
+		if nextdelim =~ a:kMap
+			return a:kMap . "\<left>"
+		elseif nextdelim =~ 'opt'
+			if a:kMap =~ 'dot'
+				return "\<right>."
+			elseif a:nMap =~ '^$'
+				return "\<right>" . a:kMap
+			endif
+		endif
+	endif
+	if a:kMap =~ 'dot'
+		return "."
+	endif
+	return a:kMap
 endfunction
 " --------------------
 " --------------------

@@ -129,8 +129,6 @@ using unite and press m on where to put it. Prompt with new path and yes /no.
 	* DrawGit
 	* Jumps
 	* Tagcompletion
-* Make my delimiter function prettier. (Use key for comparison so I will be
-able to return the key afterwards. Will save a lot of code.)
 * BUG: Delimiter stops h abbrev from working. Currently disabled space delimiter.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
