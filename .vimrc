@@ -141,7 +141,7 @@ if !exists("g:disablePlugins")
 
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
-	call unite#filters#sorter_default#use(['sorter_rank'])
+	call unite#filters#sorter_default#use(['sorter_ftime', 'sorter_reverse'])
 	call unite#custom#profile('default', 'context', {
 				\ 'start_insert' : 1,
 				\ 'smartcase' : 1,
@@ -585,7 +585,8 @@ cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ?
 function! UniteBinds()
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <ESC> <Plug>(unite_all_exit)
-	nnoremap <buffer> <BS> <Plug>()
+	inoremap <buffer> <BS> <BS>
+	nmap <buffer> <BS> <Plug>(unite_insert_enter)
 	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 	imap <buffer> <TAB> <Plug>(unite_select_next_line)
@@ -600,7 +601,7 @@ function! FugitiveBindings()
 	" Fast movement for :GStatus
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
-	nmap <buffer> <esc> q
+	nmap <buffer> <esc> :bd<cr>
 endfunction
 " --------------------
 " ---- [3.7] OPOHBUFFER ----

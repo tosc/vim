@@ -112,7 +112,6 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* BUG: Backspace closes unite.
 * BUG: All folds close on save sometimes. Fold stop working after save sometimes.
 * Add button to show my names and the colors of my marks. mg? Mg? ?
 * Move my infostuff to server repo.
