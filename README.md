@@ -118,10 +118,11 @@ Add a pentadactylrc with the line:
 	* todo
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
-* Make move rm delete selectable in unite.
+* Make move rm selectable in unite.
 * BUG: US2 doesn't show in python files.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
+* Make my draw into a real plugin.
 
 * Add easy bind for / ? so I can use them more like f F.
 * Look at neobundle to make installation easier.

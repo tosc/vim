@@ -632,6 +632,8 @@ function! UniteBinds()
 	nmap <buffer> <ESC> :call UniteExit()<CR>
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <BS> <Plug>(unite_insert_enter)
+	nnoremap <silent><buffer><expr> dd unite#do_action('rm')
+	nnoremap <silent><buffer><expr> cc unite#do_action('move')
 	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 	imap <buffer> <TAB> <Plug>(unite_select_next_line)
