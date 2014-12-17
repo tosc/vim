@@ -141,8 +141,7 @@ if !exists("g:disablePlugins")
 
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
-	call unite#filters#sorter_default#use(['sorter_ftime', 'sorter_reverse', 'sorter_dots'])
-	"call unite#filters#sorter_default#use(['sorter_dots'])
+	call unite#filters#sorter_default#use(['sorter_ftime', 'sorter_reverse'])
 	call unite#custom#profile('default', 'context', {
 				\ 'start_insert' : 1,
 				\ 'smartcase' : 1,
@@ -162,27 +161,32 @@ if !exists("g:disablePlugins")
 	function! custom_open.func(candidate)
 		let g:unite_bookmark_source = 0
 		let g:unite_path = a:candidate.action__path
-		call unite#start_temporary([
-		\ ['dir', g:unite_path],
-		\ ['fil', g:unite_path],
-		\ ['fil/n', g:unite_path],
-		\ ['dir/n', g:unite_path]],
-		\ {'prompt' : g:unite_path . '>'})
+		call UniteExplorer()
 	endfunction
 	" Make bookmarks behave like a directory.
 	call unite#custom#action('file', 'custom_open', custom_open)
 	call unite#custom#default_action('bookmark', 'custom_open')
 endif
 
-function! UniteExplorer()
+function! UniteExplorerStart()
+	let g:file_to_move = ''
+	hi UniteInputPrompt guibg=NONE guifg=palegreen
 	let g:unite_bookmark_source = 0
 	if !exists("g:unite_path")
 		let g:unite_path = substitute(getcwd(), '\', '/', 'g')
 	endif
-
-	execute "Unite -prompt=" . g:unite_path .
-		\ "> dir:" . g:unite_path . " fil:" . g:unite_path . 
-		\ " fil/n:" . g:unite_path . " dir/n:" . g:unite_path
+	call UniteExplorer()
+endfunction
+function! UniteExplorer()
+	call unite#start([
+		\ ['move', g:unite_path],
+		\ ['dots', g:unite_path],
+		\ ['dir', g:unite_path],
+		\ ['fil', g:unite_path],
+		\ ['fil/n', g:unite_path],
+		\ ['dir/n', g:unite_path]],
+		\ {'prompt' : g:unite_path . '>'})
+	call unite#mappings#narrowing("", 0)
 endfunction
 function! UniteFileSwitcher()
 	execute 'Unite buffer file_mru'
@@ -194,9 +198,34 @@ function! OpenBookmarkSource()
 endfunction
 function! UniteExit()
 	if g:unite_bookmark_source
-		call UniteExplorer()
+		call UniteExplorerStart()
 	else
 		execute "normal \<Plug>(unite_all_exit)"
+	endif
+	let g:file_to_move = ''
+	hi UniteInputPrompt guibg=NONE guifg=palegreen
+endfunction
+" Convert unite args to path.
+function! UniteParsePath(args)
+	let path = unite#util#substitute_path_separator(
+		 \ unite#util#expand(join(a:args, ':')))
+	let path = unite#util#substitute_path_separator(
+		 \ fnamemodify(path, ':p'))
+
+	return path
+endfunction
+function! UniteFixPath(path)
+	if has('unix')
+		if a:path =~ '\.\.$'
+			let path = fnamemodify(a:path . '/', ':p')
+		else
+			let path = a:path
+		endif
+		return substitute(path, '//', '/', 'g')
+	elseif has('win32')
+		let path = fnamemodify(a:path, ':p')
+		let splitWord = split(path, '\')
+		return join(splitWord, '/')
 	endif
 endfunction
 " --------------------
@@ -328,7 +357,7 @@ if !exists("g:disablePlugins")
 	nnoremap ä :Unite line -custom-line-enable-highlight<CR>
 
 	nnoremap ö :call UniteFileSwitcher()<CR>
-	nnoremap Ö :call UniteExplorer()<CR>
+	nnoremap Ö :call UniteExplorerStart()<CR>
 else
 	nnoremap ä /
 	nnoremap ö :e
@@ -507,8 +536,8 @@ noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r 
 " H
 " Unite help when I get it working.
 " I
-map <leader>ii :Unite dir/t:~/info/ <CR>
-map <leader>in :Unite dir/notes:~/info/ <CR>
+map <leader>ii :Unite tags:~/info/ <CR>
+map <leader>in :Unite notes:~/info/ <CR>
 " J
 " K
 " Kill program running with r
@@ -523,7 +552,7 @@ endif
 map <leader>n :bn <CR>
 " O
 map <leader>o :call UniteFileSwitcher()<CR>
-map <leader>O :call UniteExplorer()<CR>
+map <leader>O :call UniteExplorerStart()<CR>
 " P
 map <leader>p :bp <CR>
 " Q
@@ -950,9 +979,9 @@ endfunction
 " ---- [5.1.3] VIM ----
 function! VimrcFolding(lnum)
 	let line = getline(a:lnum)
-	if line =~ '^\" ---- '
+	if line =~ '^\" ---- ' || line =~ '^function'
 		return 'a1'
-	elseif line =~ '^\" -----'
+	elseif line =~ '^\" -----' || line =~ '^endfunction'
 		return 's1'
 	else
 		return '='

@@ -112,17 +112,13 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* FIXED? BUG: All folds close on save sometimes. Fold stop working after save sometimes.
 * Move my infostuff to server repo.
-* Should I highlight special marks?
 * TagGenerator
 	* helptags for vim
 	* todo
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
-* Add move file in unite. Press move on candidate and save that path. Move around
-using unite and press m on where to put it. Prompt with new path and yes /no.
-* Add rename and delete file in unite. Prompt before.
+* Make move rm delete selectable in unite.
 * BUG: US2 doesn't show in python files.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
