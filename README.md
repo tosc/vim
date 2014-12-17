@@ -112,6 +112,8 @@ Add a pentadactylrc with the line:
 
 # TODO
 
+* Change my snippet function to non volatile. Save the snippets.
+* Get more information from my jedi completion.
 * Move my infostuff to server repo.
 * TagGenerator
 	* helptags for vim
@@ -119,10 +121,8 @@ Add a pentadactylrc with the line:
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
 * Make move rm selectable in unite.
-* BUG: US2 doesn't show in python files.
-* Move from using my filteromni to making an own complete longest common
- function. With this I can use fuzzy but still have my tabcompletion.
 * Make my draw into a real plugin.
+* Move my sources to vim-scripts.
 * Show insert/normal mode better in unite.
 * Echo result of rm mv add. Echomsg?
 

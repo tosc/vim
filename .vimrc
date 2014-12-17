@@ -84,7 +84,6 @@ else
 	Plugin 'JazzCore/neocomplcache-ultisnips'
 endif
 	" Omnicomplete engines.
-	Plugin 'davidhalter/jedi-vim'
 	Plugin 'Rip-Rip/clang_complete'
 	Plugin 'OmniSharp/omnisharp-vim'
 
@@ -251,6 +250,7 @@ let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
 " ---- [2.7] NEOCOMPLETE ----
 let g:neocomplete#enable_at_startup = 1
+let g:neocomplete#skip_auto_completion_time = ''
 
 if !exists('g:neocomplete#keyword_patterns')
 	let g:neocomplete#keyword_patterns = {}
@@ -267,7 +267,6 @@ if !exists('g:neocomplete#force_omni_input_patterns')
         let g:neocomplete#force_omni_input_patterns = {}
 endif
 let g:neocomplete#force_overwrite_completefunc = 1
-let g:neocomplete#force_omni_input_patterns.python = '\h\w*\|[^.\t]\.\w*'
 let g:neocomplete#force_omni_input_patterns.c =
 	\ '[^.[:digit:] *\t]\%(\.\|->\)\w*'
 let g:neocomplete#force_omni_input_patterns.cpp =
@@ -287,18 +286,7 @@ let g:neocomplete#enable_fuzzy_completion = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 " --------------------
-" ---- [2.8] JEDI ----
-"let g:jedi#auto_initialization = 0
-let g:jedi#auto_vim_configuration = 0
-let g:jedi#completions_enabled = 0
-let g:jedi#popup_select_first = 0
-let g:jedi#usages_command = "<NOP>"
-let g:jedi#rename_command = "<NOP>"
-let g:jedi#documentation_command = "<NOP>"
-let g:jedi#goto_definitions_command = "<NOP>"
-let g:jedi#goto_assignments_command = "<NOP>"
-" --------------------
-" ---- [2.9] SYNTASTIC ----
+" ---- [2.8] SYNTASTIC ----
 let g:syntastic_mode_map = { "mode": "active",
 			   \ "active_filetypes": [],
 			   \ "passive_filetypes": ["vim"] }
@@ -740,7 +728,7 @@ autocmd Filetype todo call TODOSettings()
 " --------------------
 " ---- [4.7] PYTHON ----
 function! PythonSettings()
-	setlocal omnifunc=PythonOmni
+	setlocal omnifunc=
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	if !exists("g:disablePlugins")
@@ -749,12 +737,6 @@ function! PythonSettings()
 			let g:neocomplcache_omni_patterns.python = '.*'
 		endif
 	endif
-endfunction
-
-function! PythonOmni(findstart, base)
-	call jedi#complete_string(0)
-	let words = jedi#completions(a:findstart, a:base)
-	return FilterOmni(words, a:findstart, a:base)
 endfunction
 
 autocmd Filetype python call PythonSettings()
@@ -1466,6 +1448,60 @@ function! FilterOmni(words, findstart, base)
 	else
 		return filter(a:words, 'match(v:val["word"], a:base)==0')
 	endif
+endfunction
+
+function! GetSnippetFiletypes()
+	let filetypes = []
+	if &l:filetype != ''
+		let filetypes += [&l:filetype]
+		if &l:filetype == 'plaintex'
+			let filetypes += ['tex']
+		elseif &l:filetype == 'cpp'
+			let filetypes += ['c']
+		endif
+	endif
+	let filetypes += ['all']
+	return filetypes
+endfunction
+
+let g:active_snippets = []
+function! GetActiveSnippets()
+	let g:active_snippets = []
+	let filetypes = s:get_snippet_filetypes()
+	let takenTriggers = []
+	let suggestions = []
+	for filetype in filetypes
+		let command = 'cat ~/git/vim/UltiSnips/' . filetype . '.snippets | grep "^snippet"'
+		let snippetList = split((exists("*vimproc#system") ? vimproc#system(command) : system(command)), "\n")
+		for snippet in snippetList
+			let tempList = split(snippet, '"')
+			if len(tempList) > 2
+				let rawDescription = split(snippet, '"')[-2]
+				if rawDescription =~ ':'
+					let descriptionList = split(rawDescription, ':')
+					let description = descriptionList[0]
+					let rawTriggers = descriptionList[1]
+					if rawTriggers != '' 
+						if rawTriggers =~ '|'
+							let triggers = split(rawTriggers, '|')
+						else
+							let triggers = [rawTriggers]
+						endif
+						for trigger in triggers
+							if index(takenTriggers,	trigger) == -1
+								call add(takenTriggers, trigger)
+								call add(suggestions, {
+								 \ 'word' : trigger,
+								 \ 'menu' : self.mark . ' ' . description . ' [' . filetype . ']'
+								 \ })
+							endif
+						endfor
+					endif
+				endif
+			endif
+		endfor
+	endfor
+	return suggestions
 endfunction
 " --------------------
 " ---- [11.1] SESSION ----
