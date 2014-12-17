@@ -123,6 +123,8 @@ get more output from program.
 * Move from using my filteromni to making an own complete longest common
  function. With this I can use fuzzy but still have my tabcompletion.
 * Make my draw into a real plugin.
+* Show insert/normal mode better in unite.
+* Echo result of rm mv add. Echomsg?
 
 * Add easy bind for / ? so I can use them more like f F.
 * Look at neobundle to make installation easier.

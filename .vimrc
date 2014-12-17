@@ -137,6 +137,7 @@ let g:Omnisharp_stop_server = 0
 " -------
 " ---- [2.4] UNITE ----
 if !exists("g:disablePlugins")
+	let g:unite_force_overwrite_statusline = 0
 	let g:osfiletypes = ["mkv","pdf","mp4","zip"]
 
 	call unite#custom#default_action('buffer', 'goto')
@@ -151,21 +152,6 @@ if !exists("g:disablePlugins")
 				\ 'update_time' : 300,
 				\ 'cursor_line_highlight' : 'TabLine'
 				\ })
-
-	let custom_open = {
-	      \ 'description' : 'open files or open directory',
-	      \ 'is_quit' : 0,
-	      \ 'is_start' : 1,
-	      \ }
-	" Open a directory.
-	function! custom_open.func(candidate)
-		let g:unite_bookmark_source = 0
-		let g:unite_path = a:candidate.action__path
-		call UniteExplorer()
-	endfunction
-	" Make bookmarks behave like a directory.
-	call unite#custom#action('file', 'custom_open', custom_open)
-	call unite#custom#default_action('bookmark', 'custom_open')
 endif
 
 function! UniteExplorerStart()
@@ -194,7 +180,7 @@ endfunction
 let g:unite_bookmark_source = 0
 function! OpenBookmarkSource()
 	let g:unite_bookmark_source = 1
-	execute "Unite -prompt=bookmark> bookmark -default-action=custom_open"
+	execute "Unite -prompt=bookmark> bmark"
 endfunction
 function! UniteExit()
 	if g:unite_bookmark_source
