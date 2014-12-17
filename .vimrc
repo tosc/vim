@@ -141,7 +141,8 @@ if !exists("g:disablePlugins")
 
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
-	call unite#filters#sorter_default#use(['sorter_ftime', 'sorter_reverse'])
+	call unite#filters#sorter_default#use(['sorter_ftime', 'sorter_reverse', 'sorter_dots'])
+	"call unite#filters#sorter_default#use(['sorter_dots'])
 	call unite#custom#profile('default', 'context', {
 				\ 'start_insert' : 1,
 				\ 'smartcase' : 1,
@@ -159,12 +160,14 @@ if !exists("g:disablePlugins")
 	      \ }
 	" Open a directory.
 	function! custom_open.func(candidate)
+		let g:unite_bookmark_source = 0
+		let g:unite_path = a:candidate.action__path
 		call unite#start_temporary([
-		\ ['dir', a:candidate.action__path],
-		\ ['fil', a:candidate.action__path],
-		\ ['fil/n', a:candidate.action__path],
-		\ ['dir/n', a:candidate.action__path]],
-		\ {'prompt' : a:candidate.action__path . '>'})
+		\ ['dir', g:unite_path],
+		\ ['fil', g:unite_path],
+		\ ['fil/n', g:unite_path],
+		\ ['dir/n', g:unite_path]],
+		\ {'prompt' : g:unite_path . '>'})
 	endfunction
 	" Make bookmarks behave like a directory.
 	call unite#custom#action('file', 'custom_open', custom_open)
@@ -172,15 +175,29 @@ if !exists("g:disablePlugins")
 endif
 
 function! UniteExplorer()
-	let unite_path = substitute(getcwd(), '\', '/', 'g')
+	let g:unite_bookmark_source = 0
+	if !exists("g:unite_path")
+		let g:unite_path = substitute(getcwd(), '\', '/', 'g')
+	endif
 
-	execute "Unite -prompt=" . unite_path .
-		\ "> bookmark -default-action=custom_open dir:" .
-		\ unite_path . " fil:" . unite_path . " fil/n:" .
-		\ unite_path . " dir/n:" . unite_path
+	execute "Unite -prompt=" . g:unite_path .
+		\ "> dir:" . g:unite_path . " fil:" . g:unite_path . 
+		\ " fil/n:" . g:unite_path . " dir/n:" . g:unite_path
 endfunction
 function! UniteFileSwitcher()
 	execute 'Unite buffer file_mru'
+endfunction
+let g:unite_bookmark_source = 0
+function! OpenBookmarkSource()
+	let g:unite_bookmark_source = 1
+	execute "Unite -prompt=bookmark> bookmark -default-action=custom_open"
+endfunction
+function! UniteExit()
+	if g:unite_bookmark_source
+		call UniteExplorer()
+	else
+		execute "normal \<Plug>(unite_all_exit)"
+	endif
 endfunction
 " --------------------
 " ---- [2.5] NEOCOMPLCACHE ----
@@ -308,7 +325,7 @@ nnoremap zV zMzv
 
 if !exists("g:disablePlugins")
 	" Search file using unite.
-	nnoremap ä :Unite line -auto-preview -custom-line-enable-highlight<CR>
+	nnoremap ä :Unite line -custom-line-enable-highlight<CR>
 
 	nnoremap ö :call UniteFileSwitcher()<CR>
 	nnoremap Ö :call UniteExplorer()<CR>
@@ -582,14 +599,15 @@ cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ?
 " --------------------
 " ---- [3.5] UNITE ----
 function! UniteBinds()
+	nmap <buffer> b :call OpenBookmarkSource()<CR>
+	nmap <buffer> <ESC> :call UniteExit()<CR>
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
-	nmap <buffer> <ESC> <Plug>(unite_all_exit)
-	inoremap <buffer> <BS> <BS>
 	nmap <buffer> <BS> <Plug>(unite_insert_enter)
 	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 	imap <buffer> <TAB> <Plug>(unite_select_next_line)
 	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
+	inoremap <buffer> <BS> <BS>
 	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
 endfunction
