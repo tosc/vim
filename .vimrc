@@ -217,11 +217,7 @@ let g:clang_auto_select = 0
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
-" ---- [2.7] FASTFOLD ----
-let g:fastfold_togglehook = 0
-let g:fastfold_map = 1
-" --------------------
-" ---- [2.8] NEOCOMPLETE ----
+" ---- [2.7] NEOCOMPLETE ----
 let g:neocomplete#enable_at_startup = 1
 
 if !exists('g:neocomplete#keyword_patterns')
@@ -259,7 +255,7 @@ let g:neocomplete#enable_fuzzy_completion = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 " --------------------
-" ---- [2.9] JEDI ----
+" ---- [2.8] JEDI ----
 "let g:jedi#auto_initialization = 0
 let g:jedi#auto_vim_configuration = 0
 let g:jedi#completions_enabled = 0
@@ -270,7 +266,7 @@ let g:jedi#documentation_command = "<NOP>"
 let g:jedi#goto_definitions_command = "<NOP>"
 let g:jedi#goto_assignments_command = "<NOP>"
 " --------------------
-" ---- [2.10] SYNTASTIC ----
+" ---- [2.9] SYNTASTIC ----
 let g:syntastic_mode_map = { "mode": "active",
 			   \ "active_filetypes": [],
 			   \ "passive_filetypes": ["vim"] }
@@ -1342,7 +1338,7 @@ autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
 
 " To make FastFold calculate the folds when you open a file.
-autocmd BufReadPost * let &foldlevel=0
+autocmd BufReadPost * normal zuz
 
 autocmd TextChanged,TextChangedI * call HighlightGitDisable()
 autocmd TextChangedI * let g:stilldelim -= 1
