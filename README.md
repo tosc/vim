@@ -112,21 +112,25 @@ Add a pentadactylrc with the line:
 
 # TODO
 
+* Delim unpredictable.
+* Not sure my move and rm is perfect.
+* BUG: .. doesn't work at the top.
+	* Write custom helpfixpaths instead of the ones I use currently.
+* Get more information from my jedi completion.
 * Change my snippet function to non volatile. Save the snippets.
 * TagGenerator
 	* helptags for vim
 	* todo
-* Create unite source for external commands. Switch to that unite buffer to 
-get more output from program.
-* Make move rm selectable in unite.
-* Make my draw into a real plugin.
 * Show insert/normal mode better in unite.
-* Echo result of rm mv add. Echomsg?
 * Move my infostuff to server repo.
 * Move my sources to vim-scripts.
-* Get more information from my jedi completion.
+* Echo result of rm mv add. Echomsg?
+* Create unite source for external commands. Switch to that unite buffer to 
+get more output from program.
+* Make my draw into a real plugin.
+* Find way to disable default US source for neocomplete.
+* Download all external binaries for windows and put them at a convenient
+	location to make installing vim easier.
+* Better names and sorting for ö.
 
 * Add easy bind for / ? so I can use them more like f F.
-* Look at neobundle to make installation easier.
-* Look at syntastics spellchecker.
-* Find way to disable default US source for neocomplete.

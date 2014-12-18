@@ -158,7 +158,7 @@ function! UniteExplorerStart()
 	hi UniteInputPrompt guibg=NONE guifg=palegreen
 	let g:unite_bookmark_source = 0
 	if !exists("g:unite_path")
-		let g:unite_path = substitute(getcwd(), '\', '/', 'g')
+		let g:unite_path = UniteFixPath(getcwd()) . '/'
 	endif
 	call UniteExplorer()
 endfunction
@@ -190,27 +190,12 @@ function! UniteExit()
 	let g:files_to_move = []
 	hi UniteInputPrompt guibg=NONE guifg=palegreen
 endfunction
-" Convert unite args to path.
-function! UniteParsePath(args)
-	let path = unite#util#substitute_path_separator(
-		 \ unite#util#expand(join(a:args, ':')))
-	let path = unite#util#substitute_path_separator(
-		 \ fnamemodify(path, ':p'))
-
-	return path
-endfunction
 function! UniteFixPath(path)
 	if has('unix')
-		if a:path =~ '\.\.$'
-			let path = fnamemodify(a:path . '/', ':p')
-		else
-			let path = a:path
-		endif
+		let path = a:path
 		return substitute(path, '//', '/', 'g')
 	elseif has('win32')
-		let path = fnamemodify(a:path, ':p')
-		let splitWord = split(path, '\')
-		return join(splitWord, '/')
+		return substitute(a:path, '\', '/', 'g')
 	endif
 endfunction
 " --------------------
