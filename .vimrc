@@ -141,7 +141,7 @@ if !exists("g:disablePlugins")
 
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
-	call unite#filters#sorter_default#use(['sorter_ftime', 'sorter_reverse'])
+	call unite#filters#sorter_default#use(['sorter_rank'])
 	call unite#custom#profile('default', 'context', {
 				\ 'start_insert' : 1,
 				\ 'smartcase' : 1,
@@ -157,11 +157,11 @@ function! UniteExplorerStart()
 	let g:files_to_move =  []
 	hi UniteInputPrompt guibg=NONE guifg=palegreen
 	let g:unite_bookmark_source = 0
-	call UniteExplorer(UniteFixPath(getcwd()) . '/')
+	if !exists('g:unite_path')
+		let g:unite_path = UniteFixPath(getcwd()) . '/'
+	endif
+	call UniteExplorer(g:unite_path)
 endfunction
-if !exists('g:unite_path')
-	let g:unite_path = ''
-endif
 " Takes first argument as path to open my explorer in. If no argument is given
 " then path of last explorer is used.
 function! UniteExplorer(...)
@@ -417,22 +417,21 @@ inoremap <C-K> <C-O>D
 inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : StartDelim("\<CR>", '')
 
 " Easier delimiters.
-inoremap {{ {<cr><cr>}<up><TAB>
-noremap! <expr> { StartDelim('{', '}')
-noremap! <expr> } StartDelim('}', 'opt')
-noremap! <expr> ( StartDelim('(', ')')
-noremap! <expr> ) StartDelim(')', 'opt')
-noremap! <expr> < StartDelim('<', '>')
-noremap! <expr> > StartDelim('>', 'opt')
-noremap! <expr> [ StartDelim('[', ']')
-noremap! <expr> ] StartDelim(']', 'opt')
-noremap! <expr> " StartDelim('"', '"')
+noremap! <expr> { StartDelim("{", "}")
+noremap! <expr> } StartDelim("}", "opt")
+noremap! <expr> ( StartDelim("(", ")")
+noremap! <expr> ) StartDelim(")", "opt")
+noremap! <expr> < StartDelim("<", ">")
+noremap! <expr> > StartDelim(">", "opt")
+noremap! <expr> [ StartDelim("[", "]")
+noremap! <expr> ] StartDelim("]", "opt")
+noremap! <expr> " StartDelim("\"", "\"")
 noremap! <expr> ' StartDelim("'", "'")
-noremap! <expr> <left> StartDelim("\<left>", '')
-noremap! <expr> <space> StartDelim("\<space>", '')
-noremap! <expr> <bs> StartDelim("\<bs>", '')
-noremap! <expr> , StartDelim(",", '')
-noremap! <expr> . StartDelim('dot', '')
+noremap! <expr> <left> StartDelim("\<left>", "")
+noremap! <expr> <space> StartDelim("\<space>", "")
+noremap! <expr> <bs> StartDelim("\<bs>", "")
+noremap! <expr> , StartDelim(",", "")
+noremap! <expr> . StartDelim(".", "")
 " --------------------
 " ---- [3.2] VISUAL ----
 " I keep pressing << >> in the wrong order. HL are good for directions.
@@ -1351,7 +1350,7 @@ autocmd BufEnter * call UpdateGitInfo()
 autocmd BufReadPost * normal zuz
 
 autocmd TextChanged,TextChangedI * call HighlightGitDisable()
-autocmd TextChangedI * let g:stilldelim -= 1
+autocmd TextChangedI * let g:delimInfo.counter -= 1
 autocmd InsertEnter * call HighlightDrawDisable()
 autocmd InsertLeave * call HighlightDrawEnable()
 autocmd BufEnter * call UpdateMatches()
@@ -1707,40 +1706,46 @@ function! AddGitMatches()
 endfunction
 " --------------------
 " ---- [11.8] AUTODELIMITER ----
-let g:stilldelim = 0
-let g:nextdelim = ''
-let g:prevdelim = ''
+let g:delimInfo = {'counter' : 0, 'next' : "", 'prev' : ""}
 " kMap - first key of the delimiter, same as the button you will bind this to
 " nMap - the end of the delimiter. Special values are "opt" and "".
 " 		opt is for the last bind of the delimiter
 " 		'' is for keys you press after the end of a delimiter
 function! StartDelim(kMap, nMap)
-	let nextdelim = g:nextdelim
-	let prevdelim = g:prevdelim
-	let stilldelim = g:stilldelim
-	if (g:nextdelim =~ '"' && a:kMap =~ '"') ||
-	 \ (g:nextdelim =~ "'" && a:kMap =~ "'")
-		let g:nextdelim = 'opt'
+	let nextdelim = g:delimInfo.next
+	let prevdelim = g:delimInfo.prev
+	let counter = g:delimInfo.counter
+	" Special case for the ones that use same key for both delimiters.
+	if (g:delimInfo.next == "\"" && a:kMap == "\"") ||
+	 \ (g:delimInfo.next == "'" && a:kMap == "'")
+		let g:delimInfo.next = "opt"
+	" Special case for {{
+	elseif g:delimInfo.prev == "{" && a:kMap == "{"
+		let g:delimInfo = {'counter' : 0, 'next' : "", 'prev' : ""}
+		return "\<cr>\<cr>}\<up>\<TAB>"
 	else
-		let g:nextdelim = a:nMap
+		let g:delimInfo.next = a:nMap
 	endif
-	let g:prevdelim = a:kMap
-	let g:stilldelim = 2
-	if nextdelim !~ '^$' && stilldelim > 0
-		if nextdelim =~ a:kMap
+	let g:delimInfo.prev = a:kMap
+	if g:delimInfo.next != "" && g:delimInfo.next != 'opt'
+		let g:delimInfo.counter = 2
+	endif
+	" Second key
+	if counter == 1
+		if nextdelim == a:kMap
 			return a:kMap . "\<left>"
-		elseif nextdelim =~ 'opt'
-			if a:kMap =~ 'dot'
-				if prevdelim !~ '"'
+		endif
+	" Third key
+	elseif counter == 0
+		if nextdelim == "opt"
+			if a:kMap == "."
+				if prevdelim != "\""
 					return "\<right>."
 				endif
-			elseif a:nMap =~ '^$'
+			elseif a:nMap == ""
 				return "\<right>" . a:kMap
 			endif
 		endif
-	endif
-	if a:kMap =~ 'dot'
-		return "."
 	endif
 	return a:kMap
 endfunction

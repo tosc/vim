@@ -113,9 +113,6 @@ Add a pentadactylrc with the line:
 # TODO
 
 * Delim unpredictable.
-* Not sure my move and rm is perfect.
-* BUG: .. doesn't work at the top.
-	* Write custom helpfixpaths instead of the ones I use currently.
 * Get more information from my jedi completion.
 * Change my snippet function to non volatile. Save the snippets.
 * TagGenerator
@@ -131,6 +128,7 @@ get more output from program.
 * Find way to disable default US source for neocomplete.
 * Download all external binaries for windows and put them at a convenient
 	location to make installing vim easier.
-* Better names and sorting for ö.
+* Better names in ö.
+* cp in unite.
 
 * Add easy bind for / ? so I can use them more like f F.
