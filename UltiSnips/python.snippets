@@ -21,18 +21,24 @@ snippet if "if" b
 if ${1:True}:
 	${0:${VISUAL}}
 endsnippet
-snippet "elif|eif|(else if)|elseif" "else if" br
+snippet "ifsh?o?r?t?" "if shorthand:ifshort" r
+${1:var} if ${2:condition} else ${3:otherVar}
+endsnippet
+snippet "ifel?s?e?" "if else:ifelse" br
+<MISSING ifelse>
+endsnippet
+snippet "elif|(else if|elseif)" "else if:elif|elseif" br
 elif ${1:True}:
 	${0:${VISUAL}}
 endsnippet
-snippet else "else" b
+snippet else "else:else" b
 else:
 	${0:${VISUAL}}
 endsnippet
-snippet switch "switch" b
+snippet switch "switch:switch" b
 No switch in python. Use if,elif, else.
 endsnippet
-snippet case "case" b
+snippet case "case:case" b
 No switch in python. Use if,elif, else.
 endsnippet
 

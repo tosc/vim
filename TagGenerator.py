@@ -22,7 +22,7 @@ def generateNoteTags(directory):
             match = re.match('^(.*)\t(.*)\t(.*)$', line)
             match2 = re.match('^\w.*$', line)
             if match:
-                r.write(match.group(1) + '\t' + infoloc + directory + match.group(2) + '\t' + match.group(3) + '\n')
+                r.write(match.group(1) + ' ????\t' + infoloc + directory + match.group(2) + '\t' + match.group(3) + '\n')
             elif match2:
                 line = line[:-1]
                 r.write(line + '\t' + noteloc + "/" + file + '\t' + line + '\n')

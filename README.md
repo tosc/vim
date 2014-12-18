@@ -113,8 +113,6 @@ Add a pentadactylrc with the line:
 # TODO
 
 * Change my snippet function to non volatile. Save the snippets.
-* Get more information from my jedi completion.
-* Move my infostuff to server repo.
 * TagGenerator
 	* helptags for vim
 	* todo
@@ -122,9 +120,11 @@ Add a pentadactylrc with the line:
 get more output from program.
 * Make move rm selectable in unite.
 * Make my draw into a real plugin.
-* Move my sources to vim-scripts.
 * Show insert/normal mode better in unite.
 * Echo result of rm mv add. Echomsg?
+* Move my infostuff to server repo.
+* Move my sources to vim-scripts.
+* Get more information from my jedi completion.
 
 * Add easy bind for / ? so I can use them more like f F.
 * Look at neobundle to make installation easier.

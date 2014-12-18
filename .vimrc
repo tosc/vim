@@ -154,7 +154,7 @@ if !exists("g:disablePlugins")
 endif
 
 function! UniteExplorerStart()
-	let g:file_to_move = ''
+	let g:files_to_move =  []
 	hi UniteInputPrompt guibg=NONE guifg=palegreen
 	let g:unite_bookmark_source = 0
 	if !exists("g:unite_path")
@@ -187,7 +187,7 @@ function! UniteExit()
 	else
 		execute "normal \<Plug>(unite_all_exit)"
 	endif
-	let g:file_to_move = ''
+	let g:files_to_move = []
 	hi UniteInputPrompt guibg=NONE guifg=palegreen
 endfunction
 " Convert unite args to path.
@@ -255,8 +255,8 @@ let g:neocomplete#skip_auto_completion_time = ''
 if !exists('g:neocomplete#keyword_patterns')
 	let g:neocomplete#keyword_patterns = {}
 endif
-let g:neocomplete#keyword_patterns['default'] = '\h\w*'
-
+let g:neocomplete#keyword_patterns.default = '\h\w*\|[^.\t]\.\w*'
+let g:neocomplete#keyword_patterns.python = '\h\w*'
 if !exists('g:neocomplete#sources#omni#input_patterns')
 	let g:neocomplete#sources#omni#input_patterns = {}
 endif
@@ -279,7 +279,8 @@ let g:neocomplete#force_omni_input_patterns.objcpp =
 let g:neocomplete#enable_smart_case = 0
 let g:neocomplete#enable_camel_case_completion = 0
 let g:neocomplete#enable_ignore_case = 0
-let g:neocomplete#sources#syntax#min_keyword_length = 3
+let g:neocomplete#sources#syntax#min_keyword_length = 1
+let g:neocomplete#min_keyword_length = 1
 let g:neocomplete#enable_auto_close_preview = 0
 let g:neocomplete#enable_fuzzy_completion = 0
 
@@ -606,6 +607,8 @@ function! UniteBinds()
 	nmap <buffer> <ESC> :call UniteExit()<CR>
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <BS> <Plug>(unite_insert_enter)
+	nmap <buffer> <space> V<space>
+	xmap <buffer> <TAB> <space><Plug>(unite_choose_action)
 	nnoremap <silent><buffer><expr> dd unite#do_action('rm')
 	nnoremap <silent><buffer><expr> cc unite#do_action('move')
 	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
