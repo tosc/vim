@@ -52,6 +52,8 @@ set showbreak=<<
 set sessionoptions-=options
 set sessionoptions+=folds
 
+set rtp+=~/git/vim/scripts/
+
 syntax on
 " ---------
 " ---- [2] PLUGINS ----
@@ -64,8 +66,8 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'gmarik/Vundle.vim'
 
 	" Unite and unite plugins.
-	Plugin 'Shougo/neomru.vim'
 	Plugin 'Shougo/unite.vim'
+	Plugin 'Shougo/neomru.vim'
 	Plugin 'Shougo/unite-session'
 	Plugin 'Shougo/unite-build'
 	Plugin 'Shougo/unite-help'
@@ -97,7 +99,6 @@ endif
 	Plugin 'ynkdir/vim-vimlparser'
 
 	" Div
-	Plugin 'tosc/vim-scripts'
 	Plugin 'tpope/vim-fugitive'
 	Plugin 'tpope/vim-surround'
 	Plugin 'Konfekt/FastFold'
