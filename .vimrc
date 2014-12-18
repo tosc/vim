@@ -157,12 +157,17 @@ function! UniteExplorerStart()
 	let g:files_to_move =  []
 	hi UniteInputPrompt guibg=NONE guifg=palegreen
 	let g:unite_bookmark_source = 0
-	if !exists("g:unite_path")
-		let g:unite_path = UniteFixPath(getcwd()) . '/'
-	endif
-	call UniteExplorer()
+	call UniteExplorer(UniteFixPath(getcwd()) . '/')
 endfunction
-function! UniteExplorer()
+if !exists('g:unite_path')
+	let g:unite_path = ''
+endif
+" Takes first argument as path to open my explorer in. If no argument is given
+" then path of last explorer is used.
+function! UniteExplorer(...)
+	if a:0
+		let g:unite_path = a:1
+	endif
 	call unite#start([
 		\ ['move', g:unite_path],
 		\ ['dots', g:unite_path],
