@@ -21,8 +21,7 @@ Vim settings.
 "let g:disableExternal = 1
 source ~/git/vim/.vimrc
 ```  
-11. Download Vundle  
-`` git clone https://github.com/gmarik/Vundle.vim ~/.vim/bundle/Vundle.vim``  
+11. Install plugins.  
 `` :BundleInstall ``  
 12. Build clang_complete.  
 `` make install ``
@@ -37,13 +36,9 @@ source ~/git/vim/.vimrc
 6. Add python27 to path.
 7. Add lua to path.
 8: Add mono/bin to path.
-8. Link Ultisnips snippetfolder  
-``mklink /D "%HOME%/vimfiles/UltiSnips" "%HOME%/git/vim/UltiSnips"``  
-9. Link my dictionary folder  
-``mklink /D "%HOME%/.vim/dict" "%HOME%/git/vim/dict"`` 
-10. Compile omnisharp.  
+9. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
-11. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
+10. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
 `` make -f make_mingw32.mak``  
 `` make -f make_mingw64.mak``  
 
@@ -58,11 +53,7 @@ source ~/git/vim/.vimrc
 
 ### LINUX
 
-1. Link Ultisnips snippetfolder  
-``ln -s ~/git/vim/UltiSnips ~/.vim/UltiSnips``  
-2. Link my dictionary folder  
-``ln -s ~/git/vim/dict ~/.vim/dict``  
-3. Compile Vimproc.  
+1. Compile Vimproc.  
 `` make -f make_unix.mak ``  
 
 ### MAC

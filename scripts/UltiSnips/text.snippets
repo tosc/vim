@@ -1,0 +1,12 @@
+priority 1
+
+# Only for all
+# Notes snippets
+
+snippet "var(\w+)" "variable into examplevar" r
+{`!p snip.rv = match.group(1)`}
+endsnippet
+
+snippet "opt(\w+)" "variable into examplevar" r
+{`!p snip.rv = match.group(1)`?}
+endsnippet

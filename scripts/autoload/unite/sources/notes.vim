@@ -12,7 +12,7 @@ let s:source_notes = {
 function! s:source_notes.gather_candidates(args, context)
 	let files = []
 	
-	let path = UniteParsePath(a:args)
+	let path = join(a:args, ':')
 	let pathcontent = glob(path . '*')
 	let lines = split(pathcontent, '\n')
 

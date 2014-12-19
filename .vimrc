@@ -61,7 +61,7 @@ syntax on
 if !exists("g:reload") && !exists("g:disablePlugins")
 	" Required by vundle
 	filetype off
-	set rtp+=~/.vim/bundle/Vundle.vim/
+	set rtp+=~/git/vim/Vundle.vim/
 	call vundle#begin()
 	Plugin 'gmarik/Vundle.vim'
 
@@ -122,6 +122,8 @@ let g:UltiSnipsExpandTrigger="<Nop>"
 let g:UltiSnipsListSnippets ="<Nop>"
 let g:UltiSnipsJumpForwardTrigger="<Nop>"
 let g:UltiSnipsJumpBackwardTrigger="<Nop>"
+
+let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
 " --------
 " ---- [2.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
@@ -549,7 +551,7 @@ map <leader>tn :tabnew <CR>
 " U
 if !exists("g:disablePlugins")
 	map <leader>ue :UltiSnipsEdit <CR>
-	map <leader>uu :Unite fil:~/vimfiles/Ultisnips <CR>
+	map <leader>uu :Unite fil:~/git/vim/scripts/Ultisnips/ <CR>
 	map <leader>us :Unite ultisnips <CR>
 endif
 " V
