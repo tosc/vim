@@ -61,7 +61,7 @@ syntax on
 if !exists("g:reload") && !exists("g:disablePlugins")
 	" Required by vundle
 	filetype off
-	set rtp+=~/git/vim/Vundle.vim/
+	set rtp+=~/git/vim/bundle/Vundle.vim/
 	call vundle#begin()
 	Plugin 'gmarik/Vundle.vim'
 
