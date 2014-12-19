@@ -4,15 +4,16 @@ endfunction
 
 " Tagsource
 let s:source_tags = {
-      \ 'name' : 'tags',
-      \ 'description' : 'dir notes',
-      \ 'action_table': {},
-      \ 'default_action' : 'open'
-      \ }
+	\ 'name' : 'tags',
+	\ 'description' : 'dir notes',
+	\ 'action_table': {},
+	\ 'default_action' : 'open',
+	\ 'sorters' :  []
+	\ }
 function! s:source_tags.gather_candidates(args, context)
 	let files = []
 	
-	let path = UniteParsePath(a:args)
+	let path = join(a:args, ':')
 	let pathcontent = glob(path . '*')
 	let lines = split(pathcontent, '\n')
 

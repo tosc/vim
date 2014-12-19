@@ -1,12 +1,29 @@
-" ---- [0] FRESH INSTALL ----
-if !isdirectory(expand('~') . "/.vim/tmp")
-" If that folder doesn't exists then this is the first time running vim
-	call mkdir(expand('~') . "/.vim/tmp")
-	call mkdir(expand('~') . "/.vim/tags")
-	call mkdir(expand('~') . "/.cache/unite/session")
+" ---- [0] INITIALIZATION ----
+let requiredFolders = [
+		\ "~/.vim", 
+		\ "~/.vim/tmp", 
+		\ "~/.vim/tags", 
+		\ "~/.cache",
+		\ "~/.cache/unite",
+		\ "~/.cache/unite/session" ]
+for rawfolder in requiredFolders
+	let folder = fnamemodify(rawfolder, ":p")
+	if !isdirectory(folder)
+		call mkdir(folder)
+		let setup = 1
+		let g:disablePlugins = 1
+		let g:disableExternal = 1
+	endif
+endfor
 
-	let g:disablePlugins = 1
-	let g:disableExternal = 1
+if !exists('g:disablePlugins')
+	let g:disablePlugins = 0
+endif
+if !exists('g:minimalMode')
+	let g:minimalMode = 0
+endif
+if !exists('g:disableExternal')
+	let g:disableExternal = 0
 endif
 " --------------------
 " ---- [1] VIMSETTINGS ----
@@ -58,7 +75,7 @@ syntax on
 " ---------
 " ---- [2] PLUGINS ----
 " ---- [2.0] VUNDLE ----
-if !exists("g:reload") && !exists("g:disablePlugins")
+if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
 	" Required by vundle
 	filetype off
 	set rtp+=~/git/vim/bundle/Vundle.vim/
@@ -77,7 +94,7 @@ if !exists("g:reload") && !exists("g:disablePlugins")
 	Plugin 'SirVer/ultisnips'
 
 	" Code-completion
-if has('lua') && !exists('g:minimalMode')
+if has('lua') && !g:minimalMode
 	Plugin 'Shougo/neocomplete.vim'
 	Plugin 'tosc/neocomplete-spell'
 	Plugin 'tosc/neocomplete-ultisnips'
@@ -138,10 +155,10 @@ let g:OmniSharp_sln_list_index = 1
 let g:Omnisharp_stop_server = 0
 " -------
 " ---- [2.4] UNITE ----
-if !exists("g:disablePlugins")
-	let g:unite_force_overwrite_statusline = 0
-	let g:osfiletypes = ["mkv","pdf","mp4","zip"]
+let g:unite_force_overwrite_statusline = 0
+let g:osfiletypes = ["mkv","pdf","mp4","zip"]
 
+if !g:disablePlugins
 	call unite#custom#default_action('buffer', 'goto')
 	call unite#filters#matcher_default#use(['matcher_fuzzy'])
 	call unite#filters#sorter_default#use(['sorter_rank'])
@@ -185,8 +202,10 @@ function! UniteFileSwitcher()
 	execute 'Unite buffer file_mru'
 endfunction
 let g:unite_bookmark_source = 0
-function! OpenBookmarkSource()
-	let g:unite_bookmark_source = 1
+function! OpenBookmarkSource(...)
+	if !a:0
+		let g:unite_bookmark_source = 1
+	endif
 	execute "Unite -prompt=bookmark> bmark"
 endfunction
 function! UniteExit()
@@ -290,16 +309,16 @@ let g:syntastic_auto_loc_list = 1
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
 function! BindInner(kMap, nMap)
-	execute "nnoremap ci" . a:kMap . " " . a:nMap
-	execute "nnoremap di" . a:kMap . " " . a:nMap
-	execute "nnoremap vi" . a:kMap . " " . a:nMap
-	execute "nnoremap yi" . a:kMap . " " . a:nMap
+	execute "nnoremap ci" . a:kMap . " ci" . a:nMap
+	execute "nnoremap di" . a:kMap . " di" . a:nMap
+	execute "nnoremap vi" . a:kMap . " vi" . a:nMap
+	execute "nnoremap yi" . a:kMap . " yi" . a:nMap
 endfunction
 " Wanted binds like cib ciB but for [] and <> "" ''
 call BindInner('d', '[')
 call BindInner('D', '>')
-call BindInner('c', '"')
-call BindInner('C', "'")
+call BindInner('q', "\"")
+call BindInner('t', "'")
 
 " I keep pressing << >> in the wrong order. HL are good for directions.
 nnoremap H << 
@@ -320,7 +339,7 @@ nnoremap Y y$
 " Close everything except current fold.
 nnoremap zV zMzv
 
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	" Search file using unite.
 	nnoremap ä :Unite line -custom-line-enable-highlight<CR>
 
@@ -396,7 +415,7 @@ inoremap <C-S> <C-X><C-S>
 " Autocomplete line.
 inoremap <C-L> <C-X><C-L>
 
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	" Run my tabcompletion.
 	inoremap <TAB> <C-R>=NeoTab()<CR>
 else
@@ -453,11 +472,11 @@ snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
 snoremap <pageup> <ESC>:call SmartJump()<CR>
 snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
 
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 endif
 
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	" Remapped s to vim-surround.
 	xmap s S
 endif
@@ -469,7 +488,7 @@ let g:mapleader="\<space>"
 
 " A
 " B
-map <leader>b :b #<CR>
+map <leader>b :call OpenBookmarkSource(1)<CR>
 " C
 map <leader>co :Errors<CR>
 map <leader>cc :SyntasticCheck<CR>
@@ -493,7 +512,7 @@ map <leader>gP :!git -C %:h push --force<CR> :call UpdateGitInfo()<CR>
 " Opens a interactive menu that lets you pick what commits to use/squash.
 map <leader>gr :!git -C %:h rebase -i HEAD~
 
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	map <leader>gc :Gcommit<CR>
 	map <leader>gd :Gdiff<CR>
 	map <leader>gg :Gstatus<CR>
@@ -505,13 +524,14 @@ noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r 
 " I
 map <leader>ii :Unite tags:~/info/ <CR>
 map <leader>in :Unite notes:~/info/ <CR>
+map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
 " J
 " K
 " Kill program running with r
 " L
 " M
 map <leader>m :!make<CR>
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	map <leader>m :cd %:h<CR>:Unite -auto-preview -no-start-insert
 				\ build:make<CR>
 endif
@@ -536,7 +556,7 @@ map <leader>ss :call SwedishSpellCheck() <CR>
 map <leader>so :call NoSpellCheck() <CR>
 map <leader>sc :call NoSpellCheck() <CR>
 map <leader>sd :call NoSpellCheck() <CR>
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	map <leader>S :Unite ultisnips <CR>
 endif
 " T
@@ -549,7 +569,7 @@ map <leader>th :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR
 map <leader>tc :tabclose <CR>
 map <leader>tn :tabnew <CR>
 " U
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	map <leader>ue :UltiSnipsEdit <CR>
 	map <leader>uu :Unite fil:~/git/vim/scripts/Ultisnips/ <CR>
 	map <leader>us :Unite ultisnips <CR>
@@ -562,7 +582,7 @@ map <leader>w :w <CR>
 " X
 " Y
 " Z
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	map <leader>z :Unite session<CR>
 endif
 " --------------------
@@ -578,7 +598,7 @@ cnoremap <expr> h<space> getcmdtype() == ":" && getcmdline() == "" ? "call FullS
 cnoremap <expr> n getcmdtype() == ":" && getcmdline() == "t" ? 'abnew' : "n"
 cnoremap <expr> c getcmdtype() == ":" && getcmdline() == "t" ? 'abc' : "c"
 
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	" I tend to write :git instead of :Git
 	cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>Git" : "t"
 else
@@ -601,15 +621,11 @@ function! UniteBinds()
 	nmap <buffer> <BS> <Plug>(unite_insert_enter)
 	nmap <buffer> <space> V<space>
 	xmap <buffer> <TAB> <space><Plug>(unite_choose_action)
-	nnoremap <silent><buffer><expr> dd unite#do_action('rm')
-	nnoremap <silent><buffer><expr> cc unite#do_action('move')
 	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-	nnoremap <silent><buffer><expr> <C-c> unite#do_action('cd')
 	imap <buffer> <TAB> <Plug>(unite_select_next_line)
 	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
 	inoremap <buffer> <BS> <BS>
 	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-	inoremap <silent><buffer><expr> <C-c> unite#do_action('cd') |
 endfunction
 autocmd FileType unite call UniteBinds()
 " --------------------
@@ -638,12 +654,6 @@ function! JavaSettings()
 	setlocal omnifunc=JavaOmni
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
-	if !exists("g:disablePlugins")
-		if !has('lua')
-			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-			let g:neocomplcache_omni_patterns.java = '.*'
-		endif
-	endif
 endfunction
 
 function! JavaOmni(findstart, base)
@@ -659,12 +669,6 @@ function! CSSettings()
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
 	let g:unite_builder_make_command = "msbuild"
-	if !exists("g:disablePlugins")
-		if !has('lua')
-			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-			let g:neocomplcache_omni_patterns.cs = '.*'
-		endif
-	endif
 endfunction
 
 function! CSOmni(findstart, base)
@@ -726,12 +730,6 @@ function! PythonSettings()
 	setlocal omnifunc=
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
-	if !exists("g:disablePlugins")
-		if !has('lua')
-			let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-			let g:neocomplcache_omni_patterns.python = '.*'
-		endif
-	endif
 endfunction
 
 autocmd Filetype python call PythonSettings()
@@ -799,7 +797,7 @@ function! TEXSettings()
 	call EnglishSpellCheck()
 endfunction
 
-if !exists("g:minimalMode") && !exists("g:disableExternal")
+if !g:minimalMode && !g:disableExternal
 	autocmd TextChanged,TextChangedI *.tex silent! call SaveIfPossible()
 else
 	" Compile latex to a pdf when you save
@@ -1110,7 +1108,7 @@ endfunction
 " ---- [6] STATUSLINE ----
 set laststatus=2
 set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
-if !exists("g:disablePlugins")
+if !g:disablePlugins
 	set statusline+=%#warningmsg#%{SyntasticStatuslineFlag()}%*
 endif
 
@@ -1119,7 +1117,7 @@ function! MyStatusLine()
 	if !exists("b:statusLineVar")
 		call UpdateGitInfo()
 	endif
-	if !exists("g:disablePlugins")
+	if !g:disablePlugins
 		if SyntasticStatuslineFlag() == ""
 			hi StatusLine guibg=NONE
 		else
@@ -1195,7 +1193,7 @@ endfunction
 set tabline=%!Tabline()
 " --------------------
 " ---- [8] MINIMALMODE ----
-if exists("g:minimalMode")
+if g:minimalMode
 	let s:CompletionCommand = "\<C-X>\<C-U>"
 	let g:neocomplcache_disable_auto_complete = 1
 	inoremap <TAB> <C-R>=MinimalTab()<CR>
@@ -1364,7 +1362,7 @@ function! KillAllExternal()
 	endif
 	call OmniSharp#StopServer()
 endfunction
-if !exists("g:disableExternal")
+if !g:disableExternal && !g:disablePlugins
 	autocmd VimLeave * call KillAllExternal()
 endif
 
@@ -1511,7 +1509,7 @@ endfunction
 " Default delimiters: "'(){}[]
 " To change default delimiters just change b:smartJumpElements
 function! SmartJump()
-	if !exists("g:disablePlugins")
+	if !g:disablePlugins
 		call UltiSnips#JumpForwards()
 		if g:ulti_jump_forwards_res == 1
 			return ""
@@ -1532,7 +1530,7 @@ function! SmartJump()
 	return ""
 endfunction
 function! SmartJumpBack()
-	if !exists("g:disablePlugins")
+	if !g:disablePlugins
 		call UltiSnips#JumpBackwards()
 		if g:ulti_jump_backwards_res == 1
 			return ""
@@ -1611,7 +1609,7 @@ function! StartEclim()
 endfunction
 
 function! StartTexBuilder()
-	if !exists("g:minimalMode") && !exists("g:disableExternal")
+	if !g:minimalMode && !g:disableExternal
 		cd ~\git\vim
 		Start python texbuilder.py %:h %
 		cd %:h
@@ -1621,23 +1619,17 @@ endfunction
 " ---- [11.6] SPELLCHECK ----
 function! EnglishSpellCheck()
 	setlocal spell spelllang=en_us
-	if !exists("g:disablePlugins") && has('lua')
-		let b:neocomplete_spell_file = 'american-english'
-	endif
+	let b:neocomplete_spell_file = 'american-english'
 endfunction
 
 function! SwedishSpellCheck()
 	setlocal spell spelllang=sv
-	if !exists("g:disablePlugins") && has('lua')
-		let b:neocomplete_spell_file = 'swedish'
-	endif
+	let b:neocomplete_spell_file = 'swedish'
 endfunction
 
 function! NoSpellCheck()
 	setlocal nospell
-	if !exists("g:disablePlugins") && has('lua')
-		let b:neocomplete_spell_file = ''
-	endif
+	let b:neocomplete_spell_file = ''
 endfunction
 " --------------------
 " ---- [11.7] MATCH ----
@@ -1768,5 +1760,9 @@ endif
 " ---- [13] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
+endif
+
+if exists('setup')
+	autocmd VimEnter * BundleInstall
 endif
 " --------------------

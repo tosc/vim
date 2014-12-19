@@ -12,8 +12,11 @@ infoloc = "C:/Users/opo/info/"
 doc = "/documentation/"
 notes= "/notes/"
 tagloc = ""
+totaltags = 0
 def generateNoteTags(directory):
+    global totaltags
     noteloc = infoloc + directory + notes
+    nrcreated = 0
     for file in os.listdir(noteloc):
         f = open(noteloc + "/" + file, 'r')
         line = f.readline()
@@ -22,20 +25,26 @@ def generateNoteTags(directory):
             match = re.match('^(.*)\t(.*)\t(.*)$', line)
             match2 = re.match('^\w.*$', line)
             if match:
+                nrcreated += 1
                 r.write(match.group(1) + ' ????\t' + infoloc + directory + match.group(2) + '\t' + match.group(3) + '\n')
             elif match2:
+                nrcreated += 1
                 line = line[:-1]
-                r.write(line + '\t' + noteloc + "/" + file + '\t' + line + '\n')
+                r.write(line + ' ????\t' + noteloc + "/" + file + '\t' + line + '\n')
             line = f.readline()
         f.close()
+    totaltags += nrcreated
+    print "Notes:              " + str(nrcreated) + " tags created."
 
 for directory in os.listdir(infoloc):
+    print directory
     tagloc = infoloc + directory + "/tags"
     r = open(tagloc, 'w')
     r.write('')
     r.close()
     r = open(tagloc, 'a')
     generateNoteTags(directory)
+    nrcreated = 0
     if directory == "python":
         docloc = infoloc + directory + doc + "library"
         for stuff in os.listdir(docloc):
@@ -46,12 +55,13 @@ for directory in os.listdir(infoloc):
                 # print line
                 match = re.match('^\w\S+(\(.*\))?$', line)
                 if match:
+                    nrcreated += 1
                     line = line[:-1]
                     r.write(line + '\t' + docloc + "/" + stuff + '\t' + line + '\n')
                 line = f.readline()
             f.close()
         r.close()
-    
+
     if directory == "c":
         docloc = infoloc + directory + doc + "libc.txt"
         f = open(docloc, 'r')
@@ -60,10 +70,12 @@ for directory in os.listdir(infoloc):
             # print line
             match = re.match('(^ -- Function: ){1}(\w+ ?\*? ?)(\w+)', line)
             if match:
+                nrcreated += 1
                 tag = match.group(3)
                 r.write(tag + '\t' + docloc + '\t' + line[:-1] + '\n')
             match = re.match('(^ -- Macro: ){1}(\w+ )?(\w+)', line)
             if match:
+                nrcreated += 1
                 tag = match.group(3)
                 r.write(tag + '\t' + docloc + '\t' + line[:-1] + '\n')
             line = f.readline()
@@ -74,6 +86,7 @@ for directory in os.listdir(infoloc):
         for stuff in os.listdir(docloc):
             match = re.match('^(' + directory + '-\w+).txt', stuff)
             if match:
+                nrcreated += 1
                 r.write(match.group(1) + '\t' + docloc + match.group(0) + '\t' + match.group(1) + '\n')
         r.close()
     if directory == "linux":
@@ -81,5 +94,10 @@ for directory in os.listdir(infoloc):
         for stuff in os.listdir(docloc):
             match = re.match('^(.+).txt', stuff)
             if match:
+                nrcreated += 1
                 r.write(match.group(1) + '\t' + docloc + match.group(0) + '\t' + match.group(1) + '\n')
         r.close()
+    totaltags += nrcreated
+    print "Documentation:      " + str(nrcreated) + " tags created."
+    print ""
+print "Total:              " + str(totaltags) + " tags created."

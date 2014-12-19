@@ -103,7 +103,6 @@ Add a pentadactylrc with the line:
 
 # TODO
 
-* Delim unpredictable.
 * Get more information from my jedi completion.
 * Change my snippet function to non volatile. Save the snippets.
 * TagGenerator

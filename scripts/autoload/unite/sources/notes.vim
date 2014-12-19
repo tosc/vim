@@ -4,11 +4,12 @@ endfunction
 
 " Note source
 let s:source_notes = {
-      \ 'name' : 'notes',
-      \ 'description' : 'dir notes',
-      \ 'action_table': {},
-      \ 'default_action' : 'open'
-      \ }
+	\ 'name' : 'notes',
+	\ 'description' : 'dir notes',
+	\ 'action_table': {},
+	\ 'default_action' : 'open',
+	\ 'sorters' :  []
+	\ }
 function! s:source_notes.gather_candidates(args, context)
 	let files = []
 	
@@ -59,7 +60,7 @@ let s:source_notes.action_table.open = {
       \ }
 function! s:source_notes.action_table.open.func(candidate)
 	let filepath = a:candidate.action__path
-	let path = a:candidate.action__path . "/notes/"
+	let path = a:candidate.action__path . "notes/"
 	if a:candidate.new
 		if confirm("About to create folders:\n\t" .
 					\ filepath . "\n\t" .
