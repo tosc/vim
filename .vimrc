@@ -225,6 +225,26 @@ function! UniteFixPath(path)
 		return substitute(a:path, '\', '/', 'g')
 	endif
 endfunction
+function! UniteTags(filetype)
+	let filepath = UniteFixPath(fnamemodify("~/info/", ':p')) . a:filetype
+	if !isdirectory(filepath) && a:filetype != ""
+		if confirm("About to create folders:\n\t" .
+					\ filepath . "\n\t" .
+					\ filepath . "/notes\n\t" .
+					\ filepath . "/documentation",
+				\ "&Yes\n&No\n&Cancel") == 1
+			execute 'call mkdir("". "' . filepath . '")'
+			execute 'call mkdir("". "' . filepath . "/notes" . '")'
+			execute 'call mkdir("". "' . filepath . "/documentation" . '")'
+			UniteClose
+		endif
+	else
+		execute "setlocal tags=~/info/" . a:filetype . '/tags'
+		call unite#start_temporary([
+		\ ['tag'] ],
+		\ {'prompt' : 'tags>'})
+	endif
+endfunction
 " --------------------
 " ---- [2.5] NEOCOMPLCACHE ----
 let g:neocomplcache_enable_at_startup = 1
@@ -522,7 +542,8 @@ noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r 
 " H
 " Unite help when I get it working.
 " I
-map <leader>ii :Unite tags:~/info/ <CR>
+map <leader>ii :call UniteTags(&l:filetype)<CR>
+map <leader>ia :Unite tags:~/info/ <CR>
 map <leader>in :Unite notes:~/info/ <CR>
 map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
 " J

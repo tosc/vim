@@ -21,9 +21,7 @@ Vim settings.
 "let g:disableExternal = 1
 source ~/git/vim/.vimrc
 ```  
-11. Install plugins.  
-`` :BundleInstall ``  
-12. Build clang_complete.  
+11. Build clang_complete.  
 `` make install ``
 
 ### WINDOWS
@@ -120,5 +118,6 @@ get more output from program.
 	location to make installing vim easier.
 * Better names in ö.
 * cp in unite.
+* Detect stuff that needs compiling and compile by itself.
 
 * Add easy bind for / ? so I can use them more like f F.

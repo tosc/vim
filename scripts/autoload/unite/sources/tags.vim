@@ -28,8 +28,7 @@ function! s:source_tags.gather_candidates(args, context)
 		let file = splitWord[-1]
 		call add(files, {
 			\ 'word' : file, 
-			\ 'action__path' : newpath . "/", 
-			\ 'new' : 0})
+			\ 'action__path' : newpath . "/"})
 	endfor
 	return files
 endfunction
@@ -47,8 +46,7 @@ function! s:source_tags.change_candidates(args, context)
 	call add(folders, {
 			\ 'word' : a:context.input,
 			\ 'action__path' : input,
-			\ 'abbr': "Create new category: " . a:context.input,
-			\ 'new' : 1})
+			\ 'abbr': "Create new category: " . a:context.input})
 	return folders
 endfunction
 
@@ -59,23 +57,7 @@ let s:source_tags.action_table.open = {
       \ 'is_start' : 1,
       \ }
 function! s:source_tags.action_table.open.func(candidate)
-	let filepath = a:candidate.action__path
+	let filetype = fnamemodify(a:candidate.action__path, ':t')
 	" Open new instance with new folder
-	if a:candidate.new
-		if confirm("About to create folders:\n\t" .
-					\ filepath . "\n\t" .
-					\ filepath . "/notes\n\t" .
-					\ filepath . "/documentation",
-				\ "&Yes\n&No\n&Cancel") == 1
-			execute 'call mkdir("". "' . filepath . '")'
-			execute 'call mkdir("". "' . filepath . "/notes" . '")'
-			execute 'call mkdir("". "' . filepath . "/documentation" . '")'
-			UniteClose
-		endif
-	else
-		execute "setlocal tags=~/info/" . a:candidate.word . '/tags'
-		call unite#start_temporary([
-		\ ['tag'] ],
-		\ {'prompt' : 'tags>'})
-	endif
+	call UniteTags(a:candidate.word)
 endfunction
