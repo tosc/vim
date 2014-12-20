@@ -101,6 +101,7 @@ Add a pentadactylrc with the line:
 
 # TODO
 
+* Use my current solution but get special characters from bindings.
 * Get more information from my jedi completion.
 * Change my snippet function to non volatile. Save the snippets.
 * TagGenerator
@@ -119,5 +120,6 @@ get more output from program.
 * Better names in ö.
 * cp in unite.
 * Detect stuff that needs compiling and compile by itself.
+* Make bb and the other delimiters like those only happen after a space.
 
 * Add easy bind for / ? so I can use them more like f F.

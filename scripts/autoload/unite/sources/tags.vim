@@ -1,63 +1,41 @@
 function! unite#sources#tags#define()
-	return s:source_tags
+	return s:source
 endfunction
 
-" Tagsource
-let s:source_tags = {
+" Tag source
+let s:source = {
 	\ 'name' : 'tags',
-	\ 'description' : 'dir notes',
+	\ 'description' : 'tags',
 	\ 'action_table': {},
 	\ 'default_action' : 'open',
-	\ 'sorters' :  []
 	\ }
-function! s:source_tags.gather_candidates(args, context)
-	let files = []
-	
-	let path = join(a:args, ':')
-	let pathcontent = glob(path . '*')
-	let lines = split(pathcontent, '\n')
 
-	for candidate in lines
-		if has('win32')
-			let splitWord = split(candidate, '\')
-			let newpath = join(splitWord, '/')
-		else
-			let splitWord = split(candidate, '/')
-			let newpath = candidate
-		endif
-		let file = splitWord[-1]
-		call add(files, {
-			\ 'word' : file, 
-			\ 'action__path' : newpath . "/"})
-	endfor
-	return files
-endfunction
-
-function! s:source_tags.change_candidates(args, context)
-	let path = unite#sources#file#_get_path(a:args, a:context)
-	let input = unite#sources#file#_get_input(path, a:context)
-	let input = substitute(input, '\*', '', 'g')
-
-	if input == '' || filereadable(input) || isdirectory(input)
-	return []
+function! s:source.gather_candidates(args, context)
+	let candidates = []
+	if exists("*vimproc#system")
+		let newWords = vimproc#system('cat ~/info/' . a:args[0] . '/tags | grep "'. a:context.input . '"')
+	else
+		let newWords = system('cat ~/info/' . a:args[0] . '/tags | grep "^'. a:context.input . '"')
 	endif
-
-	let folders = []
-	call add(folders, {
-			\ 'word' : a:context.input,
-			\ 'action__path' : input,
-			\ 'abbr': "Create new category: " . a:context.input})
-	return folders
+	let filelist = split(newWords, "\n")
+	for tag in filelist
+		let taglist = split(tag, "\t")
+		call add(candidates, {
+			\ 'word' : taglist[0],
+			\ "action__path" : taglist[1],
+			\ "abbr" : taglist[0],
+			\ "search" : taglist[2],
+			\ })
+	endfor
+	return candidates
 endfunction
 
-" Open tag
-let s:source_tags.action_table.open = {
+" Open a tag
+let s:source.action_table.open = {
       \ 'description' : 'open files or open directory',
       \ 'is_quit' : 0,
       \ 'is_start' : 1,
       \ }
-function! s:source_tags.action_table.open.func(candidate)
-	let filetype = fnamemodify(a:candidate.action__path, ':t')
-	" Open new instance with new folder
-	call UniteTags(a:candidate.word)
+function! s:source.action_table.open.func(candidate)
+	execute "e +/" . a:candidate.search . " " . a:candidate.action__path
 endfunction

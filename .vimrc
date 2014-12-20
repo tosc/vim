@@ -88,7 +88,6 @@ if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
 	Plugin 'Shougo/unite-session'
 	Plugin 'Shougo/unite-build'
 	Plugin 'Shougo/unite-help'
-	Plugin 'tsukkee/unite-tag'
 
 	" Snippets
 	Plugin 'SirVer/ultisnips'
@@ -239,9 +238,8 @@ function! UniteTags(filetype)
 			UniteClose
 		endif
 	else
-		execute "setlocal tags=~/info/" . a:filetype . '/tags'
 		call unite#start_temporary([
-		\ ['tag'] ],
+		\ ['tags', a:filetype]],
 		\ {'prompt' : 'tags>'})
 	endif
 endfunction
@@ -440,7 +438,7 @@ if !g:disablePlugins
 	inoremap <TAB> <C-R>=NeoTab()<CR>
 else
 	" Simple tabcompletion.
-	inoremap <expr><TAB> getline(".")[col('.') - 2] =~ '\w' ? '<C-X><C-N>' : StartDelim("\<TAB>", "")
+	inoremap <expr><TAB> getline(".")[col('.') - 2] =~ '\w' ? '<C-X><C-N>' : "\<TAB>"
 endif
 
 " Jump to next(previous) ultisnips location if one exists, 
@@ -456,24 +454,7 @@ inoremap <C-E> <end>
 inoremap <C-K> <C-O>D
 
 " Pressing enter chooses completion if completion window is up.
-inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : StartDelim("\<CR>", '')
-
-" Easier delimiters.
-noremap! <expr> { StartDelim("{", "}")
-noremap! <expr> } StartDelim("}", "opt")
-noremap! <expr> ( StartDelim("(", ")")
-noremap! <expr> ) StartDelim(")", "opt")
-noremap! <expr> < StartDelim("<", ">")
-noremap! <expr> > StartDelim(">", "opt")
-noremap! <expr> [ StartDelim("[", "]")
-noremap! <expr> ] StartDelim("]", "opt")
-noremap! <expr> " StartDelim("\"", "\"")
-noremap! <expr> ' StartDelim("'", "'")
-noremap! <expr> <left> StartDelim("\<left>", "")
-noremap! <expr> <space> StartDelim("\<space>", "")
-noremap! <expr> <bs> StartDelim("\<bs>", "")
-noremap! <expr> , StartDelim(",", "")
-noremap! <expr> . StartDelim(".", "")
+inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : "\<CR>"
 " --------------------
 " ---- [3.2] VISUAL ----
 " I keep pressing << >> in the wrong order. HL are good for directions.
@@ -543,7 +524,7 @@ noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r 
 " Unite help when I get it working.
 " I
 map <leader>ii :call UniteTags(&l:filetype)<CR>
-map <leader>ia :Unite tags:~/info/ <CR>
+map <leader>ia :Unite tagfolders:~/info/ <CR>
 map <leader>in :Unite notes:~/info/ <CR>
 map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
 " J
@@ -1372,7 +1353,7 @@ autocmd BufEnter * call UpdateGitInfo()
 autocmd BufReadPost * normal zuz
 
 autocmd TextChanged,TextChangedI * call HighlightGitDisable()
-autocmd TextChangedI * let g:delimInfo.counter -= 1
+autocmd InsertCharPre * let v:char = Delim(v:char)
 autocmd InsertEnter * call HighlightDrawDisable()
 autocmd InsertLeave * call HighlightDrawEnable()
 autocmd BufEnter * call UpdateMatches()
@@ -1410,7 +1391,7 @@ function! NeoTab()
 		endif
 		return longestCommon
 	endif
-	return StartDelim("\<TAB>", "")
+	return "\<TAB>"
 endfunction
 
 function! NeoLongestCommon()
@@ -1450,7 +1431,7 @@ function! MinimalTab()
 			return (pumvisible() ? "\<C-E>" : "") . s:CompletionCommand
 		endif
 	else
-		return StartDelim("\<TAB>", "")
+		return "\<TAB>"
 	endif
 endfunction
 
@@ -1722,48 +1703,45 @@ function! AddGitMatches()
 endfunction
 " --------------------
 " ---- [11.8] AUTODELIMITER ----
-let g:delimInfo = {'counter' : 0, 'next' : "", 'prev' : ""}
-" kMap - first key of the delimiter, same as the button you will bind this to
-" nMap - the end of the delimiter. Special values are "opt" and "".
-" 		opt is for the last bind of the delimiter
-" 		'' is for keys you press after the end of a delimiter
-function! StartDelim(kMap, nMap)
-	let nextdelim = g:delimInfo.next
-	let prevdelim = g:delimInfo.prev
-	let counter = g:delimInfo.counter
-	" Special case for the ones that use same key for both delimiters.
-	if (g:delimInfo.next == "\"" && a:kMap == "\"") ||
-	 \ (g:delimInfo.next == "'" && a:kMap == "'")
-		let g:delimInfo.next = "opt"
-	" Special case for {{
-	elseif g:delimInfo.prev == "{" && a:kMap == "{"
-		let g:delimInfo = {'counter' : 0, 'next' : "", 'prev' : ""}
-		return "\<cr>\<cr>}\<up>\<TAB>"
-	else
-		let g:delimInfo.next = a:nMap
-	endif
-	let g:delimInfo.prev = a:kMap
-	if g:delimInfo.next != "" && g:delimInfo.next != 'opt'
-		let g:delimInfo.counter = 2
-	endif
-	" Second key
-	if counter == 1
-		if nextdelim == a:kMap
-			return a:kMap . "\<left>"
+let g:keychains = [
+	\ [["{"], ["}", "\<left>"], ["opt"]],
+	\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
+	\ [["("], [")", "\<left>"]],
+	\ ]
+let g:currentchains = []
+let g:optkeys = ["\<cr>", "\<left>", "\<space>"]
+let g:teet = []
+function! Delim(key)
+	let g:teet += [a:key]
+	let call = ""
+	for chains in g:keychains
+		if chains[0][0] == a:key
+			call add(g:currentchains, chains)
 		endif
-	" Third key
-	elseif counter == 0
-		if nextdelim == "opt"
-			if a:kMap == "."
-				if prevdelim != "\""
-					return "\<right>."
+	endfor	
+	let newchains = []
+	for chains in g:currentchains
+		if chains[0][0] == "opt"
+			for key in g:optkeys
+				if key == a:key
+					call feedkeys("\<right>")
 				endif
-			elseif a:nMap == ""
-				return "\<right>" . a:kMap
+			endfor			
+		elseif chains[0][0] == a:key
+			if len(chains[0]) > 1
+				let call = chains[0][1]			
+			endif
+			let chains = chains[1:]
+			if chains != []
+				call add(newchains, chains)
 			endif
 		endif
+	endfor
+	let g:currentchains = newchains
+	if call != ""	
+		call feedkeys(call)
 	endif
-	return a:kMap
+	return a:key
 endfunction
 " --------------------
 " --------------------
