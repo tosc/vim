@@ -438,7 +438,7 @@ if !g:disablePlugins
 	inoremap <TAB> <C-R>=NeoTab()<CR>
 else
 	" Simple tabcompletion.
-	inoremap <expr><TAB> getline(".")[col('.') - 2] =~ '\w' ? '<C-X><C-N>' : "\<TAB>"
+	inoremap <expr><TAB> getline(".")[col('.') - 2] =~ '\w' ? '<C-X><C-N>' : SpecialDelim("\<TAB>")
 endif
 
 " Jump to next(previous) ultisnips location if one exists, 
@@ -454,7 +454,25 @@ inoremap <C-E> <end>
 inoremap <C-K> <C-O>D
 
 " Pressing enter chooses completion if completion window is up.
-inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : "\<CR>"
+inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : SpecialDelim("\<CR>")
+
+" Special keys must be taken care of by my delim function.
+inoremap <expr> <left> SpecialDelim("\<left>")
+inoremap <expr> <right> SpecialDelim("\<right>")
+inoremap <expr> <up> SpecialDelim("\<up>")
+inoremap <expr> <down> SpecialDelim("\<down>")
+inoremap <expr> <space> SpecialDelim("\<space>")
+inoremap <expr> <bs> SpecialDelim("\<bs>")
+
+" Text chains that do special tings in Insert.
+let g:keychains = [
+	\ [["{"], ["}", "\<left>"], ["opt"]],
+	\ [["("], [")", "\<left>"], ["opt"]],
+	\ [["<"], [">", "\<left>"], ["opt"]],
+	\ [['"'], ['"', "\<left>"], ["opt"]],
+	\ [["'"], ["'", "\<left>"], ["opt"]],
+	\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
+	\ ]
 " --------------------
 " ---- [3.2] VISUAL ----
 " I keep pressing << >> in the wrong order. HL are good for directions.
@@ -626,6 +644,7 @@ function! UniteBinds()
 	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 	imap <buffer> <TAB> <Plug>(unite_select_next_line)
 	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
+	imap <buffer> <S-Space> <Plug>(unite_redraw)
 	inoremap <buffer> <BS> <BS>
 	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 endfunction
@@ -1387,11 +1406,11 @@ function! NeoTab()
 			let longestCommon = neocomplcache#complete_common_string()
 		endif
 		if longestCommon == ""
-			return pumvisible() ? "" : "\<TAB>"
+			return pumvisible() ? "" : SpecialDelim("\<TAB>")
 		endif
 		return longestCommon
 	endif
-	return "\<TAB>"
+	return SpecialDelim("\<TAB>")
 endfunction
 
 function! NeoLongestCommon()
@@ -1431,7 +1450,7 @@ function! MinimalTab()
 			return (pumvisible() ? "\<C-E>" : "") . s:CompletionCommand
 		endif
 	else
-		return "\<TAB>"
+		return SpecialDelim("\<TAB>")
 	endif
 endfunction
 
@@ -1703,16 +1722,11 @@ function! AddGitMatches()
 endfunction
 " --------------------
 " ---- [11.8] AUTODELIMITER ----
-let g:keychains = [
-	\ [["{"], ["}", "\<left>"], ["opt"]],
-	\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
-	\ [["("], [")", "\<left>"]],
-	\ ]
 let g:currentchains = []
-let g:optkeys = ["\<cr>", "\<left>", "\<space>"]
-let g:teet = []
+let g:delimCall = 0
+let g:optkeys = ["\<cr>", "\<left>", "\<space>", "\<tab>"]
 function! Delim(key)
-	let g:teet += [a:key]
+	let g:delimCall = 0
 	let call = ""
 	for chains in g:keychains
 		if chains[0][0] == a:key
@@ -1721,13 +1735,7 @@ function! Delim(key)
 	endfor	
 	let newchains = []
 	for chains in g:currentchains
-		if chains[0][0] == "opt"
-			for key in g:optkeys
-				if key == a:key
-					call feedkeys("\<right>")
-				endif
-			endfor			
-		elseif chains[0][0] == a:key
+		if chains[0][0] == a:key
 			if len(chains[0]) > 1
 				let call = chains[0][1]			
 			endif
@@ -1739,9 +1747,34 @@ function! Delim(key)
 	endfor
 	let g:currentchains = newchains
 	if call != ""	
+		let g:delimCall = 1
 		call feedkeys(call)
 	endif
 	return a:key
+endfunction
+
+" Call this for all keys not being registered by InsertCharPre
+function! SpecialDelim(key)
+	let returnV = a:key
+	let newchains = []
+	if g:delimCall == 0
+		for chains in g:currentchains
+			if chains[0][0] == "opt"
+				for key in g:optkeys
+					if key == a:key
+						let returnV = "\<right>" . a:key
+					endif
+				endfor			
+			endif
+			let chains = chains[1:]
+			if chains != []
+				call add(newchains, chains)
+			endif
+		endfor
+		let g:currentchains = newchains
+	endif
+	let g:delimCall = 0
+	return returnV
 endfunction
 " --------------------
 " --------------------

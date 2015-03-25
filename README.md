@@ -101,9 +101,11 @@ Add a pentadactylrc with the line:
 
 # TODO
 
+* Add a bind in unite to change sorting method from time to name.
+* Enter in unite does not open external programs correctly.
 * Use my current solution but get special characters from bindings.
 * Get more information from my jedi completion.
-* Change my snippet function to non volatile. Save the snippets.
+* Change my unite snippet source to non volatile.
 * TagGenerator
 	* helptags for vim
 	* todo
