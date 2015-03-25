@@ -456,6 +456,21 @@ inoremap <C-K> <C-O>D
 " Pressing enter chooses completion if completion window is up.
 inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : SpecialDelim("\<CR>")
 
+" Text chains that do special tings in Insert.
+let g:keychains = [
+	\ [["{"], ["}", "\<left>"], ["opt"]],
+	\ [["("], [")", "\<left>"], ["opt"]],
+	\ [["<"], [">", "\<left>"], ["opt"]],
+	\ [["["], ["]", "\<left>"], ["opt"]],
+	\ [['"'], ['"', "\<left>"], ["opt"]],
+	\ [["'"], ["'", "\<left>"], ["opt"]],
+	\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
+	\ [["b"], ["b"], ["b", "\<bs>\<bs>\<bs>()"]],
+	\ [["B"], ["B"], ["B", "\<bs>\<bs>\<bs>{}"]],
+	\ [["d"], ["d"], ["d", "\<bs>\<bs>\<bs>[]"]],
+	\ [["D"], ["D"], ["D", "\<bs>\<bs>\<bs><>"]],
+	\ ]
+
 " Special keys must be taken care of by my delim function.
 inoremap <expr> <left> SpecialDelim("\<left>")
 inoremap <expr> <right> SpecialDelim("\<right>")
@@ -463,16 +478,6 @@ inoremap <expr> <up> SpecialDelim("\<up>")
 inoremap <expr> <down> SpecialDelim("\<down>")
 inoremap <expr> <space> SpecialDelim("\<space>")
 inoremap <expr> <bs> SpecialDelim("\<bs>")
-
-" Text chains that do special tings in Insert.
-let g:keychains = [
-	\ [["{"], ["}", "\<left>"], ["opt"]],
-	\ [["("], [")", "\<left>"], ["opt"]],
-	\ [["<"], [">", "\<left>"], ["opt"]],
-	\ [['"'], ['"', "\<left>"], ["opt"]],
-	\ [["'"], ["'", "\<left>"], ["opt"]],
-	\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
-	\ ]
 " --------------------
 " ---- [3.2] VISUAL ----
 " I keep pressing << >> in the wrong order. HL are good for directions.
@@ -1724,18 +1729,18 @@ endfunction
 " ---- [11.8] AUTODELIMITER ----
 let g:currentchains = []
 let g:delimCall = 0
-let g:optkeys = ["\<cr>", "\<left>", "\<space>", "\<tab>"]
+let g:optkeys = ["\<cr>", "\<left>", "\<space>", "\<tab>", "\<bs>"]
 function! Delim(key)
 	let g:delimCall = 0
 	let call = ""
 	for chains in g:keychains
-		if chains[0][0] == a:key
+		if chains[0][0] ==# a:key
 			call add(g:currentchains, chains)
 		endif
 	endfor	
 	let newchains = []
 	for chains in g:currentchains
-		if chains[0][0] == a:key
+		if chains[0][0] ==# a:key
 			if len(chains[0]) > 1
 				let call = chains[0][1]			
 			endif
@@ -1756,7 +1761,6 @@ endfunction
 " Call this for all keys not being registered by InsertCharPre
 function! SpecialDelim(key)
 	let returnV = a:key
-	let newchains = []
 	if g:delimCall == 0
 		for chains in g:currentchains
 			if chains[0][0] == "opt"
@@ -1766,12 +1770,8 @@ function! SpecialDelim(key)
 					endif
 				endfor			
 			endif
-			let chains = chains[1:]
-			if chains != []
-				call add(newchains, chains)
-			endif
 		endfor
-		let g:currentchains = newchains
+		let g:currentchains = []
 	endif
 	let g:delimCall = 0
 	return returnV

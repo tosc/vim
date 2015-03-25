@@ -103,7 +103,6 @@ Add a pentadactylrc with the line:
 
 * Add a bind in unite to change sorting method from time to name.
 * Enter in unite does not open external programs correctly.
-* Use my current solution but get special characters from bindings.
 * Get more information from my jedi completion.
 * Change my unite snippet source to non volatile.
 * TagGenerator
