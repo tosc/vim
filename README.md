@@ -33,7 +33,7 @@ source ~/git/vim/.vimrc
 5. Add clang to path.
 6. Add python27 to path.
 7. Add lua to path.
-8: Add mono/bin to path.
+8. Add mono/bin to path.
 9. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
 10. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
@@ -101,14 +101,14 @@ Add a pentadactylrc with the line:
 
 # TODO
 
+* Make it possible to reference pdfs and maybe firefox using my note-system.
+* Change pentadactyl to vimperator.
 * Add a bind in unite to change sorting method from time to name.
-* Enter in unite does not open external programs correctly.
 * Get more information from my jedi completion.
 * Change my unite snippet source to non volatile.
 * TagGenerator
 	* helptags for vim
 	* todo
-* Show insert/normal mode better in unite.
 * Move my infostuff to server repo.
 * Move my sources to vim-scripts.
 * Echo result of rm mv add. Echomsg?
@@ -121,6 +121,4 @@ get more output from program.
 * Better names in ö.
 * cp in unite.
 * Detect stuff that needs compiling and compile by itself.
-* Make bb and the other delimiters like those only happen after a space.
-
 * Add easy bind for / ? so I can use them more like f F.

@@ -155,7 +155,7 @@ let g:Omnisharp_stop_server = 0
 " -------
 " ---- [2.4] UNITE ----
 let g:unite_force_overwrite_statusline = 0
-let g:osfiletypes = ["mkv","pdf","mp4","zip"]
+let g:osfiletypes = ["mkv","pdf","mp4","zip","avi"]
 
 if !g:disablePlugins
 	call unite#custom#default_action('buffer', 'goto')
@@ -547,6 +547,7 @@ noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r 
 " Unite help when I get it working.
 " I
 map <leader>ii :call UniteTags(&l:filetype)<CR>
+map <leader>iI :Unite tagfolders:~/info/ <CR>
 map <leader>ia :Unite tagfolders:~/info/ <CR>
 map <leader>in :Unite notes:~/info/ <CR>
 map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
@@ -1365,6 +1366,9 @@ endfunction
 "black te[x]t
 "[y]ellow
 "[z] - weird color, weird letter
+" --------------------
+" ---- [9.3] UNITE ----
+highlight uniteSource__Dir gui=NONE cterm=NONE guifg=khaki ctermfg=228
 " --------------------
 " --------------------
 " ---- [10] AUTOCMD ----

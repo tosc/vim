@@ -36,8 +36,9 @@ function! s:source.gather_candidates(args, context)
 			endif
 			if file !~ '^\.$' && file !~ '^\.\.$'
 				" Add folder to unite.
-				call add(files, {'word' : file . "/", 
-					\ 'action__path' : newpath . "/"})
+				call add(files, {'word' : file . "/",
+					\ 'action__path' : newpath . "/",
+					\ 'abbr' : file})
 			endif
 		endif
 	endfor

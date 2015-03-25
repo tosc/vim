@@ -3,7 +3,10 @@
 # - subject
 #   - documentation     If the language has a documentation then place it here and create a custom rule for how to get the tags for it.
 #   - notes             Notes/stuff to remember about the subject. Generates a tag at location if line start with a character.
-#                       Create a custom tag that link to stuff by having a line with 3 sections of text separated by tags. Ex: text \t location from info \t regex searchpattern in file
+#                       Create a custom tag that link to stuff by having a line with 3 sections of text separated by tags. 
+#                       name-of-tag \t location of file from info \t what part of the file to show using regex searchpattern
+#                       Example of a c-note for how print works. Links to the documentation for libc where the line starts with 12.12.
+#                       print \t /documentation/libc.txt \t ^12.12
 #   - (opt)compendium   Other stuff you can link to using custom-tags
 import os
 import re
