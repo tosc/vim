@@ -10,7 +10,9 @@ let s:source = {
 	\ 'action_table': {},
 	\ 'default_action' : 'open',
 	\ 'default_kind' : 'movable',
-	\ 'sorters' : ['sorter_ftime', 'sorter_reverse']
+	\ 'sorters' : ['sorter_ftime', 'sorter_reverse'],
+      	\ 'syntax' : 'uniteSource__Fil',
+      	\ 'hooks' : {}
 	\ }
 
 function! s:source.gather_candidates(args, context)
@@ -35,6 +37,18 @@ function! s:source.gather_candidates(args, context)
 		endfor
 	endif
 	return files
+endfunction
+
+function! s:source.hooks.on_syntax(args, context)
+	let regex = ""
+	for ftype in g:osfiletypes
+		if regex == ""
+			let regex = ".*" . ftype
+		else
+			let regex .= '\|.*' . ftype
+		endif
+	endfor
+	execute "syntax match uniteSource__Fil_Special /" . regex . "/ contained containedin=uniteSource__Fil"
 endfunction
 
 " Open a file

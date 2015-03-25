@@ -1368,7 +1368,10 @@ endfunction
 "[z] - weird color, weird letter
 " --------------------
 " ---- [9.3] UNITE ----
-highlight uniteSource__Dir gui=NONE cterm=NONE guifg=khaki ctermfg=228
+hi uniteSource__Dir gui=NONE cterm=NONE guifg=khaki ctermfg=228
+hi link uniteSource__Fil Identifier
+hi link uniteCandidateInputKeyword Search
+hi default link uniteSource__Fil_Special PreProc
 " --------------------
 " --------------------
 " ---- [10] AUTOCMD ----
