@@ -430,9 +430,6 @@ inoremap <C-F> <C-X><C-F>
 " Autocomplete spelling
 inoremap <C-S> <C-X><C-S>
 
-" Autocomplete line.
-inoremap <C-L> <C-X><C-L>
-
 if !g:disablePlugins
 	" Run my tabcompletion.
 	inoremap <TAB> <C-R>=NeoTab()<CR>
@@ -447,6 +444,8 @@ inoremap <S-Space> <C-R>=SmartJump()<CR>
 inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
 inoremap <pageup> <C-R>=SmartJump()<CR>
 inoremap <pagedown> <C-R>=SmartJumpBack()<CR>
+inoremap <C-L> <C-R>=SmartJump()<CR>
+inoremap <C-H> <C-R>=SmartJumpBack()<CR>
 
 " Readline bindings.
 inoremap <C-A> <home>
