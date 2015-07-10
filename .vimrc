@@ -1756,6 +1756,11 @@ function! Delim(key)
 				call add(newchains, chains)
 			endif
 		endif
+		if chains[0][0] == "opt"
+			if a:key == ";"
+				let call = "\<bs>\<right>;"
+			endif
+		endif
 	endfor
 	let g:currentchains = newchains
 	if call != ""	

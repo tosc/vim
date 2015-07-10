@@ -40,6 +40,8 @@ def generateNoteTags(directory):
     print "Notes:              " + str(nrcreated) + " tags created."
 
 for directory in os.listdir(infoloc):
+    if directory == "todo.txt":
+        continue
     print directory
     tagloc = infoloc + directory + "/tags"
     r = open(tagloc, 'w')
@@ -98,7 +100,7 @@ for directory in os.listdir(infoloc):
             match = re.match('^(.+).txt', stuff)
             if match:
                 nrcreated += 1
-                r.write(match.group(1) + '\t' + docloc + match.group(0) + '\t' + match.group(1) + '\n')
+                r.write("man-" + match.group(1) + '\t' + docloc + match.group(0) + '\t' + match.group(1) + '\n')
         r.close()
     totaltags += nrcreated
     print "Documentation:      " + str(nrcreated) + " tags created."
