@@ -524,7 +524,7 @@ map <leader>ce :SyntasticCheck<CR>
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
 " E
-autocmd Filetype tex map <buffer><leader>e :call StartTexBuilder() <cr>
+autocmd Filetype tex,plaintex map <buffer><leader>e :call StartTexBuilder() <cr>
 " F
 " Fetch new info from programming running with r
 " G
@@ -745,7 +745,7 @@ endfunction
 function! SnippetUpdate()
 	let oldCWD = getcwd()
 	execute 'cd %:h'
-	execute '! python ' . g:UltiSnipsSnippetsDir . '/SnippetComplete.py'
+	execute '! python ' . expand(g:UltiSnipsSnippetsDir) . '/SnippetComplete.py'
 	execute 'cd ' . oldCWD
 endfunction
 
@@ -845,7 +845,7 @@ else
 		\ . expand('%:h') . " " . expand('%'))
 endif
 
-autocmd Filetype tex call TEXSettings()
+autocmd Filetype tex,plaintex call TEXSettings()
 
 function! SaveIfPossible()
 	write
