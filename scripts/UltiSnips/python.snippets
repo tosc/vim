@@ -1,7 +1,7 @@
 priority 1
 
 # Header
-snippet "import|include" "import" br
+snippet "import|include" "import:import|include" br
 import ${1:package}
 endsnippet
 
@@ -12,7 +12,7 @@ endsnippet
 snippet "&&" "and" r
 and
 endsnippet
-snippet "!([a-zA-Z0-9.,\-]+)" "not" r
+snippet "!([a-zA-Z0-9.,\-]+)" "not:not" r
 not `!p snip.rv = match.group(1)`
 endsnippet
 
@@ -31,14 +31,14 @@ snippet "elif|(else if|elseif)" "else if:elif|elseif" br
 elif ${1:True}:
 	${0:${VISUAL}}
 endsnippet
-snippet else "else:else" b
+snippet else "else" b
 else:
 	${0:${VISUAL}}
 endsnippet
-snippet switch "switch:switch" b
+snippet switch "switch" b
 No switch in python. Use if,elif, else.
 endsnippet
-snippet case "case:case" b
+snippet case "case" b
 No switch in python. Use if,elif, else.
 endsnippet
 
@@ -47,11 +47,11 @@ snippet for "for" b
 for ${1:var} in range(0,${2:10}):
 	${0:${VISUAL}}
 endsnippet
-snippet "for((?!e)\w+)" "for + match.group(1) as variable" br
+snippet "for((?!e)\w+)" "for ??? as variable:for???" br
 for `!p snip.rv = match.group(1)` in range(0,${1:10}):
 	${VISUAL}${0}
 endsnippet
-snippet "fore(ach)?" "for each element in collection" br
+snippet "fore(ach)?" "for each element in collection:foreach" br
 for ${1:thing} in ${2:collection}:
 	${VISUAL}${0}
 endsnippet
@@ -67,58 +67,58 @@ while True:
 endsnippet
 
 # Methods/functinos
-snippet "func?t?i?o?n?" "function" br
+snippet "func?t?i?o?n?" "function:function" br
 def ${1:funcName}(${2:param}):
 	${0:pass}${0:${VISUAL}}
 endsnippet
-snippet "meth?o?d?" "function" br
+snippet "meth?o?d?" "method:method" br
 def ${1:methodName}(self${2:, param}):
 	${0:pass}${0:${VISUAL}}
 endsnippet
-snippet "cons?t?r?u?c?t?o?r?" "Description" br
+snippet "cons?t?r?u?c?t?o?r?" "constructor:constructor" br
 def __init__(self${1:, param}):
 	${0:pass}${0:${VISUAL}}
 endsnippet
 
 # String snippets
-snippet "[sS]tr(ing)?" "string variable" br
+snippet "[sS]tr(ing)?" "string variable:string|String" br
 ${1:var} = "${2:string}"
 endsnippet
-snippet "contains|in" "string contains/is in another string" br
+snippet "contains|in" "string contains or in:contains|in" br
 ${1:"another string"} in ${2:"string"}
 endsnippet
-snippet "([a-zA-Z0-9."']+) contains" "string contains match.group(1)" br
+snippet "([a-zA-Z0-9."']+) contains" "string contains ???:??? contains" br
 ${1:"another string"} in `!p snip.rv = match.group(1)`
 endsnippet
-snippet "([a-zA-z0-9."']+) in" "match.group(1) in string" br
+snippet "([a-zA-z0-9."']+) in" "??? in string:??? in" br
 `!p snip.rv = match.group(1)` in ${1:"another string"}
 endsnippet
-snippet "[tT]o[sS]tring\(?\)?" "Description" br
+snippet "[tT]o[sS]tring\(?\)?" "variable to string:toString|ToString" br
 str(${VISUAL}${0})
 endsnippet
-snippet "((\([^"]*\))|[a-zA-Z0-9.,\-]+)+.[tT]o[sS]tring\(?\)?" "match.group(1) to string" br
+snippet "((\([^"]*\))|[a-zA-Z0-9.,\-]+)+.[tT]o[sS]tring\(?\)?" "??? to string:???toString|???ToString" br
 str(`!p snip.rv = match.group(1)`)
 endsnippet
 
 # int snippets
-snippet "[iI]nt" "int variable" br
+snippet "[iI]nt" "int variable:int|Int" br
 ${1:var} = ${2:${10}}
 endsnippet
-snippet "(\w+)\+\+" "Description" r
+snippet "(\w+)\+\+" "increment int:???++" r
 `!p snip.rv = match.group(1)` += 1
 endsnippet
-snippet "(\w+)\-\-" "Description" r
+snippet "(\w+)\-\-" "decrement int:???--" r
 `!p snip.rv = match.group(1)` -= 1
 endsnippet
 
 # Variable snippets
-snippet "[dD]ouble" "double variable" br
+snippet "[dD]ouble" "double variable:double|Double" br
 ${1:var} = ${2:2.0}
 endsnippet
-snippet "[fF]loat" "float variable" br
+snippet "[fF]loat" "float variable:float|Float" br
 ${1:var} = ${2:2.0}
 endsnippet
-snippet "[bB]ool(ean)?" "float variable" br
+snippet "[bB]ool(ean)?" "float variable:boolean|Boolean" br
 ${1:var} = ${2:True}
 endsnippet
 
@@ -129,7 +129,7 @@ endsnippet
 snippet list "list" b
 ${1:listName} = [${0:item}]
 endsnippet
-snippet "(\w+) ?list" "list of type match.group(1)" br
+snippet "(\w+) ?list" "list of type ???:??? list" br
 ${1:listName} = [${0:item}]
 endsnippet
 
@@ -137,7 +137,7 @@ endsnippet
 snippet "\"|#|//" "comment" br
 # ${VISUAL}${0}
 endsnippet
-snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines " br
+snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines:multilinecomment" br
 '''
 ${VISUAL}${0}
 '''
@@ -224,6 +224,25 @@ snippet runPipe "Run external and get output, import subprocess"
 cmd = subprocess.Popen(${1:"ls -la"}, stdout=subprocess.PIPE)	
 for row in cmd.stdout:
 	${0}
+endsnippet
+snippet url "Fetch info from url, import urllib2:url"
+response = urllib2.urlopen('${1:www.google.com}')
+html = response.read()
+response.close()
+${0}
+endsnippet
+snippet htmlparser "Parses a html site, from HTMLParser import HTMLParser:htmlparser"
+class ${1:MyHTMLParser}(HTMLParser):
+    def handle_starttag(self, tag, attr):
+    	${2:print tag}
+    def handle_endtag(self, tag):
+    	${3:print tag}
+    def handle_data(self, data):
+    	${4:print tag}
+
+parser = MyHTMLParser()
+parser.feed(${5:<p>test</p>})
+${0}
 endsnippet
 # Stream snippets
 snippet streamopen "Open a stream:streamopen" b

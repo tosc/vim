@@ -1,0 +1,23 @@
+List	New List
+if	If
+elif	Else if
+else	Else
+switch	switch
+case	case
+for	For
+fori	For int i
+forj	For int j
+forx	For int x
+fory	For int y
+fore	For each
+comment	Comment method
+param	Documentation for parameter
+returns	Documentation for return
+area	New GUIarea
+hor	New gui horizontal
+flex	New gui flexspace
+vert	new gui vert
+button	gui button
+toggle	gui toggle
+set	Setter
+fileunity	New unity script

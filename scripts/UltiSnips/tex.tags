@@ -1,0 +1,23 @@
+if	if
+ifor	if or
+ifelse	if else
+for	for
+filemath	new math document
+file	new document
+list	normal list
+listdescription	list with keyword and description
+numberedlist	numbered list, \begin{enumerate}[resume] to continue count
+numberedlistdescription	numbered list, \begin{enumerate}[resume] to continue count
+item	new entry in a list
+itemdescription	new entry in a description list
+nl	New line
+newline	New line
+venn	Venn diagram
+mathmode	Math
+mm	Math
+...	Mathdots
+omega	Omega
+Omega	Omega
+/	division
+U	upphöjt
+_	nersänkt

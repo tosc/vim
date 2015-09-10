@@ -1,0 +1,53 @@
+import	import
+include	import
+header	header
+if	if
+ifshort	if shorthand
+ifelse	if else
+else	else
+switch	switch
+case	case
+for	for
+for???	for,??? as variable
+foreach	for each element in collection
+while	while
+do	do while
+function	function
+method	function
+(\w+)(func?t?i?o?n?|meth?o?d?)	function with type as match.group(1)
+constructor	constructor
+string	string variable
+String	string variable
+tostring	to string
+ToString	to string
+toString	to string
+int	int variable
+Int	int variable
+???++	increment
+???--	decrement
+double	double variable
+Double	double variable
+float	float variable
+Float	float variable
+bool	bool variable
+Bool	bool variable
+enum	enum
+list	list
+List	list
+\"|#|//	comment
+mlc	 A comment spanning multiple lines
+multilinecomment	 A comment spanning multiple lines
+comment	comment
+sleep	Sleep program
+time	current time in milliseconds
+kill	kill current script
+print	print
+printvar	print a variable
+printlist	print a list
+file	runnable script
+class	new class
+streamopen	Open a stream
+streamopen	Close a stream
+streamread	Read from a stream
+streamreadline	Read a line from a stream
+streamwrite	write to a stream

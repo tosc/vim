@@ -1,0 +1,16 @@
+\|\||or	or
+&&|and	and
+if	if
+ifel?s?e?	if else
+else	else
+for((?!e)\w+)	for + match.group(1) as variable
+for	for
+fore	for each
+while	while
+func?t?i?o?n?|method	function
+(\w+)(func?t?i?o?n?|method)	function with type as match.group(1)
+[sS]tr(ing)?	string variable
+[iI]nt	int variable
+[fF]loat	float variable
+[bB]ool(ean)?	float variable
+print	print

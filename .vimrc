@@ -71,6 +71,9 @@ set sessionoptions+=folds
 
 set rtp+=~/git/vim/scripts/
 
+"Disables bug with bg using putty
+set t_ut=
+
 syntax on
 " ---------
 " ---- [2] PLUGINS ----
@@ -78,7 +81,7 @@ syntax on
 if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
 	" Required by vundle
 	filetype off
-	set rtp+=~/git/vim/bundle/Vundle.vim/
+	set rtp+=~/.vim/bundle/Vundle.vim/
 	call vundle#begin()
 	Plugin 'gmarik/Vundle.vim'
 
@@ -95,11 +98,8 @@ if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
 	" Code-completion
 if has('lua') && !g:minimalMode
 	Plugin 'Shougo/neocomplete.vim'
-	Plugin 'tosc/neocomplete-spell'
-	Plugin 'tosc/neocomplete-ultisnips'
 else
 	Plugin 'Shougo/neocomplcache'
-	Plugin 'JazzCore/neocomplcache-ultisnips'
 endif
 	" Omnicomplete engines.
 	Plugin 'Rip-Rip/clang_complete'
@@ -444,7 +444,7 @@ inoremap <S-Space> <C-R>=SmartJump()<CR>
 inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
 inoremap <pageup> <C-R>=SmartJump()<CR>
 inoremap <pagedown> <C-R>=SmartJumpBack()<CR>
-inoremap <C-L> <C-R>=SmartJump()<CR>
+inoremap <C-L> <nop>
 inoremap <C-H> <C-R>=SmartJumpBack()<CR>
 
 " Readline bindings.
@@ -477,6 +477,8 @@ inoremap <expr> <up> SpecialDelim("\<up>")
 inoremap <expr> <down> SpecialDelim("\<down>")
 inoremap <expr> <space> SpecialDelim("\<space>")
 inoremap <expr> <bs> SpecialDelim("\<bs>")
+inoremap <C-L> <ESC>:call SmartJump()<CR>
+inoremap <C-H> <ESC>:call SmartJumpBack()<CR>
 " --------------------
 " ---- [3.2] VISUAL ----
 " I keep pressing << >> in the wrong order. HL are good for directions.
@@ -494,6 +496,8 @@ snoremap <S-Space> <ESC>:call SmartJump()<CR>
 snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
 snoremap <pageup> <ESC>:call SmartJump()<CR>
 snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
+snoremap <C-L> <ESC>:call SmartJump()<CR>
+snoremap <C-H> <ESC>:call SmartJumpBack()<CR>
 
 if !g:disablePlugins
 	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
@@ -738,6 +742,14 @@ function! SnippetSettings()
 	setlocal foldmethod=expr
 endfunction
 
+function! SnippetUpdate()
+	let oldCWD = getcwd()
+	execute 'cd %:h'
+	execute '! python ' . g:UltiSnipsSnippetsDir . '/SnippetComplete.py'
+	execute 'cd ' . oldCWD
+endfunction
+
+autocmd BufWritePost *.snippets call SnippetUpdate()
 autocmd Filetype snippets call SnippetSettings()
 " --------------------
 " ---- [4.6] TODO ----
@@ -1541,6 +1553,7 @@ endfunction
 " Default delimiters: "'(){}[]
 " To change default delimiters just change b:smartJumpElements
 function! SmartJump()
+	pclose
 	if !g:disablePlugins
 		call UltiSnips#JumpForwards()
 		if g:ulti_jump_forwards_res == 1

@@ -1,0 +1,58 @@
+import	import
+include	import
+\|\|	or
+&&	and
+not	not
+if	if
+ifshort	if shorthand
+ifelse	if else
+else	else
+switch	switch
+case	case
+for	for
+for???	for ??? as variable
+foreach	for each element in collection
+while	while
+do	do while
+function	function
+method	method
+constructor	constructor
+string	string variable
+String	string variable
+contains	string contains or in
+in	string contains or in
+toString	variable to string
+ToString	variable to string
+???toString	??? to string
+???ToString	??? to string
+int	int variable
+Int	int variable
+???++	increment int
+???--	decrement int
+double	double variable
+Double	double variable
+float	float variable
+Float	float variable
+boolean	float variable
+Boolean	float variable
+enum	enum, requires from enum import Enum
+list	list
+\"|#|//	comment
+multilinecomment	 A comment spanning multiple lines
+comment	comment
+time	current time in milliseconds, import time
+sleep	sleep, import time
+print	print
+printvar	print a variable
+main	main
+class	New class
+gui	A gui
+bind	New keybinding
+button	New button
+label	New label
+labelvar	New label with var
+streamopen	Open a stream
+streamopen	Close a stream
+streamread	Read from a stream
+streamreadline	Read a line from a stream
+streamwrite	write to a stream

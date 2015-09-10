@@ -1,0 +1,8 @@
+\"|#|//	comment
+file	new snippet file
+snippet	Snippet definition
+(\d+)	Tabstop with nr
+(\d+)v	Tabstop with nr and visual
+python	python block
+Trigger2	python block
+(\d+)m(atch)?(.)?g(roup)?	get the matched pattern

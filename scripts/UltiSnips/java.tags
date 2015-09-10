@@ -1,0 +1,14 @@
+if	If
+elif	Else if
+else	Else
+switch	switch
+case	case
+for	For
+fori	For int i
+fore	For each
+comment	Comment method
+param	Documentation for parameter
+returns	Documentation for return
+List	New List
+set	Setter
+JC	New unity script
