@@ -333,9 +333,6 @@ nnoremap L >>
 " Wanted a easier bind for $
 nnoremap + $
 
-" Show the my normal and insert bindings.
-nnoremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg
-
 " Do last recording. (Removes exmode which I never use.)
 nnoremap Q @@
 
@@ -375,9 +372,6 @@ nnoremap <expr> gp '`[' . getregtype()[0] . '`]'
 " and goto mark ` to m.
 nnoremap M m
 nnoremap m `
-nnoremap mg? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r
-	\ ~/git/vim/.vimrc <CR> /\[9.2\]<CR>j :0,.-1d<CR>/" --------<CR>
-	\ :.,$d<CR>:call HelpMarkColor()<CR>
 function! BindMark(uMap)
 	let lMap = tolower(a:uMap)
 	execute "nnoremap M" . lMap . " m" . a:uMap 
@@ -469,6 +463,10 @@ inoremap <expr> <bs> SpecialDelim("\<bs>")
 vnoremap H <gv
 vnoremap L >gv
 
+"Switches repeat f/F, feels more logical on swedish keyboard.
+vnoremap , ;
+vnoremap ; ,
+
 xnoremap + $
 
 xnoremap å c<C-R>=PythonMath()<CR>
@@ -488,8 +486,6 @@ if !g:disablePlugins
 	" Remapped s to vim-surround.
 	xmap s S
 endif
-
-xnoremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.2\]<CR> :0,.-1d<CR>/\[3.3\]<CR> :.,$d<CR>gg
 " --------------------
 " ---- [3.3] LEADER ----
 let g:mapleader="\<space>"
@@ -524,9 +520,16 @@ if !g:disablePlugins
 	map <leader>gd :Gdiff<CR>
 	map <leader>gg :Gstatus<CR>
 endif
-
-noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
-" H
+" H - Help, show binds.
+noremap <leader>hn :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.1\]<CR> :.,$d<CR>gg
+noremap <leader>hi :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.1\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg
+noremap <leader>hv :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.2\]<CR> :0,.-1d<CR>/\[3.3\]<CR> :.,$d<CR>gg
+noremap <leader>hl :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
+noremap <leader>hc :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.5\]<CR> :0,.-1d<CR>/\[3.6\]<CR> :.,$d<CR>gg
+noremap <leader>hu :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.6\]<CR> :0,.-1d<CR>/\[3.7\]<CR> :.,$d<CR>gg
+noremap <leader>hm :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r
+	\ ~/git/vim/.vimrc <CR> /\[9.2\]<CR>j :0,.-1d<CR>/" --------<CR>
+	\ :.,$d<CR>:call HelpMarkColor()<CR>
 " I - Information, notes on helpful things.
 map <leader>ii :call UniteTags(&l:filetype)<CR>
 map <leader>iI :Unite tagfolders:~/info/ <CR>
@@ -598,8 +601,8 @@ endif
 "This adds $$ as textobjects.	
 onoremap a$ :<c-u>normal! F$vf$<cr>
 onoremap i$ :<c-u>normal! T$vt$<cr>
-onoremap am a$
-onoremap im i$
+onoremap am :<c-u>normal! F$vf$<cr>
+onoremap im :<c-u>normal! T$vt$<cr>
 
 " Wanted binds like cib ciB but for [] and <> "" ''
 onoremap ad a[
@@ -736,8 +739,8 @@ endfunction
 
 function! SnippetUpdate()
 	let oldCWD = getcwd()
-	execute 'cd %:h'
-	execute '! python ' . expand(g:UltiSnipsSnippetsDir) . '/SnippetComplete.py'
+	cd ~\git\vim
+	Start python SnippetComplete.py
 	execute 'cd ' . oldCWD
 endfunction
 

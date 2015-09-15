@@ -1,0 +1,82 @@
+import	import
+include	import
+if	if
+ifor	if or
+ifelse	if else
+for	for
+function	function
+method	function
+???function	function with type as match.group(1)
+???constructor	function with type as match.group(1)
+begin	function begin
+???begin	function begin with type as match.group(1)
+end	function end
+???end	function end with type as match.group(1)
+\"|#|//	comment
+mlc	 A comment spanning multiple lines
+multilinecomment	 A comment spanning multiple lines
+comment	comment
+filemath	new math document
+filebase	new document
+liststartunnumbered	normal list
+listdescription	new item on list but with keyword and description
+listitem	new item on list
+liststartnumbered	numbered list, \begin{enumerate}[resume] to continue count
+nl	New line
+newline	New line
+subsection	subsection
+ssection	subsection
+subsubsection	subsubsection
+sssection	subsubsection
+fillpage	fills the rest of the page with blank
+clearpage	fills the rest of the page with blank
+venn	Venn diagram
+graphstart	create a new graph
+graphplot	add a equation to your graph, dashed/dotted/red/green
+graphequation	add a equation to your graph, dashed/dotted/red/green
+graphcoordinates	add coordiantes to your graph, dashed/dotted/red/green/samples= 
+graphnode	show a point on your graph
+graphpoint	show a point on your graph
+graphtext	show text at point
+unitcircle	unit circle
+uc	unit circle
+mm	mm
+mathmode	mm
+mathfloat	floating math
+mf	floating math
+equation	floating math
+noheadertheorem	textbox without header but with grey background
+textbox	textbox without header but with grey background
+newlinemath	new line math
+nlm	new line math
+omega	Omega
+Omega	Omega
+frac	division
+fraction	division
+division	division
+div	division
+leq	less than or equal
+lessthanequal	less than or equal
+geq	greater than or equal
+greaterthanequal	greater than or equal
+U	upphöjt
+_	nersänkt
+largespace	large space
+sspace	large space
+sqrt	Square root
+squareroot	Square root
+root	Square root
+abs	absolutevalue
+absolutevalue	absolutevalue
+pm	plusminus sign
++-	plusminus sign
+plusminus	plusminus sign
+italic	Italic
+cursive	Italic
+kursivt	Italic
+counterValue	change counter value
+ref	Get info about the reference, use \label to label a object first
+referense	Get info about the reference, use \label to label a object first
+link	Get info about the reference, use \label to label a object first
+mark	Mark object for use with reference
+label	Mark object for use with reference

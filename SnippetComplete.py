@@ -1,19 +1,20 @@
 import os
 import re
 
-for fileName in os.listdir("."):
+for fileName in os.listdir("./scripts/UltiSnips/"):
+    print fileName
     if ".snippets" in fileName:
 
         suggestions = []
         fileSplit = fileName.split('.')
 
         #Empty all tagfiles
-        r = open(fileSplit[0] + ".tags", 'w')
+        r = open("scripts/UltiSnips/tags/" + fileSplit[0] + ".tags", 'w')
         r.write('')
         r.close()
 
         #Read and retrieve snippets and their descriptions
-        f = open(fileName, 'r')
+        f = open("scripts/UltiSnips/" + fileName, 'r')
         line = f.readline()
         while line != '':
             match = re.match('(^snippet ){1}(\S+) "(.*)"{1} (\S+)', line)
@@ -40,7 +41,7 @@ for fileName in os.listdir("."):
         #Save all snippets to the tagsfile.
 
         newTags = 0
-        r = open(fileSplit[0] + ".tags", 'a')
+        r = open("scripts/UltiSnips/tags/" + fileSplit[0] + ".tags", 'a')
         for (snippet, description) in suggestions:
             r.write(snippet + "\t" + description + '\n')
             newTags += 1

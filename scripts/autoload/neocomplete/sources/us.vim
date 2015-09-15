@@ -10,7 +10,7 @@ let s:us_source = {
 
 function! s:us_source.gather_candidates(context)
 	let suggestions = []
-	let file = g:UltiSnipsSnippetsDir . '/' . &filetype . '.tags'
+	let file = g:UltiSnipsSnippetsDir . '/tags/' . &filetype . '.tags'
 	if exists("*vimproc#system")
 		let newWords = vimproc#system('cat ' . file . ' | grep "^'. a:context.complete_str . '"')
 	else
@@ -25,7 +25,7 @@ function! s:us_source.gather_candidates(context)
 			\ })
 	endfor
 
-	let file = g:UltiSnipsSnippetsDir . '/all.tags'
+	let file = g:UltiSnipsSnippetsDir . '/tags/all.tags'
 	if exists("*vimproc#system")
 		let newWords = vimproc#system('cat ' . file . ' | grep "^'. a:context.complete_str . '"')
 	else

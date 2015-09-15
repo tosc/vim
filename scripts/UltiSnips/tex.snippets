@@ -1,6 +1,9 @@
 priority 1
 
 # Header
+snippet "import|include" "import:import|include" br
+\include*{${1:filename}}
+endsnippet
 # Logical operations
 # Conditional snippets
 snippet if "if:if" b
@@ -30,27 +33,23 @@ endsnippet
 # Methods/functions
 snippet "func?t?i?o?n?|meth?o?d?|const?r?u?c?t?o?r?" "function:function|method" br
 \begin{${1}}
-$2
-\end{$1}
 $0
+\end{$1}
 endsnippet
 snippet "(\w+)(func?t?i?o?n?|meth?o?d?|const?r?u?c?t?o?r?)" "function with type as match.group(1):???function|???constructor" br
 \begin{`!p snip.rv = match.group(1)`}
-$2
-\end{`!p snip.rv = match.group(1)`}
 $0
+\end{`!p snip.rv = match.group(1)`}
 endsnippet
 snippet "begin" "function begin:begin" br
-\begin{${1}}
-$0
+\begin{$0}
 endsnippet
 snippet "(\w+)(begin)" "function begin with type as match.group(1):???begin" br
 \begin{`!p snip.rv = match.group(1)`}
 $0
 endsnippet
 snippet "end" "function end:end" br
-\end{${1}}
-$0
+\end{$0}
 endsnippet
 snippet "(\w+)(end)" "function end with type as match.group(1):???end" br
 \end{`!p snip.rv = match.group(1)`}
@@ -70,6 +69,7 @@ endsnippet
 snippet comment "comment:comment" b
 <MISSING documentation>
 endsnippet
+
 # Special snippets
 # New code snippets
 snippet filemath "new math document:filemath" b
@@ -87,6 +87,8 @@ snippet filemath "new math document:filemath" b
 	\usepackage[margin=1in]{geometry}
 	\usepackage{pgfplots}
 	\usepackage{subcaption}
+	\usepackage{commath}
+	\usepackage{newclude}
 	
 	\newtheoremstyle{customtheorem}
 		{\topsep}
@@ -94,7 +96,7 @@ snippet filemath "new math document:filemath" b
 		{}
 		{0pt}
 		{\bfseries}
-		{\\*[3pt]}
+		{\\[3pt]}
 		{0mm}
 		{\thmname{#1}\thmnumber{ #2}\thmnote{ - #3}}
 	
@@ -144,11 +146,12 @@ snippet filemath "new math document:filemath" b
 		}
 	}
 	\tikzset{every picture/.style=thick}
-	\counterwithin{figure}{section}
+	\counterwithin{figure}{subsection}
 	\captionsetup[subfigure]{labelformat=empty}
 	
 	
-	\begin{document}
+% \includeonly{}
+\begin{document}
 	\title{${1:Title}}
 	\author{Tobias Schwalbe}
 	
@@ -178,64 +181,44 @@ $0
 endsnippet
 
 # Lists
-snippet list "normal list:list" b
+snippet liststartunnumbered "normal list:liststartunnumbered" b
 \begin{itemize}
-	\item ${1:Item description}
 	$0
 \end{itemize}
 endsnippet
-snippet listdescription "list with keyword and description:listdescription" b
-\begin{description}
-	\item[${1:Item}] ${2:Item description}
-	$0
-\end{description}
-endsnippet
-snippet "numb?e?r?e?d?list" "numbered list, \begin{enumerate}[resume] to continue count:numberedlist" br
-\begin{enumerate}
-	\item ${1:Item description}
-	$0
-\end{enumerate}
-endsnippet
-snippet "numb?e?r?e?d?listdescription" "numbered list, \begin{enumerate}[resume] to continue count:numberedlistdescription" br
-\begin{enumerate}
-	\item[${1:Item}] ${2:Item description}
-	$0
-\end{enumerate}
-endsnippet
-snippet item "new entry in a list:item" b
-\item ${1:Item description}
-$0
-endsnippet
-snippet itemdescription "new entry in a description list:itemdescription" b
+snippet listdescription "new item on list but with keyword and description:listdescription" b
 \item[${1:Item}] ${2:Item description}
+endsnippet
+snippet listitem "new item on list:listitem" b
+\item ${1:Item description}
+endsnippet
+snippet liststartnumbered "numbered list, \begin{enumerate}[resume] to continue count:liststartnumbered" b
+\begin{enumerate}
+	$0
+\end{enumerate}
 endsnippet
 
 # Formatting
 snippet "ne?w?li?n?e?|\\n" "New line:nl|newline" r
-\\*
+\\\\
 endsnippet 
 snippet lipsum "Lorem ipsum \usepackage{lipsum}"
 \lipsum[100]
 endsnippet
 snippet section
 \section{${1:Title}}
-$0
 endsnippet
-snippet subsection
+snippet "s(ub)?section" "subsection:subsection|ssection" br
 \subsection{${1:Title}}
-$0
 endsnippet
-snippet subsubsection
+snippet "s(ub)?s(ub)?section" "subsubsection:subsubsection|sssection" br
 \subsubsection{${1:Title}}
-$0
-endsnippet
-snippet ssection
-\subsection{${1:Title}}
-$0
 endsnippet
 snippet sssection
 \subsubsection{${1:Title}}
-$0
+endsnippet
+snippet "fillpage|clearpage" "fills the rest of the page with blank:fillpage|clearpage" r
+\clearpage
 endsnippet
 
 # Frames
@@ -273,62 +256,46 @@ snippet venn "Venn diagram" b
 \end{center}
 endsnippet
 snippet "graphstart" "create a new graph:graphstart" br
-\begin{figure}
+\begin{figure}[!htb]
 	\centering
-	\begin{tikzpicture}[scale=1]
-		\begin{axis}[
-			axis x line = center,
-			axis y line = center,
-			xtick={},
-			ytick={},
-			xmin=,
-			ymin=,
-			xmax=,
-			ymax=,
-			xticklabels={},
-			yticklabels={},
-			xlabel={$x$},
-			ylabel={$f(x) = $1$},
-			xlabel style = below right,
-			ylabel style = above left]
-			\addplot [mark=none]{${1:MATH WITH ALL * TYPED OUT}} node [pos=0.75, label={170:${2:$$1$}},inner sep = 0pt] {};${3}
-		\end{axis}
-	\end{tikzpicture}
+	\begin{subfigure}{1\textwidth}
+		\begin{tikzpicture}
+			\begin{axis}[
+				axis x line = center,
+				axis y line = center,
+				xtick={},
+				ytick={},
+				xmin=,
+				ymin=,
+				xmax=,
+				ymax=,
+				xticklabels={},
+				yticklabels={},
+				xlabel={$x$},
+				ylabel={$f(x) = $1$},
+				xlabel style = below right,
+				ylabel style = above left]
+				\addplot [mark=none, domain=${2:-10}:${3:10}, samples=50]{${1:MATH WITH ALL * TYPED OUT}};$0
+			\end{axis}
+		\end{tikzpicture}
+		\caption{}
+	\end{subfigure}
 	\caption{${4:Look at the pretty figure.}}
 \end{figure}
 $0
 endsnippet
-snippet "graphsubstart" "create a new sub graph:graphsubstart" br
-\begin{subfigure}{0.4\textwidth}
-	\centering
-	\begin{tikzpicture}[scale=1]
-		\begin{axis}[
-			axis x line = center,
-			axis y line = center,
-			xtick={},
-			ytick={},
-			xmin=,
-			ymin=,
-			xmax=,
-			ymax=,
-			xticklabels={},
-			yticklabels={},
-			xlabel={$x$},
-			ylabel={$f(x) = $1$},
-			xlabel style = below right,
-			ylabel style = above left]
-			\addplot [mark=none]{${1:MATH WITH ALL * TYPED OUT}} node [pos=0.75, label={170:${2:$$1$}},inner sep = 0pt] {};${3}
-		\end{axis}
-	\end{tikzpicture}
-	\caption{${4:Look at the pretty figure.}}
-\end{subfigure}
-$0
+snippet "graphequation|graphplot" "add a equation to your graph, dashed/dotted/red/green:graphplot|graphequation" br
+\addplot [mark=none,domain=${2:x}:${3:y},samples=50]{${1:MATH WITH ALL * TYPED OUT}};$0
 endsnippet
-snippet "graphplot" "add a plot to your graph, use domain=-5colon5, samples=50 inside [] to change domain and number of samples:graphplot" br
-\addplot [mark=none]{${1:MATH WITH ALL * TYPED OUT}} node [pos=0.75, label={170:${2:$$1$}},inner sep = 0pt] {};$0
+snippet "graphcoordinates" "add coordiantes to your graph, dashed/dotted/red/green/samples= :graphcoordinates" br
+\addplot [mark=none] coordinates {${1:(0,1) (1,1)}};$0
 endsnippet
-snippet "graphnode|graphpoint" "show a point on your graph, remove circle and fill to just get text:graphnode|graphpoint" br
+snippet "graphnode|graphpoint" "show a point on your graph:graphnode|graphpoint" br
 \node[label={180:{($1)}}, circle, fill, inner sep = 2pt]
+	at (axis cs:${1:0,0}) {};$0
+endsnippet
+snippet "graphtext" "show text at point:graphtext" br
+\node[label={0:{${2:Text}}}, inner sep = 2pt]
 	at (axis cs:${1:0,0}) {};$0
 endsnippet
 snippet "u(nit)?c(ircle)?" "unit circle:unitcircle|uc" br
@@ -403,18 +370,16 @@ endsnippet
 snippet "m(ath)?m(ode)?" "mm:mm|mathmode" br
 $ ${VISUAL}$0 $
 endsnippet
-snippet " m(ath)?m(ode)?" "mathmode" r
- $ ${VISUAL}$0 $
+snippet "m(ath)?f(loat)?|equation" "floating math:mathfloat|mf|equation" r
+\[ $0 \]
+endsnippet
+snippet "([ ({])m(ath)?m(ode)?" "mathmode" r
+`!p snip.rv = match.group(1)`$ ${VISUAL}$0 $
 endsnippet
 snippet solution
 \begin{solution}
 	${VISUAL}$2
 \end{solution}
-endsnippet
-snippet equation
-\[
-	${VISUAL}$0
-\]
 endsnippet
 snippet nequation
 \begin{equation}
@@ -444,10 +409,15 @@ snippet theorem "theorem"
 	\end{theorem}
 \end{theoremframe}
 endsnippet
-snippet notheorem
+snippet nonumtheorem
 \begin{nonumtheorem}
 	${VISUAL}$2
 \end{nonumtheorem}
+endsnippet
+snippet "noheadertheorem|textbox" "textbox without header but with grey background:noheadertheorem|textbox" r
+\begin{theoremframe}
+	${VISUAL}$2
+\end{theoremframe}
 endsnippet
 snippet text
 \text{${VISUAL}$1}$0
@@ -474,7 +444,7 @@ endsnippet
 snippet \ "\"
 \backslash
 endsnippet
-snippet / "division"
+snippet "/|frac(tion)?|div(ision)?" "division:frac|fraction|division|div" r
 \frac{${1:x}}{${2:y}}$0
 endsnippet
 snippet tom "Tom mängd:tom" 
@@ -585,6 +555,12 @@ endsnippet
 snippet "sq(uare)?r(oo)?t|root" "Square root:sqrt|squareroot|root" r
 \sqrt{${VISUAL}$0}
 endsnippet
+snippet "abs(olute)?(value)?" "absolutevalue:abs|absolutevalue" r
+\abs{${VISUAL}${0}}
+endsnippet
+snippet "p(lus)?m(inus)?" "plusminus sign:pm|+-|plusminus" r
+\pm
+endsnippet
 
 # Unsorted
 snippet table
@@ -607,10 +583,19 @@ snippet grid
 	\end{tikzpicture}
 \end{center}
 endsnippet
-snippet italic "Italic" 
+snippet "italic|cursive|kursivt" "Italic:italic|cursive|kursivt" r
 \textit{${VISUAL}$1}$0
 endsnippet
 snippet bold "Bold" 
 \textbf{${VISUAL}$1}$0
+endsnippet
+snippet "counterValue" "change counter value:counterValue" br
+\addtocounter{${1:counterName}}{${0:-1}}
+endsnippet
+snippet "ref(erence)?|link" "Get info about the reference, use \label to label a object first:ref|referense|link" r
+\ref{${1:fig:symmetry}}
+endsnippet
+snippet "mark|label" "Mark object for use with reference:mark|label" r
+\label{${1:fig:symmetry}}
 endsnippet
 
