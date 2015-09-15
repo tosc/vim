@@ -28,11 +28,48 @@ snippet for "for:for" b
 endsnippet
 
 # Methods/functions
+snippet "func?t?i?o?n?|meth?o?d?|const?r?u?c?t?o?r?" "function:function|method" br
+\begin{${1}}
+$2
+\end{$1}
+$0
+endsnippet
+snippet "(\w+)(func?t?i?o?n?|meth?o?d?|const?r?u?c?t?o?r?)" "function with type as match.group(1):???function|???constructor" br
+\begin{`!p snip.rv = match.group(1)`}
+$2
+\end{`!p snip.rv = match.group(1)`}
+$0
+endsnippet
+snippet "begin" "function begin:begin" br
+\begin{${1}}
+$0
+endsnippet
+snippet "(\w+)(begin)" "function begin with type as match.group(1):???begin" br
+\begin{`!p snip.rv = match.group(1)`}
+$0
+endsnippet
+snippet "end" "function end:end" br
+\end{${1}}
+$0
+endsnippet
+snippet "(\w+)(end)" "function end with type as match.group(1):???end" br
+\end{`!p snip.rv = match.group(1)`}
+$0
+endsnippet
 # String snippets
 # int snippets
 # Variable snippets
 # Datatype snippets
 # Documentation snippets
+snippet "\"|#|//" "comment" r
+%
+endsnippet
+snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines:mlc|multilinecomment" br
+<MISSING multiline comment>
+endsnippet
+snippet comment "comment:comment" b
+<MISSING documentation>
+endsnippet
 # Special snippets
 # New code snippets
 snippet filemath "new math document:filemath" b
@@ -48,6 +85,8 @@ snippet filemath "new math document:filemath" b
 	\usepackage{lipsum}
 	\usepackage[none]{hyphenat}
 	\usepackage[margin=1in]{geometry}
+	\usepackage{pgfplots}
+	\usepackage{subcaption}
 	
 	\newtheoremstyle{customtheorem}
 		{\topsep}
@@ -97,6 +136,16 @@ snippet filemath "new math document:filemath" b
 	\newmdenv[
 		skipabove=1em,
 		]{definitionframe}
+
+	\pgfplotsset{
+		every axis/.append style={
+			scale only axis,
+			width=\textwidth,
+		}
+	}
+	\tikzset{every picture/.style=thick}
+	\counterwithin{figure}{section}
+	\captionsetup[subfigure]{labelformat=empty}
 	
 	
 	\begin{document}
@@ -112,7 +161,7 @@ $0
 \end{document}
 
 endsnippet
-snippet file "new document:file" b
+snippet filebase "new document:filebase" b
 \documentclass[11pt]{article}
 
 	\begin{document}
@@ -153,7 +202,6 @@ snippet "numb?e?r?e?d?listdescription" "numbered list, \begin{enumerate}[resume]
 	$0
 \end{enumerate}
 endsnippet
-
 snippet item "new entry in a list:item" b
 \item ${1:Item description}
 $0
@@ -224,10 +272,139 @@ snippet venn "Venn diagram" b
 	\end{tikzpicture}
 \end{center}
 endsnippet
+snippet "graphstart" "create a new graph:graphstart" br
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[scale=1]
+		\begin{axis}[
+			axis x line = center,
+			axis y line = center,
+			xtick={},
+			ytick={},
+			xmin=,
+			ymin=,
+			xmax=,
+			ymax=,
+			xticklabels={},
+			yticklabels={},
+			xlabel={$x$},
+			ylabel={$f(x) = $1$},
+			xlabel style = below right,
+			ylabel style = above left]
+			\addplot [mark=none]{${1:MATH WITH ALL * TYPED OUT}} node [pos=0.75, label={170:${2:$$1$}},inner sep = 0pt] {};${3}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{${4:Look at the pretty figure.}}
+\end{figure}
+$0
+endsnippet
+snippet "graphsubstart" "create a new sub graph:graphsubstart" br
+\begin{subfigure}{0.4\textwidth}
+	\centering
+	\begin{tikzpicture}[scale=1]
+		\begin{axis}[
+			axis x line = center,
+			axis y line = center,
+			xtick={},
+			ytick={},
+			xmin=,
+			ymin=,
+			xmax=,
+			ymax=,
+			xticklabels={},
+			yticklabels={},
+			xlabel={$x$},
+			ylabel={$f(x) = $1$},
+			xlabel style = below right,
+			ylabel style = above left]
+			\addplot [mark=none]{${1:MATH WITH ALL * TYPED OUT}} node [pos=0.75, label={170:${2:$$1$}},inner sep = 0pt] {};${3}
+		\end{axis}
+	\end{tikzpicture}
+	\caption{${4:Look at the pretty figure.}}
+\end{subfigure}
+$0
+endsnippet
+snippet "graphplot" "add a plot to your graph, use domain=-5colon5, samples=50 inside [] to change domain and number of samples:graphplot" br
+\addplot [mark=none]{${1:MATH WITH ALL * TYPED OUT}} node [pos=0.75, label={170:${2:$$1$}},inner sep = 0pt] {};$0
+endsnippet
+snippet "graphnode|graphpoint" "show a point on your graph, remove circle and fill to just get text:graphnode|graphpoint" br
+\node[label={180:{($1)}}, circle, fill, inner sep = 2pt]
+	at (axis cs:${1:0,0}) {};$0
+endsnippet
+snippet "u(nit)?c(ircle)?" "unit circle:unitcircle|uc" br
+\begin{tikzpicture}[scale=5.3,cap=round,>=latex]
+	% draw the coordinates
+	\draw[->] (-1.5cm,0cm) -- (1.5cm,0cm) node[right,fill=white] {$x$};
+	\draw[->] (0cm,-1.5cm) -- (0cm,1.5cm) node[above,fill=white] {$y$};
+
+	% draw the unit circle
+	\draw[thick] (0cm,0cm) circle(1cm);
+
+	\foreach \x in {0,30,...,360} {
+		% lines from center to point
+		\draw[gray] (0cm,0cm) -- (\x:1cm);
+		% dots at each point
+		\filldraw[black] (\x:1cm) circle(0.4pt);
+		% draw each angle in degrees
+		\draw (\x:0.6cm) node[fill=white] {$\x^\circ$};
+	}
+
+	% draw each angle in radians
+	\foreach \x/\xtext in {
+		30/\frac{\pi}{6},
+		45/\frac{\pi}{4},
+		60/\frac{\pi}{3},
+		90/\frac{\pi}{2},
+		120/\frac{2\pi}{3},
+		135/\frac{3\pi}{4},
+		150/\frac{5\pi}{6},
+		180/\pi,
+		210/\frac{7\pi}{6},
+		225/\frac{5\pi}{4},
+		240/\frac{4\pi}{3},
+		270/\frac{3\pi}{2},
+		300/\frac{5\pi}{3},
+		315/\frac{7\pi}{4},
+		330/\frac{11\pi}{6},
+		360/2\pi}
+		\draw (\x:0.85cm) node[fill=white] {$\xtext$
+	};
+
+	\foreach \x/\xtext/\y in {
+		% the coordinates for the first quadrant
+		30/\frac{\sqrt{3}}{2}/\frac{1}{2},
+		45/\frac{\sqrt{2}}{2}/\frac{\sqrt{2}}{2},
+		60/\frac{1}{2}/\frac{\sqrt{3}}{2},
+		% the coordinates for the second quadrant
+		150/-\frac{\sqrt{3}}{2}/\frac{1}{2},
+		135/-\frac{\sqrt{2}}{2}/\frac{\sqrt{2}}{2},
+		120/-\frac{1}{2}/\frac{\sqrt{3}}{2},
+		% the coordinates for the third quadrant
+		210/-\frac{\sqrt{3}}{2}/-\frac{1}{2},
+		225/-\frac{\sqrt{2}}{2}/-\frac{\sqrt{2}}{2},
+		240/-\frac{1}{2}/-\frac{\sqrt{3}}{2},
+		% the coordinates for the fourth quadrant
+		330/\frac{\sqrt{3}}{2}/-\frac{1}{2},
+		315/\frac{\sqrt{2}}{2}/-\frac{\sqrt{2}}{2},
+		300/\frac{1}{2}/-\frac{\sqrt{3}}{2}}
+		\draw (\x:1.25cm) node[fill=white] {$\left(\xtext,\y\right)$
+	};
+
+	% draw the horizontal and vertical coordinates
+	% the placement is better this way
+	\draw (-1.25cm,0cm) node[above=1pt] {$(-1,0)$}
+		(1.25cm,0cm)  node[above=1pt] {$(1,0)$}
+		(0cm,-1.25cm) node[fill=white] {$(0,-1)$}
+		(0cm,1.25cm)  node[fill=white] {$(0,1)$};
+\end{tikzpicture}$0
+endsnippet
 
 # Math modes
-snippet "ma?t?h?mo?d?e?" "Math:mathmode|mm" br
-$ ${VISUAL}$1 $$0
+snippet "m(ath)?m(ode)?" "mm:mm|mathmode" br
+$ ${VISUAL}$0 $
+endsnippet
+snippet " m(ath)?m(ode)?" "mathmode" r
+ $ ${VISUAL}$0 $
 endsnippet
 snippet solution
 \begin{solution}
@@ -275,33 +452,32 @@ endsnippet
 snippet text
 \text{${VISUAL}$1}$0
 endsnippet
-
+snippet "ne?w?li?n?e?ma?t?h?" "new line math:newlinemath|nlm" br
+\[ ${VISUAL}$1 \]$0
+endsnippet
 # Symbols
-snippet " (\S{1})" "Variable matchgroup as math" r
+snippet " ([^#"//]{1})" "One character (not a comment character) will be converted to math:???quotationmark" r
  $ `!p snip.rv = match.group(1)` $
 endsnippet
-snippet ... "Mathdots" i
+snippet ... "Mathdots:..."
 \ldots
 endsnippet 
 snippet "[oO]mega" "Omega:omega|Omega" r
 \Omega
 endsnippet
-snippet tillhör 
+snippet "tillhör| in" "tillhör:tillhör|in" r
 \in
 endsnippet
-snippet in 
-\in
-endsnippet
-snippet notin 
+snippet notin "notin"
 \notin
 endsnippet
-snippet \ 
+snippet \ "\"
 \backslash
 endsnippet
-snippet / "division" i
+snippet / "division"
 \frac{${1:x}}{${2:y}}$0
 endsnippet
-snippet tom "Tom mängd" 
+snippet tom "Tom mängd:tom" 
 \emptyset
 endsnippet
 snippet delmängd
@@ -316,10 +492,10 @@ endsnippet
 snippet snitt
 \cap
 endsnippet
-snippet <=
+snippet "<=|l(essthan)?eq(ual)?" "less than or equal:leq|lessthanequal" r
 \leq 
 endsnippet
-snippet >=
+snippet ">=|g(reaterthan)?eq(ual)?" "greater than or equal:geq|greaterthanequal" r
 \geq 
 endsnippet
 snippet subset 
@@ -352,7 +528,7 @@ endsnippet
 snippet _ "nersänkt" i
 _{$1}$0
 endsnippet
-snippet largespace "space"
+snippet "largespace|sspace" "large space:largespace|sspace" r
 \qquad 
 endsnippet 
 snippet space "space"
@@ -402,6 +578,12 @@ snippet oplus
 endsnippet
 snippet otimes
 \otimes
+endsnippet
+snippet infinity "infinity"
+\infty
+endsnippet
+snippet "sq(uare)?r(oo)?t|root" "Square root:sqrt|squareroot|root" r
+\sqrt{${VISUAL}$0}
 endsnippet
 
 # Unsorted

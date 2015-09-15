@@ -326,18 +326,6 @@ let g:syntastic_auto_loc_list = 1
 " --------------------
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
-function! BindInner(kMap, nMap)
-	execute "nnoremap ci" . a:kMap . " ci" . a:nMap
-	execute "nnoremap di" . a:kMap . " di" . a:nMap
-	execute "nnoremap vi" . a:kMap . " vi" . a:nMap
-	execute "nnoremap yi" . a:kMap . " yi" . a:nMap
-endfunction
-" Wanted binds like cib ciB but for [] and <> "" ''
-call BindInner('d', '[')
-call BindInner('D', '>')
-call BindInner('q', "\"")
-call BindInner('t', "'")
-
 " I keep pressing << >> in the wrong order. HL are good for directions.
 nnoremap H << 
 nnoremap L >> 
@@ -369,10 +357,9 @@ else
 	nnoremap Ö :e
 endif
 
-" Jump to next(previous) ultisnips location if one exists, 
-" else jump to next(previous) delimiter.
-nnoremap <S-Space> :call SmartJump()<CR>
-nnoremap <S-BS> :call SmartJumpBack()<CR>
+"SmartJump
+nnoremap <C-H> :call SmartJumpBack()<CR>
+nnoremap <C-L> :call SmartJump()<CR>
 
 "Switches repeat f/F, feels more logical on swedish keyboard.
 nnoremap , ;
@@ -440,11 +427,9 @@ endif
 
 " Jump to next(previous) ultisnips location if one exists, 
 " else jump to next(previous) delimiter.
-inoremap <S-Space> <C-R>=SmartJump()<CR>
-inoremap <S-BS> <C-R>=SmartJumpBack()<CR>
 inoremap <pageup> <C-R>=SmartJump()<CR>
 inoremap <pagedown> <C-R>=SmartJumpBack()<CR>
-inoremap <C-L> <nop>
+inoremap <C-L> <C-R>=SmartJump()<CR>
 inoremap <C-H> <C-R>=SmartJumpBack()<CR>
 
 " Readline bindings.
@@ -477,8 +462,6 @@ inoremap <expr> <up> SpecialDelim("\<up>")
 inoremap <expr> <down> SpecialDelim("\<down>")
 inoremap <expr> <space> SpecialDelim("\<space>")
 inoremap <expr> <bs> SpecialDelim("\<bs>")
-inoremap <C-L> <ESC>:call SmartJump()<CR>
-inoremap <C-H> <ESC>:call SmartJumpBack()<CR>
 " --------------------
 " ---- [3.2] VISUAL ----
 " I keep pressing << >> in the wrong order. HL are good for directions.
@@ -492,8 +475,6 @@ xnoremap å c<C-R>=PythonMath()<CR>
 
 " Jump to next(previous) ultisnips location if one exists,
 " else jump to next(previous) delimiter.
-snoremap <S-Space> <ESC>:call SmartJump()<CR>
-snoremap <S-BS> <ESC>:call SmartJumpBack()<CR>
 snoremap <pageup> <ESC>:call SmartJump()<CR>
 snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
 snoremap <C-L> <ESC>:call SmartJump()<CR>
@@ -514,20 +495,19 @@ xnoremap g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/v
 let g:mapleader="\<space>"
 
 " A
-" B
+" B - Bookmark
 map <leader>b :call OpenBookmarkSource(1)<CR>
-" C
+" C - Compile
 map <leader>co :Errors<CR>
 map <leader>cc :SyntasticCheck<CR>
 map <leader>ce :SyntasticCheck<CR>
-" D
+" D - Delete buffer
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
-" E
+" E - External helpers
 autocmd Filetype tex,plaintex map <buffer><leader>e :call StartTexBuilder() <cr>
 " F
-" Fetch new info from programming running with r
-" G
+" G - Git
 map <leader>gc :!git -C %:h commit<CR>
 map <leader>gd :!git -C %:h diff<CR>
 map <leader>gD :!git -C %:h diff<CR>
@@ -547,8 +527,7 @@ endif
 
 noremap <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
 " H
-" Unite help when I get it working.
-" I
+" I - Information, notes on helpful things.
 map <leader>ii :call UniteTags(&l:filetype)<CR>
 map <leader>iI :Unite tagfolders:~/info/ <CR>
 map <leader>ia :Unite tagfolders:~/info/ <CR>
@@ -556,30 +535,30 @@ map <leader>in :Unite notes:~/info/ <CR>
 map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
 " J
 " K
-" Kill program running with r
 " L
-" M
+" M - Make
 map <leader>m :!make<CR>
 if !g:disablePlugins
 	map <leader>m :cd %:h<CR>:Unite -auto-preview -no-start-insert
 				\ build:make<CR>
 endif
-" N
+" N - Next buffer
 map <leader>n :bn <CR>
-" O
+" O - Open file explorer
 map <leader>o :call UniteFileSwitcher()<CR>
 map <leader>O :call UniteExplorerStart()<CR>
-" P
+" P - Previous buffer
 map <leader>p :bp <CR>
-" Q
+" Q - Quit window (not used?)
 map <leader>q :q <CR>
-" R
+" R - Run file/project
 autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
 autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype vim map <leader>r :so % <cr>
-" S
+autocmd Filetype tex map <leader>r :Start %:h\temp.pdf <cr>
+" S - Spellcheck
 map <leader>se :call EnglishSpellCheck() <CR>
 map <leader>ss :call SwedishSpellCheck() <CR>
 map <leader>so :call NoSpellCheck() <CR>
@@ -588,7 +567,7 @@ map <leader>sd :call NoSpellCheck() <CR>
 if !g:disablePlugins
 	map <leader>S :Unite ultisnips <CR>
 endif
-" T
+" T - Tabs, tabformats and cycle tabs.
 map <leader>te :set expandtab <CR>
 map <leader>tt :set noexpandtab <CR>
 map <leader>t4 :set tabstop=4 <CR> :set shiftwidth=4 <CR>
@@ -597,25 +576,38 @@ map <leader>ts :set listchars=tab:>\ ,trail:#,extends:>,precedes:<,nbsp:+ <CR>
 map <leader>th :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
 map <leader>tc :tabclose <CR>
 map <leader>tn :tabnew <CR>
-" U
+" U - Ultisnips
 if !g:disablePlugins
 	map <leader>ue :UltiSnipsEdit <CR>
 	map <leader>uu :Unite fil:~/git/vim/scripts/Ultisnips/ <CR>
 	map <leader>us :Unite ultisnips <CR>
 endif
-" V
+" V - .vimrc
 map <leader>vv :e ~/git/vim/.vimrc<CR>
 map <leader>vd :w !diff % -<CR>
-" W
+" W - Write
 map <leader>w :w <CR>
 " X
 " Y
-" Z
+" Z - Z(S)essions
 if !g:disablePlugins
 	map <leader>z :Unite session<CR>
 endif
 " --------------------
-" ---- [3.4] COMMAND ----
+" ---- [3.4] OMAP ----
+"This adds $$ as textobjects.	
+onoremap a$ :<c-u>normal! F$vf$<cr>
+onoremap i$ :<c-u>normal! T$vt$<cr>
+onoremap am a$
+onoremap im i$
+
+" Wanted binds like cib ciB but for [] and <> "" ''
+onoremap ad a[
+onoremap aD a>
+onoremap aq a"
+onoremap at a'
+" --------------------
+" ---- [3.5] COMMAND ----
 cnoremap <C-BS> <C-W>
 
 " Readline bindings.
@@ -642,7 +634,7 @@ cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ?
 
 " See insert for delimiterbindings.
 " --------------------
-" ---- [3.5] UNITE ----
+" ---- [3.6] UNITE ----
 function! UniteBinds()
 	nmap <buffer> b :call OpenBookmarkSource()<CR>
 	nmap <buffer> <ESC> :call UniteExit()<CR>
@@ -659,7 +651,7 @@ function! UniteBinds()
 endfunction
 autocmd FileType unite call UniteBinds()
 " --------------------
-" ---- [3.6] FUGITIVE ----
+" ---- [3.7] FUGITIVE ----
 function! FugitiveBindings()
 	" Fast movement for :GStatus
 	nmap <buffer> j <C-N>
@@ -667,7 +659,7 @@ function! FugitiveBindings()
 	nmap <buffer> <esc> :bd<cr>
 endfunction
 " --------------------
-" ---- [3.7] OPOHBUFFER ----
+" ---- [3.8] OPOHBUFFER ----
 function! OpohBinds()
 	nnoremap <buffer> <ESC> :execute("b #")<CR>
 endfunction
@@ -832,6 +824,7 @@ autocmd Filetype jp call JAPANESESettings()
 function! TEXSettings()
 	setlocal foldexpr=IndentFolding2(v:lnum)
 	setlocal foldtext=NormalFoldText()
+	setlocal noswapfile
 	call EnglishSpellCheck()
 endfunction
 
@@ -1561,7 +1554,7 @@ function! SmartJump()
 		endif
 	endif
 	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}<>\[]"
+		let b:smartJumpElements = "[]'\"(){}<>\[\$]"
 	endif
 	let cursorPos = getpos('.')
 	let pos = match(getline('.'), b:smartJumpElements, cursorPos[2] - 1)
@@ -1582,7 +1575,7 @@ function! SmartJumpBack()
 		endif
 	endif
 	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}<>\[]"
+		let b:smartJumpElements = "[]'\"(){}<>\[\$]"
 	endif
 	let cursorPos = getpos('.')
 	let newPos = match(getline('.'), b:smartJumpElements)
@@ -1602,6 +1595,9 @@ function! SmartJumpBack()
 	let cursorPos[2] = pos + 1
 	call setpos('.', cursorPos)
 	return ""
+endfunction
+function! DelimMatch(text, start, end)
+let b:smartJumpElements = "[]'\"(){}<>\[]"
 endfunction
 " --------------------
 " ---- [11.3] TEMPBUFFER ----

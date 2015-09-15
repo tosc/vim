@@ -2,8 +2,20 @@ if	if
 ifor	if or
 ifelse	if else
 for	for
+function	function
+method	function
+???function	function with type as match.group(1)
+???constructor	function with type as match.group(1)
+begin	function begin
+???begin	function begin with type as match.group(1)
+end	function end
+???end	function end with type as match.group(1)
+\"|#|//	comment
+mlc	 A comment spanning multiple lines
+multilinecomment	 A comment spanning multiple lines
+comment	comment
 filemath	new math document
-file	new document
+filebase	new document
 list	normal list
 listdescription	list with keyword and description
 numberedlist	numbered list, \begin{enumerate}[resume] to continue count
@@ -13,11 +25,27 @@ itemdescription	new entry in a description list
 nl	New line
 newline	New line
 venn	Venn diagram
-mathmode	Math
-mm	Math
-...	Mathdots
+graphstart	create a new graph
+graphsubstart	create a new sub graph
+graphplot	add a plot to your graph, use domain=-5colon5, samples=50 inside [] to change domain and number of samples
+graphnode	show a point on your graph, remove circle and fill to just get text
+graphpoint	show a point on your graph, remove circle and fill to just get text
+unitcircle	unit circle
+uc	unit circle
+mm	mm
+mathmode	mm
+newlinemath	new line math
+nlm	new line math
 omega	Omega
 Omega	Omega
-/	division
+leq	less than or equal
+lessthanequal	less than or equal
+geq	greater than or equal
+greaterthanequal	greater than or equal
 U	upphöjt
 _	nersänkt
+largespace	large space
+sspace	large space
+sqrt	Square root
+squareroot	Square root
+root	Square root
