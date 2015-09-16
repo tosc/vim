@@ -1655,7 +1655,7 @@ endfunction
 function! StartTexBuilder()
 	if !g:minimalMode && !g:disableExternal
 		cd ~\git\vim
-		Start python texbuilder.py %:h %
+		Start python TexBuilder.py %:h %
 		cd %:h
 	endif
 endfunction
