@@ -101,6 +101,24 @@ Add a pentadactylrc with the line:
 
 # TODO
 
+* Find a way to work on pdf on the server but view it on another computer.
+	* Script that fetches a file constantly? Is there already a common
+	practice for doing this?
+	* Make it general if it works so you can do this for any project/file.
+* TexBuilder creates a temp.tex in vim folder. Change it to use the folder
+	where you are currently building.
+* Create a remote repo for my info/notes.
+* Create own session unite source. Currently use Shougos for no reason.
+	* Create a unite source that shows files in my session folder.
+		Show name of the session. This should be a list of the buffers
+		in that session.
+		Show timestamp of the last time that sessions was used.
+		(Show working folder)?
+	* Add default action to open that session.
+	* (Delete session button)?
+	* (Bookmark sessions)?
+	* Remove shougos session plugin.
+* Add a :et command. Creates a file in the tempfolder for quick testing and so on.
 * Make it possible to reference pdfs and maybe firefox using my note-system.
 * Change pentadactyl to vimperator.
 * Add a bind in unite to change sorting method from time to name.
@@ -110,15 +128,12 @@ Add a pentadactylrc with the line:
 	* helptags for vim
 	* todo
 * Move my infostuff to server repo.
-* Move my sources to vim-scripts.
 * Echo result of rm mv add. Echomsg?
 * Create unite source for external commands. Switch to that unite buffer to 
 get more output from program.
 * Make my draw into a real plugin.
-* Find way to disable default US source for neocomplete.
 * Download all external binaries for windows and put them at a convenient
 	location to make installing vim easier.
 * Better names in ö.
 * cp in unite.
 * Detect stuff that needs compiling and compile by itself.
-* Add easy bind for / ? so I can use them more like f F.

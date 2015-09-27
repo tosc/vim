@@ -46,6 +46,7 @@ print	print
 printvar	print a variable
 main	main
 class	New class
+thread	new thread
 gui	A gui
 bind	New keybinding
 button	New button

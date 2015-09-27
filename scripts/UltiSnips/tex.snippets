@@ -214,9 +214,6 @@ endsnippet
 snippet "s(ub)?s(ub)?section" "subsubsection:subsubsection|sssection" br
 \subsubsection{${1:Title}}
 endsnippet
-snippet sssection
-\subsubsection{${1:Title}}
-endsnippet
 snippet "fillpage|clearpage" "fills the rest of the page with blank:fillpage|clearpage" r
 \clearpage
 endsnippet
@@ -427,7 +424,7 @@ snippet "ne?w?li?n?e?ma?t?h?" "new line math:newlinemath|nlm" br
 endsnippet
 # Symbols
 snippet " ([^#"//]{1})" "One character (not a comment character) will be converted to math:???quotationmark" r
- $ `!p snip.rv = match.group(1)` $
+ $ `!p snip.rv = match.group(1)` $$0
 endsnippet
 snippet ... "Mathdots:..."
 \ldots
@@ -560,6 +557,9 @@ snippet "abs(olute)?(value)?" "absolutevalue:abs|absolutevalue" r
 endsnippet
 snippet "p(lus)?m(inus)?" "plusminus sign:pm|+-|plusminus" r
 \pm
+endsnippet
+snippet pi "pi:pi"
+\pi
 endsnippet
 
 # Unsorted

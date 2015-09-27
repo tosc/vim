@@ -46,6 +46,7 @@ printvar	print a variable
 printlist	print a list
 filebase	runnable script
 class	new class
+thread	new thread
 streamopen	Open a stream
 streamopen	Close a stream
 streamread	Read from a stream

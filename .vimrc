@@ -225,7 +225,7 @@ function! UniteFixPath(path)
 	endif
 endfunction
 function! UniteTags(filetype)
-	let filepath = UniteFixPath(fnamemodify("~/info/", ':p')) . a:filetype
+	let filepath = UniteFixPath(fnamemodify("~/git/info/", ':p')) . a:filetype
 	if !isdirectory(filepath) && a:filetype != ""
 		if confirm("About to create folders:\n\t" .
 					\ filepath . "\n\t" .
@@ -503,6 +503,7 @@ map <leader>D :bd!<CR>
 " E - External helpers
 autocmd Filetype tex,plaintex map <buffer><leader>e :call StartTexBuilder() <cr>
 " F
+noremap <leader>f :Unite line -custom-line-enable-highlight<CR>
 " G - Git
 map <leader>gc :!git -C %:h commit<CR>
 map <leader>gd :!git -C %:h diff<CR>
@@ -526,15 +527,15 @@ noremap <leader>hi :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r 
 noremap <leader>hv :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.2\]<CR> :0,.-1d<CR>/\[3.3\]<CR> :.,$d<CR>gg
 noremap <leader>hl :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
 noremap <leader>hc :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.5\]<CR> :0,.-1d<CR>/\[3.6\]<CR> :.,$d<CR>gg
-noremap <leader>hu :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.6\]<CR> :0,.-1d<CR>/\[3.7\]<CR> :.,$d<CR>gg
+noremap <leader>hu :Unite us <CR>
 noremap <leader>hm :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r
 	\ ~/git/vim/.vimrc <CR> /\[9.2\]<CR>j :0,.-1d<CR>/" --------<CR>
 	\ :.,$d<CR>:call HelpMarkColor()<CR>
 " I - Information, notes on helpful things.
 map <leader>ii :call UniteTags(&l:filetype)<CR>
-map <leader>iI :Unite tagfolders:~/info/ <CR>
-map <leader>ia :Unite tagfolders:~/info/ <CR>
-map <leader>in :Unite notes:~/info/ <CR>
+map <leader>iI :Unite tagfolders:~/git/info/ <CR>
+map <leader>ia :Unite tagfolders:~/git/info/ <CR>
+map <leader>in :Unite notes:~/git/info/ <CR>
 map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
 " J
 " K
@@ -567,9 +568,6 @@ map <leader>ss :call SwedishSpellCheck() <CR>
 map <leader>so :call NoSpellCheck() <CR>
 map <leader>sc :call NoSpellCheck() <CR>
 map <leader>sd :call NoSpellCheck() <CR>
-if !g:disablePlugins
-	map <leader>S :Unite ultisnips <CR>
-endif
 " T - Tabs, tabformats and cycle tabs.
 map <leader>te :set expandtab <CR>
 map <leader>tt :set noexpandtab <CR>
@@ -583,7 +581,10 @@ map <leader>tn :tabnew <CR>
 if !g:disablePlugins
 	map <leader>ue :UltiSnipsEdit <CR>
 	map <leader>uu :Unite fil:~/git/vim/scripts/Ultisnips/ <CR>
-	map <leader>us :Unite ultisnips <CR>
+	map <leader>ua :Unite us <CR>
+	map <leader>uh :Unite us <CR>
+	map <leader>ul :Unite us <CR>
+	map <leader>us :Unite us <CR>
 endif
 " V - .vimrc
 map <leader>vv :e ~/git/vim/.vimrc<CR>
