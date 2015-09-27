@@ -11,7 +11,7 @@
 import os
 import re
 
-infoloc = "C:/Users/opo/info/"
+infoloc = "C:/Users/opo/git/info/"
 doc = "/documentation/"
 notes= "/notes/"
 tagloc = ""
@@ -40,7 +40,7 @@ def generateNoteTags(directory):
     print "Notes:              " + str(nrcreated) + " tags created."
 
 for directory in os.listdir(infoloc):
-    if directory == "todo.txt":
+    if directory == "todo.txt" or directory == ".git":
         continue
     print directory
     tagloc = infoloc + directory + "/tags"
