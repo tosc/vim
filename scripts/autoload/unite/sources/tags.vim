@@ -13,9 +13,9 @@ let s:source = {
 function! s:source.gather_candidates(args, context)
 	let candidates = []
 	if exists("*vimproc#system")
-		let newWords = vimproc#system('cat ~/info/' . a:args[0] . '/tags | grep "'. a:context.input . '"')
+		let newWords = vimproc#system('cat ~/git/info/' . a:args[0] . '/tags | grep "'. a:context.input . '"')
 	else
-		let newWords = system('cat ~/info/' . a:args[0] . '/tags | grep "^'. a:context.input . '"')
+		let newWords = system('cat ~/git/info/' . a:args[0] . '/tags | grep "^'. a:context.input . '"')
 	endif
 	let filelist = split(newWords, "\n")
 	for tag in filelist
