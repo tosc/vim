@@ -8,10 +8,8 @@ Vim settings.
 1. Install GIT.
 2. Clone this repository.
 3. Go into the cloned repo and run
-```
-git submodule init
-git submodule update
-```
+``git submodule init``
+``git submodule update``
 4. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
 5. Install python.
 6. Install lua.
@@ -21,15 +19,15 @@ git submodule update
 10. Install Eclipse.
 11. Install ECLIM.
 12. Install Mono-develop. (http://www.mono-project.com/)
-13. Create a vimrc with the lines:  
+13. Build clang_complete.  
+`` make install ``
+14. Create a vimrc with the lines:  
 ```VimL
 "let g:minimalMode = 1
 "let g:disablePlugins = 1
 "let g:disableExternal = 1
 source ~/git/vim/.vimrc
 ```  
-11. Build clang_complete.  
-`` make install ``
 
 ### WINDOWS
 
