@@ -5,16 +5,23 @@ Vim settings.
 ## INSTALL
 ### ALL
 
-1. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
-2. Install python.
-3. Install lua.
-4. Install clang.
-5. Install ctags.
-6. Install LaTex.
-7. Install Eclipse.
-8. Install ECLIM.
-9. Install Mono-develop. (http://www.mono-project.com/)
-10. Create a vimrc with the lines:  
+1. Install GIT.
+2. Clone this repository.
+3. Go into the cloned repo and run
+```
+git submodule init
+git submodule update
+```
+4. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
+5. Install python.
+6. Install lua.
+7. Install clang.
+8. Install ctags.
+9. Install LaTex.
+10. Install Eclipse.
+11. Install ECLIM.
+12. Install Mono-develop. (http://www.mono-project.com/)
+13. Create a vimrc with the lines:  
 ```VimL
 "let g:minimalMode = 1
 "let g:disablePlugins = 1
@@ -91,6 +98,8 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 ### SSH
 * If Unite binding doesn't work then check that you are using the right encoding for ssh.
 
+### Fugitive
+* If fugitive doesn't do anything when you try to commit and just types "fugitive:" in red in the command line then try running git commit in terminal. You might not have initiated your git and that should fix it.
 # Vimperator
 
 Firefox pentadactyl settings.  

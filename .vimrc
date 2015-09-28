@@ -38,6 +38,12 @@ set tabpagemax=100
 set notimeout
 if &guifont
 	set guifont=Inconsolata\ bold\ 10
+	" If you need to change this on another computer just use 
+	" set guifont=*
+	" Pick the font and size you want. Then type
+	" set guifont?
+	" To get the value you want to set guifont too. Then add that to your
+	" local .vimrc.
 endif
 set wildmode=longest:full,list
 set directory=~/.vim/tmp//
@@ -81,7 +87,7 @@ syntax on
 if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
 	" Required by vundle
 	filetype off
-	set rtp+=~/.vim/bundle/Vundle.vim/
+	set rtp+=~/git/vim/bundle/Vundle.vim/
 	call vundle#begin()
 	Plugin 'gmarik/Vundle.vim'
 
