@@ -64,6 +64,8 @@ set updatetime=1000
 set backspace=indent,eol,start
 let $LANG = 'en'
 set colorcolumn=78
+set textwidth=0
+set wrapmargin=0
 
 " Shows whitespaces and tabs when using list.
 set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ 
@@ -1188,12 +1190,18 @@ function! GitStatusLine()
 				\ currentFolder . " status -b -s")
 		endif
 		if gitTemp !~ "fatal"
-		let gitTemp = substitute(gitTemp[2:], "\\.\\.\\.", '->', '')
+			let gitTemp = substitute(gitTemp[2:], "\\.\\.\\.", '->', '')
 			let gitList = split(gitTemp, "\n")
 			if len(gitList) > 0
-				let SlowStatusLineVar .=
-				\ "[" . substitute(substitute(gitList[0],
-				\ " ", "", ""), " ", "] ", "")
+				let newTemp = "[" . substitute(gitList[0],
+					\ " ", "", "")
+				if newTemp =~ " "
+					let newTemp = substitute(newTemp, 
+						\ " ", "] ", "")
+				else
+					let newTemp .= "]"
+				endif
+				let SlowStatusLineVar .= newTemp
 			endif
 			if len(gitList) > 1
 				let SlowStatusLineVar .= " [m " . (len(gitList) -1) . "]"
