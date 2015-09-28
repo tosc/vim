@@ -7,8 +7,8 @@ Vim settings.
 
 1. Install GIT.
 2. Clone this repository.
-3. Go into the cloned repo and run
-``git submodule init``
+3. Go into the cloned repo and run  
+``git submodule init``  
 ``git submodule update``
 4. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
 5. Install python.
