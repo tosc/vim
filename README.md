@@ -91,13 +91,13 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 ### SSH
 * If Unite binding doesn't work then check that you are using the right encoding for ssh.
 
-# PENTADACTYL
+# Vimperator
 
 Firefox pentadactyl settings.  
 
 ## INSTALL
-Add a pentadactylrc with the line:  
-`` source ~/git/vim/.pentadactylrc `` 
+Add a .vimperatorrc with the line:  
+`` source ~/git/vim/.vimperatorrc `` 
 
 # TODO
 
@@ -120,7 +120,6 @@ Add a pentadactylrc with the line:
 	* Remove shougos session plugin.
 * Add a :et command. Creates a file in the tempfolder for quick testing and so on.
 * Make it possible to reference pdfs and maybe firefox using my note-system.
-* Change pentadactyl to vimperator.
 * Add a bind in unite to change sorting method from time to name.
 * Get more information from my jedi completion.
 * Change my unite snippet source to non volatile.
