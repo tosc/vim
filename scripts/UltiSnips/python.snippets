@@ -170,6 +170,12 @@ endsnippet
 snippet "printva?r?" "print a variable:printvar" r
 print ${0}
 endsnippet
+snippet randomnr "get a random number 1 <= number <= 10, import random"
+random.randint(${1:1},${2:10})	
+endsnippet
+snippet randomobject "get a random object from a collection, import random"
+random.choice(${1:collection})
+endsnippet
 
 # New code snippets
 snippet main "main" b
@@ -197,40 +203,6 @@ $1()
 endsnippet
 
 # Language specific
-snippet gui "A gui" b
-from Tkinter import *
-
-class Gui:
-	def __init__(self, window):
-		window.title("WINDOW TITLE")
-		$0
-
-window = Tk()
-gui = Gui(window)
-
-window.mainloop()
-endsnippet
-snippet bind "New keybinding" b
-${1:widget}.bind("<${2:Down}>", self.${3:function})
-$0
-endsnippet
-snippet button "New button" b
-${1:button} = Button(${2:parent}, text="${3:buttonText}", command = self.${4:commandFunction})
-$1.grid(row = ${5:rowNr}, column = ${6:columnNr}, ${7:columnSpan = 1, }${8:sticky = W+E})
-$0
-endsnippet
-snippet label "New label" b
-${1:label} = Label(${2:parent}, text="${3:buttonText}")
-$1.grid(row = ${4:rowNr}, column = ${5:columnNr})
-$0
-endsnippet
-snippet labelvar "New label with var" b
-self.${1:label}Var = StringVar()
-$1 = Label(${2:parent}, textvariable = self.$1Var)
-$1.grid(row = ${3:rowNr}, column = ${4:columnNr})
-self.$1Var.set("${5:Starttext for label}")
-$0
-endsnippet
 snippet runOnly "Run external program, import os"
 os.system(${1:"ls -la"})$0
 endsnippet
@@ -258,12 +230,21 @@ parser = MyHTMLParser()
 parser.feed(${5:<p>test</p>})
 ${0}
 endsnippet
+snippet inforegex "info about regex"
+# if !match:
+# - string does not match regex.
+# match.group(1)
+# - First regexhit.
+endsnippet
+snippet regex "regex, import re"
+${1:match} = re.match('${2:^S*}', ${3:line})
+endsnippet
 # Stream snippets
 snippet streamopen "Open a stream:streamopen" b
-${1:newStream} = open('${2:filename}', '${3:#write - w, read - r, append to file - a, read and write - r+#}')
+${1:streamName} = open('${2:filename}', '${3:#write - w, read - r, append to file - a, read and write - r+#}')
 endsnippet
 snippet streamclose "Close a stream:streamopen" b
-<MISSING streamclose>
+${1:streamName}.close()
 endsnippet
 snippet streamread "Read from a stream:streamread" b
 <MISSING streamread>
@@ -272,5 +253,77 @@ snippet streamreadline "Read a line from a stream:streamreadline" b
 <MISSING streamreadline>
 endsnippet
 snippet streamwrite "write to a stream:streamwrite" b
-<MISSING streamwrite>
+${1:streamName}.write(${2:"Line to write"})
+endsnippet
+# Gui snippets
+snippet guiinfoall "info about how to use the gui"
+# Use guistart or guinew to start a empty gui.
+# These snippets use the gridsystem for positioning and all
+# widgets needs a gridposition to show up.
+endsnippet
+snippet "guinew|guistart" "A gui:guinew|guistart" br
+from Tkinter import *
+
+class Gui:
+	def __init__(self, window):
+		window.title("WINDOW TITLE")
+		$0
+
+window = Tk()
+gui = Gui(window)
+
+window.mainloop()
+endsnippet
+snippet "gui((int)|(string)|(boolean)|(double))+var" "A variable used for entry.:guiintvar|guistringvar|guiboolvar|guidoublevar" r
+self.${1:var} = `!p snip.rv = match.group(1).title()`Var()
+self.$1.set("${2:Text}")
+endsnippet
+snippet guiinfobind "Info about how to use guibind"
+# You call bind on the widget you want to have a keybinding.
+# The First arugment is the key and the second is the function that will
+# be called when you press the binding.
+# The function has to look like this:
+# def function(self, event)
+# The keys are:
+# <Button-1> - Mousebutton 1.
+# <ButtonRelease-1> - Mousebutton 1 up.
+# <Double-Button-1> - Doubleclick.
+# <Return> - Enter
+# <Leave> - Mouse outside widget.
+# <Key> - Char of the key presset.
+# a - You typed the character.
+# <Shift-Up> - Pressing shift and up.
+# <Control-Q> - Pressing Control and Shift-Q.
+endsnippet
+snippet guibind "New keybinding" b
+${1:widget}.bind("<${2:Down}>", self.${3:function})
+$0
+endsnippet
+snippet guibutton "New button" b
+${1:button} = Button(${2:parent}, text="${3:buttonText}", command = self.${4:commandFunction})
+$1.grid(row = ${5:rowNr}, column = ${6:columnNr}, ${7:columnSpan = 1, }${8:sticky = W+E})
+$0
+endsnippet
+snippet guilabel "New label" b
+${1:label} = Label(${2:parent}, text="${3:buttonText}")
+$1.grid(row = ${4:rowNr}, column = ${5:columnNr})
+$0
+endsnippet
+snippet guilabelvar "New label with var" b
+self.${1:label}Var = StringVar()
+$1 = Label(${2:parent}, textvariable = self.$1Var)
+$1.grid(row = ${3:rowNr}, column = ${4:columnNr})
+self.$1Var.set("${5:Starttext for label}")
+$0
+endsnippet
+snippet guiinfoentry "info about entry"
+# First argument is the parent where this entry will be placed.
+# The second optional arugment is the variable that you can set and get
+# to get the value of the entry.
+# To get a callback for when the entry changed, just add a keybinding
+# for KeyRelease and you should be good.
+endsnippet
+snippet guientry "guientry is a insertfield"
+${1:entry} = Entry(${2:parent}, textvariable = self.${3:stringVar})
+$1.grid(row = ${4:rowNr}, column = ${5:columnNr})
 endsnippet

@@ -98,6 +98,10 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 
 ### Fugitive
 * If fugitive doesn't do anything when you try to commit and just types "fugitive:" in red in the command line then try running git commit in terminal. You might not have initiated your git and that should fix it.
+
+### Unite
+* If unite complains, try compiling vimproc.
+
 # Vimperator
 
 Firefox pentadactyl settings.  
@@ -114,6 +118,8 @@ Add a .vimperatorrc with the line:
 	* Make it general if it works so you can do this for any project/file.
 * TexBuilder creates a temp.tex in vim folder. Change it to use the folder
 	where you are currently building.
+* Create unite source that shows files from ssh. Then create a get file
+	script that gets that file.
 * Create a remote repo for my info/notes.
 * Create own session unite source. Currently use Shougos for no reason.
 	* Create a unite source that shows files in my session folder.

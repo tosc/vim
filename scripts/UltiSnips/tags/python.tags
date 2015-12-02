@@ -47,13 +47,18 @@ printvar	print a variable
 main	main
 class	New class
 thread	new thread
-gui	A gui
-bind	New keybinding
-button	New button
-label	New label
-labelvar	New label with var
 streamopen	Open a stream
 streamopen	Close a stream
 streamread	Read from a stream
 streamreadline	Read a line from a stream
 streamwrite	write to a stream
+guinew	A gui
+guistart	A gui
+guiintvar	A variable used for entry.
+guistringvar	A variable used for entry.
+guiboolvar	A variable used for entry.
+guidoublevar	A variable used for entry.
+guibind	New keybinding
+guibutton	New button
+guilabel	New label
+guilabelvar	New label with var

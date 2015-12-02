@@ -30,6 +30,7 @@ subsubsection	subsubsection
 sssection	subsubsection
 fillpage	fills the rest of the page with blank
 clearpage	fills the rest of the page with blank
+drawstart	draw an image
 venn	Venn diagram
 graphstart	create a new graph
 graphplot	add a equation to your graph, dashed/dotted/red/green
@@ -42,15 +43,14 @@ unitcircle	unit circle
 uc	unit circle
 mm	mm
 mathmode	mm
-mathfloat	floating math
-mf	floating math
-equation	floating math
 noheadertheorem	textbox without header but with grey background
 textbox	textbox without header but with grey background
 newlinemath	new line math
 nlm	new line math
 omega	Omega
 Omega	Omega
+tillhör	tillhör
+in	tillhör
 frac	division
 fraction	division
 division	division
@@ -59,6 +59,10 @@ leq	less than or equal
 lessthanequal	less than or equal
 geq	greater than or equal
 greaterthanequal	greater than or equal
+S	sigma notation eller summa
+sum	sigma notation eller summa
+lim	limit
+limit	limit
 U	upphöjt
 _	nersänkt
 largespace	large space
