@@ -1,5 +1,9 @@
 priority 1
 
+global !p
+from snippetHelpers import *
+endglobal
+
 snippet List "New List" b
 List<${1:ListType}> ${2:variable} = new List<$1>{};
 $0

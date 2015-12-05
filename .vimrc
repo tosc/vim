@@ -294,7 +294,6 @@ if !exists('g:neocomplete#keyword_patterns')
 	let g:neocomplete#keyword_patterns = {}
 endif
 let g:neocomplete#keyword_patterns.default = '\h\w*\|[^.\t]\.\w*'
-let g:neocomplete#keyword_patterns.python = '\h\w*'
 if !exists('g:neocomplete#sources#omni#input_patterns')
 	let g:neocomplete#sources#omni#input_patterns = {}
 endif
@@ -313,6 +312,12 @@ let g:neocomplete#force_omni_input_patterns.objc =
 	\ '\[\h\w*\s\h\?\|\h\w*\%(\.\|->\)'
 let g:neocomplete#force_omni_input_patterns.objcpp =
 	\ '\[\h\w*\s\h\?\|\h\w*\%(\.\|->\)\|\h\w*::\w*'
+
+if !exists('g:neocomplete#sources')
+	let g:neocomplete#sources = {}
+endif
+let g:neocomplete#sources._ = ['us']
+let g:neocomplete#sources.python = ['us', 'jedi']
 
 let g:neocomplete#enable_smart_case = 0
 let g:neocomplete#enable_camel_case_completion = 0
