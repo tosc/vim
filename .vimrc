@@ -495,9 +495,15 @@ if !g:disablePlugins
 	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 endif
 
+" Surround mappings
 if !g:disablePlugins
-	" Remapped s to vim-surround.
+	" Remapped vim surround to s since all it does normaly is cl.
+	" The other remaps makes surround add (*) instead of ( * )
 	xmap s S
+	xmap s( s)
+	xmap s< s>
+	xmap s[ s]
+	xmap s{ s}
 endif
 " --------------------
 " ---- [3.3] LEADER ----

@@ -14,16 +14,3 @@ endsnippet
 snippet "opt(\w+)" "variable into examplevar" r
 {`!p snip.rv = match.group(1)`?}
 endsnippet
-
-snippet "import (\w+)" "import at top" r
-`!p 
-test = add_package("import", match.group(1))
-`
-endsnippet
-
-snippet test
-test.test.test
-`!p
-add_package("import", "test2")
-`
-endsnippet
