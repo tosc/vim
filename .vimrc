@@ -289,6 +289,7 @@ let g:easytags_by_filetype = '~/.vim/tags/'
 " ---- [2.7] NEOCOMPLETE ----
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#skip_auto_completion_time = ''
+let g:neocomplete#auto_completion_start_length = 2
 
 if !exists('g:neocomplete#keyword_patterns')
 	let g:neocomplete#keyword_patterns = {}
@@ -317,6 +318,7 @@ if !exists('g:neocomplete#sources')
 	let g:neocomplete#sources = {}
 endif
 let g:neocomplete#sources._ = ['us']
+let g:neocomplete#sources.vim = ['_']
 let g:neocomplete#sources.python = ['us', 'jedi']
 
 let g:neocomplete#enable_smart_case = 0

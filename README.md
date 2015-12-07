@@ -127,6 +127,7 @@ Add a .vimperatorrc with the line:
 get more output from program.
 
 ### Low
+* Create binding for adding new words to my spell check.
 * Create own session unite source. Currently use Shougos for no reason.
 	* Create a unite source that shows files in my session folder.
 		Show name of the session. This should be a list of the buffers

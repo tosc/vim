@@ -2,10 +2,9 @@ let s:us_source = {
 	\ 'name': 'us',
 	\ 'kind': 'keyword',
 	\ 'mark': '[US]',
+	\ 'rank': 100,
 	\ 'matchers': ['matcher_head'],
-	\ 'max_candidates': 20,
 	\ 'is_volatile': 1,
-	\ 'rank' : 100
 	\ }
 
 function! s:us_source.gather_candidates(context)

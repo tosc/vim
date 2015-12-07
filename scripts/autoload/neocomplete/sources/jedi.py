@@ -11,10 +11,10 @@ script =  jedi.Script(source, row, column, buf_path, encoding)
 completions = script.complete()
 completion_string = ""
 for completion in completions:
-    params = completion.params if completion.type == 'function' else ""
+    docList = completion.docstring().split("\n")
+    info = ""
+    if len(docList) > 0:
+        info = docList[0]
     vim.command("call add( l:completion, {'word' : '" + completion.word +
-                    "', 'menu' : s:jedi_source.mark . ' " + completion.type + "'})")
-#                    "', 'description' : '" + re.sub("'", '`', completion.description) +
-#                    "', 'type' : '" + completion.type + 
-#                    "', 'param' : '" + params +
-#                    "', 'name' : '" + completion.name + "'})")
+                    "', 'menu' : s:jedi_source.mark . ' " + completion.type.ljust(10) + 
+                    " - " + info + "'})")
