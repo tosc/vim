@@ -495,15 +495,14 @@ if !g:disablePlugins
 	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 endif
 
-" Surround mappings
+" Remapped vim surround to s since all it does normaly is cl.
 if !g:disablePlugins
-	" Remapped vim surround to s since all it does normaly is cl.
-	" The other remaps makes surround add (*) instead of ( * )
 	xmap s S
-	xmap s( s)
-	xmap s< s>
-	xmap s[ s]
-	xmap s{ s}
+	xmap sd s]
+	xmap sD s>
+	xmap sq s"
+	xmap st s'
+	xmap sm s$
 endif
 " --------------------
 " ---- [3.3] LEADER ----
@@ -626,9 +625,14 @@ onoremap im :<c-u>normal! T$vt$<cr>
 
 " Wanted binds like cib ciB but for [] and <> "" ''
 onoremap ad a[
-onoremap aD a>
+onoremap aD a<
 onoremap aq a"
 onoremap at a'
+
+onoremap id i[
+onoremap iD i<
+onoremap iq i"
+onoremap it i'
 " --------------------
 " ---- [3.5] COMMAND ----
 cnoremap <C-BS> <C-W>

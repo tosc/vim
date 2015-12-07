@@ -112,15 +112,22 @@ Add a .vimperatorrc with the line:
 
 # TODO
 
-* Find a way to work on pdf on the server but view it on another computer.
-	* Script that fetches a file constantly? Is there already a common
-	practice for doing this?
-	* Make it general if it works so you can do this for any project/file.
-* TexBuilder creates a temp.tex in vim folder. Change it to use the folder
-	where you are currently building.
-* Create unite source that shows files from ssh. Then create a get file
-	script that gets that file.
+### Important
+* My delim seems to be bugged, try bbb
+* Fix bug with unite and buffers.
+* Fix cs bind like you did with s
+* Fix my pythonsnippets for method and function. Don't use the same
+	helpfunction, use different ones and jump depending on that.
+	In other words, if completing method then add that to a class.
+	If completing function then add that outside class.
+* Get more information from my jedi completion.
 * Create a remote repo for my info/notes.
+* Move my infostuff to server repo.
+* Add a :et command. Creates a file in the tempfolder for quick testing and so on.
+* Create unite source for external commands. Switch to that unite buffer to 
+get more output from program.
+
+### Low
 * Create own session unite source. Currently use Shougos for no reason.
 	* Create a unite source that shows files in my session folder.
 		Show name of the session. This should be a list of the buffers
@@ -131,18 +138,13 @@ Add a .vimperatorrc with the line:
 	* (Delete session button)?
 	* (Bookmark sessions)?
 	* Remove shougos session plugin.
-* Add a :et command. Creates a file in the tempfolder for quick testing and so on.
 * Make it possible to reference pdfs and maybe firefox using my note-system.
 * Add a bind in unite to change sorting method from time to name.
-* Get more information from my jedi completion.
-* Change my unite snippet source to non volatile.
 * TagGenerator
 	* helptags for vim
 	* todo
-* Move my infostuff to server repo.
+* Change my unite snippet source to non volatile.
 * Echo result of rm mv add. Echomsg?
-* Create unite source for external commands. Switch to that unite buffer to 
-get more output from program.
 * Make my draw into a real plugin.
 * Download all external binaries for windows and put them at a convenient
 	location to make installing vim easier.
