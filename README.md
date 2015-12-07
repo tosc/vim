@@ -113,7 +113,6 @@ Add a .vimperatorrc with the line:
 # TODO
 
 ### Important
-* My delim seems to be bugged, try bbb
 * Fix bug with unite and buffers.
 * Fix cs bind like you did with s
 * Fix my pythonsnippets for method and function. Don't use the same

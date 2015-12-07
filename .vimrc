@@ -1775,6 +1775,7 @@ function! AddGitMatches()
 endfunction
 " --------------------
 " ---- [11.8] AUTODELIMITER ----
+"\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
 let g:currentchains = []
 let g:delimCall = 0
 let g:optkeys = ["\<cr>", "\<left>", "\<space>", "\<tab>", "\<bs>"]
@@ -1797,9 +1798,11 @@ function! Delim(key)
 				call add(newchains, chains)
 			endif
 		endif
-		if chains[0][0] == "opt"
-			if a:key == ";"
-				let call = "\<bs>\<right>;"
+		if chains != []
+			if chains[0][0] == "opt"
+				if a:key == ";"
+					let call = "\<bs>\<right>;"
+				endif
 			endif
 		endif
 	endfor
