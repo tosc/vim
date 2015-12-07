@@ -1,9 +1,14 @@
 import	import
 include	import
 header	header
+or	or
+and	and
+not	not
 if	if
 ifshort	if shorthand
 ifelse	if else
+elif	else if
+elseif	else if
 else	else
 switch	switch
 case	case
@@ -18,6 +23,8 @@ method	function
 constructor	constructor
 string	string variable
 String	string variable
+contains	string contains/is in another string
+in	string contains/is in another string
 tostring	to string
 ToString	to string
 toString	to string
@@ -34,6 +41,8 @@ Bool	bool variable
 enum	enum
 list	list
 List	list
+??? list	list of type ???
+??? List	list of type ???
 \"|#|//	comment
 mlc	 A comment spanning multiple lines
 multilinecomment	 A comment spanning multiple lines
@@ -46,6 +55,9 @@ printvar	print a variable
 printlist	print a list
 filebase	runnable script
 class	new class
+class???	New class
+subclass	new subclass
+subclass???	New class
 thread	new thread
 streamopen	Open a stream
 streamopen	Close a stream

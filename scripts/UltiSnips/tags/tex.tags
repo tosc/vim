@@ -24,13 +24,25 @@ listitem	new item on list
 liststartnumbered	numbered list, \begin{enumerate}[resume] to continue count
 nl	New line
 newline	New line
+lipsum	Lorem ipsum \usepackage{lipsum}
+section	section
 subsection	subsection
 ssection	subsection
 subsubsection	subsubsection
 sssection	subsubsection
 fillpage	fills the rest of the page with blank
 clearpage	fills the rest of the page with blank
+box	box
+frame	frame
+grayframe	grayframe
+definition	definition
 drawstart	draw an image
+drawline	drawline
+drawsquare	drawsquare
+drawtriangle	drawtriangle
+drawtext	drawtext
+drawcircle	drawcircle
+drawoptions	drawoptions
 venn	Venn diagram
 graphstart	create a new graph
 graphplot	add a equation to your graph, dashed/dotted/red/green
@@ -41,32 +53,80 @@ graphpoint	show a point on your graph
 graphtext	show text at point
 unitcircle	unit circle
 uc	unit circle
+figure	figure
+subfigure	subfigure
+image	image
 mm	mm
 mathmode	mm
+([ ({])m(ath)?m(ode)?	mathmode
+solution	solution
+equationnormal	equationnormal
+equationalign	A align equation, \\ - new line, &= - align this =
+proof	proof
+example	example
+theorem	theorem
+nonumtheorem	nonumtheorem
 noheadertheorem	textbox without header but with grey background
 textbox	textbox without header but with grey background
+text	text
 newlinemath	new line math
 nlm	new line math
+???quotationmark	One character (not a comment character) will be converted to math
+...	Mathdots
 omega	Omega
 Omega	Omega
 tillhör	tillhör
 in	tillhör
+notin	notin
+\	\
 frac	division
 fraction	division
 division	division
 div	division
+tom	Tom mängd
+delmängd	delmängd
+ldelmängd	ldelmängd
+union	union
+snitt	snitt
 leq	less than or equal
 lessthanequal	less than or equal
 geq	greater than or equal
 greaterthanequal	greater than or equal
+subset	subset
+subset=	subset=
+mN	mN
+N	N
+Z	Z
+times	times
 S	sigma notation eller summa
 sum	sigma notation eller summa
 lim	limit
 limit	limit
 U	upphöjt
+left	left
+right	right
 _	nersänkt
 largespace	large space
 sspace	large space
+space	space
+qed	qed
+->	->
+<-	<-
+<==>	<==>
+<=>	<=>
+!=	!=
+|	|
+!|	!|
+>	>
+<	<
+phi	phi
+congruent	congruent
+mod	mod
+theta	theta
+o+	o+
+oplus	oplus
+otimes	otimes
+infinity	infinity
 sqrt	Square root
 squareroot	Square root
 root	Square root
@@ -75,9 +135,15 @@ absolutevalue	absolutevalue
 pm	plusminus sign
 +-	plusminus sign
 plusminus	plusminus sign
+pi	pi
+naturalNumber	natural number
+cases	A big {, put inside nlm
+table	table
+grid	grid
 italic	Italic
 cursive	Italic
 kursivt	Italic
+bold	Bold
 counterValue	change counter value
 ref	Get info about the reference, use \label to label a object first
 referense	Get info about the reference, use \label to label a object first

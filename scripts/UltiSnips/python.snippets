@@ -3,11 +3,103 @@ priority 1
 
 global !p
 from snippetHelpers import *
+
+def methodLoc(alwaysLast = False):
+	inBlock = False
+	inClass = False
+	first = True
+	snipPos = int(vim.eval("getpos('.')[1]"))
+	endBlockPos = 0
+	indent = 0
+	#Remove snippet trigger
+	del snip.buffer[snip.line]
+	#Go through all lines in buffer looking for the right location
+	for i in range(1, len(snip.buffer)):
+		currentLine = snip.buffer[i-1]
+		empty = re.match("^\s*$", currentLine)
+		#Indentation of current line
+		lineIndent = int(vim.eval("indent(" + str(i) + ")"))
+
+		#Skip empty lines
+		if not empty:
+			#lineIndent 0 denotes the end of a code block.
+			if lineIndent == 0:
+				#This is the start of a new code block.
+				if inBlock:
+					#Break if you expanded the snippet
+					#in a class
+					if inClass and snipPos <= i and not alwaysLast:
+						break
+					inBlock = False
+					inClass = False
+				#Found a def
+				if re.match("^\s*def.*$", currentLine):
+					if not inBlock:
+						indent = 0
+					inBlock = True
+					first = False
+				#Found a class
+				if re.match("^\s*class.*$", currentLine):
+					#Always break if you find a new class
+					#and you expanded the snippet outside it.
+					if not first and snipPos <= i and not alwaysLast:
+						break
+					if not inBlock and not alwaysLast:
+						indent = int(vim.eval("shiftwidth()"))
+					inBlock = True
+					inClass = True
+					first = False
+			#Set the end of the current code block to this line.
+			if inBlock or re.match("^\s*import.*$", currentLine):
+				endBlockPos = i-1
+
+	#Set the location of the snippet and add empty lines around it.
+	snip.buffer.append('', endBlockPos+1)
+	snip.buffer.append('', endBlockPos+1)
+	snip.buffer[endBlockPos+2] = ' ' * indent
+	snip.cursor.set(endBlockPos+2, indent)
+
+#import example - import apa
+#pre_expand "add_package_py('apa')"
+def add_package_py(package):
+	return add_package("import", package, snip.buffer)
+
+#import example - from apa import APA
+#pre_expand "from_import('aoa', 'APA')"
+def from_import(fromPackage, importPackage):
+	fileBuffer = snip.buffer
+	line = -1
+	line2 = -1
+	found = False
+	for i in range(0,len(fileBuffer) - 1):
+		importMatch = re.match("^from (\S*) import (\S*)$", fileBuffer[i])
+		if importMatch:
+			line = i
+			if importMatch.group(1) == fromPackage and importMatch.group(2) == importPackage:
+				found = True
+				break
+		importMatch2 = re.match("^import (\S*)$", fileBuffer[i])
+		if importMatch2:
+			line2 = i
+	if not found:
+		if line == -1:
+			line = line2
+		fileBuffer.append("from " + fromPackage + " import " + importPackage, line + 1)
+		return 1
+	return 0
 endglobal
 
 # Header
 snippet "import|include" "import:import|include" br
 import ${1:package}
+endsnippet
+
+pre_expand "impMatch = re.match('import( |)(\w+)', snip.buffer[snip.line]); add_package_py(impMatch.group(2))"
+snippet "import( |)(\w+)" "" br
+endsnippet
+
+pre_expand "add_package_py('apa')"
+snippet "test" "" br
 endsnippet
 
 # Logical operations
@@ -26,6 +118,7 @@ snippet if "if" b
 if ${1:True}:
 	${0:${VISUAL}}
 endsnippet
+
 snippet "ifsh?o?r?t?" "if shorthand:ifshort" r
 ${1:var} if ${2:condition} else ${3:otherVar}
 endsnippet
@@ -36,19 +129,19 @@ snippet "elif|(else if|elseif)" "else if:elif|elseif" br
 elif ${1:True}:
 	${0:${VISUAL}}
 endsnippet
-snippet else "else" b
+snippet else "else:else" b
 else:
 	${0:${VISUAL}}
 endsnippet
-snippet switch "switch" b
+snippet switch "switch:switch" b
 No switch in python. Use if,elif, else.
 endsnippet
-snippet case "case" b
+snippet case "case:case" b
 No switch in python. Use if,elif, else.
 endsnippet
 
 # Loop snippets
-snippet for "for" b
+snippet for "for:for" b
 for ${1:var} in range(0,${2:10}):
 	${0:${VISUAL}}
 endsnippet
@@ -60,11 +153,11 @@ snippet "fore(ach)?" "for each element in collection:foreach" br
 for ${1:thing} in ${2:collection}:
 	${VISUAL}${0}
 endsnippet
-snippet while "while" b
+snippet while "while:while" b
 while ${1:True}:
 	${0:${VISUAL}}
 endsnippet
-snippet do "do while" b
+snippet do "do while:do" b
 while True:
 	${0:${VISUAL}}	
 	if ${1:fail_condition}:
@@ -72,14 +165,31 @@ while True:
 endsnippet
 
 # Methods/functinos
+pre_expand "methodLoc()"
+snippet "def( |)(\w+)" "def:def???" br
+def `!p snip.rv = match.group(2)`():
+	${2:pass}
+endsnippet
+
+pre_expand "methodLoc()"
+snippet "def" "def:def" br
+def ${1:funcName}(${2:param}):
+	${0:pass}${0:${VISUAL}}
+endsnippet
+
+pre_expand "methodLoc()"
 snippet "func?t?i?o?n?" "function:function" br
 def ${1:funcName}(${2:param}):
 	${0:pass}${0:${VISUAL}}
 endsnippet
+
+pre_expand "methodLoc()"
 snippet "meth?o?d?" "method:method" br
 def ${1:methodName}(self${2:, param}):
 	${0:pass}${0:${VISUAL}}
 endsnippet
+
+pre_expand "methodLoc()"
 snippet "cons?t?r?u?c?t?o?r?" "constructor:constructor" br
 def __init__(self${1:, param}):
 	${0:pass}${0:${VISUAL}}
@@ -128,10 +238,11 @@ ${1:var} = ${2:True}
 endsnippet
 
 # Datatype snippets
-snippet enum "enum, requires from enum import Enum" b
+pre_expand "from_import('enum', 'Enum')"
+snippet enum "enum:enum" b
 ${1:EnumName} = Enum('${2:item}')
 endsnippet
-snippet list "list" b
+snippet list "list:list" b
 ${1:listName} = [${0:item}]
 endsnippet
 snippet "(\w+) ?list" "list of type ???:??? list" br
@@ -147,7 +258,7 @@ snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple line
 ${VISUAL}${0}
 '''
 endsnippet
-snippet comment "comment" b
+snippet comment "comment:comment" b
 """
 ${1:What it does.}
 
@@ -159,13 +270,16 @@ ${3:Returns:}
 endsnippet
 
 # Special snippets
-snippet time "current time in milliseconds, import time" b
+pre_expand "add_package_py('time')"
+snippet time "current time in milliseconds:time" b
 time.time()
 endsnippet
-snippet sleep "sleep, import time" b
+pre_expand "add_package_py('time')"
+snippet sleep "sleep:sleep" b
 time.sleep(${0:seconds})
 endsnippet
-snippet print "print" b
+
+snippet print "print:print" b
 print ${VISUAL:"}${0}`!p 
 if snip.v.text == "":
 	snip.rv = '"'
@@ -175,23 +289,51 @@ endsnippet
 snippet "printva?r?" "print a variable:printvar" r
 print ${0}
 endsnippet
-snippet randomnr "get a random number 1 <= number <= 10, import random"
+
+pre_expand "add_package_py('random')"
+snippet randomnr "get a random number 1 <= number <= 10:randomnr"
 random.randint(${1:1},${2:10})	
 endsnippet
-snippet randomobject "get a random object from a collection, import random"
+
+pre_expand "add_package_py('random')"
+snippet randomobject "get a random object from a collection:randomobject"
 random.choice(${1:collection})
 endsnippet
 
 # New code snippets
-snippet main "main" b
+snippet main "main:main" b
 Python does not need a main. Just write the code in an empty document.
 endsnippet
-snippet class "New class" b
+
+pre_expand "methodLoc('True')"
+snippet class "New class:class" b
 class ${1:NewClass}:
 	def __init__(self):
-		pass
-	${VISUAL}$0
+		pass$0
 endsnippet
+
+pre_expand "methodLoc('True')"
+snippet "class( |)(\w+)" "New class:class???" br
+class `!p snip.rv = match.group(2)`:
+	def __init__(self):
+		pass$0
+endsnippet
+
+
+pre_expand "methodLoc('True')"
+snippet "subclass" "New class:subclass" br
+class ${1:NewClass}(${2:MasterClass}):
+	def __init__(self):
+		$2.__init__(self)$0
+endsnippet
+
+pre_expand "methodLoc('True')"
+snippet "subclass( |)(\w+)" "New class:subclass???" br
+class `!p snip.rv = match.group(2)`(${2:MasterClass}):
+	def __init__(self):
+		$2.__init__(self)$0
+endsnippet
+
 snippet thread "new thread:thread" b
 from threading import Thread
 
@@ -208,42 +350,54 @@ $1()
 endsnippet
 
 # Language specific
-snippet runOnly "Run external program, import os"
+pre_expand "add_package_py('os')"
+snippet runOnly "Run external program:runOnly"
 os.system(${1:"ls -la"})$0
 endsnippet
-snippet runPipe "Run external and get output, import subprocess"
+
+pre_expand "add_package_py('subprocess')"
+snippet runPipe "Run external and get output:runPipe"
 cmd = subprocess.Popen(${1:"ls -la"}, stdout=subprocess.PIPE)	
 for row in cmd.stdout:
 	${0}
 endsnippet
-snippet url "Fetch info from url, import urllib2:url"
-response = urllib2.urlopen('${1:www.google.com}')
+
+pre_expand "add_package_py('urllib2')"
+snippet url "Fetch info from url:url"
+response = urllib2.urlopen('${1:http://www.google.com}')
 html = response.read()
 response.close()
 ${0}
 endsnippet
-snippet htmlparser "Parses a html site, from HTMLParser import HTMLParser:htmlparser"
+
+pre_expand "from_import('HTMLParser', 'HTMLParser')"
+snippet htmlparser "Parses a html site:htmlparser"
 class ${1:MyHTMLParser}(HTMLParser):
     def handle_starttag(self, tag, attr):
     	${2:print tag}
     def handle_endtag(self, tag):
     	${3:print tag}
     def handle_data(self, data):
-    	${4:print tag}
+    	${4:print data}
 
 parser = MyHTMLParser()
-parser.feed(${5:<p>test</p>})
+parser.feed(${5:"<p>test</p>"})
 ${0}
 endsnippet
+
 snippet inforegex "info about regex"
 # if !match:
 # - string does not match regex.
 # match.group(1)
 # - First regexhit.
+# Example of regexes
+# - "^\s*$" - a Line with only whitespaces.
 endsnippet
-snippet regex "regex, import re"
+pre_expand "add_package_py('re')"
+snippet regex "regex:regex"
 ${1:match} = re.match('${2:^S*}', ${3:line})
 endsnippet
+
 # Stream snippets
 snippet streamopen "Open a stream:streamopen" b
 ${1:streamName} = open('${2:filename}', '${3:#write - w, read - r, append to file - a, read and write - r+#}')
@@ -300,35 +454,36 @@ snippet guiinfobind "Info about how to use guibind"
 # <Shift-Up> - Pressing shift and up.
 # <Control-Q> - Pressing Control and Shift-Q.
 endsnippet
-snippet guibind "New keybinding" b
+snippet guibind "New keybinding:guibind" b
 ${1:widget}.bind("<${2:Down}>", self.${3:function})
 $0
 endsnippet
-snippet guibutton "New button" b
+snippet guibutton "New button:guibutton" b
 ${1:button} = Button(${2:parent}, text="${3:buttonText}", command = self.${4:commandFunction})
 $1.grid(row = ${5:rowNr}, column = ${6:columnNr}, ${7:columnSpan = 1, }${8:sticky = W+E})
 $0
 endsnippet
-snippet guilabel "New label" b
+snippet guilabel "New label:guilabel" b
 ${1:label} = Label(${2:parent}, text="${3:buttonText}")
 $1.grid(row = ${4:rowNr}, column = ${5:columnNr})
 $0
 endsnippet
-snippet guilabelvar "New label with var" b
+snippet guilabelvar "New label with var:guilabelvar" b
 self.${1:label}Var = StringVar()
 $1 = Label(${2:parent}, textvariable = self.$1Var)
 $1.grid(row = ${3:rowNr}, column = ${4:columnNr})
 self.$1Var.set("${5:Starttext for label}")
 $0
 endsnippet
-snippet guiinfoentry "info about entry"
+snippet guiinfoentry "info about entry:guiinfoentry"
 # First argument is the parent where this entry will be placed.
 # The second optional arugment is the variable that you can set and get
 # to get the value of the entry.
 # To get a callback for when the entry changed, just add a keybinding
 # for KeyRelease and you should be good.
 endsnippet
-snippet guientry "guientry is a insertfield"
+snippet guientry "guientry is a insertfield:guientry"
 ${1:entry} = Entry(${2:parent}, textvariable = self.${3:stringVar})
 $1.grid(row = ${4:rowNr}, column = ${5:columnNr})
 endsnippet
+

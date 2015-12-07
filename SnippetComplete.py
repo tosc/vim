@@ -17,24 +17,39 @@ for fileName in os.listdir("./scripts/UltiSnips/"):
         f = open("scripts/UltiSnips/" + fileName, 'r')
         line = f.readline()
         while line != '':
-            match = re.match('(^snippet ){1}(\S+) "(.*)"{1} (\S+)', line)
-            if match:
-                if "r" in match.group(4):
-                    match = re.match('(^snippet ){1}"(.*)" "(.*)"{1} (\S+)', line)
-            if match:
-                if ":" in match.group(3):
-                    suggSplitColon = match.group(3).split(':')
-                    suggTags = []
-                    if "|" in suggSplitColon[1]:
-                        suggSplitBar = suggSplitColon[1].split('|')
-                        for suggTag in suggSplitBar:
-                            suggTags.append(suggTag)
+            brokenSnippet = True
+            isSnippet = re.match('^snippet(.*)$', line)
+            if isSnippet:
+                match = re.match('(^snippet ){1}(\S+)$', line)
+                if match:
+                    suggestions.append((match.group(2), match.group(2)))
+                    brokenSnippet = False
+                match = re.match('(^snippet ){1}(\S+) "(.*)"(| \S+)', line)
+                regdescmatch = re.match('(^snippet ){1}"(.*)" "(.*)"( \S+)', line)
+                if regdescmatch:
+                    match = regdescmatch
+                if match:
+                    if ":" in match.group(3):
+                        suggSplitColon = match.group(3).split(':')
+                        suggTags = []
+                        if "|" in suggSplitColon[1]:
+                            suggSplitBar = suggSplitColon[1].split('|')
+                            for suggTag in suggSplitBar:
+                                suggTags.append(suggTag)
+                                brokenSnippet = False
+                        else:
+                            suggTags.append(suggSplitColon[1])
+                            brokenSnippet = False
+                        for suggTag in suggTags:
+                            suggestions.append((suggTag, suggSplitColon[0]))
+                            brokenSnippet = False
                     else:
-                        suggTags.append(suggSplitColon[1])
-                    for suggTag in suggTags:
-                        suggestions.append((suggTag, suggSplitColon[0]))
-                else:
-                    suggestions.append((match.group(2), match.group(3)))
+                        suggestions.append((match.group(2), match.group(3)))
+                        brokenSnippet = False
+            else:
+                brokenSnippet = False
+            if brokenSnippet:
+                print "BROKEN SNIPPET" + ": " + line
             line = f.readline()
 
 

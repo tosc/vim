@@ -11,4 +11,6 @@ param	Documentation for parameter
 returns	Documentation for return
 List	New List
 set	Setter
+/get/	getter
+/getset/	getter/setter
 JC	New unity script

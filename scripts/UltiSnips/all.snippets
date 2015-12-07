@@ -1,3 +1,6 @@
+# Info
+#All snippets should end with $0 on the last line that has text on it.
+#- IE The user always has to push enter after expanding something simple.
 # Header
 snippet "import|include" "import:import|include" br
 <MISSING import|include>
@@ -47,7 +50,7 @@ endsnippet
 snippet "for((?!e)\w+)" "for,??? as variable:for???" br
 <MISSING for var>
 endsnippet
-snippet "forea?c?h?" "for each element in collection:foreach" br
+snippet "fore(ach)?" "for each element in collection:foreach" br
 <MISSING foreach>
 endsnippet
 snippet while "while:while" b
@@ -149,6 +152,15 @@ snippet filebase "runnable script:filebase" b
 endsnippet
 snippet class "new class:class" b
 <MISSING class>
+endsnippet
+snippet "class( |)(\w+)" "New class:class???" br
+<MISSING class???>
+endsnippet
+snippet subclass "new subclass:subclass" b
+<MISSING subclass>
+endsnippet
+snippet "subclass( |)(\w+)" "New class:subclass???" br
+<MISSING subclass???>
 endsnippet
 snippet thread "new thread:thread" b
 <MISSING thread>

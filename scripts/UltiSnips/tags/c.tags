@@ -3,5 +3,7 @@ header	New C-header
 if	if
 elif	else if
 else	else
+switch	switch
+case	case
 main	New C-class
 tcpclient	

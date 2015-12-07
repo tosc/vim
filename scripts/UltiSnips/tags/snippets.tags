@@ -1,8 +1,19 @@
 \"|#|//	comment
 file	new snippet file
 snippet	Snippet definition
+v	Visual only
 (\d+)	Tabstop with nr
 (\d+)v	Tabstop with nr and visual
 python	python block
 Trigger2	python block
 (\d+)m(atch)?(.)?g(roup)?	get the matched pattern
+mg	get the matched pattern
+matchgroup	get the matched pattern
+	get the matched pattern
+ep	regex for something enclosed in parentheses
+enclosingparentheses	regex for something enclosed in parentheses
+enclosing parentheses	regex for something enclosed in parentheses
+eq	matches quotes
+enclosingquotes	matches quotes
+vn	matches a variable name
+variablename	matches a variable name

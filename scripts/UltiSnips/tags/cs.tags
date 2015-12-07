@@ -20,4 +20,6 @@ vert	new gui vert
 button	gui button
 toggle	gui toggle
 set	Setter
+/get/	getter
+/getset/	getter/setter
 fileunity	New unity script

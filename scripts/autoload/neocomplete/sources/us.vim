@@ -5,7 +5,7 @@ let s:us_source = {
 	\ 'matchers': ['matcher_head'],
 	\ 'max_candidates': 20,
 	\ 'is_volatile': 1,
-	\ 'rank' : 9
+	\ 'rank' : 100
 	\ }
 
 function! s:us_source.gather_candidates(context)

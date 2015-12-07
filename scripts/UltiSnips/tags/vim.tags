@@ -2,6 +2,7 @@
 &&|and	and
 if	if
 ifel?s?e?	if else
+(elif|eif)|(else if|elseif)	else if
 else	else
 for((?!e)\w+)	for + match.group(1) as variable
 for	for
@@ -13,4 +14,5 @@ func?t?i?o?n?|method	function
 [iI]nt	int variable
 [fF]loat	float variable
 [bB]ool(ean)?	float variable
+"	New block
 print	print
