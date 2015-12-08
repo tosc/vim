@@ -1019,7 +1019,7 @@ function! SnippetFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^# ' && !g:InsideBrace
 		return '>1'
-	elseif line =~ '^snippet'
+	elseif (line =~ '^snippet' || line=~ '^pre_expand') && !g:InsideBrace
 		let g:InsideBrace = 1
 		return '>2'
 	elseif line =~ '^endsnippet'
@@ -1119,6 +1119,9 @@ endfunction
 function! NormalFoldText()
 	let line = substitute(getline(v:foldstart),'^\s*','','')
 	let indent_level = indent(v:foldstart)
+	if line =~ '^pre_expand'
+		let line = substitute(getline(v:foldstart+1),'^\s*','','')
+	endif
 	if line =~ '^snippet'
 		let indent_level = &l:tabstop
 	endif
