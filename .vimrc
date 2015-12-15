@@ -317,7 +317,7 @@ let g:neocomplete#force_omni_input_patterns.objcpp =
 if !exists('g:neocomplete#sources')
 	let g:neocomplete#sources = {}
 endif
-let g:neocomplete#sources._ = ['us']
+let g:neocomplete#sources._ = ['us', 'omni']
 let g:neocomplete#sources.vim = ['_']
 let g:neocomplete#sources.python = ['us', 'jedi']
 
@@ -370,8 +370,8 @@ else
 endif
 
 "SmartJump
-nnoremap <C-H> :call SmartJumpBack()<CR>
-nnoremap <C-L> :call SmartJump()<CR>
+nnoremap <C-E> :call SmartJump()<CR>
+nnoremap <C-B> :call SmartJumpBack()<CR>
 
 "Switches repeat f/F, feels more logical on swedish keyboard.
 nnoremap , ;
@@ -438,12 +438,11 @@ endif
 " else jump to next(previous) delimiter.
 inoremap <pageup> <C-R>=SmartJump()<CR>
 inoremap <pagedown> <C-R>=SmartJumpBack()<CR>
-inoremap <C-L> <C-R>=SmartJump()<CR>
-inoremap <C-H> <C-R>=SmartJumpBack()<CR>
+inoremap <C-E> <C-R>=SmartJump()<CR>
+inoremap <C-B> <C-R>=SmartJumpBack()<CR>
 
 " Readline bindings.
 inoremap <C-A> <home>
-inoremap <C-E> <end>
 inoremap <C-K> <C-O>D
 
 " Pressing enter chooses completion if completion window is up.
@@ -490,8 +489,8 @@ xnoremap å c<C-R>=PythonMath()<CR>
 " else jump to next(previous) delimiter.
 snoremap <pageup> <ESC>:call SmartJump()<CR>
 snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
-snoremap <C-L> <ESC>:call SmartJump()<CR>
-snoremap <C-H> <ESC>:call SmartJumpBack()<CR>
+snoremap <C-E> <ESC>:call SmartJump()<CR>
+snoremap <C-B> <ESC>:call SmartJumpBack()<CR>
 
 if !g:disablePlugins
 	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
@@ -1019,7 +1018,7 @@ function! SnippetFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ '^# ' && !g:InsideBrace
 		return '>1'
-	elseif (line =~ '^snippet' || line=~ '^pre_expand') && !g:InsideBrace
+	elseif (line =~ '^snippet' || line=~ '^pre_expand' || line=~ '^post_jump') && !g:InsideBrace
 		let g:InsideBrace = 1
 		return '>2'
 	elseif line =~ '^endsnippet'
@@ -1119,7 +1118,7 @@ endfunction
 function! NormalFoldText()
 	let line = substitute(getline(v:foldstart),'^\s*','','')
 	let indent_level = indent(v:foldstart)
-	if line =~ '^pre_expand'
+	if line =~ '^pre_expand' || line =~ '^post_jump'
 		let line = substitute(getline(v:foldstart+1),'^\s*','','')
 	endif
 	if line =~ '^snippet'

@@ -3,6 +3,7 @@ file	new snippet file
 snippet	Snippet definition
 v	Visual only
 (\d+)	Tabstop with nr
+(\d+)d	Tabstop with nr
 (\d+)v	Tabstop with nr and visual
 python	python block
 Trigger2	python block

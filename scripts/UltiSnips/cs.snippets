@@ -1,36 +1,75 @@
+# Snippet setttings
 priority 1
 
 global !p
 from snippetHelpers import *
+
+def add_package_cs(package):
+	return add_package("using", package, snip.buffer)
+
+def constructor():
+	done = False
+	line, column = snip.tabstops[2].start
+	stuffs = snip.tabstops[1].current_text.split(", ")
+	for thing in stuffs:
+		splitThing = thing.split(" ")
+		if len(splitThing) > 1:
+			if done:
+				snip.expand_anon("\nthis." + splitThing[1] + " = " + splitThing[1])
+			else:
+				snip.expand_anon("this." + splitThing[1] + " = " + splitThing[1])
+			done = True
 endglobal
 
-snippet List "New List" b
-List<${1:ListType}> ${2:variable} = new List<$1>{};
-$0
+# Header
+snippet "import|include" "import:import|include" br
+using ${1:package}
 endsnippet
 
-snippet if "If" b
+snippet header "header:header" b
+<MISSING header>
+endsnippet
+
+# Logical operations
+snippet " \|\|| or" "or:or" r
+<MISSING or|||>
+endsnippet
+snippet " &&| and" "and:and" r
+<MISSING and|&&>
+endsnippet
+snippet "!([a-zA-Z0-9.,\-]+)| not" "not:not" r
+<MISSING !|not>
+endsnippet
+
+# Conditional snippets
+snippet if "if:if" b
 if($1)
 {
 	${2:${VISUAL}}
 }
 $0
 endsnippet
-snippet elif "Else if" b
+snippet "ifsh?o?r?t?" "if shorthand:ifshort" r
+	<MISSING ifshort>
+endsnippet
+snippet "ifel?s?e?" "if else:ifelse" br
+<MISSING ifelse>
+endsnippet
+snippet "elif|(else if|elseif)" "else if:elif|elseif" br
 else if($1)
 {
 	${2:${VISUAL}}
 }
 $0
 endsnippet
-snippet else "Else" b
+snippet else "else:else" b
 else
 {
 	${1:${VISUAL}}
 }
 $0
 endsnippet
-snippet switch "switch" b
+snippet switch "switch:switch" b
 switch($1)
 {
 	case $2:
@@ -40,57 +79,131 @@ switch($1)
 }
 $0
 endsnippet
-snippet case "case" b
+snippet case "case:case" b
 case $1:
 	$2
 	break;
 $0
 endsnippet
-
-snippet for "For" b
+	
+# Loop snippets
+snippet for "for:for" b
 for(int ${1:index} = 0; $1 < ${2:times}; $1++)
 {
 	${3:${VISUAL}}
 }
 $0
 endsnippet
-snippet fori "For int i" b
-for(int i = 0; i < ${1:times}; i++)
-{
-	${2:${VISUAL}}
-}
-$0
-endsnippet
-snippet forj "For int j" b
-for(int j = 0; j < ${1:times}; j++)
-{
-	${2:${VISUAL}}
-}
-$0
-endsnippet
-snippet forx "For int x" b
-for(int x = 0; x < ${1:times}; x++)
-{
-	${2:${VISUAL}}
-}
-$0
-endsnippet
-snippet fory "For int y" b
-for(int y = 0; y < ${1:times}; y++)
-{
-	${2:${VISUAL}}
-}
-$0
-endsnippet
-snippet fore "For each" b
+snippet "fore(ach)?" "for each element in collection:foreach" br
 foreach(${1:ElementType} ${2:ElementVarName} in ${3:Collection})
 {
 	${4:${VISUAL}}
 }
 $0
 endsnippet
+snippet while "while:while" b
+<MISSING white>
+endsnippet
+snippet do "do while:do" b
+<MISSING do>
+endsnippet
 
-snippet comment "Comment method" b
+# Methods/functinos
+snippet "func?t?i?o?n?|meth?o?d?" "function:function|method" br
+<MISSING func|method>
+endsnippet
+snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
+<MISSING var func|method>
+endsnippet
+post_jump "if snip.tabstop == 2: constructor()"
+snippet "const?r?u?c?t?o?r?" "constructor:constructor" br
+public `!p 
+className = fn.split(".")[0]
+snip.rv = className
+`($1)
+{
+	$2
+}$3
+endsnippet
+
+# String snippets
+snippet "[sS]tri?n?g?" "string variable:string|String" br
+<MISSING string var>
+endsnippet
+snippet " contains| in" "string contains/is in another string:contains|in" r
+<MISSING contains|in>
+endsnippet
+snippet "[tT]o[sS]tring\(?\)?" "to string:tostring|ToString|toString" br
+<MISSING ToString>
+endsnippet
+
+# int snippets
+snippet "[iI]nt" "int variable:int|Int" br
+<MISSING int var>
+endsnippet
+snippet "(\w+)\+\+" "increment:???++" r
+<MISSING ++>
+endsnippet
+snippet "(\w+)\-\-" "decrement:???--" r
+<MISSING -->
+endsnippet
+
+# Variable snippets
+snippet "[dD]ouble" "double variable:double|Double" br
+<MISSING double var>
+endsnippet
+snippet "[fF]loat" "float variable:float|Float" br
+<MISSING float var>
+endsnippet
+snippet "[bB]ool" "bool variable:bool|Bool" br
+<MISSING bool var>
+endsnippet
+
+# Datatype snippets
+snippet enum "enum:enum" b
+<MISSING enum>
+endsnippet
+snippet "[lL]ist" "list:list|List" br
+List<${1:ListType}> ${2:variable} = new List<$1>{};$0
+endsnippet
+snippet "(\w+) ?[lL]ist" "list of type ???:??? list|??? List" br
+<MISSING list with type>
+endsnippet
+snippet set "Setter" b
+${1:public} void Set${2}(${3:String} ${4})
+{
+	this.$4 = $4;
+}
+$0
+endsnippet
+snippet /get/ "getter" !br
+${1:public} ${2:String} Get${3:Name}() 
+{
+	return `!p snip.rv = t[3].lower()`;
+}
+$0
+endsnippet
+snippet /getset/ "getter/setter" !br
+${1:public} ${2:String} Get${3:Name}() 
+{
+	return `!p snip.rv = t[3].lower()`;
+}
+
+$1 void Set$3($2 `!p snip.rv = t[3].lower()`)
+{
+	this.`!p snip.rv = t[3].lower()` = `!p snip.rv = t[3].lower()`;
+}
+$0
+endsnippet
+
+# Documentation snippets
+snippet "\"|#|//" "comment" r
+//
+endsnippet
+snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines:mlc|multilinecomment" br
+<MISSING multiline comment>
+endsnippet
+snippet comment "comment:comment" b
 /// <summary>
 /// $1
 /// </summary>$0
@@ -103,6 +216,107 @@ snippet returns "Documentation for return" b
 /// <returns>$1</returns>$0
 endsnippet
 
+# Special snippets
+snippet sleep "Sleep program:sleep" b
+<MISSING sleep>
+endsnippet
+snippet time "current time in milliseconds:time" b
+<MISSING time>
+endsnippet
+snippet "kill" "kill current script:kill" br
+<MISSING kill>
+endsnippet
+snippet print "print:print" b
+<MISSING print>
+endsnippet
+snippet "printva?r?" "print a variable:printvar" r
+<MISSING print var>
+endsnippet
+snippet "printli?s?t?" "print a list:printlist" r
+<MISSING print list>
+endsnippet
+
+# New code snippets
+snippet filebase "runnable script:filebase" b
+<MISSING main>
+endsnippet
+snippet class "new class:class" b
+public class `!p
+className = fn.split(".")[0]
+snip.rv = className`
+{
+	$0
+}
+endsnippet
+snippet "class( |)(\w+)" "New class:class???" br
+public class `!p
+className = fn.split(".")[0]
+snip.rv = className`
+{
+	$0
+}
+endsnippet
+snippet subclass "new subclass:subclass" b
+public class `!p
+className = fn.split(".")[0]
+snip.rv = className` : ${1:Parent}
+{
+	$0
+}
+endsnippet
+snippet "subclass( |)(\w+)" "New class:subclass???" br
+public class `!p
+className = fn.split(".")[0]
+snip.rv = className` : `!p match.group(1)`
+{
+	$0
+}
+endsnippet
+snippet thread "new thread:thread" b
+<MISSING thread>
+endsnippet
+snippet fileunity "New unity script:fileunity" b
+using UnityEngine;
+using System.Collections;
+
+public class `!p
+className = fn.split(".")[0]
+snip.rv = className
+` : MonoBehaviour
+{
+	$0
+
+	void Awake()
+	{
+	}
+
+	void Start ()
+	{
+	}
+
+	void Update ()
+	{
+	}
+}
+endsnippet
+# Stream snippets
+snippet streamopen "Open a stream:streamopen" b
+<MISSING streamopen>
+endsnippet
+snippet streamclose "Close a stream:streamopen" b
+<MISSING streamclose>
+endsnippet
+snippet streamread "Read from a stream:streamread" b
+<MISSING streamread>
+endsnippet
+snippet streamreadline "Read a line from a stream:streamreadline" b
+<MISSING streamreadline>
+endsnippet
+snippet streamwrite "write to a stream:streamwrite" b
+<MISSING streamwrite>
+endsnippet
+
+# Unity GUI snippets
 snippet area "New GUIarea" b
 GUILayout.BeginArea(new Rect($1, $2, $3, $4));
 ${5:${VISUAL}}
@@ -135,52 +349,4 @@ endsnippet
 snippet toggle "gui toggle" b
 bool ${1:newToggleVar} = GUILayout.Toggle(${2:toggleVar}, "${3:Button}");
 $0
-endsnippet
-snippet set "Setter" b
-${1:public} void Set${2}(${3:String} ${4})
-{
-	this.$4 = $4;
-}
-$0
-endsnippet
-snippet /get/ "getter" !br
-${1:public} ${2:String} Get${3:Name}() 
-{
-	return `!p snip.rv = t[3].lower()`;
-}
-$0
-endsnippet
-snippet /getset/ "getter/setter" !br
-${1:public} ${2:String} Get${3:Name}() 
-{
-	return `!p snip.rv = t[3].lower()`;
-}
-
-$1 void Set$3($2 `!p snip.rv = t[3].lower()`)
-{
-	this.`!p snip.rv = t[3].lower()` = `!p snip.rv = t[3].lower()`;
-}
-$0
-endsnippet
-
-snippet fileunity "New unity script:fileunity" b
-using UnityEngine;
-using System.Collections;
-
-public class ${1:ClassName} : MonoBehaviour 
-{
-	$0
-
-	void Awake()
-	{
-	}
-
-	void Start () 
-	{
-	}
-
-	void Update () 
-	{
-	}
-}
 endsnippet

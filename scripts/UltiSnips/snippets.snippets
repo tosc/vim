@@ -46,6 +46,9 @@ snippet v "Visual only"
 \${VISUAL}
 endsnippet
 snippet "(\d+)" "Tabstop with nr" ir
+\$`!p snip.rv = match.group(1)`$0
+endsnippet
+snippet "(\d+)d" "Tabstop with nr" ir
 \${`!p snip.rv = match.group(1)`:${1:Default}}$0
 endsnippet
 snippet "(\d+)v" "Tabstop with nr and visual" ir
