@@ -106,8 +106,6 @@ if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
 	" Code-completion
 if has('lua') && !g:minimalMode
 	Plugin 'Shougo/neocomplete.vim'
-else
-	Plugin 'Shougo/neocomplcache'
 endif
 	" Omnicomplete engines.
 	Plugin 'Rip-Rip/clang_complete'
@@ -252,41 +250,11 @@ function! UniteTags(filetype)
 	endif
 endfunction
 " --------------------
-" ---- [2.5] NEOCOMPLCACHE ----
-let g:neocomplcache_enable_at_startup = 1
-
-" Required for clang_complete to play nice with NEOCOMPLCACHE.
-if !exists('g:neocomplcache_force_omni_patterns')
-	let g:neocomplcache_force_omni_patterns = {}
-endif
-if !exists('g:neocomplcache_omni_functions')
-	    let g:neocomplcache_omni_functions = {}
-endif
-
-let g:neocomplcache_force_overwrite_completefunc = 1
-let g:neocomplcache_force_omni_patterns.c =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplcache_force_omni_patterns.cpp =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-let g:neocomplcache_force_omni_patterns.objc =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)'
-let g:neocomplcache_force_omni_patterns.objcpp =
-			\ '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-
-let g:neocomplcache_enable_smart_case = 0
-let g:neocomplcache_enable_camel_case_completion = 0
-let g:neocomplcache_enable_ignore_case = 0
-let g:neocomplcache_min_syntax_length = 3
-let g:neocomplcache_enable_auto_close_preview = 0
-
-let g:clang_complete_auto = 0
-let g:clang_auto_select = 0
-" --------------------
-" ---- [2.6] EASYTAGS ----
+" ---- [2.5] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
 let g:easytags_by_filetype = '~/.vim/tags/'
 " --------------------
-" ---- [2.7] NEOCOMPLETE ----
+" ---- [2.6] NEOCOMPLETE ----
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#skip_auto_completion_time = ''
 let g:neocomplete#auto_completion_start_length = 2
@@ -332,7 +300,7 @@ let g:neocomplete#enable_fuzzy_completion = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 " --------------------
-" ---- [2.8] SYNTASTIC ----
+" ---- [2.7] SYNTASTIC ----
 let g:syntastic_mode_map = { "mode": "active",
 			   \ "active_filetypes": [],
 			   \ "passive_filetypes": ["vim"] }
@@ -1264,7 +1232,6 @@ set tabline=%!Tabline()
 " ---- [8] MINIMALMODE ----
 if g:minimalMode
 	let s:CompletionCommand = "\<C-X>\<C-U>"
-	let g:neocomplcache_disable_auto_complete = 1
 	inoremap <TAB> <C-R>=MinimalTab()<CR>
 	let g:syntastic_mode_map = { "mode": "passive",
 				   \ "active_filetypes": [],
@@ -1454,11 +1421,7 @@ function! NeoTab()
 		return ""
 	endif
 	if getline(".")[col('.') - 2] =~ '\w'
-		if has('lua')
-			let longestCommon = NeoLongestCommon()
-		else
-			let longestCommon = neocomplcache#complete_common_string()
-		endif
+		let longestCommon = NeoLongestCommon()
 		if longestCommon == ""
 			return pumvisible() ? "" : SpecialDelim("\<TAB>")
 		endif
