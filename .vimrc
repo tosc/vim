@@ -545,6 +545,7 @@ noremap <leader>hn :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r 
 noremap <leader>hi :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.1\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg
 noremap <leader>hv :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.2\]<CR> :0,.-1d<CR>/\[3.3\]<CR> :.,$d<CR>gg
 noremap <leader>hl :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
+noremap <leader>hh :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
 noremap <leader>hc :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.5\]<CR> :0,.-1d<CR>/\[3.6\]<CR> :.,$d<CR>gg
 noremap <leader>hu :Unite us <CR>
 noremap <leader>hm :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r
@@ -1649,22 +1650,6 @@ function! OpohBuffer()
 	setlocal filetype=opoh
 	setlocal buftype=nofile
 endfunction
-
-function! FullScreenHelp(search)
-	let curPath = expand('%')
-	execute("keepalt h " . a:search)
-	let helpPath = expand('%')
-	if curPath != helpPath
-		let curPos = getpos('.')
-		keepalt close
-		call OpohBuffer()
-		execute("keepalt r " . helpPath)
-		call setpos(".",curPos)
-		setlocal syntax=help
-		setlocal nobuflisted
-		setlocal buftype=nofile
-	endif
-endfunction
 " --------------------
 " ---- [11.4] EVALUATE MATH ----
 function! PythonMath()
@@ -1835,6 +1820,23 @@ function! SpecialDelim(key)
 	endif
 	let g:delimCall = 0
 	return returnV
+endfunction
+" --------------------
+" ---- [11.9] HELP ----
+function! FullScreenHelp(search)
+	let curPath = expand('%')
+	execute("h " . a:search)
+	let helpPath = expand('%')
+	if curPath != helpPath
+		let curPos = getpos('.')
+		close
+		execute("e " . a:search . " [HELP]")
+		execute("r " . helpPath)
+		call setpos(".",curPos)
+		setlocal syntax=help
+		setlocal filetype=help
+		setlocal buftype=nowrite
+	endif
 endfunction
 " --------------------
 " --------------------
