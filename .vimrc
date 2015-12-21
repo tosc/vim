@@ -285,7 +285,7 @@ let g:neocomplete#force_omni_input_patterns.objcpp =
 if !exists('g:neocomplete#sources')
 	let g:neocomplete#sources = {}
 endif
-let g:neocomplete#sources._ = ['us', 'omni']
+let g:neocomplete#sources._ = ['us']
 let g:neocomplete#sources.vim = ['_']
 let g:neocomplete#sources.python = ['us', 'jedi']
 
