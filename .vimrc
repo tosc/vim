@@ -575,6 +575,7 @@ if !g:disablePlugins
 	map <leader>us :Unite us <CR>
 endif
 " V - .vimrc
+map <leader>vr :e ~/git/vim/README.md<CR>
 map <leader>vv :e ~/git/vim/.vimrc<CR>
 map <leader>vd :w !diff % -<CR>
 " W - Write

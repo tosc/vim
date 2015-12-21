@@ -113,20 +113,21 @@ Add a .vimperatorrc with the line:
 # TODO
 
 ### Important
-* Fix bug with unite and buffers.
-* Fix cs bind like you did with s
+* Find better way of calling help, make it so that I can use autocompletetion.
+* Fix bug with unite and buffers (seems to happen when you have an empty
+	buffer)
 * Fix my pythonsnippets for method and function. Don't use the same
 	helpfunction, use different ones and jump depending on that.
 	In other words, if completing method then add that to a class.
 	If completing function then add that outside class.
-* Get more information from my jedi completion.
-* Create a remote repo for my info/notes.
-* Move my infostuff to server repo.
+
+### Mid
+* Fix cs bind like you did with s
 * Add a :et command. Creates a file in the tempfolder for quick testing and so on.
-* Create unite source for external commands. Switch to that unite buffer to 
-get more output from program.
 
 ### Low
+* Create unite source for external commands. Switch to that unite buffer to 
+	get more output from program.
 * Create binding for adding new words to my spell check.
 * Create own session unite source. Currently use Shougos for no reason.
 	* Create a unite source that shows files in my session folder.
@@ -138,7 +139,6 @@ get more output from program.
 	* (Delete session button)?
 	* (Bookmark sessions)?
 	* Remove shougos session plugin.
-* Make it possible to reference pdfs and maybe firefox using my note-system.
 * Add a bind in unite to change sorting method from time to name.
 * TagGenerator
 	* helptags for vim
