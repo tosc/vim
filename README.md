@@ -120,6 +120,14 @@ Add a .vimperatorrc with the line:
 	helpfunction, use different ones and jump depending on that.
 	In other words, if completing method then add that to a class.
 	If completing function then add that outside class.
+* Look into vim-operator-flashy.
+* Look into SwagKingTenK/VimSearch.
+* Add mapping to fix p removing the yank register.
+	Try this mapping:
+	xnoremap p pgvy
+	Does this break any actions that use operators with p?
+* Use alt bindings for jumping between tabtops? Alt+H Alt-L
+	Look to make sure those are safe to bind.
 
 ### Mid
 * Fix cs bind like you did with s
@@ -148,6 +156,6 @@ Add a .vimperatorrc with the line:
 * Make my draw into a real plugin.
 * Download all external binaries for windows and put them at a convenient
 	location to make installing vim easier.
-* Better names in ö.
+* Better names in Ã¶.
 * cp in unite.
 * Detect stuff that needs compiling and compile by itself.
