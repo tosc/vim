@@ -11,7 +11,7 @@
 import os
 import re
 
-infoloc = "C:/Users/opo/git/info/"
+infoloc = os.path.expanduser('~') + "/git/info/"
 doc = "/documentation/"
 notes= "/notes/"
 tagloc = ""
