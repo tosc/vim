@@ -288,6 +288,7 @@ endif
 let g:neocomplete#sources._ = ['us']
 let g:neocomplete#sources.vim = ['_']
 let g:neocomplete#sources.python = ['us', 'jedi']
+let g:neocomplete#sources.cs = ['us', 'omni']
 
 let g:neocomplete#enable_smart_case = 0
 let g:neocomplete#enable_camel_case_completion = 0
@@ -525,7 +526,8 @@ map <leader>iI :Unite tagfolders:~/git/info/ <CR>
 map <leader>ia :Unite tagfolders:~/git/info/ <CR>
 map <leader>in :Unite notes:~/git/info/ <CR>
 map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
-" J
+" J - Format json file.
+map <leader>j :%!python -m json.tool<CR>
 " K
 " L
 " M - Make
