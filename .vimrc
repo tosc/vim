@@ -525,6 +525,7 @@ map <leader>ii :call UniteTags(&l:filetype)<CR>
 map <leader>iI :Unite tagfolders:~/git/info/ <CR>
 map <leader>ia :Unite tagfolders:~/git/info/ <CR>
 map <leader>in :Unite notes:~/git/info/ <CR>
+map <leader>if :Unite notes:~/git/info/ <CR>
 map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
 " J - Format json file.
 map <leader>j :%!python -m json.tool<CR>

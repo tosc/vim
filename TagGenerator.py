@@ -24,13 +24,13 @@ def generateNoteTags(directory):
         f = open(noteloc + "/" + file, 'r')
         line = f.readline()
         while line != '':
-            # print line
-            match = re.match('^(.*)\t(.*)\t(.*)$', line)
+            #match = re.match('^(.*)\t(.*)\t(.*)$', line)
+            #if match:
+            #    print line
+            #    nrcreated += 1
+            #    r.write(match.group(1) + ' ????\t' + infoloc + directory + match.group(2) + '\t' + match.group(3) + '\n')
             match2 = re.match('^\w.*$', line)
-            if match:
-                nrcreated += 1
-                r.write(match.group(1) + ' ????\t' + infoloc + directory + match.group(2) + '\t' + match.group(3) + '\n')
-            elif match2:
+            if match2:
                 nrcreated += 1
                 line = line[:-1]
                 r.write(line + ' ????\t' + noteloc + "/" + file + '\t' + line + '\n')
@@ -40,7 +40,7 @@ def generateNoteTags(directory):
     print "Notes:              " + str(nrcreated) + " tags created."
 
 for directory in os.listdir(infoloc):
-    if directory == "todo.txt" or directory == ".git":
+    if directory == "todo.txt" or directory == ".git" or directory == "pass.pass":
         continue
     print directory
     tagloc = infoloc + directory + "/tags"
