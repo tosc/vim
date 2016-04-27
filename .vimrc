@@ -511,6 +511,12 @@ map <leader>gp :!git -C %:h push<CR> :call UpdateGitInfo()<CR>
 map <leader>gP :!git -C %:h push --force<CR> :call UpdateGitInfo()<CR>
 " Opens a interactive menu that lets you pick what commits to use/squash.
 map <leader>gr :!git -C %:h rebase -i HEAD~
+function! ResetGit()
+	if confirm("Reset git to remote?", "y\nn") == 1
+		echo system("git -C " . expand("%:p:h") . " reset --hard")
+	endif
+endfunction
+map <leader>gR :call ResetGit()<CR>
 
 if !g:disablePlugins
 	map <leader>gc :Gcommit<CR>
