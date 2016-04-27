@@ -12,16 +12,16 @@ Vim settings.
 ``git submodule update``
 4. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
 5. Install python.
-6. Install lua.
-7. Install clang.
-8. Install ctags.
-9. Install LaTex.
-10. Install Eclipse.
-11. Install ECLIM.
-12. Install Mono-develop. (http://www.mono-project.com/)
-13. Build clang_complete.  
+7. Install lua.
+8. Install clang.
+9. Install ctags.
+10. Install LaTex.
+11. Install Eclipse.
+12. Install ECLIM.
+13. Install Mono-develop. (http://www.mono-project.com/)
+14. Build clang_complete.  
 `` make install ``
-14. Create a vimrc with the lines:  
+15. Create a vimrc with the lines:  
 ```VimL
 "let g:minimalMode = 1
 "let g:disablePlugins = 1
@@ -44,6 +44,9 @@ source ~/git/vim/.vimrc
 10. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
 `` make -f make_mingw32.mak``  
 `` make -f make_mingw64.mak``  
+11. Install curses-package for python. Download it here: http://www.lfd.uci.edu/~gohlke/pythonlibs/#curses
+`` python -m pip downloaded-filename.whl ``
+12. Resize cmd globally. (Rightclick title of cmd and select defaults.)
 
 ##### (Optional)
 
@@ -58,6 +61,8 @@ source ~/git/vim/.vimrc
 
 1. Compile Vimproc.  
 `` make -f make_unix.mak ``  
+2. Install curses-package for python.  
+`` pip install curses ``  
 
 ### MAC
 

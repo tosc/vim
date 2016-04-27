@@ -31,6 +31,9 @@ endif
 if !exists('g:startExternal')
 	let g:startedExternal = 0
 endif
+if !exists('g:disableVimHelper')
+	let g:disableVimHelper = 0
+endif
 " --------------------
 " ---- [1] VIMSETTINGS ----
 autocmd!
@@ -497,7 +500,7 @@ map <leader>ce :SyntasticCheck<CR>
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
 " E - Start external
-autocmd Filetype tex map <leader>e :Start -dir=~ .vim\tmp\tmp\main.pdf <cr>
+autocmd Filetype tex map <leader>e :Spawn! -dir=~ .vim\tmp\tmp\main.pdf <cr>
 " F
 noremap <leader>f :Unite line -custom-line-enable-highlight<CR>
 " G - Git
@@ -644,6 +647,10 @@ if !g:disablePlugins
 else
 	cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>!git" : "t"
 endif
+
+"et filename opens opens a file with filename in a tmp folder.
+cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "e" ? "\<bs>Et" : "t"
+command -nargs=1 Et :e ~\.vim\tmp\tmp\<args>
 
 " Show the my normal and insert bindings.
 cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ? 
@@ -1595,9 +1602,7 @@ endfunction
 
 function! StartVimHelper()
 	if !g:minimalMode && !g:disableExternal
-		cd ~\git\vim
-		Start python VimHelper.py
-		cd %:h
+		Spawn! -dir=~ python git\vim\VimHelper.py
 	endif
 endfunction
 " --------------------
@@ -1797,6 +1802,7 @@ endfunction
 " --------------------
 " ---- [11.12] MESSAGE VIMHELPER ----
 function! MessageVimHelper(type, message)
+if !g:disableVimHelper
 python << endpy
 import socket
 try:
@@ -1809,6 +1815,7 @@ except:
 	    	vim.command("call StartVimHelper()")
 	vim.command("let g:startedExternal = 1")
 endpy
+endif
 endfunction
 " --------------------
 " --------------------
