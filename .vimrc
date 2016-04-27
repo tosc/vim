@@ -1,11 +1,11 @@
 " ---- [0] INITIALIZATION ----
 let requiredFolders = [
-		\ "~/.vim", 
-		\ "~/.vim/tmp", 
-		\ "~/.vim/tmp/tmp", 
-		\ "~/.vim/tmp/swapfiles", 
-		\ "~/.vim/tmp/gitstatusline", 
-		\ "~/.vim/tags", 
+		\ "~/.vim",
+		\ "~/.vim/tmp",
+		\ "~/.vim/tmp/tmp",
+		\ "~/.vim/tmp/swapfiles",
+		\ "~/.vim/tmp/gitstatusline",
+		\ "~/.vim/tags",
 		\ "~/.cache",
 		\ "~/.cache/unite",
 		\ "~/.cache/unite/session" ]
@@ -609,6 +609,8 @@ map <leader>w :w <CR>
 if !g:disablePlugins
 	map <leader>z :Unite session<CR>
 endif
+" ?
+noremap <leader>hl :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
 " --------------------
 " ---- [3.4] OMAP ----
 "This adds $$ as textobjects.	
