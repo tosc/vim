@@ -1630,6 +1630,7 @@ endfunction
 function! UpdateGitInfo()
 	let b:statusLineVar = ""
 	call UpdateMatches()
+	call UpdateGitStatusBar()
 endfunction
 
 function! UpdateGitStatusBar()
