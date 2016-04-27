@@ -305,10 +305,6 @@ workers = [
 drawer = Drawer(workers)
 server = Server(drawer, workers)
 while(True):
-    # Check how many vim clients are running, if 0 quit.
-    f = open(os.path.expanduser('~') + "/.vim/tmp/current-vim-clients", 'r')
-    currentVimClients = int(f.read())
-    f.close()
     if server.clients == -1:
         sys.exit()
     if server.clients == 0:
