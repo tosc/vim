@@ -2,6 +2,9 @@
 let requiredFolders = [
 		\ "~/.vim", 
 		\ "~/.vim/tmp", 
+		\ "~/.vim/tmp/tmp", 
+		\ "~/.vim/tmp/swapfiles", 
+		\ "~/.vim/tmp/gitstatusline", 
 		\ "~/.vim/tags", 
 		\ "~/.cache",
 		\ "~/.cache/unite",
@@ -25,6 +28,23 @@ endif
 if !exists('g:disableExternal')
 	let g:disableExternal = 0
 endif
+if !exists('g:startExternal')
+	let g:startExternal = 0
+endif
+
+if !exists("g:reload")
+	if filereadable(expand("~/.vim/tmp/current-vim-clients"))
+		let temp = readfile(expand("~/.vim/tmp/current-vim-clients"))
+		if temp[0] == 0
+			let g:startExternal = 1
+		endif
+		let temp[0] = temp[0] + 1
+		call writefile([temp[0]], expand("~/.vim/tmp/current-vim-clients"))
+	else
+		call writefile(["0"], expand("~/.vim/tmp/current-vim-clients"))
+		let g:startExternal = 1
+	endif
+endif
 " --------------------
 " ---- [1] VIMSETTINGS ----
 autocmd!
@@ -46,7 +66,7 @@ if &guifont
 	" local .vimrc.
 endif
 set wildmode=longest:full,list
-set directory=~/.vim/tmp//
+set directory=~/.vim/tmp/swapfiles//
 set nobackup
 set winminheight=0
 set visualbell
@@ -488,8 +508,8 @@ map <leader>ce :SyntasticCheck<CR>
 " D - Delete buffer
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
-" E - External helpers
-autocmd Filetype tex,plaintex map <buffer><leader>e :call StartTexBuilder() <cr>
+" E - Start external helper
+map <leader>e :call StartVimHelper()<CR>
 " F
 noremap <leader>f :Unite line -custom-line-enable-highlight<CR>
 " G - Git
@@ -1149,9 +1169,7 @@ endif
 
 " Gets the gitinfo for the statusline.
 function! MyStatusLine()
-	if !exists("b:statusLineVar")
-		call UpdateGitInfo()
-	endif
+	let b:statusLineVar = ""
 	if !g:disablePlugins
 		if SyntasticStatuslineFlag() == ""
 			hi StatusLine guibg=NONE
@@ -1159,58 +1177,12 @@ function! MyStatusLine()
 			hi StatusLine guibg=red
 		endif
 	endif
+	let gitStatusLineFile = expand("~/.vim/tmp/gitstatusline/") .  substitute(expand("%:p"), "[\\:/]", "-", "g")
+	if filereadable(gitStatusLineFile)
+		let b:statusLineVar = readfile(gitStatusLineFile)[0]
+	endif
 
 	return b:statusLineVar
-endfunction
-
-" Updates gitinfo for the statusline.
-" m - Nr of [m]odified [f]iles.
-" +/- - Nr of rows added / deleted.
-function! GitStatusLine()
-	let SlowStatusLineVar = ""
-	if &modifiable
-		let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
-		if exists("*vimproc#system")
-			let gitTemp = vimproc#system("git -C " . 
-				\ currentFolder . " status -b -s")
-			let rowsTemp = split(vimproc#system("git -C " . 
-				\ currentFolder . " diff --numstat"), "\n")
-		else
-			let rowsTemp = split(system("git -C " .
-				\ currentFolder . " diff --numstat"), "\n")
-			let gitTemp = system("git -C " . 
-				\ currentFolder . " status -b -s")
-		endif
-		if gitTemp !~ "fatal"
-			let gitTemp = substitute(gitTemp[2:], "\\.\\.\\.", '->', '')
-			let gitList = split(gitTemp, "\n")
-			if len(gitList) > 0
-				let newTemp = "[" . substitute(gitList[0],
-					\ " ", "", "")
-				if newTemp =~ " "
-					let newTemp = substitute(newTemp, 
-						\ " ", "] ", "")
-				else
-					let newTemp .= "]"
-				endif
-				let SlowStatusLineVar .= newTemp
-			endif
-			if len(gitList) > 1
-				let SlowStatusLineVar .= " [m " . (len(gitList) -1) . "]"
-			endif
-			let changedRows = []
-			for row in rowsTemp
-				if row =~ escape(expand('%:t'), ".")
-					let changedRows = split(row, "\t")
-				endif
-			endfor
-			if(len(changedRows) > 0)
-				let SlowStatusLineVar .= " [+" . changedRows[0] .
-							\ " -" . changedRows[1] . "]"
-			endif
-		endif
-	endif
-	let b:statusLineVar = SlowStatusLineVar
 endfunction
 " --------------------
 " ---- [7] TABLINE ----
@@ -1391,6 +1363,8 @@ hi default link uniteSource__Fil_Special PreProc
 autocmd BufWritePost * call SaveSession()
 autocmd BufWritePost * call UpdateGitInfo()
 
+autocmd FocusGained * call UpdateGitStatusBar()
+
 autocmd BufEnter * call UpdateGitInfo()
 
 " To make FastFold calculate the folds when you open a file.
@@ -1400,22 +1374,10 @@ autocmd TextChanged,TextChangedI * call HighlightGitDisable()
 autocmd InsertCharPre * let v:char = Delim(v:char)
 autocmd InsertEnter * call HighlightDrawDisable()
 autocmd InsertLeave * call HighlightDrawEnable()
-autocmd BufEnter * call UpdateMatches()
 
-function! KillAllExternal()
-	if exists("g:EclimdRunning")
-		ShutdownEclim
-	endif
-	call OmniSharp#StopServer()
-endfunction
-if !g:disableExternal && !g:disablePlugins
-	autocmd VimLeave * call KillAllExternal()
-endif
+autocmd VimLeave * call OnExit()
+autocmd VimEnter * call AfterInit()
 
-function! UpdateGitInfo()
-	call UpdateMatches()
-	call GitStatusLine()
-endfunction
 " --------------------
 " ---- [11] FUNCTIONS ----
 " ---- [11.0] TABCOMPLETION ----
@@ -1638,10 +1600,10 @@ function! StartEclim()
 	call vimproc#system_bg('eclimd')
 endfunction
 
-function! StartTexBuilder()
+function! StartVimHelper()
 	if !g:minimalMode && !g:disableExternal
 		cd ~\git\vim
-		Start python TexBuilder.py %:h %
+		Start python VimHelper.py %:h %
 		cd %:h
 	endif
 endfunction
@@ -1662,7 +1624,16 @@ function! NoSpellCheck()
 	let b:neocomplete_spell_file = ''
 endfunction
 " --------------------
-" ---- [11.7] MATCH ----
+" ---- [11.7] GIT INFO ----
+function! UpdateGitInfo()
+	let b:statusLineVar = ""
+	call UpdateMatches()
+endfunction
+
+function! UpdateGitStatusBar()
+	call writefile([expand("%:p")], expand("~/.vim/tmp/current-file"))
+endfunction
+
 " Draws lines added/removed and edited since last commit.
 let g:drawEnabled = 1
 function! UpdateMatches()
@@ -1803,6 +1774,34 @@ function! FullScreenHelp(search)
 		setlocal syntax=help
 		setlocal filetype=help
 		setlocal buftype=nowrite
+	endif
+endfunction
+" --------------------
+" ---- [11.10] ON EXIT ----
+function! OnExit()
+	if !g:disableExternal && !g:disablePlugins
+		call KillAllExternal()
+	endif
+
+	if filereadable(expand("~/.vim/tmp/current-vim-clients"))
+		let temp = readfile(expand("~/.vim/tmp/current-vim-clients"))
+		let temp[0] = temp[0] - 1
+		call writefile([temp[0]], expand("~/.vim/tmp/current-vim-clients"))
+	endif
+endfunction
+
+function! KillAllExternal()
+	if exists("g:EclimdRunning")
+		ShutdownEclim
+	endif
+	call OmniSharp#StopServer()
+endfunction
+
+" --------------------
+" ---- [11.11] AFTER INIT ----
+function! AfterInit()
+	if g:startExternal == 1
+		call StartVimHelper()
 	endif
 endfunction
 " --------------------
