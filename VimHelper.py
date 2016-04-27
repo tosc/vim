@@ -4,12 +4,15 @@ import time
 import subprocess
 import sys
 import datetime
+import socket
 from threading import Thread
+from threading import Condition
 
 # Draw a nice progressbar for all my threads.
 class Drawer(Thread):
     def __init__(self, workers):
         Thread.__init__(self)
+        self.draw = True
         self.daemon = True
         self.workers = workers
         self.windowLen = 80
@@ -26,10 +29,9 @@ class Drawer(Thread):
         self.start()
 
     def run(self):
-        while(True):
+        while(self.draw):
             os.system('cls')
-            for worker in self.workers:
-                self.drawProgressBar(worker)
+            self.drawProgressBars()
             line = '-' * self.windowLen
             sys.stdout.write("\n")
             sys.stdout.write(line + "\n")
@@ -50,47 +52,14 @@ class Drawer(Thread):
                 self.msgs.append((source,tmpMsg))
         self.msgs = self.msgs[-self.maxMsgs:]
 
-    def drawProgressBar(self, worker):
-        count = time.time() - worker.timeStart
-        sleepcount = time.time() - worker.timeDone
-        if worker.idle or worker.lastTime == 0:
-            status = "Idle..."
-            percents = 0
-            filled_len = 0
-        elif worker.done:
-            status = "Sleeping..."
-            percents = round(100.0 * sleepcount / float(worker.sleep), 1)
-            if percents > 99:
-                percents = 99
-                filled_len = 0
-            elif percents < 0:
-                percents = 0
-                filled_len = self.barLen - 1
-            else:
-                filled_len = self.barLen - int(round(self.barLen * sleepcount / float(worker.sleep)))
-        else:
-            status = "Running..."
-            percents = round(100.0 * count / float(worker.lastTime), 1)
-            if percents > 99:
-                percents = 99
-                filled_len = self.barLen - 1
-            elif percents < 0:
-                percents = 0
-                filled_len = 0
-            else:
-                filled_len = int(round(self.barLen * count / float(worker.lastTime)))
-        bar = '#' * filled_len + '-' * (self.barLen - filled_len)
-        percentText = str(percents) + '%'
-
-        sys.stdout.write(worker.name + '\n')
-        sys.stdout.write('[%s] %s - %s\n\n' % (bar, percentText, status))
+    def drawProgressBars(self):
+        for worker in self.workers:
+            worker.drawProgressBar()
 
     def drawConsole(self):
         for source,msg in self.msgs:
             consoleLine = "%-" + str(self.consoleNamesLen) + "." + str(self.consoleNamesLen) + "s| %s\n"
             sys.stdout.write(consoleLine % (source,msg))
-
-
 
 # All external workers should inherit this.
 class Worker(Thread):
@@ -109,6 +78,8 @@ class Worker(Thread):
         self.timeDone = time.time()
         self.lastTime = 1
 
+        self.hide = False
+
         self.sleep = 1
 
         self.drawer = None
@@ -122,14 +93,54 @@ class Worker(Thread):
                 self.timeDone = time.time()
                 self.lastTime = self.timeDone - self.timeStart
                 self.done = True
-            time.sleep(self.sleep)
+            if self.sleep != 0:
+                time.sleep(self.sleep)
 
     def update(self):
         print "fix updateloop"
 
     def setPath(self, path):
         self.currentPath = path
-        self.currentFolder,self.currentFile = os.path.split(currentPath)
+        self.currentFolder,self.currentFile = os.path.split(path)
+
+    def drawProgressBar(self):
+        if not self.hide:
+            count = time.time() - self.timeStart
+            sleepcount = time.time() - self.timeDone
+            if self.idle or self.lastTime == 0:
+                status = "Idle..."
+                percents = 0
+                filled_len = 0
+            elif self.done:
+                status = "Sleeping..."
+                percents = round(100.0 * sleepcount / float(self.sleep), 1)
+                if percents > 99:
+                    percents = 99
+                    filled_len = 0
+                elif percents < 0:
+                    percents = 0
+                    filled_len = drawer.barLen - 1
+                else:
+                    filled_len = drawer.barLen - int(round(drawer.barLen * sleepcount / float(self.sleep)))
+            else:
+                status = "Running..."
+                percents = round(100.0 * count / float(self.lastTime), 1)
+                if percents > 99:
+                    percents = 99
+                    filled_len = drawer.barLen - 1
+                elif percents < 0:
+                    percents = 0
+                    filled_len = 0
+                else:
+                    filled_len = int(round(drawer.barLen * count / float(self.lastTime)))
+            bar = '#' * filled_len + '-' * (drawer.barLen - filled_len)
+            percentText = str(percents) + '%'
+
+            sys.stdout.write(self.name + '\n')
+            sys.stdout.write('[%s] %s - %s\n\n' % (bar, percentText, status))
+
+    def add_msg(self, msg):
+        drawer.add_msg(self.name, msg)
 
 # A thread that updates my git statusline
 class UpdateGit(Worker):
@@ -137,51 +148,82 @@ class UpdateGit(Worker):
         Worker.__init__(self, "Git statusbar")
         self.daemon = True
         self.lastTime = 0.1
-        self.sleep = 0.5
+        self.sleep = 0
+        self.condition = Condition()
+        self.pause = True
+        self.hide = True
         self.start()
 
     def update(self):
-        if self.currentPath != "":
-            try:
-                filesRaw = subprocess.check_output("git -C " + self.currentFolder + " status -b -s", stderr=subprocess.STDOUT)
-                rowsRaw = subprocess.check_output("git -C " + self.currentFolder + " diff --numstat", stderr=subprocess.STDOUT)
+        with self.condition:
+            while self.currentPath == "":
+                self.condition.wait()
+        try:
+            filesRaw = subprocess.check_output("git -C " + self.currentFolder + " status -b -s", stderr=subprocess.STDOUT)
+            rowsRaw = subprocess.check_output("git -C " + self.currentFolder + " diff --numstat", stderr=subprocess.STDOUT)
 
-                statusLine = ""
+            statusLine = ""
 
-                filesRaw = filesRaw.replace("...", "->")
-                filesRaw = filesRaw.replace("#", "")
-                filesSplit = filesRaw.split("\n")
-                # [master->origin/master]   Branch info
-                if len(filesSplit) > 0:
-                    branch = filesSplit[0][1:].split(" ")
-                    statusLine += "[" + branch[0] + "]"
-                    if len(branch[1:]) > 0:
-                        statusLine += " "
-                        branch = branch[1:]
-                        if len(branch) > 3:
-                            statusLine += branch[0] + " " + branch[1][:-1] + "] ["
-                            branch = branch[2:]
-                        if len(branch) > 1:
-                            statusLine += branch[0] + " " + branch[1]
-                            branch = branch[2:]
+            filesRaw = filesRaw.replace("...", "->")
+            filesRaw = filesRaw.replace("#", "")
+            filesSplit = filesRaw.split("\n")
+            # [master->origin/master]   Branch info
+            if len(filesSplit) > 0:
+                branch = filesSplit[0][1:].split(" ")
+                statusLine += "[" + branch[0] + "]"
+                if len(branch[1:]) > 0:
+                    statusLine += " "
+                    branch = branch[1:]
+                    if len(branch) > 3:
+                        statusLine += branch[0] + " " + branch[1][:-1] + "] ["
+                        branch = branch[2:]
+                    if len(branch) > 1:
+                        statusLine += branch[0] + " " + branch[1]
+                        branch = branch[2:]
 
-                # [m 3]                     Number of modified files
-                if len(filesSplit) > 2:
-                    statusLine += " [m " + str(len(filesSplit) - 2) + "]"
+            # [m 3]                     Number of modified files
+            if len(filesSplit) > 2:
+                statusLine += " [m " + str(len(filesSplit) - 2) + "]"
 
-                # [+3 -2]                   Changed rows in current file
-                for row in rowsRaw.split("\n"):
-                    if self.currentFile in row:
-                        changedRows = row.split("\t")
-                        statusLine += " [+" + changedRows[0] + " -" + changedRows[1] + "]"
+            # [+3 -2]                   Changed rows in current file
+            for row in rowsRaw.split("\n"):
+                if self.currentFile in row:
+                    changedRows = row.split("\t")
+                    statusLine += " [+" + changedRows[0] + " -" + changedRows[1] + "]"
 
-                statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "")
-                f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'w')
-                f.write(statusLine)
+            statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "")
+
+            before = ""
+            if os.path.isfile(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName):
+                f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'r')
+                before = f.read()
                 f.close()
-            except Exception,e:
-                #self.drawer.add_msg(self.name, str(e.output))
-                pass
+
+            f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'w')
+            f.write(statusLine)
+            f.close()
+
+            f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'r')
+            after = f.read()
+            f.close()
+
+            if before != after:
+                if before == "":
+                    self.add_msg("GIT StatusBar New - " + self.currentFile)
+                    self.add_msg(after)
+                else:
+                    self.add_msg("GIT StatusBar Update - " + self.currentFile)
+                    self.add_msg(before + " ->")
+                    self.add_msg(after)
+        except Exception,e:
+            pass
+        self.currentPath = ""
+
+    def setPath(self, path):
+        with self.condition:
+            self.currentPath = path
+            self.currentFolder,self.currentFile = os.path.split(path)
+            self.condition.notify()
 
 
 class TexBuilder(Worker):
@@ -210,27 +252,60 @@ class TexBuilder(Worker):
         else:
             self.idle = True
 
+class Server(Thread):
+    def __init__(self, drawer, workers):
+        Thread.__init__(self)
+        self.drawer = drawer
+        self.workers = workers
+        self.daemon = True
+        self.clients = 1
+        self.start()
+
+    def run(self):
+        s = socket.socket()
+
+        s.bind(("localhost", 51351))
+
+        s.listen(5)
+        while True:
+            c, addr = s.accept()
+            server_msgs = c.recv(1024).split("\t")
+            if server_msgs[0] == "path":
+                for worker in self.workers:
+                    worker.setPath(server_msgs[1])
+            elif server_msgs[0] == "client":
+                if server_msgs[1] == "1":
+                    self.clients += 1
+                    self.add_msg("Vim client started - Currently " + str(self.clients))
+                else:
+                    self.clients -= 1
+                    self.add_msg("Vim client stopped - Currently " + str(self.clients))
+
+            c.close()
+
+    def add_msg(self, msg):
+        self.drawer.add_msg("Server", msg)
 
 workers = [
             UpdateGit(),
             TexBuilder()
             ]
 drawer = Drawer(workers)
+server = Server(drawer, workers)
 while(True):
     # Check how many vim clients are running, if 0 quit.
     f = open(os.path.expanduser('~') + "/.vim/tmp/current-vim-clients", 'r')
     currentVimClients = int(f.read())
     f.close()
-    if currentVimClients == 0:
-       sys.exit() 
+    if server.clients == 0:
+        drawer.add_msg("Main", "No vim clients left")
+        drawer.add_msg("Main", "Killing helper in 3sec")
+        time.sleep(1)
+        drawer.add_msg("Main", "Killing helper in 2sec")
+        time.sleep(1)
+        drawer.add_msg("Main", "Killing helper in 1sec")
+        time.sleep(1)
+        sys.exit()
 
-    # Get the path to the file vim currently is editing.
-    f = open(os.path.expanduser('~') + "/.vim/tmp/current-file", 'r')
-    currentPath = f.read().replace("\n", "")
-    f.close()
-    currentFolder,currentFile = os.path.split(currentPath)
-
-    for worker in workers:
-        worker.setPath(currentPath)
     time.sleep(0.1)
 

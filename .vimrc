@@ -31,20 +31,6 @@ endif
 if !exists('g:startExternal')
 	let g:startExternal = 0
 endif
-
-if !exists("g:reload")
-	if filereadable(expand("~/.vim/tmp/current-vim-clients"))
-		let temp = readfile(expand("~/.vim/tmp/current-vim-clients"))
-		if temp[0] == 0
-			let g:startExternal = 1
-		endif
-		let temp[0] = temp[0] + 1
-		call writefile([temp[0]], expand("~/.vim/tmp/current-vim-clients"))
-	else
-		call writefile(["0"], expand("~/.vim/tmp/current-vim-clients"))
-		let g:startExternal = 1
-	endif
-endif
 " --------------------
 " ---- [1] VIMSETTINGS ----
 autocmd!
@@ -67,6 +53,8 @@ if &guifont
 endif
 set wildmode=longest:full,list
 set directory=~/.vim/tmp/swapfiles//
+" Ignore message from exisiting swap
+set shortmess+=A
 set nobackup
 set winminheight=0
 set visualbell
@@ -1634,7 +1622,7 @@ function! UpdateGitInfo()
 endfunction
 
 function! UpdateGitStatusBar()
-	call writefile([expand("%:p")], expand("~/.vim/tmp/current-file"))
+	call MessageVimHelper("path", expand("%:p"))
 endfunction
 
 " Draws lines added/removed and edited since last commit.
@@ -1786,11 +1774,7 @@ function! OnExit()
 		call KillAllExternal()
 	endif
 
-	if filereadable(expand("~/.vim/tmp/current-vim-clients"))
-		let temp = readfile(expand("~/.vim/tmp/current-vim-clients"))
-		let temp[0] = temp[0] - 1
-		call writefile([temp[0]], expand("~/.vim/tmp/current-vim-clients"))
-	endif
+	call MessageVimHelper("client", "0")
 endfunction
 
 function! KillAllExternal()
@@ -1803,9 +1787,21 @@ endfunction
 " --------------------
 " ---- [11.11] AFTER INIT ----
 function! AfterInit()
-	if g:startExternal == 1
-		call StartVimHelper()
-	endif
+	call MessageVimHelper("client", "1")
+endfunction
+" --------------------
+" ---- [11.12] MESSAGE VIMHELPER ----
+function! MessageVimHelper(type, message)
+python << endpy
+import socket
+try:
+	s = socket.socket()
+	s.connect(("localhost", 51351))
+
+	s.send(vim.eval("a:type") + "\t" + vim.eval("a:message"))
+except:
+    vim.command("call StartVimHelper()")
+endpy
 endfunction
 " --------------------
 " --------------------
