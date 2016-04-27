@@ -148,25 +148,29 @@ class UpdateGit(Worker):
 
                 statusLine = ""
 
-                if filesRaw != "fatal":
-                    filesRaw = filesRaw.replace("...", "->")
-                    filesRaw = filesRaw.replace("#", "")
-                    filesRaw = filesRaw.replace(" ", "")
-                    filesSplit = filesRaw.split("\n")
-                    # [master->origin/master]   Branch info
-                    if len(filesSplit) > 0:
-                        statusLine += "[" + filesSplit[0] + "]"
-                    # [m 3]                     Number of modified files
-                    if len(filesSplit) > 1:
-                        statusLine += " [m " + str(len(filesSplit) - 2) + "]"
+                filesRaw = filesRaw.replace("...", "->")
+                filesRaw = filesRaw.replace("#", "")
+                filesSplit = filesRaw.split("\n")
+                # [master->origin/master]   Branch info
+                if len(filesSplit) > 0:
+                    branch = filesSplit[0][1:].split(" ")
+                    statusLine += "[" + branch[0] + "]"
+                    if len(branch[1:]) > 0:
+                        statusLine += " "
+                        branch = branch[1:]
+                        while len(branch) > 1:
+                            statusLine += branch[0] + " " + branch[1]
+                            branch = branch[2:]
 
-                    # [+3 -2]                   Changed rows in current file
-                    for row in rowsRaw.split("\n"):
-                        if self.currentFile in row:
-                            changedRows = row.split("\t")
-                            statusLine += " [+" + changedRows[0] + " -" + changedRows[1] + "]"
-                else:
-                    self.drawer.add_msg(self.name, filesRaw)
+                # [m 3]                     Number of modified files
+                if len(filesSplit) > 2:
+                    statusLine += " [m " + str(len(filesSplit) - 2) + "]"
+
+                # [+3 -2]                   Changed rows in current file
+                for row in rowsRaw.split("\n"):
+                    if self.currentFile in row:
+                        changedRows = row.split("\t")
+                        statusLine += " [+" + changedRows[0] + " -" + changedRows[1] + "]"
 
                 statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "")
                 f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'w')
