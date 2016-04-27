@@ -159,7 +159,7 @@ class UpdateGit(Worker):
                         statusLine += " "
                         branch = branch[1:]
                         while len(branch) > 1:
-                            statusLine += branch[0] + " " + branch[1]
+                            statusLine += branch[0].replace(",", "] [") + " " + branch[1].replace(",", "] [")
                             branch = branch[2:]
 
                 # [m 3]                     Number of modified files
