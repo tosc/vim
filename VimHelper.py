@@ -80,6 +80,7 @@ class Worker(Thread):
 
         self.hide = False
 
+        self.condition = Condition()
         self.sleep = 1
 
         self.drawer = None
@@ -145,11 +146,10 @@ class Worker(Thread):
 # A thread that updates my git statusline
 class UpdateGit(Worker):
     def __init__(self):
-        Worker.__init__(self, "Git statusbar")
+        Worker.__init__(self, "Git")
         self.daemon = True
         self.lastTime = 0.1
         self.sleep = 0
-        self.condition = Condition()
         self.pause = True
         self.hide = True
         self.start()
@@ -216,41 +216,37 @@ class UpdateGit(Worker):
                     self.add_msg(before + " ->")
                     self.add_msg(after)
         except Exception,e:
-            pass
-        self.currentPath = ""
+            statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "")
 
-    def setPath(self, path):
-        with self.condition:
-            self.currentPath = path
-            self.currentFolder,self.currentFile = os.path.split(path)
-            self.condition.notify()
+            f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'w')
+            f.write("")
+            f.close()
+        self.currentPath = ""
 
 
 class TexBuilder(Worker):
     def __init__(self):
-        Worker.__init__(self, "LaTex Builder")
+        Worker.__init__(self, "LaTex")
         self.daemon = True
         self.lastTime = 3
-        self.sleep = 0.5
+        self.sleep = 0
         self.idle = True
         self.start()
-        self.i = 0
 
     def update(self):
-        if ".tex" in self.currentFile:
+        with self.condition:
+            while self.currentPath == "":
+                self.idle = True
+                self.condition.wait()
             self.idle = False
             tmpFolder = os.path.expanduser('~') + "/.vim/tmp/tmp/"
             try:
-                self.drawer.add_msg(self.name, "Building pdf - " + self.currentFile)
-                subprocess.check_output("cp " + self.currentPath + " " + tmpFolder + "temp.tex", stderr=subprocess.STDOUT)
-                subprocess.check_output("rm -f " + tmpFolder + "*.aux", stderr=subprocess.STDOUT)
-                output = subprocess.check_output("pdflatex -halt-on-error -output-directory=" + tmpFolder + " " + tmpFolder+ "temp.tex", stderr=subprocess.STDOUT, cwd=self.currentFolder)
-                self.drawer.add_msg(self.name, "PDF Done")
+                if os.path.isfile(tmpFolder + "temp.tex"):
+                    subprocess.check_output("cp " + tmpFolder + "temp.tex " +  tmpFolder + "main.tex", stderr=subprocess.STDOUT)
+                    subprocess.check_output("rm -f " + tmpFolder + "*.aux", stderr=subprocess.STDOUT)
+                    subprocess.check_output("pdflatex -halt-on-error -output-directory=" + tmpFolder + " " + tmpFolder + "main.tex", stderr=subprocess.STDOUT, cwd=self.currentFolder)
             except Exception,e:
                 self.drawer.add_msg(self.name, str(e.output))
-
-        else:
-            self.idle = True
 
 class Server(Thread):
     def __init__(self, drawer, workers):
@@ -272,19 +268,35 @@ class Server(Thread):
             server_msgs = c.recv(1024).split("\t")
             if server_msgs[0] == "path":
                 for worker in self.workers:
-                    worker.setPath(server_msgs[1])
+                    if worker.name == "Git":
+                        with worker.condition:
+                            worker.setPath(server_msgs[1])
+                            worker.condition.notify()
             elif server_msgs[0] == "client":
                 if server_msgs[1] == "1":
                     self.clients += 1
                     self.add_msg("Vim client started - Currently " + str(self.clients))
-                else:
+                elif server_msgs[1] == "-1":
                     self.clients -= 1
                     self.add_msg("Vim client stopped - Currently " + str(self.clients))
-
+                elif server_msgs[1] == "0":
+                    self.clients = -1
+            elif server_msgs[0] == "tex":
+                if server_msgs[1] == "":
+                    self.add_msg("Stopping PDF")
+                for worker in self.workers:
+                    if worker.name == "LaTex":
+                        with worker.condition:
+                            worker.setPath(server_msgs[1])
+                            if server_msgs[1] != "":
+                                self.add_msg("Building PDF - " + worker.currentFile)
+                            worker.condition.notify()
             c.close()
 
     def add_msg(self, msg):
         self.drawer.add_msg("Server", msg)
+
+drawer = None
 
 workers = [
             UpdateGit(),
@@ -297,15 +309,19 @@ while(True):
     f = open(os.path.expanduser('~') + "/.vim/tmp/current-vim-clients", 'r')
     currentVimClients = int(f.read())
     f.close()
+    if server.clients == -1:
+        sys.exit()
     if server.clients == 0:
         drawer.add_msg("Main", "No vim clients left")
         drawer.add_msg("Main", "Killing helper in 3sec")
         time.sleep(1)
-        drawer.add_msg("Main", "Killing helper in 2sec")
-        time.sleep(1)
-        drawer.add_msg("Main", "Killing helper in 1sec")
-        time.sleep(1)
-        sys.exit()
+        if server.clients == 0:
+            drawer.add_msg("Main", "Killing helper in 2sec")
+            time.sleep(1)
+            if server.clients == 0:
+                drawer.add_msg("Main", "Killing helper in 1sec")
+                time.sleep(1)
+                if server.clients == 0:
+                    sys.exit()
 
     time.sleep(0.1)
-

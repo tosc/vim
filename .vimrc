@@ -29,7 +29,7 @@ if !exists('g:disableExternal')
 	let g:disableExternal = 0
 endif
 if !exists('g:startExternal')
-	let g:startExternal = 0
+	let g:startedExternal = 0
 endif
 " --------------------
 " ---- [1] VIMSETTINGS ----
@@ -496,8 +496,8 @@ map <leader>ce :SyntasticCheck<CR>
 " D - Delete buffer
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
-" E - Start external helper
-map <leader>e :call StartVimHelper()<CR>
+" E - Start external
+autocmd Filetype tex map <leader>e :Start -dir=~ .vim\tmp\tmp\main.pdf <cr>
 " F
 noremap <leader>f :Unite line -custom-line-enable-highlight<CR>
 " G - Git
@@ -560,13 +560,14 @@ map <leader>O :call UniteExplorerStart()<CR>
 map <leader>p :bp <CR>
 " Q - Quit window (not used?)
 map <leader>q :q <CR>
-" R - Run file/project
+" R - Run file or project / Stop file or project
 autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
 autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
 autocmd Filetype vim map <leader>r :so % <cr>
-autocmd Filetype tex map <leader>r :Start %:h\temp.pdf <cr>
+autocmd Filetype tex map <leader>r :call MessageVimHelper("tex", expand("%:p")) <cr>
+autocmd Filetype tex map <leader>R :call MessageVimHelper("tex", "") <cr>
 " S - Spellcheck
 map <leader>se :call EnglishSpellCheck() <CR>
 map <leader>ss :call SwedishSpellCheck() <CR>
@@ -593,6 +594,7 @@ if !g:disablePlugins
 endif
 " V - .vimrc
 map <leader>vr :e ~/git/vim/README.md<CR>
+map <leader>vh :e ~/git/vim/VimHelper.py<CR>
 map <leader>vv :e ~/git/vim/.vimrc<CR>
 map <leader>vd :w !diff % -<CR>
 " W - Write
@@ -845,20 +847,12 @@ function! TEXSettings()
 	call EnglishSpellCheck()
 endfunction
 
-if !g:minimalMode && !g:disableExternal
-	autocmd TextChanged,TextChangedI *.tex silent! call SaveIfPossible()
-else
-	" Compile latex to a pdf when you save
-	autocmd BufWritePre *.tex call vimproc#system("rm -f " . expand('%:r') . ".aux")
-	autocmd BufWritePost *.tex call 
-		\ vimproc#system("pdflatex -halt-on-error -output-directory=" 
-		\ . expand('%:h') . " " . expand('%'))
-endif
+autocmd TextChanged,TextChangedI *.tex call CreateTEXPDF()
 
 autocmd Filetype tex,plaintex call TEXSettings()
 
-function! SaveIfPossible()
-	write
+function! CreateTEXPDF()
+	call writefile(getline(1,'$'), expand("~/.vim/tmp/tmp/temp.tex"))
 endfunction
 " --------------------
 " ---- [4.13] GITCOMMIT ----
@@ -1175,7 +1169,10 @@ function! MyStatusLine()
 	endif
 	let gitStatusLineFile = expand("~/.vim/tmp/gitstatusline/") .  substitute(expand("%:p"), "[\\:/]", "-", "g")
 	if filereadable(gitStatusLineFile)
-		let b:statusLineVar = readfile(gitStatusLineFile)[0]
+		let statusInfo = readfile(gitStatusLineFile)
+		if len(statusInfo) > 0
+			let b:statusLineVar = statusInfo[0]
+		endif
 	endif
 
 	return b:statusLineVar
@@ -1599,7 +1596,7 @@ endfunction
 function! StartVimHelper()
 	if !g:minimalMode && !g:disableExternal
 		cd ~\git\vim
-		Start python VimHelper.py %:h %
+		Start python VimHelper.py
 		cd %:h
 	endif
 endfunction
@@ -1780,7 +1777,7 @@ function! OnExit()
 		call KillAllExternal()
 	endif
 
-	call MessageVimHelper("client", "0")
+	call MessageVimHelper("client", "-1")
 endfunction
 
 function! KillAllExternal()
@@ -1793,7 +1790,9 @@ endfunction
 " --------------------
 " ---- [11.11] AFTER INIT ----
 function! AfterInit()
-	call MessageVimHelper("client", "1")
+	if !g:startedExternal
+		call MessageVimHelper("client", "1")
+	endif
 endfunction
 " --------------------
 " ---- [11.12] MESSAGE VIMHELPER ----
@@ -1806,7 +1805,9 @@ try:
 
 	s.send(vim.eval("a:type") + "\t" + vim.eval("a:message"))
 except:
-    vim.command("call StartVimHelper()")
+	if vim.eval("g:startedExternal") == "0":
+	    	vim.command("call StartVimHelper()")
+	vim.command("let g:startedExternal = 1")
 endpy
 endfunction
 " --------------------
