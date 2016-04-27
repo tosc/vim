@@ -513,7 +513,7 @@ map <leader>gP :!git -C %:h push --force<CR> :call UpdateGitInfo()<CR>
 map <leader>gr :!git -C %:h rebase -i HEAD~
 function! ResetGit()
 	if confirm("Reset git to remote?", "y\nn") == 1
-		echo system("git -C " . expand("%:p:h") . " reset --hard")
+		echo system("git -C " . expand("%:p:h") . " reset --hard origin/HEAD")
 	endif
 endfunction
 map <leader>gR :call ResetGit()<CR>
