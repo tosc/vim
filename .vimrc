@@ -514,6 +514,8 @@ map <leader>gp :!git -C %:h push<CR> :call UpdateGitInfo()<CR>
 map <leader>gP :!git -C %:h push --force<CR> :call UpdateGitInfo()<CR>
 " Opens a interactive menu that lets you pick what commits to use/squash.
 map <leader>gr :!git -C %:h rebase -i HEAD~
+
+"HardReset
 function! ResetGit()
 	if confirm("Reset git to remote?", "y\nn") == 1
 		echo system("git -C " . expand("%:p:h") . " reset --hard origin/HEAD")
@@ -521,21 +523,24 @@ function! ResetGit()
 endfunction
 map <leader>gR :call ResetGit()<CR>
 
+map <leader>gh :call HighlightDrawDisable()<CR>
+map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" H -<CR> :0,.-1d<CR>/^" I -<CR> :.,$d<CR>gg
+
 if !g:disablePlugins
 	map <leader>gc :Gcommit<CR>
 	map <leader>gd :Gdiff<CR>
 	map <leader>gg :Gstatus<CR>
 endif
 " H - Help, show binds.
-noremap <leader>hn :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.0\]<CR> :0,.-1d<CR>/\[3.1\]<CR> :.,$d<CR>gg
-noremap <leader>hi :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.1\]<CR> :0,.-1d<CR>/\[3.2\]<CR> :.,$d<CR>gg
-noremap <leader>hv :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.2\]<CR> :0,.-1d<CR>/\[3.3\]<CR> :.,$d<CR>gg
-noremap <leader>hl :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
-noremap <leader>hh :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
-noremap <leader>hc :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.5\]<CR> :0,.-1d<CR>/\[3.6\]<CR> :.,$d<CR>gg
-noremap <leader>hu :Unite us <CR>
-noremap <leader>hm :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r
-	\ ~/git/vim/.vimrc <CR> /\[9.2\]<CR>j :0,.-1d<CR>/" --------<CR>
+map <leader>hn :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.0\]<CR> :0,.-1d<CR>/^" ---- \[3.1\]<CR> :.,$d<CR>gg
+map <leader>hi :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.1\]<CR> :0,.-1d<CR>/^" ---- \[3.2\]<CR> :.,$d<CR>gg
+map <leader>hv :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.2\]<CR> :0,.-1d<CR>/^" ---- \[3.3\]<CR> :.,$d<CR>gg
+map <leader>hl :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.3\]<CR> :0,.-1d<CR>/^" ---- \[3.4\]<CR> :.,$d<CR>gg
+map <leader>hh :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.3\]<CR> :0,.-1d<CR>/^" ---- \[3.4\]<CR> :.,$d<CR>gg
+map <leader>hc :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.5\]<CR> :0,.-1d<CR>/^" ---- \[3.6\]<CR> :.,$d<CR>gg
+map <leader>hu :Unite us <CR>
+map <leader>hm :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r
+	\ ~/git/vim/.vimrc <CR> /^" ---- \[9.2\]<CR>j :0,.-1d<CR>/^" --------<CR>
 	\ :.,$d<CR>:call HelpMarkColor()<CR>
 " I - Information, notes on helpful things.
 map <leader>ii :call UniteTags(&l:filetype)<CR>
@@ -609,7 +614,7 @@ if !g:disablePlugins
 	map <leader>z :Unite session<CR>
 endif
 " ?
-noremap <leader>hl :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /\[3.3\]<CR> :0,.-1d<CR>/\[3.4\]<CR> :.,$d<CR>gg
+map <leader>? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" H -<CR> :0,.-1d<CR>/^" I -<CR> :.,$d<CR>gg
 " --------------------
 " ---- [3.4] OMAP ----
 "This adds $$ as textobjects.	
@@ -655,8 +660,8 @@ command -nargs=1 Et :e ~\.vim\tmp\tmp\<args>
 " Show the my normal and insert bindings.
 cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ? 
 			\ "\<bs>" . 'call OpohBuffer() <bar> setlocal syntax=vim <bar>
-			\ keepalt r ~/git/vim/.vimrc <CR> /\[3.4\]<CR>
-			\ :0,.-1d<CR>/\[3.5\]<CR> :.,$d<CR>gg' : '?'
+			\ keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.4\]<CR>
+			\ :0,.-1d<CR>/^" ---- \[3.5\]<CR> :.,$d<CR>gg' : '?'
 
 " See insert for delimiterbindings.
 " --------------------
