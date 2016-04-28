@@ -6,112 +6,180 @@ import sys
 import datetime
 import socket
 import curses
+import curses.textpad as textpad
 from threading import Thread
 from threading import Condition
 
-# Draw a nice progressbar for all my threads.
+# Main screen
+screen = curses.initscr()
+
+# Don't echo input
+curses.noecho()
+# Don't wait for CR before parsing input
+curses.cbreak()
+# Remove cursors
+curses.curs_set(0)
+# Enables keypad in screen
+screen.keypad(1)
+
+# Size of terminal
+windowWidth = screen.getmaxyx()[1]
+windowHeight = screen.getmaxyx()[0]
+
+# Nr of progressbars avaliable.
+maxWorkers = 10
+# Nr of lines in console.
+maxMsgs = 20
+
+gutterWidth = 7
+consoleWidth = windowWidth - (gutterWidth + 2) - 2
+statusBarWidth = windowWidth - 2
+progressBarsWidth = statusBarWidth
+
+# Progressbar lenght
+barLen = progressBarsWidth/2 - 2
+
+statusBarOffsetY = maxWorkers + 2
+consoleOffsetY = statusBarOffsetY + 3
+
+# Threads
+workers = []
+
+# Console lines
+msgs = []
+
+# All containers in gui
+progressBars = screen.subwin(maxWorkers+2, progressBarsWidth+2, 0, 0)
+statusBar = screen.subwin(1+2, statusBarWidth+2, statusBarOffsetY, 0)
+console = screen.subwin(maxMsgs+2, consoleWidth+2, consoleOffsetY , gutterWidth+2)
+gutter = screen.subwin(maxMsgs+2, gutterWidth+2, consoleOffsetY , 0)
+textbox = screen.subwin(1, windowWidth, windowHeight - 1, 0)
+
+# Draw border around gui
+progressBars.border(0)
+statusBar.border(0)
+console.border(0)
+gutter.border(0)
+
+# Write line to console.
+def add_msg(client, msg):
+    global msgs
+    while len(msg) > consoleWidth:
+        msgs.append((client, msg[:consoleWidth]))
+        client = ""
+        msg = msg[consoleWidth:]
+    if len(msg) != 0:
+        msgs.append((client, msg))
+        client = ""
+    if len(msgs) > maxMsgs:
+        msgs = msgs[len(msgs)-maxMsgs:]
+
+# Default console lines
+for i in range(0,maxMsgs):
+    pass
+    add_msg("client", str(i))
+add_msg("client", "Started vim-helper.")
+
+"""
+Inputfield for console
+"""
+class Textbox(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.start()
+        self.name = "TextBox"
+
+    def run(self):
+        while(True):
+            output = textpad.Textbox(textbox).edit()
+            workers.append(CommandBuilder(output))
+            textbox.clear()
+
+"""
+Draws gui
+"""
 class Drawer(Thread):
-    def __init__(self, workers):
+    def __init__(self):
         Thread.__init__(self)
         self.draw = True
         self.daemon = True
-        self.workers = workers
 
-        self.screen = curses.initscr()
-        self.uiOffsetX = 0
-        self.consoleOffsetY = 10
-
-        self.windowWidth = self.screen.getmaxyx()[1]
-        self.windowHeight = self.screen.getmaxyx()[0]
-        self.windowLen = self.windowWidth
-        self.msgs = []
-        self.maxMsgs = self.windowHeight - self.consoleOffsetY - 2
-        self.consoleNamesLen = 16
-        self.maxTextLen = self.windowLen - self.consoleNamesLen - 4
-        self.barLen = self.windowLen/2 - 2
-        self.maxWorkers = 10
-        curses.noecho()
-        curses.cbreak()
-        self.screen.keypad(1)
-
-        for i in range(0,self.maxMsgs):
-            self.add_msg("", " ")
-        self.add_msg("main", "Started vim-helper.")
+        self.textbox = Textbox()
         self.start()
 
     def run(self):
         while(self.draw):
-            for worker in self.workers:
-                if not worker.isAlive():
-                    self.workers.remove(worker)
             self.drawProgressBars()
-            line = '-' * self.windowLen
-            self.screen.addstr(self.consoleOffsetY-1, 0, line)
+            self.drawStatusBar()
             self.drawConsole()
-            self.screen.addstr(self.windowHeight-2, 0, line)
-            self.screen.refresh()
 
-    def add_msg(self, source, msg):
-        msgList = msg.split("\n")
-        for splitMsg in msgList:
-            source = datetime.datetime.now().strftime(" %H:%M:%S | ") + source
-            tmpMsg = splitMsg
-            while len(tmpMsg) > self.maxTextLen:
-                self.msgs.append((source,tmpMsg[0:self.maxTextLen]))
-                tmpMsg = tmpMsg[self.maxTextLen:]
-            if tmpMsg != "":
-                self.msgs.append((source,tmpMsg))
-        self.msgs = self.msgs[-self.maxMsgs:]
+            progressBars.refresh()
+            statusBar.refresh()
+            console.refresh()
+            gutter.refresh()
+            screen.refresh()
+
+    def drawStatusBar(self):
+        first = True
+        workerNames = ""
+        for worker in workers:
+            if not first:
+                workerNames += " | "
+            else:
+                first = False
+            workerNames += worker.name
+
+        cwd = "C:\\bla\\test\\"
+        workerInfo = "Workers: " + str(len(workers)) + " | " + workerNames
+        padding = (" " * statusBarWidth)[len(cwd):-len(workerInfo)]
+        if len(padding) < 2:
+            padding = " "*2
+        statusBarInfo = cwd + padding + workerInfo
+        statusBar.addstr(1, 1, '{0:.{1}}'.format(statusBarInfo, statusBarWidth))
 
     def drawProgressBars(self):
-        y = 0
-        x = 0
-        for worker in self.workers:
-            if not worker.hide and not worker.idle and y < 10:
-                count = time.time() - worker.timeStart
-                sleepcount = time.time() - worker.timeDone
-                if worker.idle or worker.lastTime == 0:
-                    status = "Idle..."
-                    percents = 0
-                    filled_len = 0
-                else:
-                    status = "Running"
-                    percents = round(100.0 * count / float(worker.lastTime), 1)
-                    if percents > 99:
-                        percents = 99
-                        filled_len = self.barLen - 1
-                    else:
-                        filled_len = int(round(self.barLen * count / float(worker.lastTime)))
-                bar = ("[" + '#' * filled_len + '-' * (self.barLen - filled_len) + "]")
+        y = 1
+        x = 1
+        i = 0
+        runningWorkers = []
+        for worker in workers:
+            if not worker.hide and not worker.idle:
+                runningWorkers.append(worker)
 
-                self.screen.addstr(y, x*self.barLen, ('{:>10} {} {:>5}'.format("[" + worker.name + "]", status, str(percents) + '%')).center(self.barLen, " "))
-                self.screen.addstr(y + 1, x*(self.barLen + 2), bar)
-                if x == 0:
-                    x += 1
-                else:
-                    x = 0
-                    y += 2
-
-        while y < 10:
-            self.screen.addstr(y, x*self.barLen, "".center(self.barLen, " "))
-            self.screen.addstr(y + 1, x*(self.barLen + 2), "".center(self.barLen + 2, " "))
-            if x == 0:
-                x += 1
+        while i < maxWorkers:
+            if i > len(runningWorkers) - 1:
+                progressBars.addstr(y, x, " "*(barLen+2))
+                progressBars.addstr(y+1, x, " "*(barLen+2))
             else:
-                x = 0
+                count = time.time() - runningWorkers[i].timeStart
+                percents = round(100.0 * count / float(runningWorkers[i].lastTime), 1)
+                if percents > 99:
+                    percents = 99
+                    filled_len = barLen - 1
+                else:
+                    filled_len = int(round(barLen * count / float(runningWorkers[i].lastTime)))
+                progressBars.addstr(y, x, ('{:>10} {:>5}'.format("[" + runningWorkers[i].name + "]", str(percents) + '%')).center(barLen+2, " "))
+                progressBars.addstr(y+1, x, ("[" + '#' * filled_len + '-' * (barLen - filled_len) + "]"))
+            i += 1
+            if i == 5:
+                x = barLen + 3
+                y = 1
+            else:
                 y += 2
 
     def drawConsole(self):
-        for worker in self.workers:
-            while len(worker.msgs) > 0:
-                self.add_msg(worker.name, worker.msgs.pop(0))
-        i = 0
-        for source,msg in self.msgs:
-            consoleLine = "%-" + str(self.consoleNamesLen) + "." + str(self.consoleNamesLen) + "s | %s\n"
-            self.screen.addstr(i + self.consoleOffsetY, 0, consoleLine % (source,msg))
-            i += 1
+        for i in range(0,len(msgs)):
+            (gutterInfo, msg) = msgs[i]
+            gutter.addstr(i+1, 1, '{0:{1}s}'.format(gutterInfo, gutterWidth))
+            console.addstr(i+1, 1, '{0:{1}s}'.format(msg, consoleWidth))
 
-# All external workers should inherit this.
+"""
+Baseclass for all workers.
+
+Parameters:
+    name - name of worker
+"""
 class Worker(Thread):
     def __init__(self, name):
         Thread.__init__(self)
@@ -129,11 +197,7 @@ class Worker(Thread):
         self.lastTime = 1
 
         self.hide = False
-
         self.condition = Condition()
-
-        self.msgs = []
-
         self.running = True
 
     def run(self):
@@ -147,16 +211,21 @@ class Worker(Thread):
                 self.done = True
 
     def update(self):
-        print "fix updateloop"
+        pass
 
     def setPath(self, path):
         self.currentPath = path
         self.currentFolder,self.currentFile = os.path.split(path)
 
-    def add_msg(self, msg):
-        self.msgs.append(msg)
 
-# A thread that updates my git statusline
+"""
+Updates GIT statusline in VIM
+
+Saves new statusline to ~/.vim/tmp/gitstatusline/FILENAME
+Where FILENAME is the full path to the file vim is working on
+where \:/ are replaced with -. when server recieves
+("path", PATH)
+"""
 class UpdateGit(Worker):
     def __init__(self):
         Worker.__init__(self, "Git")
@@ -203,7 +272,7 @@ class UpdateGit(Worker):
                     changedRows = row.split("\t")
                     statusLine += " [+" + changedRows[0] + " -" + changedRows[1] + "]"
 
-            statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "")
+            statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "-")
 
             before = ""
             if os.path.isfile(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName):
@@ -221,12 +290,12 @@ class UpdateGit(Worker):
 
             if before != after:
                 if before == "":
-                    self.add_msg("GIT StatusBar New - " + self.currentFile)
-                    self.add_msg(after)
+                    add_msg(self.name, "GIT StatusBar New - " + self.currentFile)
+                    add_msg(self.name, after)
                 else:
-                    self.add_msg("GIT StatusBar Update - " + self.currentFile)
-                    self.add_msg(before + " ->")
-                    self.add_msg(after)
+                    add_msg(self.name, "GIT StatusBar Update - " + self.currentFile)
+                    add_msg(self.name, before + " ->")
+                    add_msg(self.name, after)
         except Exception,e:
             statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "")
 
@@ -235,7 +304,13 @@ class UpdateGit(Worker):
             f.close()
         self.currentPath = ""
 
+"""
+Autobuilds texfiles.
 
+Starts autobuilding texfile when server recieves ("tex", PATH_TO_TEXFILE)
+Stops ("tex", "")
+Output pdf is ~/.vim/tmp/tmp/temp.pdf
+"""
 class TexBuilder(Worker):
     def __init__(self):
         Worker.__init__(self, "LaTex")
@@ -265,33 +340,32 @@ class TexBuilder(Worker):
                         subprocess.check_output("cp " + tmpFolder + "temp.tex " +  tmpFolder + "main.tex", stderr=subprocess.STDOUT)
                         subprocess.check_output("rm -f " + tmpFolder + "*.aux", stderr=subprocess.STDOUT)
                         subprocess.check_output("pdflatex -halt-on-error -output-directory=" + tmpFolder + " " + tmpFolder + "main.tex", stderr=subprocess.STDOUT, cwd=self.currentFolder)
-                        self.add_msg("PDF Done")
+                        add_msg(self.name, "PDF Done")
                     else:
                         self.idle = True
             except Exception,e:
-                self.add_msg(str(e.output))
+                add_msg(self.name, str(e.output))
 
-
+"""
+Parses communication from VIM
+"""
 class Server(Thread):
-    def __init__(self, drawer, workers):
+    def __init__(self):
         Thread.__init__(self)
-        self.drawer = drawer
-        self.workers = workers
         self.daemon = True
         self.clients = 1
         self.start()
 
     def run(self):
         s = socket.socket()
-
         s.bind(("localhost", 51351))
-
         s.listen(5)
+
         while True:
             c, addr = s.accept()
             server_msgs = c.recv(1024).split("\t")
             if server_msgs[0] == "path":
-                for worker in self.workers:
+                for worker in workers:
                     if worker.name == "Git":
                         with worker.condition:
                             worker.setPath(server_msgs[1])
@@ -299,51 +373,72 @@ class Server(Thread):
             elif server_msgs[0] == "client":
                 if server_msgs[1] == "1":
                     self.clients += 1
-                    self.add_msg("Vim client started - Currently " + str(self.clients))
+                    add_msg(self.name, "Vim client started - Currently " + str(self.clients))
                 elif server_msgs[1] == "-1":
                     self.clients -= 1
-                    self.add_msg("Vim client stopped - Currently " + str(self.clients))
+                    add_msg(self.name, "Vim client stopped - Currently " + str(self.clients))
                 elif server_msgs[1] == "0":
                     self.clients = -1
             elif server_msgs[0] == "tex":
-                for worker in self.workers:
+                for worker in workers:
                     if worker.name == "LaTex":
                         if server_msgs[1] == "":
-                            worker.add_msg("Stopped listening for changes - " + worker.currentFile)
+                            add_msg(self.name, "Stopped listening for changes - " + worker.currentFile)
                         with worker.condition:
                             worker.setPath(server_msgs[1])
                             if server_msgs[1] != "":
-                                worker.add_msg("Listening for changes - " + worker.currentFile)
+                                add_msg(self.name, "Listening for changes - " + worker.currentFile)
                             worker.condition.notify()
-            elif server_msgs[0] == "run":
-                self.workers.append(TempBar())
             c.close()
 
-    def add_msg(self, msg):
-        self.drawer.add_msg("Server", msg)
+"""
+Run custom command
 
-drawer = None
+Parameters:
+    command - command to run
+"""
+class CommandBuilder(Worker):
+    def __init__(self, command):
+        Worker.__init__(self, "Command")
+        self.command = command
+        self.daemon = True
+        self.lastTime = 10
+        add_msg(self.name, command)
+        self.start()
 
-workers = [
-            UpdateGit(),
-            TexBuilder()
-            ]
-drawer = Drawer(workers)
-server = Server(drawer, workers)
+    def update(self):
+        try:
+            output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True)
+            for line in output.split('\n'):
+                #add_msg(self.name, str(line))
+                pass
+            #add_msg(self.name, self.command + " Done")
+        except Exception,e:
+            #add_msg(self.name, str(e.output))
+            pass
+        time.sleep(self.lastTime)
+        self.running = False
+
+workers = [UpdateGit(), TexBuilder()]
+drawer = Drawer()
+server = Server()
+
 while(True):
+    for worker in workers:
+        if not worker.isAlive():
+            workers.remove(worker)
     if server.clients == -1:
         sys.exit()
     if server.clients == 0:
-        drawer.add_msg("Main", "No vim clients left")
-        drawer.add_msg("Main", "Killing helper in 3sec")
+        add_msg("Main", "No vim clients left")
+        add_msg("Main", "Killing helper in 3sec")
         time.sleep(1)
         if server.clients == 0:
-            drawer.add_msg("Main", "Killing helper in 2sec")
+            add_msg("Main", "Killing helper in 2sec")
             time.sleep(1)
             if server.clients == 0:
-                drawer.add_msg("Main", "Killing helper in 1sec")
+                add_msg("Main", "Killing helper in 1sec")
                 time.sleep(1)
                 if server.clients == 0:
                     sys.exit()
-
     time.sleep(0.1)
