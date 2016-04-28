@@ -44,6 +44,7 @@ consoleOffsetY = statusBarOffsetY + 3
 
 # Threads
 workers = []
+server = None
 
 # Console lines
 msgs = []
@@ -152,12 +153,13 @@ class Drawer(Thread):
                 progressBars.addstr(y, x, " "*(barLen+2))
                 progressBars.addstr(y+1, x, " "*(barLen+2))
             else:
-                count = time.time() - runningWorkers[i].timeStart
-                percents = round(100.0 * count / float(runningWorkers[i].lastTime), 1)
-                if percents > 99:
+                percents = 0
+                if percents > 99 or runningWorkers[i].lastTime == 0: 
                     percents = 99
                     filled_len = barLen - 1
                 else:
+                    count = time.time() - runningWorkers[i].timeStart
+                    percents = round(100.0 * count / float(runningWorkers[i].lastTime), 1)
                     filled_len = int(round(barLen * count / float(runningWorkers[i].lastTime)))
                 progressBars.addstr(y, x, ('{:>10} {:>5}'.format("[" + runningWorkers[i].name + "]", str(percents) + '%')).center(barLen+2, " "))
                 progressBars.addstr(y+1, x, ("[" + '#' * filled_len + '-' * (barLen - filled_len) + "]"))
@@ -402,21 +404,25 @@ class CommandBuilder(Worker):
         Worker.__init__(self, "Command")
         self.command = command
         self.daemon = True
-        self.lastTime = 10
+        self.lastTime = 1
         add_msg(self.name, command)
         self.start()
 
     def update(self):
-        try:
-            output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True)
-            for line in output.split('\n'):
-                #add_msg(self.name, str(line))
+        #Catch custom scripts
+        if ":q" in self.command:
+            add_msg(self.name, "Quitting.")
+            server.clients = -1
+        #Run script in console
+        else:
+            try:
+                output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True)
+                for line in output.split('\n'):
+                    add_msg(self.name, str(line))
+                add_msg(self.name, self.command + " Done")
+            except Exception,e:
+                add_msg(self.name, str(e.output))
                 pass
-            #add_msg(self.name, self.command + " Done")
-        except Exception,e:
-            #add_msg(self.name, str(e.output))
-            pass
-        time.sleep(self.lastTime)
         self.running = False
 
 workers = [UpdateGit(), TexBuilder()]
