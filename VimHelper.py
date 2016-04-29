@@ -7,8 +7,10 @@ import datetime
 import socket
 import curses
 import curses.textpad as textpad
+import inspect
 from threading import Thread
 from threading import Condition
+from threading import Lock
 
 # Main screen
 screen = curses.initscr()
@@ -29,7 +31,7 @@ windowHeight = screen.getmaxyx()[0]
 # Nr of progressbars avaliable.
 maxWorkers = 10
 # Nr of lines in console.
-maxMsgs = 20
+maxMsgs = 50
 
 gutterWidth = 7
 consoleWidth = windowWidth - (gutterWidth + 2) - 2
@@ -45,41 +47,75 @@ consoleOffsetY = statusBarOffsetY + 3
 # Threads
 workers = []
 server = None
+drawer = None
+console = None
 
 # Console lines
 msgs = []
+cwd = ""
+try:
+    output = subprocess.check_output("pwd", stderr=subprocess.STDOUT, shell=True)
+    if "\n" in output:
+        output = output.split("\n")[0]
+    cwd = output
+except:
+    pass
 
 # All containers in gui
 progressBars = screen.subwin(maxWorkers+2, progressBarsWidth+2, 0, 0)
 statusBar = screen.subwin(1+2, statusBarWidth+2, statusBarOffsetY, 0)
-console = screen.subwin(maxMsgs+2, consoleWidth+2, consoleOffsetY , gutterWidth+2)
+consoleWindow = screen.subwin(maxMsgs+2, consoleWidth+2, consoleOffsetY , gutterWidth+2)
 gutter = screen.subwin(maxMsgs+2, gutterWidth+2, consoleOffsetY , 0)
-textbox = screen.subwin(1, windowWidth, windowHeight - 1, 0)
+textbox = screen.subwin(1, windowWidth-1, consoleOffsetY + maxMsgs + 3, 1)
+textboxborder = screen.subwin(3, windowWidth, consoleOffsetY + maxMsgs + 2, 0)
 
 # Draw border around gui
 progressBars.border(0)
 statusBar.border(0)
-console.border(0)
+consoleWindow.border(0)
 gutter.border(0)
+textboxborder.border(0)
 
+msgLock = Lock()
 # Write line to console.
 def add_msg(client, msg):
     global msgs
-    while len(msg) > consoleWidth:
-        msgs.append((client, msg[:consoleWidth]))
-        client = ""
-        msg = msg[consoleWidth:]
-    if len(msg) != 0:
-        msgs.append((client, msg))
-        client = ""
-    if len(msgs) > maxMsgs:
-        msgs = msgs[len(msgs)-maxMsgs:]
+    if "\n" in msg:
+        newmsgs = msg.split("\n")
+        if(newmsgs[-1]) == "":
+            newmsgs = newmsgs[:-1]
+        for newmsg in newmsgs:
+            add_msg(client, newmsg)
+    else:
+        with msgLock:
+            while len(msg) > consoleWidth:
+                msgs.append((client, msg[:consoleWidth]))
+                client = ""
+                if not re.match('^\s*$', line):
+                    msg = msg[consoleWidth:]
+            msgs.append((client, msg))
+            if len(msgs) > maxMsgs:
+                msgs = msgs[len(msgs)-maxMsgs:]
 
 # Default console lines
 for i in range(0,maxMsgs):
     pass
     add_msg("client", str(i))
 add_msg("client", "Started vim-helper.")
+
+# Custom curses addstr that actually shows you what's wrong.
+def caddstr(box, x, y, string, errorOutput=False):
+    (maxY, maxX) = box.getmaxyx()
+    if len(string) <= maxX and y <= maxY:
+        box.addstr(y, x, string)
+    else:
+        errorOutput = True
+    if errorOutput:
+        frame = inspect.stack()[1][0]
+        info = inspect.getframeinfo(frame)
+        add_msg("Error", "caddstr - Wrong formatting")
+        add_msg("Error", "x,y (maxX,maxY): {},{} ({},{})".format(x+len(string),y,maxX,maxY))
+        add_msg("Error", info.function + " - " + str(info.lineno))
 
 """
 Inputfield for console
@@ -94,8 +130,25 @@ class Textbox(Thread):
     def run(self):
         while(True):
             output = textpad.Textbox(textbox).edit()
-            workers.append(CommandBuilder(output))
+            console.process.stdin.write(output + "\n")
             textbox.clear()
+
+"""
+An external console that you can send commands to
+"""
+class Console(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.daemon = True
+        self.name = "Console"
+        self.textbox = Textbox()
+        self.process = subprocess.Popen("sh", stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        self.start()
+
+    def run(self):
+        while(True):
+            msg = self.process.stdout.readline()
+            add_msg(self.name, msg)
 
 """
 Draws gui
@@ -106,7 +159,6 @@ class Drawer(Thread):
         self.draw = True
         self.daemon = True
 
-        self.textbox = Textbox()
         self.start()
 
     def run(self):
@@ -117,7 +169,7 @@ class Drawer(Thread):
 
             progressBars.refresh()
             statusBar.refresh()
-            console.refresh()
+            consoleWindow.refresh()
             gutter.refresh()
             screen.refresh()
 
@@ -131,13 +183,12 @@ class Drawer(Thread):
                 first = False
             workerNames += worker.name
 
-        cwd = "C:\\bla\\test\\"
         workerInfo = "Workers: " + str(len(workers)) + " | " + workerNames
         padding = (" " * statusBarWidth)[len(cwd):-len(workerInfo)]
         if len(padding) < 2:
             padding = " "*2
-        statusBarInfo = cwd + padding + workerInfo
-        statusBar.addstr(1, 1, '{0:.{1}}'.format(statusBarInfo, statusBarWidth))
+        statusBarInfo = '{0:.{1}}'.format(cwd + padding + workerInfo, statusBarWidth)
+        caddstr(statusBar, 1, 1, statusBarInfo)
 
     def drawProgressBars(self):
         y = 1
@@ -150,19 +201,19 @@ class Drawer(Thread):
 
         while i < maxWorkers:
             if i > len(runningWorkers) - 1:
-                progressBars.addstr(y, x, " "*(barLen+2))
-                progressBars.addstr(y+1, x, " "*(barLen+2))
+                caddstr(progressBars, x, y, " "*(barLen+2))
+                caddstr(progressBars, x, y+1, " "*(barLen+2))
             else:
-                percents = 0
-                if percents > 99 or runningWorkers[i].lastTime == 0: 
-                    percents = 99
-                    filled_len = barLen - 1
-                else:
-                    count = time.time() - runningWorkers[i].timeStart
-                    percents = round(100.0 * count / float(runningWorkers[i].lastTime), 1)
-                    filled_len = int(round(barLen * count / float(runningWorkers[i].lastTime)))
-                progressBars.addstr(y, x, ('{:>10} {:>5}'.format("[" + runningWorkers[i].name + "]", str(percents) + '%')).center(barLen+2, " "))
-                progressBars.addstr(y+1, x, ("[" + '#' * filled_len + '-' * (barLen - filled_len) + "]"))
+                count = time.time() - runningWorkers[i].timeStart
+                decimal = 0
+                if runningWorkers[i].lastTime != 0: 
+                    decimal = count / float(runningWorkers[i].lastTime)
+                if decimal > 0.99: 
+                    decimal = 0.99
+                percents = round(100.0 * decimal, 1)
+                filled_len = int(round(barLen * decimal))
+                caddstr(progressBars, x, y, ('{:>10} {:>5}'.format("[" + runningWorkers[i].name + "]", str(percents) + '%')).center(barLen+2, " "))
+                caddstr(progressBars, x, y+1, ("[" + '#' * filled_len + '-' * (barLen - filled_len) + "]"))
             i += 1
             if i == 5:
                 x = barLen + 3
@@ -171,10 +222,15 @@ class Drawer(Thread):
                 y += 2
 
     def drawConsole(self):
-        for i in range(0,len(msgs)):
-            (gutterInfo, msg) = msgs[i]
-            gutter.addstr(i+1, 1, '{0:{1}s}'.format(gutterInfo, gutterWidth))
-            console.addstr(i+1, 1, '{0:{1}s}'.format(msg, consoleWidth))
+        with msgLock:
+            currentmsgs = []
+            for msg in msgs:
+                currentmsgs.append(msg)
+        for i in range(0,len(currentmsgs)):
+            (gutterInfo, msg) = currentmsgs[i]
+            t = False
+            caddstr(gutter, 1, i+1, '{0:{1}s}'.format(gutterInfo, gutterWidth))
+            caddstr(consoleWindow, 1, i+1, '{0:{1}s}'.format(msg, consoleWidth))
 
 """
 Baseclass for all workers.
@@ -409,25 +465,34 @@ class CommandBuilder(Worker):
         self.start()
 
     def update(self):
+        global cwd
         #Catch custom scripts
-        if ":q" in self.command:
+        fCmd = self.command.replace(" ", "")
+        if ":q" == fCmd or "q" == fCmd or "quit" == fCmd or "exit" == fCmd:
             add_msg(self.name, "Quitting.")
             server.clients = -1
+        elif "cd" == fCmd:
+            folder = os.path.abspath("~")
+            add_msg(self.name, "cd " + folder)
+            cwd = folder
+        elif "^cd" in fCmd:
+            add_msg(self.name, "cd oo")
         #Run script in console
         else:
             try:
                 output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True)
-                for line in output.split('\n'):
-                    add_msg(self.name, str(line))
-                add_msg(self.name, self.command + " Done")
+                add_msg(self.name, output)
             except Exception,e:
-                add_msg(self.name, str(e.output))
-                pass
+                    try:
+                        add_msg(self.name, str(e.output))
+                    except:
+                        add_msg(self.name, str(e))
         self.running = False
 
 workers = [UpdateGit(), TexBuilder()]
 drawer = Drawer()
 server = Server()
+console = Console()
 
 while(True):
     for worker in workers:
