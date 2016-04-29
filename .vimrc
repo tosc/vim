@@ -108,7 +108,6 @@ if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
 	" Unite and unite plugins.
 	Plugin 'Shougo/unite.vim'
 	Plugin 'Shougo/neomru.vim'
-	Plugin 'Shougo/unite-session'
 	Plugin 'Shougo/unite-build'
 	Plugin 'Shougo/unite-help'
 
@@ -615,9 +614,6 @@ map <leader>vd :w !diff % -<CR>
 " X
 " Y
 " Z - Z(S)essions
-if !g:disablePlugins
-	map <leader>z :Unite session<CR>
-endif
 " ?
 map <leader>? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" H -<CR> :0,.-1d<CR>/^" I -<CR> :.,$d<CR>gg
 " --------------------
@@ -1362,7 +1358,6 @@ hi default link uniteSource__Fil_Special PreProc
 " --------------------
 " --------------------
 " ---- [10] AUTOCMD ----
-autocmd BufWritePost * call SaveSession()
 autocmd BufWritePost * call UpdateGitInfo()
 
 autocmd FocusGained * call UpdateGitStatusBar()
@@ -1507,13 +1502,7 @@ function! GetActiveSnippets()
 	return suggestions
 endfunction
 " --------------------
-" ---- [11.1] SESSION ----
-function! SaveSession()
-	let sessionName = substitute(getcwd(), "[\\:/]", "-", "g")
-	exe "mksession! ~/.cache/unite/session/" . sessionName . ".vim"
-endfunction
-" --------------------
-" ---- [11.2] JUMP ----
+" ---- [11.1] JUMP ----
 " Jumps you to the next/previous ultisnips location if exists.
 " Else it jumps to the next/previous delimiter.
 " Default delimiters: "'(){}[]
@@ -1573,7 +1562,7 @@ function! DelimMatch(text, start, end)
 let b:smartJumpElements = "[]'\"(){}<>\[]"
 endfunction
 " --------------------
-" ---- [11.3] TEMPBUFFER ----
+" ---- [11.2] TEMPBUFFER ----
 function! OpohBuffer()
 	if bufexists("[Opoh]")
 		b Opoh
@@ -1586,7 +1575,7 @@ function! OpohBuffer()
 	setlocal buftype=nofile
 endfunction
 " --------------------
-" ---- [11.4] EVALUATE MATH ----
+" ---- [11.3] EVALUATE MATH ----
 function! PythonMath()
 let l:vimMath = getreg('"')
 if l:vimMath == ''
@@ -1600,7 +1589,7 @@ endpy
 return l:pythonMath
 endfunction
 " --------------------
-" ---- [11.5] START EXTERNAL ----
+" ---- [11.4] START EXTERNAL ----
 function! StartEclim()
 	let g:EclimdRunning = 1
 	call vimproc#system_bg('eclimd')
@@ -1616,7 +1605,7 @@ function! VimHelperStart()
 	endif
 endfunction
 " --------------------
-" ---- [11.6] SPELLCHECK ----
+" ---- [11.5] SPELLCHECK ----
 function! EnglishSpellCheck()
 	setlocal spell spelllang=en_us
 	let b:neocomplete_spell_file = 'american-english'
@@ -1632,7 +1621,7 @@ function! NoSpellCheck()
 	let b:neocomplete_spell_file = ''
 endfunction
 " --------------------
-" ---- [11.7] GIT INFO ----
+" ---- [11.6] GIT INFO ----
 function! UpdateGitInfo()
 	let b:statusLineVar = ""
 	call UpdateMatches()
@@ -1710,7 +1699,7 @@ function! AddGitMatches()
 	endif
 endfunction
 " --------------------
-" ---- [11.8] AUTODELIMITER ----
+" ---- [11.7] AUTODELIMITER ----
 "\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
 let g:currentchains = []
 let g:delimCall = 0
@@ -1769,7 +1758,7 @@ function! SpecialDelim(key)
 	return returnV
 endfunction
 " --------------------
-" ---- [11.9] HELP ----
+" ---- [11.8] HELP ----
 function! FullScreenHelp(search)
 	let curPath = expand('%')
 	execute("h " . a:search)
@@ -1786,7 +1775,7 @@ function! FullScreenHelp(search)
 	endif
 endfunction
 " --------------------
-" ---- [11.10] ON EXIT ----
+" ---- [11.9] ON EXIT ----
 function! OnExit()
 	if !g:disableExternal && !g:disablePlugins
 		call KillAllExternal()
@@ -1803,14 +1792,14 @@ function! KillAllExternal()
 endfunction
 
 " --------------------
-" ---- [11.11] AFTER INIT ----
+" ---- [11.10] AFTER INIT ----
 function! AfterInit()
 	if !g:startedExternal
 		call MessageVimHelper("client", "1")
 	endif
 endfunction
 " --------------------
-" ---- [11.12] MESSAGE VIMHELPER ----
+" ---- [11.11] MESSAGE VIMHELPER ----
 function! MessageVimHelper(type, message)
 if !g:disableVimHelper
 python << endpy

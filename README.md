@@ -131,6 +131,7 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 # TODO
 
 ### Important
+* Make a new repo for dotfiles and move my dotfiles there.
 * Delete shougos addon for sessoins and remove anything that has to do
 	with sessions. Never use them.
 * Remove addons for tags. Never use tags.
