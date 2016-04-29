@@ -170,7 +170,6 @@ let g:Omnisharp_stop_server = 0
 " -------
 " ---- [2.4] UNITE ----
 let g:unite_force_overwrite_statusline = 0
-let g:osfiletypes = ["mkv","pdf","mp4","zip","avi"]
 
 if !g:disablePlugins
 	call unite#custom#default_action('buffer', 'goto')
@@ -187,50 +186,6 @@ if !g:disablePlugins
 				\ })
 endif
 
-function! UniteExplorerStart()
-	let g:files_to_move =  []
-	hi UniteInputPrompt guibg=NONE guifg=palegreen
-	let g:unite_bookmark_source = 0
-	if !exists('g:unite_path')
-		let g:unite_path = UniteFixPath(getcwd()) . '/'
-	endif
-	call UniteExplorer(g:unite_path)
-endfunction
-" Takes first argument as path to open my explorer in. If no argument is given
-" then path of last explorer is used.
-function! UniteExplorer(...)
-	if a:0
-		let g:unite_path = a:1
-	endif
-	call unite#start([
-		\ ['move', g:unite_path],
-		\ ['dots', g:unite_path],
-		\ ['dir', g:unite_path],
-		\ ['fil', g:unite_path],
-		\ ['fil/n', g:unite_path],
-		\ ['dir/n', g:unite_path]],
-		\ {'prompt' : g:unite_path . '>'})
-	call unite#mappings#narrowing("", 0)
-endfunction
-function! UniteFileSwitcher()
-	execute 'Unite buffer file_mru'
-endfunction
-let g:unite_bookmark_source = 0
-function! OpenBookmarkSource(...)
-	if !a:0
-		let g:unite_bookmark_source = 1
-	endif
-	execute "Unite -prompt=bookmark> bmark"
-endfunction
-function! UniteExit()
-	if g:unite_bookmark_source
-		call UniteExplorerStart()
-	else
-		execute "normal \<Plug>(unite_all_exit)"
-	endif
-	let g:files_to_move = []
-	hi UniteInputPrompt guibg=NONE guifg=palegreen
-endfunction
 function! UniteFixPath(path)
 	if has('unix')
 		let path = a:path
@@ -258,6 +213,23 @@ function! UniteTags(filetype)
 		\ {'prompt' : 'tags>'})
 	endif
 endfunction
+
+let my_dir = {
+      \ 'description' : 'yank word or text',
+      \ 'is_selectable' : 1,
+      \ }
+function! my_dir.func(candidates)
+	let text = join(map(copy(a:candidates),
+		\ "get(v:val, 'action__text', v:val.word)"), "\n")
+	if isdirectory(text)
+		let text = text . "/"
+	endif
+	call unite#start([
+		\ ['file']],
+		\ {'input' : text})
+endfunction
+call unite#custom_action('directory', 'my_dir', my_dir)
+call unite#custom#default_action('directory', 'my_dir')
 " --------------------
 " ---- [2.5] EASYTAGS ----
 let g:easytags_updatetime_warn = 0
@@ -339,8 +311,8 @@ if !g:disablePlugins
 	" Search file using unite.
 	nnoremap ä :Unite line -custom-line-enable-highlight<CR>
 
-	nnoremap ö :call UniteFileSwitcher()<CR>
-	nnoremap Ö :call UniteExplorerStart()<CR>
+	nnoremap ö :Unite buffer file_mru<CR>
+	nnoremap Ö :call unite#start([['file']], {'input' : UniteFixPath(expand("%:p:h")) . "/"})<CR>
 else
 	nnoremap ä /
 	nnoremap ö :e
@@ -491,7 +463,7 @@ let g:mapleader="\<space>"
 
 " A
 " B - Bookmark
-map <leader>b :call OpenBookmarkSource(1)<CR>
+map <leader>b :Unite -prompt=bookmark> bmark<CR>
 " C - Compile
 map <leader>co :Errors<CR>
 map <leader>cc :SyntasticCheck<CR>
@@ -562,8 +534,8 @@ autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
 " N - Next buffer
 map <leader>n :bn <CR>
 " O - Open file explorer
-map <leader>o :call UniteFileSwitcher()<CR>
-map <leader>O :call UniteExplorerStart()<CR>
+map <leader>o :Unite buffer file_mru<CR>
+map <leader>O :call unite#start([['file']], {'input' : UniteFixPath(expand("%:p:h")) . "/"})<CR>
 " P - Previous buffer
 map <leader>p :bp <CR>
 " Q - Quit window (not used?)
@@ -599,7 +571,7 @@ map <leader>tn :tabnew <CR>
 " U - Ultisnips
 if !g:disablePlugins
 	map <leader>ue :UltiSnipsEdit <CR>
-	map <leader>uu :Unite fil:~/git/vim/scripts/Ultisnips/ <CR>
+	map <leader>uu :Unite file:~/git/vim/scripts/Ultisnips/ <CR>
 	map <leader>ua :Unite us <CR>
 	map <leader>uh :Unite us <CR>
 	map <leader>ul :Unite us <CR>
@@ -668,8 +640,8 @@ cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ?
 " --------------------
 " ---- [3.6] UNITE ----
 function! UniteBinds()
-	nmap <buffer> b :call OpenBookmarkSource()<CR>
-	nmap <buffer> <ESC> :call UniteExit()<CR>
+	nmap <buffer> b :Unite -prompt=bookmark> bmark<CR>
+	nmap <buffer> <ESC> :execute "normal \<Plug>(unite_all_exit)"<CR>
 	nmap <buffer> <S-Space> <Plug>(unite_redraw)
 	nmap <buffer> <BS> <Plug>(unite_insert_enter)
 	nmap <buffer> <space> V<space>

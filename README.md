@@ -131,6 +131,10 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 # TODO
 
 ### Important
+* VH
+	- Add my taggenerator to VS.
+* Split my vimrc into a basefile that doesn't require any plugins and one that does.
+	- Keeps 2 repositories for the two versions.
 * Make a new repo for dotfiles and move my dotfiles there.
 * Delete shougos addon for sessoins and remove anything that has to do
 	with sessions. Never use them.
@@ -157,7 +161,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	Does this break any actions that use operators with p?
 * Use alt bindings for jumping between tabtops? Alt+H Alt-L
 	Look to make sure those are safe to bind.
-* Fix weird formatting in ö
 
 ### Low
 * VimHelper
