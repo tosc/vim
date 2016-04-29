@@ -1,7 +1,6 @@
 import	import
 include	import
 import( |)(\w+)	
-test	
 \|\|	or
 &&	and
 not	not

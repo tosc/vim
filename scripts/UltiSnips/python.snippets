@@ -384,6 +384,8 @@ endsnippet
 snippet inforegex "info about regex"
 # if !match:
 # - string does not match regex.
+# re.search
+# - match goes from the start, search goes whenever
 # match.group(1)
 # - First regexhit.
 # Example of regexes
@@ -391,7 +393,7 @@ snippet inforegex "info about regex"
 endsnippet
 pre_expand "add_package_py('re')"
 snippet regex "regex:regex"
-${1:match} = re.match('${2:^S*}', ${3:line})
+${1:match} = re.search('${2:^S*}', ${3:line})
 endsnippet
 
 # Stream snippets
