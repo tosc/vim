@@ -213,6 +213,9 @@ function! UniteTags(filetype)
 		\ {'prompt' : 'tags>'})
 	endif
 endfunction
+function! UniteExplorer(folder)
+	call unite#start([['file'], ['filn'], ['dirn']], {'input' : UniteFixPath(a:folder) . "/"})
+endfunction
 
 let my_dir = {
       \ 'description' : 'yank word or text',
@@ -224,9 +227,7 @@ function! my_dir.func(candidates)
 	if isdirectory(text)
 		let text = text . "/"
 	endif
-	call unite#start([
-		\ ['file']],
-		\ {'input' : text})
+	call unite#start([['file'], ['filn'], ['dirn']], {'input' : text})
 endfunction
 call unite#custom_action('directory', 'my_dir', my_dir)
 call unite#custom#default_action('directory', 'my_dir')
@@ -312,7 +313,7 @@ if !g:disablePlugins
 	nnoremap ä :Unite line -custom-line-enable-highlight<CR>
 
 	nnoremap ö :Unite buffer file_mru<CR>
-	nnoremap Ö :call unite#start([['file']], {'input' : UniteFixPath(expand("%:p:h")) . "/"})<CR>
+	nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
 else
 	nnoremap ä /
 	nnoremap ö :e
@@ -535,8 +536,7 @@ autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
 map <leader>n :bn <CR>
 " O - Open file explorer
 map <leader>o :Unite buffer file_mru<CR>
-map <leader>O :call unite#start([['file']], {'input' : UniteFixPath(expand("%:p:h")) . "/"})<CR>
-" P - Previous buffer
+map <leader>O :call UniteExplorer(expand("%:p:h"))<CR>
 map <leader>p :bp <CR>
 " Q - Quit window (not used?)
 map <leader>q :q <CR>
