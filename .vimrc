@@ -583,6 +583,15 @@ map <leader>so :call NoSpellCheck() <CR>
 map <leader>sc :call NoSpellCheck() <CR>
 map <leader>sd :call NoSpellCheck() <CR>
 " T - Tabs, temp and tabformat
+map <leader>tt :call OpenTempFile() <CR>
+function! OpenTempFile()
+	let fe = expand("%:e")	
+	if len(fe) > 0
+		e ~/.vim/tmp/tmp/temp.%:e
+	else
+		e ~/.vim/tmp/tmp/temp
+	endif
+endfunction
 map <leader>te :set expandtab <CR>
 map <leader>tE :set noexpandtab <CR>
 map <leader>t4 :set tabstop=4 <CR> :set shiftwidth=4 <CR>
