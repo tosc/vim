@@ -5,6 +5,7 @@ let requiredFolders = [
 		\ "~/.vim/tmp/tmp",
 		\ "~/.vim/tmp/swapfiles",
 		\ "~/.vim/tmp/gitstatusline",
+		\ "~/.vim/tmp/compilefiles",
 		\ "~/.vim/tags",
 		\ "~/.cache",
 		\ "~/.cache/unite",
@@ -554,11 +555,11 @@ map <leader>j :%!python -m json.tool<CR>
 " K
 " L
 " M - Make
-map <leader>m :!make<CR>
-if !g:disablePlugins
-	map <leader>m :cd %:h<CR>:Unite -auto-preview -no-start-insert
-				\ build:make<CR>
-endif
+autocmd Filetype c map <buffer><silent> <leader>m :w <bar> !./%:r <cr>
+autocmd Filetype cpp map <buffer><silent> <leader>m :w <bar> ! main <cr>
+autocmd Filetype cs map <buffer><silent> <leader>m :w <bar> ! main <cr>
+autocmd Filetype vim map <leader>m :so % <cr>
+autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
 " N - Next buffer
 map <leader>n :bn <CR>
 " O - Open file explorer
@@ -569,13 +570,8 @@ map <leader>p :bp <CR>
 " Q - Quit window (not used?)
 map <leader>q :q <CR>
 " R - Run file or project / Stop file or project
-autocmd Filetype python map <buffer><silent> <leader>r :w <bar> ! python % <cr>
-autocmd Filetype c map <buffer><silent> <leader>r :w <bar> !./%:r <cr>
-autocmd Filetype cpp map <buffer><silent> <leader>r :w <bar> ! main <cr>
-autocmd Filetype cs map <buffer><silent> <leader>r :w <bar> ! main <cr>
-autocmd Filetype vim map <leader>r :so % <cr>
-autocmd Filetype tex map <leader>r :call MessageVimHelper("tex", expand("%:p")) <cr>
-autocmd Filetype tex map <leader>R :call MessageVimHelper("tex", "") <cr>
+map <leader>r :call MessageVimHelper("compile", expand("%:p")) <cr>
+map <leader>R :call MessageVimHelper("compile", "") <cr>
 " S - Spellcheck
 map <leader>se :call EnglishSpellCheck() <CR>
 map <leader>ss :call SwedishSpellCheck() <CR>
@@ -866,13 +862,7 @@ function! TEXSettings()
 	call EnglishSpellCheck()
 endfunction
 
-autocmd TextChanged,TextChangedI *.tex call CreateTEXPDF()
-
 autocmd Filetype tex,plaintex call TEXSettings()
-
-function! CreateTEXPDF()
-	call writefile(getline(1,'$'), expand("~/.vim/tmp/tmp/temp.tex"))
-endfunction
 " --------------------
 " ---- [4.13] GITCOMMIT ----
 function! GITCSettings()
@@ -1383,6 +1373,7 @@ autocmd BufEnter * call UpdateGitInfo()
 autocmd BufReadPost * normal zuz
 
 autocmd TextChanged,TextChangedI * call HighlightGitDisable()
+autocmd TextChanged,TextChangedI * call CreateTempFile()
 autocmd InsertCharPre * let v:char = Delim(v:char)
 autocmd InsertEnter * call HighlightDrawDisable()
 autocmd InsertLeave * call HighlightDrawEnable()
@@ -1390,6 +1381,9 @@ autocmd InsertLeave * call HighlightDrawEnable()
 autocmd VimLeave * call OnExit()
 autocmd VimEnter * call AfterInit()
 
+function! CreateTempFile()
+	call writefile(getline(1,'$'), expand("~") . "/.vim/tmp/compilefiles/" . expand("%:t"))
+endfunction
 " --------------------
 " ---- [11] FUNCTIONS ----
 " ---- [11.0] TABCOMPLETION ----
@@ -1612,7 +1606,11 @@ function! StartEclim()
 	call vimproc#system_bg('eclimd')
 endfunction
 
-function! StartVimHelper()
+function! VimHelperRestart()
+	call MessageVimHelper("client", "0")	
+	call VimHelperStart()
+endfunction
+function! VimHelperStart()
 	if !g:minimalMode && !g:disableExternal
 		Spawn! -dir=~ python git\vim\VimHelper.py
 	endif
@@ -1824,7 +1822,7 @@ try:
 	s.send(vim.eval("a:type") + "\t" + vim.eval("a:message"))
 except:
 	if vim.eval("g:startedExternal") == "0":
-	    	vim.command("call StartVimHelper()")
+	    	vim.command("call VimHelperStart()")
 	vim.command("let g:startedExternal = 1")
 endpy
 endif

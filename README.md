@@ -131,8 +131,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 # TODO
 
 ### Important
-* VimHelper
-	Change tex-compiler to custom-auto-compiler and make it work for any file.
 * Delete shougos addon for sessoins and remove anything that has to do
 	with sessions. Never use them.
 * Remove addons for tags. Never use tags.
@@ -141,7 +139,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 
 ### Mid
 * VimHelper
-	Another console? - Some way of showing separate output from compiling file.
 	Check if you can make python focus other vim instance. If so,
 	add other vims buffers to ö and make them switchable with ö.
 * Find better way of calling help, make it so that I can use autocompletetion.
@@ -163,7 +160,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 
 ### Low
 * VimHelper
-	Find way for helper to reload itself on edit.
 	Move my autocomplete to vimhelper.
 * Add a bind in unite to change sorting method from time to name.
 * TagGenerator
