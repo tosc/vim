@@ -449,45 +449,6 @@ class Server(Thread):
                             worker.condition.notify()
             c.close()
 
-"""
-Run custom command
-
-Parameters:
-    command - command to run
-"""
-class CommandBuilder(Worker):
-    def __init__(self, command):
-        Worker.__init__(self, "Command")
-        self.command = command
-        self.daemon = True
-        self.lastTime = 1
-        add_msg(self.name, command)
-        self.start()
-
-    def update(self):
-        global cwd
-        #Catch custom scripts
-        fCmd = self.command.replace(" ", "")
-        if ":q" == fCmd or "q" == fCmd or "quit" == fCmd or "exit" == fCmd:
-            add_msg(self.name, "Quitting.")
-            server.clients = -1
-        elif "cd" == fCmd:
-            folder = os.path.abspath("~")
-            add_msg(self.name, "cd " + folder)
-            cwd = folder
-        elif "^cd" in fCmd:
-            add_msg(self.name, "cd oo")
-        #Run script in console
-        else:
-            try:
-                output = subprocess.check_output(self.command, stderr=subprocess.STDOUT, shell=True)
-                add_msg(self.name, output)
-            except Exception,e:
-                    try:
-                        add_msg(self.name, str(e.output))
-                    except:
-                        add_msg(self.name, str(e))
-        self.running = False
 
 workers = [UpdateGit(), TexBuilder()]
 drawer = Drawer()
