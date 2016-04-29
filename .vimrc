@@ -128,8 +128,6 @@ endif
 
 	" Syntax checker and syntax engines.
 	Plugin 'scrooloose/syntastic'
-	Plugin 'syngan/vim-vimlint'
-	Plugin 'ynkdir/vim-vimlparser'
 
 	" Div
 	Plugin 'tpope/vim-fugitive'
@@ -484,6 +482,8 @@ if !g:disablePlugins
 	xmap sq s"
 	xmap st s'
 	xmap sm s$
+	xmap s( s)
+	xmap s{ s}
 endif
 " --------------------
 " ---- [3.3] LEADER ----
@@ -582,13 +582,14 @@ map <leader>ss :call SwedishSpellCheck() <CR>
 map <leader>so :call NoSpellCheck() <CR>
 map <leader>sc :call NoSpellCheck() <CR>
 map <leader>sd :call NoSpellCheck() <CR>
-" T - Tabs, tabformats and cycle tabs.
+" T - Tabs, temp and tabformat
 map <leader>te :set expandtab <CR>
-map <leader>tt :set noexpandtab <CR>
+map <leader>tE :set noexpandtab <CR>
 map <leader>t4 :set tabstop=4 <CR> :set shiftwidth=4 <CR>
 map <leader>t8 :set tabstop=8 <CR> :set shiftwidth=8 <CR>
+" Show/Hide tabs
 map <leader>ts :set listchars=tab:>\ ,trail:#,extends:>,precedes:<,nbsp:+ <CR>
-map <leader>th :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
+map <leader>tS :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
 map <leader>tc :tabclose <CR>
 map <leader>tn :tabnew <CR>
 " U - Ultisnips
@@ -605,8 +606,7 @@ map <leader>vr :e ~/git/vim/README.md<CR>
 map <leader>vh :e ~/git/vim/VimHelper.py<CR>
 map <leader>vv :e ~/git/vim/.vimrc<CR>
 map <leader>vd :w !diff % -<CR>
-" W - Write
-map <leader>w :w <CR>
+" W
 " X
 " Y
 " Z - Z(S)essions
@@ -700,7 +700,6 @@ autocmd FileType opoh call OpohBinds()
 " ---- [4] FILETYPE SPECIFIC ----
 " ---- [4.0] All ----
 " :set filetype? To know current loaded filetype
-" for specific startfolding - let &foldlevel=nr
 " --------
 " ---- [4.1] JAVA ----
 function! JavaSettings()
@@ -855,7 +854,6 @@ autocmd Filetype jp call JAPANESESettings()
 function! TEXSettings()
 	setlocal foldexpr=IndentFolding2(v:lnum)
 	setlocal foldtext=NormalFoldText()
-	setlocal noswapfile
 	call EnglishSpellCheck()
 endfunction
 

@@ -131,6 +131,21 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 # TODO
 
 ### Important
+* VimHelper
+	Change tex-compiler to custom-auto-compiler and make it work for any file.
+	Another console? - Some way of showing separate output from compiling file.
+	Make vh start a new console instead of trying to make my own, then direct stdout stderr to my one.
+* Add leader that opens tempfile with current files filetype.
+* Delete shougos addon for sessoins and remove anything that has to do
+	with sessions. Never use them.
+* Remove addons for tags. Never use tags.
+* Remove addons for unite make, use my own external helper.
+* Look into fastfold, remove?
+
+### Mid
+* VimHelper
+	Check if you can make python focus other vim instance. If so,
+	add other vims buffers to ö and make them switchable with ö.
 * Find better way of calling help, make it so that I can use autocompletetion.
 * Fix bug with unite and buffers (seems to happen when you have an empty
 	buffer)
@@ -146,25 +161,12 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	Does this break any actions that use operators with p?
 * Use alt bindings for jumping between tabtops? Alt+H Alt-L
 	Look to make sure those are safe to bind.
-
-### Mid
-* Fix cs bind like you did with s
-* Add a :et command. Creates a file in the tempfolder for quick testing and so on.
+* Fix weird formatting in ö
 
 ### Low
-* Create unite source for external commands. Switch to that unite buffer to 
-	get more output from program.
-* Create binding for adding new words to my spell check.
-* Create own session unite source. Currently use Shougos for no reason.
-	* Create a unite source that shows files in my session folder.
-		Show name of the session. This should be a list of the buffers
-		in that session.
-		Show timestamp of the last time that sessions was used.
-		(Show working folder)?
-	* Add default action to open that session.
-	* (Delete session button)?
-	* (Bookmark sessions)?
-	* Remove shougos session plugin.
+* VimHelper
+	Find way for helper to reload itself on edit.
+	Move my autocomplete to vimhelper.
 * Add a bind in unite to change sorting method from time to name.
 * TagGenerator
 	* helptags for vim
@@ -176,4 +178,4 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	location to make installing vim easier.
 * Better names in Ã¶.
 * cp in unite.
-* Detect stuff that needs compiling and compile by itself.
+* Split vimrc into smaller files. Especially want to move foldingmethods to separate.
