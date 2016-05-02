@@ -12,7 +12,9 @@ from threading import Thread
 from threading import Condition
 from threading import Lock
 
-tmpFolder = os.path.expanduser('~') + "/.vim/tmp/"
+home = os.path.expanduser('~') + "/"
+scriptFolder = home + "git/vim/"
+tmpFolder = home + ".vim/tmp/"
 compileFolder = tmpFolder + "compilefiles/"
 compileOutput = tmpFolder + "compile"
 consoleOutput = tmpFolder + "console"
@@ -317,7 +319,6 @@ class Worker(Thread):
         self.lastTime = 1
 
         self.hide = False
-        self.condition = Condition()
         self.running = True
 
     def run(self):
@@ -333,155 +334,94 @@ class Worker(Thread):
     def update(self):
         pass
 
-    def setPath(self, path):
-        self.currentPath = path
-        self.currentFolder,self.currentFile = os.path.split(path)
 
 """
-Updates GIT statusline in VIM
+Runs a script once and prints the output to the compiler window.
 
-Saves new statusline to ~/.vim/tmp/gitstatusline/FILENAME
-Where FILENAME is the full path to the file vim is working on
-where \:/ are replaced with -. when server recieves
-("path", PATH)
+Paramters:
+    script - the script to call, ex "pdflatex test.tex --output-error"
+    silent - disable output
 """
-class UpdateGit(Worker):
-    def __init__(self):
-        Worker.__init__(self, "Git")
+class RunScript(Worker):
+    def __init__(self, script, folder=scriptFolder, silent=False):
+        Worker.__init__(self, "Script")
         self.daemon = True
         self.lastTime = 0.1
         self.pause = True
-        self.hide = True
+        self.script = script
+        self.currentFolder = folder
+        self.silent = silent
         self.start()
 
     def update(self):
-        with self.condition:
-            while self.currentPath == "":
-                self.condition.wait()
         try:
-            filesRaw = subprocess.check_output("git -C " + self.currentFolder + " status -b -s", stderr=subprocess.STDOUT)
-            rowsRaw = subprocess.check_output("git -C " + self.currentFolder + " diff --numstat", stderr=subprocess.STDOUT)
-
-            statusLine = ""
-
-            filesRaw = filesRaw.replace("...", "->")
-            filesRaw = filesRaw.replace("#", "")
-            filesSplit = filesRaw.split("\n")
-            # [master->origin/master]   Branch info
-            if len(filesSplit) > 0:
-                branch = filesSplit[0][1:].split(" ")
-                statusLine += "[" + branch[0] + "]"
-                if len(branch[1:]) > 0:
-                    statusLine += " "
-                    branch = branch[1:]
-                    if len(branch) > 3:
-                        statusLine += branch[0] + " " + branch[1][:-1] + "] ["
-                        branch = branch[2:]
-                    if len(branch) > 1:
-                        statusLine += branch[0] + " " + branch[1]
-                        branch = branch[2:]
-
-            # [m 3]                     Number of modified files
-            if len(filesSplit) > 2:
-                statusLine += " [m " + str(len(filesSplit) - 2) + "]"
-
-            # [+3 -2]                   Changed rows in current file
-            for row in rowsRaw.split("\n"):
-                if self.currentFile in row:
-                    changedRows = row.split("\t")
-                    statusLine += " [+" + changedRows[0] + " -" + changedRows[1] + "]"
-
-            statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "-")
-
-            before = ""
-            if os.path.isfile(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName):
-                f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'r')
-                before = f.read()
-                f.close()
-
-            f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'w')
-            f.write(statusLine)
-            f.close()
-
-            f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'r')
-            after = f.read()
-            f.close()
-
-            if before != after:
-                if before == "":
-                    consoleMsgs.addstr(self.name, "GIT StatusBar New - " + self.currentFile)
-                    consoleMsgs.addstr(self.name, after)
-                else:
-                    consoleMsgs.addstr(self.name, "GIT StatusBar Update - " + self.currentFile)
-                    consoleMsgs.addstr(self.name, before + " ->")
-                    consoleMsgs.addstr(self.name, after)
+            cop = open(compileOutput, 'w')
+            if not self.silent:
+                consoleMsgs.addstr(self.name, "Calling: " + self.script)
+            cp = subprocess.Popen(self.script, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder)
+            cp.wait()
+            cop.close()
+            if not self.silent:
+                consoleMsgs.addstr(self.name, "Done!")
+                cop = open(compileOutput, 'r')
+                compileMsgs.clear()
+                line = cop.readline()
+                while(line):
+                    compileMsgs.addstr(line)
+                    line = cop.readline()
         except Exception,e:
-            statuslineFileName = self.currentPath.replace("\\", "-").replace(":", "-").replace("/", "")
-
-            f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'w')
-            f.write("")
-            f.close()
-        self.currentPath = ""
+            consoleMsgs.addstr(self.name, "Failed")
+            consoleMsgs.addstr(self.name, str(e))
+        self.running = False
 
 """
 Autobuilds selected file. Runs when sucessful.
 """
-class Compiler(Worker):
+class Compiler(Thread):
     global compileMsgs
     def __init__(self):
-        Worker.__init__(self, "Compile")
+        Thread.__init__(self)
+        self.name = "Compile"
         self.daemon = True
-        self.lastTime = 3
-        self.idle = True
         self.prevFileToCompile = ""
         self.msgs = []
+        self.currentFile = ""
+        self.currentFolder = ""
+        self.currentPath = ""
+        self.condition = Condition()
         self.start()
 
-    def update(self):
-        with self.condition:
-            while self.currentPath == "":
-                self.idle = True
-                self.condition.wait()
-                compileMsgs.clear()
-            try:
-                fileToCompile = compileFolder + "_" + self.currentFile 
-                fileFromVim = compileFolder + self.currentFile
-                if os.path.isfile(fileFromVim):
-                    before = ""
-                    after = "_"
-                    if os.path.isfile(fileToCompile):
-                        f = open(fileFromVim, 'r')
-                        before = f.read()
-                        f.close()
-                        f = open(fileToCompile, 'r')
-                        after = f.read()
-                        f.close()
-                    if before != after or self.prevFileToCompile != fileToCompile:
-                        call = self.call(fileToCompile)
-                        if call != "":
-                            self.idle = False
-                            subprocess.check_output("cp " + fileFromVim + " " +  fileToCompile, stderr=subprocess.STDOUT)
-                            cop = open(compileOutput, 'w')
-                            consoleMsgs.addstr(self.name, "Calling: " + call)
-                            cp = subprocess.Popen(call, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder)
-                            cp.wait()
-                            consoleMsgs.addstr(self.name, "Done!")
-                            self.prevFileToCompile = fileToCompile
-                            cop.close()
-                            cop = open(compileOutput, 'r')
-                            compileMsgs.clear()
-                            line = cop.readline()
-                            while(line):
-                                compileMsgs.addstr(line)
-                                line = cop.readline()
-                        else:
-                            consoleMsgs.addstr(self.name, "Missing compiler for " + self.currentFile + "s filetype.")
-                            consoleMsgs.addstr(self.name, "Add it in VimHelper.py - Compiler.call()")
-                            self.currentPath = ""
-                    else:
-                        self.idle = True
-            except Exception,e:
-                consoleMsgs.addstr(self.name, str(e))
+    def run(self):
+        while True:
+            with self.condition:
+                while self.currentPath == "":
+                    self.condition.wait()
+                    compileMsgs.clear()
+                try:
+                    fileToCompile = compileFolder + "_" + self.currentFile 
+                    fileFromVim = compileFolder + self.currentFile
+                    if os.path.isfile(fileFromVim):
+                        before = ""
+                        after = "_"
+                        if os.path.isfile(fileToCompile):
+                            f = open(fileFromVim, 'r')
+                            before = f.read()
+                            f.close()
+                            f = open(fileToCompile, 'r')
+                            after = f.read()
+                            f.close()
+                        if before != after or self.prevFileToCompile != fileToCompile:
+                            call = self.call(fileToCompile)
+                            if call != "":
+                                subprocess.check_output("cp " + fileFromVim + " " +  fileToCompile, stderr=subprocess.STDOUT)
+                                workers.append(RunScript(call, self.currentFolder))
+                                self.prevFileToCompile = fileToCompile
+                            else:
+                                consoleMsgs.addstr(self.name, "Missing compiler for " + self.currentFile + "s filetype.")
+                                consoleMsgs.addstr(self.name, "Add it in VimHelper.py - Compiler.call()")
+                                self.currentPath = ""
+                except Exception,e:
+                    consoleMsgs.addstr(self.name, str(e))
 
     def call(self, fileToCompile):
         call = ""
@@ -491,6 +431,9 @@ class Compiler(Worker):
             call = "pdflatex -halt-on-error -output-directory={} {}".format(compileFolder, fileToCompile)
         return call
 
+    def setPath(self, path):
+        self.currentPath = path
+        self.currentFolder,self.currentFile = os.path.split(path)
 
 """
 Parses communication from VIM
@@ -523,9 +466,7 @@ class Server(Thread):
                 running = False
                 break
             if server_msgs[0] == "path":
-                with git.condition:
-                    git.setPath(server_msgs[1])
-                    git.condition.notify()
+                workers.append(RunScript("python GitStatusbar.py " + server_msgs[1], silent=True))
             elif server_msgs[0] == "client":
                 if server_msgs[1] == "1":
                     self.clients += 1
@@ -544,11 +485,12 @@ class Server(Thread):
                         compiler.setPath(server_msgs[1])
                         compiler.condition.notify()
                         consoleMsgs.addstr(self.name, "Listening for changes - " + compiler.currentFile)
+            elif server_msgs[0] == "tags":
+                workers.append(RunScript("python TagGenerator.py"))
             c.close()
 
 compiler = Compiler()
-git = UpdateGit()
-workers = [git, compiler]
+workers = []
 drawer = Drawer()
 server = Server()
 console = Console()

@@ -131,8 +131,8 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 
 ### Important
 * VH
-	- Add my taggenerator to VS.
 	- Add git draw to this.
+* Add <leader>R binding that lets you run a script with parameters.
 * Split my vimrc into a basefile that doesn't require any plugins and one that does.
 	- Keeps 2 repositories for the two versions.
 * Make a new repo for dotfiles and move my dotfiles there.

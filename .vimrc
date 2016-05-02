@@ -512,7 +512,7 @@ map <leader>iI :Unite tagfolders:~/git/info/ <CR>
 map <leader>ia :Unite tagfolders:~/git/info/ <CR>
 map <leader>in :Unite notes:~/git/info/ <CR>
 map <leader>if :Unite notes:~/git/info/ <CR>
-map <leader>ir :execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p') <CR>
+map <leader>ir :call VimHelperMessage("tags", "")
 " J - Format json file.
 map <leader>j :%!python -m json.tool<CR>
 " K
@@ -532,8 +532,8 @@ map <leader>p :bp <CR>
 " Q - Quit window (not used?)
 map <leader>q :q <CR>
 " R - Run file or project / Stop file or project
-map <leader>r :call MessageVimHelper("compile", expand("%:p")) <cr>
-map <leader>R :call MessageVimHelper("compile", "") <cr>
+map <leader>r :call VimHelperMessage("compile", expand("%:p")) <cr>
+map <leader>R :call VimHelperMessage("compile", "") <cr>
 " S - Spellcheck
 map <leader>se :call EnglishSpellCheck() <CR>
 map <leader>ss :call SwedishSpellCheck() <CR>
@@ -570,6 +570,7 @@ if !g:disablePlugins
 endif
 " V - .vimrc
 map <leader>vr :e ~/git/vim/README.md<CR>
+map <leader>vR :call VimHelperRestart()<CR>
 map <leader>vh :e ~/git/vim/VimHelper.py<CR>
 map <leader>vv :e ~/git/vim/.vimrc<CR>
 map <leader>vd :w !diff % -<CR>
@@ -852,7 +853,7 @@ endfunction
 autocmd BufNewFile,BufRead *.note set filetype=note
 
 autocmd Filetype note call PASSSettings()
-autocmd BufWritePost *.note execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p')
+autocmd BufWritePost *.note call VimHelperMessage("tags", "")
 " --------------------
 " --------------------
 " ---- [5] FOLDING ----
@@ -1571,16 +1572,6 @@ function! StartEclim()
 	let g:EclimdRunning = 1
 	call vimproc#system_bg('eclimd')
 endfunction
-
-function! VimHelperRestart()
-	call MessageVimHelper("client", "0")	
-	call VimHelperStart()
-endfunction
-function! VimHelperStart()
-	if !g:minimalMode && !g:disableExternal
-		Spawn! -dir=~ python git\vim\VimHelper.py
-	endif
-endfunction
 " --------------------
 " ---- [11.5] SPELLCHECK ----
 function! EnglishSpellCheck()
@@ -1606,7 +1597,7 @@ function! UpdateGitInfo()
 endfunction
 
 function! UpdateGitStatusBar()
-	call MessageVimHelper("path", expand("%:p"))
+	call VimHelperMessage("path", expand("%:p"))
 endfunction
 
 " Draws lines added/removed and edited since last commit.
@@ -1758,7 +1749,7 @@ function! OnExit()
 		call KillAllExternal()
 	endif
 
-	call MessageVimHelper("client", "-1")
+	call VimHelperMessage("client", "-1")
 endfunction
 
 function! KillAllExternal()
@@ -1772,12 +1763,12 @@ endfunction
 " ---- [11.10] AFTER INIT ----
 function! AfterInit()
 	if !g:startedExternal
-		call MessageVimHelper("client", "1")
+		call VimHelperMessage("client", "1")
 	endif
 endfunction
 " --------------------
-" ---- [11.11] MESSAGE VIMHELPER ----
-function! MessageVimHelper(type, message)
+" ---- [11.11] VIMHELPER ----
+function! VimHelperMessage(type, message)
 if !g:disableVimHelper
 python << endpy
 import socket
@@ -1792,6 +1783,16 @@ except:
 	vim.command("let g:startedExternal = 1")
 endpy
 endif
+endfunction
+
+function! VimHelperRestart()
+	call VimHelperMessage("client", "0")	
+	call VimHelperStart()
+endfunction
+function! VimHelperStart()
+	if !g:minimalMode && !g:disableExternal
+		Spawn! -dir=~ python git\vim\VimHelper.py
+	endif
 endfunction
 " --------------------
 " --------------------
