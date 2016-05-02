@@ -132,11 +132,7 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 ### Important
 * VH
 	- Add git draw to this.
-* Add <leader>R binding that lets you run a script with parameters.
-* Split my vimrc into a basefile that doesn't require any plugins and one that does.
-	- Keeps 2 repositories for the two versions.
 * Make a new repo for dotfiles and move my dotfiles there.
-* Remove addons for unite make, use my own external helper.
 * Look into fastfold, remove?
 * Only do the auto-save temp file when execute mode is running.
 * Add readline for the statusbar to slowgit update like before.
@@ -144,9 +140,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 * Look into why vim is so slow when my VH is offline.
 
 ### Mid
-* VimHelper
-	Check if you can make python focus other vim instance. If so,
-	add other vims buffers to ö and make them switchable with ö.
 * Find better way of calling help, make it so that I can use autocompletetion.
 * Fix bug with unite and buffers (seems to happen when you have an empty
 	buffer)
@@ -155,16 +148,20 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	In other words, if completing method then add that to a class.
 	If completing function then add that outside class.
 * Look into vim-operator-flashy.
-* Look into SwagKingTenK/VimSearch.
 * Add mapping to fix p removing the yank register.
 	Try this mapping:
 	xnoremap p pgvy
 	Does this break any actions that use operators with p?
 * Use alt bindings for jumping between tabtops? Alt+H Alt-L
 	Look to make sure those are safe to bind.
+* Split my vimrc into a basefile that doesn't require any plugins and one that does.
+	- Keeps 2 repositories for the two versions.
 
 ### Low
 * VimHelper
+* VimHelper
+	Check if you can make python focus other vim instance. If so,
+		add other vims buffers to ö and make them switchable with ö.
 	Move my autocomplete to vimhelper.
 * Add a bind in unite to change sorting method from time to name.
 * TagGenerator

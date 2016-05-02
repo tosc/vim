@@ -389,12 +389,15 @@ class Compiler(Thread):
         self.currentFolder = ""
         self.currentPath = ""
         self.condition = Condition()
+        self.args = ""
+        self.prevArgs = ""
+        self.go = False
         self.start()
 
     def run(self):
         while True:
             with self.condition:
-                while self.currentPath == "":
+                while not self.go:
                     self.condition.wait()
                     compileMsgs.clear()
                 try:
@@ -410,16 +413,17 @@ class Compiler(Thread):
                             f = open(fileToCompile, 'r')
                             after = f.read()
                             f.close()
-                        if before != after or self.prevFileToCompile != fileToCompile:
+                        if before != after or self.prevFileToCompile != fileToCompile or self.args != self.prevArgs:
                             call = self.call(fileToCompile)
                             if call != "":
                                 subprocess.check_output("cp " + fileFromVim + " " +  fileToCompile, stderr=subprocess.STDOUT)
                                 workers.append(RunScript(call, self.currentFolder))
                                 self.prevFileToCompile = fileToCompile
+                                self.prevArgs = self.args
                             else:
                                 consoleMsgs.addstr(self.name, "Missing compiler for " + self.currentFile + "s filetype.")
                                 consoleMsgs.addstr(self.name, "Add it in VimHelper.py - Compiler.call()")
-                                self.currentPath = ""
+                                self.go = False
                 except Exception,e:
                     consoleMsgs.addstr(self.name, str(e))
 
@@ -429,7 +433,7 @@ class Compiler(Thread):
             call = "python " + fileToCompile
         elif re.search("\.tex$", fileToCompile):
             call = "pdflatex -halt-on-error -output-directory={} {}".format(compileFolder, fileToCompile)
-        return call
+        return call + " " + self.args
 
     def setPath(self, path):
         self.currentPath = path
@@ -477,14 +481,18 @@ class Server(Thread):
                 elif server_msgs[1] == "0":
                     self.clients = -1
             elif server_msgs[0] == "compile":
-                if server_msgs[1] == "" or server_msgs[1] == compiler.currentPath:
+                if server_msgs[1] == "":
                     consoleMsgs.addstr(self.name, "Stopped listening for changes to " + compiler.currentFile)
                     compiler.setPath("")
+                    compiler.go = False
                 else:
-                    with compiler.condition:
                         compiler.setPath(server_msgs[1])
-                        compiler.condition.notify()
-                        consoleMsgs.addstr(self.name, "Listening for changes - " + compiler.currentFile)
+            elif server_msgs[0] == "compileargs":
+                compiler.args = server_msgs[1]
+                with compiler.condition:
+                    compiler.go = True
+                    compiler.condition.notify()
+                    consoleMsgs.addstr(self.name, "Listening for changes - " + compiler.currentFile)
             elif server_msgs[0] == "tags":
                 workers.append(RunScript("python TagGenerator.py"))
             c.close()

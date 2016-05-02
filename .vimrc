@@ -106,8 +106,6 @@ if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
 	" Unite and unite plugins.
 	Plugin 'Shougo/unite.vim'
 	Plugin 'Shougo/neomru.vim'
-	Plugin 'Shougo/unite-build'
-	Plugin 'Shougo/unite-help'
 
 	" Snippets
 	Plugin 'SirVer/ultisnips'
@@ -532,7 +530,7 @@ map <leader>p :bp <CR>
 " Q - Quit window (not used?)
 map <leader>q :q <CR>
 " R - Run file or project / Stop file or project
-map <leader>r :call VimHelperMessage("compile", expand("%:p")) <cr>
+map <leader>r :call VimHelperCompile() <cr>
 map <leader>R :call VimHelperMessage("compile", "") <cr>
 " S - Spellcheck
 map <leader>se :call EnglishSpellCheck() <CR>
@@ -1335,9 +1333,6 @@ hi default link uniteSource__Fil_Special PreProc
 " --------------------
 " ---- [10] AUTOCMD ----
 autocmd BufWritePost * call UpdateGitInfo()
-
-autocmd FocusGained * call UpdateGitStatusBar()
-
 autocmd BufEnter * call UpdateGitInfo()
 
 " To make FastFold calculate the folds when you open a file.
@@ -1593,10 +1588,6 @@ endfunction
 function! UpdateGitInfo()
 	let b:statusLineVar = ""
 	call UpdateMatches()
-	call UpdateGitStatusBar()
-endfunction
-
-function! UpdateGitStatusBar()
 	call VimHelperMessage("path", expand("%:p"))
 endfunction
 
@@ -1793,6 +1784,12 @@ function! VimHelperStart()
 	if !g:minimalMode && !g:disableExternal
 		Spawn! -dir=~ python git\vim\VimHelper.py
 	endif
+endfunction
+
+function! VimHelperCompile()
+	call VimHelperMessage("compile", expand("%:p"))
+	let args = input("Arguments? : ")
+	call VimHelperMessage("compileargs", args)
 endfunction
 " --------------------
 " --------------------
