@@ -52,24 +52,29 @@ curses.cbreak()
 # Remove cursors
 curses.curs_set(0)
 
-progressBars = screen.subwin(10, windowWidth, offsetY, 0)
+cellHeight = int((windowHeight - 6)/6)
+progressBarsHeight = cellHeight
+if cellHeight%2 != 0:
+    progressBarsHeight -= 1
+
+progressBars = screen.subwin(progressBarsHeight, windowWidth, offsetY, 0)
 add_screen(progressBars)
 progressBars.border(0)
 (progressBarsHeight, progressBarsWidth) = progressBars.getmaxyx()
 maxWorkers = progressBarsHeight - 2
 barLen = (progressBarsWidth - 2)/2 - 2
 
-compileWindow = screen.subwin(30, windowWidth, offsetY, 0)
+compileWindow = screen.subwin(3*cellHeight, windowWidth, offsetY, 0)
 add_screen(compileWindow)
 compileWindow.border(0)
 (compileHeight, compileWidth) = compileWindow.getmaxyx()
 
-statusBar = screen.subwin(1+2, windowWidth, offsetY, 0)
+statusBar = screen.subwin(3, windowWidth, offsetY, 0)
 add_screen(statusBar)
 statusBar.border(0)
 (statusBarHeight, statusBarWidth) = statusBar.getmaxyx()
 
-gutter = screen.subwin(20, 9, offsetY, 0)
+gutter = screen.subwin(2*cellHeight, 9, offsetY, 0)
 gutter.border(0)
 (gutterHeight, gutterWidth) = gutter.getmaxyx()
 consoleWindow = screen.subwin(gutterHeight, windowWidth - gutterWidth, offsetY, gutterWidth)
@@ -499,14 +504,24 @@ class Server(Thread):
         self.start()
 
     def run(self):
-        s = socket.socket()
-        s.bind(("localhost", 51351))
-        s.listen(5)
-
-        consoleMsgs.addstr(self.name, "Started listening.")
-        while True:
-            c, addr = s.accept()
-            server_msgs = c.recv(1024).split("\t")
+        running = True
+        try:
+            s = socket.socket()
+            s.bind(("localhost", 51351))
+            s.listen(5)
+            consoleMsgs.addstr(self.name, "Started listening.")
+        except:
+            consoleMsgs.addstr(self.name, "Failed to start server.")
+            self.clients = 0
+            running = False
+        while running:
+            try:
+                c, addr = s.accept()
+                server_msgs = c.recv(1024).split("\t")
+            except:
+                consoleMsgs.addstr(self.name, "Failed listening to socket.")
+                running = False
+                break
             if server_msgs[0] == "path":
                 with git.condition:
                     git.setPath(server_msgs[1])
