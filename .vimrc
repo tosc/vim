@@ -626,9 +626,9 @@ else
 	cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>!git" : "t"
 endif
 
-"et filename opens opens a file with filename in a tmp folder.
-cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "e" ? "\<bs>Et" : "t"
-command -nargs=1 Et :e ~\.vim\tmp\tmp\<args>
+"tt filename opens opens a file with filename in a tmp folder.
+cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "t" ? "\<bs>Tt" : "t"
+command -nargs=1 Tt :e ~\.vim\tmp\tmp\<args>
 
 " Show the my normal and insert bindings.
 cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ? 
@@ -850,6 +850,18 @@ function! MDSettings()
 endfunction
 
 autocmd FileType markdown call MDSettings()
+" --------------------
+" ---- [4.15] NOTE ----
+function! NOTESettings()
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+endfunction
+
+" Files that end with .pass are now password files.
+autocmd BufNewFile,BufRead *.note set filetype=note
+
+autocmd Filetype note call PASSSettings()
+autocmd BufWritePost *.note execute "! python " . fnamemodify("~/git/vim/TagGenerator.py", ':p')
 " --------------------
 " --------------------
 " ---- [5] FOLDING ----
@@ -1349,7 +1361,9 @@ autocmd VimLeave * call OnExit()
 autocmd VimEnter * call AfterInit()
 
 function! CreateTempFile()
-	call writefile(getline(1,'$'), expand("~") . "/.vim/tmp/compilefiles/" . expand("%:t"))
+	if expand('%') != ''
+		call writefile(getline(1,'$'), expand("~") . "/.vim/tmp/compilefiles/" . expand("%:t"))
+	endif
 endfunction
 " --------------------
 " ---- [11] FUNCTIONS ----

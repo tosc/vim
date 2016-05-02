@@ -70,15 +70,9 @@ function! s:source_notes.action_table.open.func(candidate)
 			execute 'call mkdir("". "' . filepath . '")'
 			execute 'call mkdir("". "' . filepath . "/notes" . '")'
 			execute 'call mkdir("". "' . filepath . "/documentation" . '")'
-			call unite#start_temporary([
-			\ ['fil', path],
-			\ ['fil/n', path]],
-			\ {'prompt' : path  . '>'})
+			call UniteExplorer(path)
 		endif
 	else
-		call unite#start_temporary([
-		\ ['fil', path],
-		\ ['fil/n', path]],
-		\ {'prompt' : path  . '>'})
+		call UniteExplorer(path)
 	endif
 endfunction

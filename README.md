@@ -133,6 +133,7 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 ### Important
 * VH
 	- Add my taggenerator to VS.
+	- Add git draw to this.
 * Split my vimrc into a basefile that doesn't require any plugins and one that does.
 	- Keeps 2 repositories for the two versions.
 * Make a new repo for dotfiles and move my dotfiles there.
@@ -141,6 +142,10 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 * Remove addons for tags. Never use tags.
 * Remove addons for unite make, use my own external helper.
 * Look into fastfold, remove?
+* Only do the auto-save temp file when execute mode is running.
+* Add readline for the statusbar to slowgit update like before.
+* Change smartjump bindings.
+* Look into why vim is so slow when my VH is offline.
 
 ### Mid
 * VimHelper
@@ -174,6 +179,7 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 * Make my draw into a real plugin.
 * Download all external binaries for windows and put them at a convenient
 	location to make installing vim easier.
+* Add bat and sh script for installing my vim.
 * Better names in ö.
 * cp in unite.
 * Split vimrc into smaller files. Especially want to move foldingmethods to separate.
