@@ -14,14 +14,13 @@ Vim settings.
 5. Install python.
 7. Install lua.
 8. Install clang.
-9. Install ctags.
-10. Install LaTex.
-11. Install Eclipse.
-12. Install ECLIM.
-13. Install Mono-develop. (http://www.mono-project.com/)
-14. Build clang_complete.  
+9. Install LaTex.
+10. Install Eclipse.
+11. Install ECLIM.
+12. Install Mono-develop. (http://www.mono-project.com/)
+13. Build clang_complete.  
 `` make install ``
-15. Create a vimrc with the lines:  
+14. Create a vimrc with the lines:  
 ```VimL
 "let g:minimalMode = 1
 "let g:disablePlugins = 1
@@ -137,9 +136,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 * Split my vimrc into a basefile that doesn't require any plugins and one that does.
 	- Keeps 2 repositories for the two versions.
 * Make a new repo for dotfiles and move my dotfiles there.
-* Delete shougos addon for sessoins and remove anything that has to do
-	with sessions. Never use them.
-* Remove addons for tags. Never use tags.
 * Remove addons for unite make, use my own external helper.
 * Look into fastfold, remove?
 * Only do the auto-save temp file when execute mode is running.

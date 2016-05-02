@@ -6,10 +6,8 @@ let requiredFolders = [
 		\ "~/.vim/tmp/swapfiles",
 		\ "~/.vim/tmp/gitstatusline",
 		\ "~/.vim/tmp/compilefiles",
-		\ "~/.vim/tags",
 		\ "~/.cache",
-		\ "~/.cache/unite",
-		\ "~/.cache/unite/session" ]
+		\ "~/.cache/unite" ]
 for rawfolder in requiredFolders
 	let folder = fnamemodify(rawfolder, ":p")
 	if !isdirectory(folder)
@@ -133,9 +131,6 @@ endif
 	Plugin 'tpope/vim-fugitive'
 	Plugin 'tpope/vim-surround'
 	Plugin 'Konfekt/FastFold'
-	Plugin 'majutsushi/tagbar'
-	Plugin 'xolox/vim-easytags'
-	Plugin 'xolox/vim-misc'
 
 	" Required by vundle
 	call vundle#end()
@@ -232,11 +227,7 @@ endfunction
 call unite#custom_action('directory', 'my_dir', my_dir)
 call unite#custom#default_action('directory', 'my_dir')
 " --------------------
-" ---- [2.5] EASYTAGS ----
-let g:easytags_updatetime_warn = 0
-let g:easytags_by_filetype = '~/.vim/tags/'
-" --------------------
-" ---- [2.6] NEOCOMPLETE ----
+" ---- [2.5] NEOCOMPLETE ----
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#skip_auto_completion_time = ''
 let g:neocomplete#auto_completion_start_length = 2
@@ -283,7 +274,7 @@ let g:neocomplete#enable_fuzzy_completion = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 " --------------------
-" ---- [2.7] SYNTASTIC ----
+" ---- [2.6] SYNTASTIC ----
 let g:syntastic_mode_map = { "mode": "active",
 			   \ "active_filetypes": [],
 			   \ "passive_filetypes": ["vim"] }
