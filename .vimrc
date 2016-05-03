@@ -28,7 +28,10 @@ if !exists('g:disableExternal')
 	let g:disableExternal = 0
 endif
 if !exists('g:startedExternal')
-	let g:startedExternal = 5
+	let g:startedExternal = 0
+endif
+if !exists('g:timeoutVH')
+	let g:timeoutVH = 5
 endif
 if !exists('g:disableVimHelper')
 	let g:disableVimHelper = 0
@@ -1740,9 +1743,7 @@ endfunction
 " --------------------
 " ---- [11.9] ON EXIT ----
 function! OnExit()
-	if !g:disableExternal && !g:disablePlugins
-		call KillAllExternal()
-	endif
+	call KillAllExternal()
 
 	call VimHelperMessage("client", "-1")
 endfunction
@@ -1764,7 +1765,7 @@ endfunction
 " --------------------
 " ---- [11.11] VIMHELPER ----
 function! VimHelperMessage(type, message)
-if !g:disableVimHelper && g:startedExternal > 0
+if !g:disableVimHelper && g:timeoutVH > 0
 python << endpy
 import socket
 try:
@@ -1772,22 +1773,24 @@ try:
 	s.connect(("localhost", 51351))
 
 	s.send(vim.eval("a:type") + "\t" + vim.eval("a:message"))
-	vim.command("let g:startedExternal = 5")
+	vim.command("let g:timeoutVH = 5")
 except:
 	vim.command("call VimHelperStart()")
-	vim.command("let g:startedExternal -= 1")
+	vim.command("let g:timeoutVH -= 1")
 endpy
 endif
 endfunction
 
 function! VimHelperRestart()
+	let g:startedExternal = 5
 	call VimHelperMessage("client", "0")	
 	call VimHelperStart()
 endfunction
 function! VimHelperStart()
-	if !g:minimalMode && !g:disableExternal
+	if !g:disableExternal
 		Spawn! -dir=~ python git\vim\VimHelper.py
 	endif
+	let g:startedExternal = 1
 endfunction
 
 function! VimHelperCompile()
