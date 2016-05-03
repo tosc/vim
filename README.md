@@ -32,24 +32,23 @@ source ~/git/vim/.vimrc
 
 1. Install mingw, make sure you select packages for msys. 
 2. Add mingw/bin and mingw/msys/ * /bin to path.
-3. Add ctags to path.
-4. Add eclimd to path.
-5. Add clang to path.
-6. Add python27 to path.
-7. Add lua to path.
-8. Add mono/bin to path.
-9. Compile omnisharp.  
+3. Add eclimd to path.
+4. Add clang to path.
+5. Add python27 to path.
+6. Add lua to path.
+7. Add mono/bin to path.
+8. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
-10. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
+9. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
 `` make -f make_mingw32.mak``  
 `` make -f make_mingw64.mak``  
-11. Install curses-package for python. Download it here: http://www.lfd.uci.edu/~gohlke/pythonlibs/#curses
+10. Install curses-package for python. Download it here: http://www.lfd.uci.edu/~gohlke/pythonlibs/#curses
 `` python -m pip downloaded-filename.whl ``
-12. Resize cmd globally. (Rightclick title of cmd and select defaults.)
 
 ##### (Optional)
 
-1. Add VIM as editor for files without extension (Optional).  
+1. Resize cmd globally. (Rightclick title of cmd and select defaults.)
+2. Add VIM as editor for files without extension (Optional).  
 ``[HKEY_CLASSES_ROOT.] @="No Extension"``  
 ``[HKEY_CLASSES_ROOT\No Extension]``  
 ``[HKEY_CLASSES_ROOT\No Extension\Shell]``  
@@ -131,7 +130,9 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 
 ### Important
 * Look into fastfold, remove?
-* Change smartjump bindings.
+* Test smartjump bindings. Add 0 and $ as things you can smartjump to.
+* Try removing my delim functions. Learn to use smartjump instead.
+
 
 ### Mid
 * VH

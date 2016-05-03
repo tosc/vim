@@ -317,8 +317,8 @@ else
 endif
 
 "SmartJump
-nnoremap <C-E> :call SmartJump()<CR>
-nnoremap <C-B> :call SmartJumpBack()<CR>
+nnoremap <C-L> :call SmartJump()<CR>
+nnoremap <C-H> :call SmartJumpBack()<CR>
 
 "Switches repeat f/F, feels more logical on swedish keyboard.
 nnoremap , ;
@@ -368,7 +368,7 @@ inoremap <C-Del> <C-O>de
 inoremap <S-CR> <C-O>O
 
 " Autocomplete filename.
-inoremap <C-F> <C-X><C-F>
+inoremap <C-Y> <C-X><C-F>
 
 " Autocomplete spelling
 inoremap <C-S> <C-X><C-S>
@@ -385,15 +385,19 @@ endif
 " else jump to next(previous) delimiter.
 inoremap <pageup> <C-R>=SmartJump()<CR>
 inoremap <pagedown> <C-R>=SmartJumpBack()<CR>
-inoremap <C-E> <C-R>=SmartJump()<CR>
-inoremap <C-B> <C-R>=SmartJumpBack()<CR>
+inoremap <C-L> <C-R>=SmartJump()<CR>
+inoremap <C-H> <C-R>=SmartJumpBack()<CR>
 
 " Readline bindings.
 inoremap <C-A> <home>
 inoremap <C-K> <C-O>D
+inoremap <C-E> <C-O>A
+inoremap <C-I> <C-E>
+inoremap <C-B> <left>
+inoremap <C-F> <right>
 
-" Pressing enter chooses completion if completion window is up.
-inoremap <expr> <CR> pumvisible() ? '<C-e><CR>' : SpecialDelim("\<CR>")
+" Enter works even when completionmenu is up.
+inoremap <expr> <CR> pumvisible() ? '<CR>' : SpecialDelim("\<CR>")
 
 " Text chains that do special tings in Insert.
 let g:keychains = [
@@ -436,8 +440,8 @@ xnoremap å c<C-R>=PythonMath()<CR>
 " else jump to next(previous) delimiter.
 snoremap <pageup> <ESC>:call SmartJump()<CR>
 snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
-snoremap <C-E> <ESC>:call SmartJump()<CR>
-snoremap <C-B> <ESC>:call SmartJumpBack()<CR>
+snoremap <C-L> <ESC>:call SmartJump()<CR>
+snoremap <C-H> <ESC>:call SmartJumpBack()<CR>
 
 if !g:disablePlugins
 	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
@@ -611,6 +615,8 @@ cnoremap <C-BS> <C-W>
 cnoremap <C-A> <home>
 cnoremap <C-E> <end>
 cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
+cnoremap <C-B> <left>
+cnoremap <C-F> <right>
 
 cnoremap <expr> h<space> getcmdtype() == ":" && getcmdline() == "" ? "call FullScreenHelp('')\<left>\<left>" : "h "
 cnoremap <expr> n getcmdtype() == ":" && getcmdline() == "t" ? 'abnew' : "n"
@@ -654,9 +660,9 @@ autocmd FileType unite call UniteBinds()
 " --------------------
 " ---- [3.7] FUGITIVE ----
 function! FugitiveBindings()
-	" Fast movement for :GStatus
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
+	nmap <buffer> gd D
 	nmap <buffer> <esc> :bd<cr>
 endfunction
 " --------------------
