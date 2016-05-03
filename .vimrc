@@ -27,8 +27,8 @@ endif
 if !exists('g:disableExternal')
 	let g:disableExternal = 0
 endif
-if !exists('g:startExternal')
-	let g:startedExternal = 0
+if !exists('g:startedExternal')
+	let g:startedExternal = 5
 endif
 if !exists('g:disableVimHelper')
 	let g:disableVimHelper = 0
@@ -1764,7 +1764,7 @@ endfunction
 " --------------------
 " ---- [11.11] VIMHELPER ----
 function! VimHelperMessage(type, message)
-if !g:disableVimHelper
+if !g:disableVimHelper && g:startedExternal > 0
 python << endpy
 import socket
 try:
@@ -1772,10 +1772,10 @@ try:
 	s.connect(("localhost", 51351))
 
 	s.send(vim.eval("a:type") + "\t" + vim.eval("a:message"))
+	vim.command("let g:startedExternal = 5")
 except:
-	if vim.eval("g:startedExternal") == "0":
-	    	vim.command("call VimHelperStart()")
-	vim.command("let g:startedExternal = 1")
+	vim.command("call VimHelperStart()")
+	vim.command("let g:startedExternal -= 1")
 endpy
 endif
 endfunction

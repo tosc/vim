@@ -132,7 +132,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 ### Important
 * Look into fastfold, remove?
 * Change smartjump bindings.
-* Look into why vim is so slow when my VH is offline.
 
 ### Mid
 * VH
