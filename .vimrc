@@ -210,6 +210,10 @@ function! UniteExplorer(folder)
 	call unite#start([['file'], ['filn'], ['dirn']], {'input' : UniteFixPath(a:folder) . "/"})
 endfunction
 
+function! UniteOpen()
+	call unite#start([['buffer'], ['file_mru']])
+endfunction
+
 let my_dir = {
       \ 'description' : 'yank word or text',
       \ 'is_selectable' : 1,
@@ -301,7 +305,7 @@ if !g:disablePlugins
 	" Search file using unite.
 	nnoremap ä :Unite line -custom-line-enable-highlight<CR>
 
-	nnoremap ö :Unite buffer file_mru<CR>
+	nnoremap ö :call UniteOpen()<CR>
 	nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
 else
 	nnoremap ä /
@@ -524,7 +528,7 @@ autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
 " N - Next buffer
 map <leader>n :bn <CR>
 " O - Open file explorer
-map <leader>o :Unite buffer file_mru<CR>
+map <leader>o :call UniteOpen()<CR>
 map <leader>O :call UniteExplorer(expand("%:p:h"))<CR>
 map <leader>p :bp <CR>
 " Q - Quit window (not used?)

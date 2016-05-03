@@ -157,7 +157,7 @@ class ConsoleCSL:
 
 compileMsgs = CSL(compileWindow)
 consoleMsgs = ConsoleCSL(consoleWindow, gutter)
-consoleMsgs.addstr("client", "Started vim-helper.")
+consoleMsgs.addstr("Client", "Started vim-helper.")
 
 # Custom curses addstr that actually shows you what's wrong.
 def caddstr(box, x, y, string, errorOutput=False):
@@ -192,7 +192,10 @@ class Textbox(Thread):
     def run(self):
         while(True):
             output = textpad.Textbox(textbox).edit()
-            console.process.stdin.write(output + "\n")
+            if re.match("(quit)|(:q)|(exit)", output):
+                server.clients = -1
+            else:
+                console.process.stdin.write(output + "\n")
             textbox.clear()
 
 """
@@ -510,10 +513,10 @@ while(True):
     if server.clients == -1:
         sys.exit()
     if server.clients == 0:
-        consoleMsgs.addstr("Main", "No vim clients left")
+        consoleMsgs.addstr("Client", "No vim clients left")
         kill = True
         for i in range(0,3):
-            consoleMsgs.addstr("Main", "Killing helper in {}sec".format(3-i))
+            consoleMsgs.addstr("Client", "Killing helper in {}sec".format(3-i))
             time.sleep(1)
             if server.clients > 0:
                 kill = False

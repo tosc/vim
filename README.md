@@ -130,19 +130,14 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 # TODO
 
 ### Important
-* VH
-	- Add git draw to this.
-* Make a new repo for dotfiles and move my dotfiles there.
 * Look into fastfold, remove?
-* Only do the auto-save temp file when execute mode is running.
-* Add readline for the statusbar to slowgit update like before.
 * Change smartjump bindings.
 * Look into why vim is so slow when my VH is offline.
 
 ### Mid
+* VH
+	- Add git draw to this.
 * Find better way of calling help, make it so that I can use autocompletetion.
-* Fix bug with unite and buffers (seems to happen when you have an empty
-	buffer)
 * Fix my pythonsnippets for method and function. Don't use the same
 	helpfunction, use different ones and jump depending on that.
 	In other words, if completing method then add that to a class.
@@ -152,27 +147,21 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	Try this mapping:
 	xnoremap p pgvy
 	Does this break any actions that use operators with p?
-* Use alt bindings for jumping between tabtops? Alt+H Alt-L
-	Look to make sure those are safe to bind.
 * Split my vimrc into a basefile that doesn't require any plugins and one that does.
 	- Keeps 2 repositories for the two versions.
+	- Split vimrc into smaller files. Especially want to move foldingmethods to separate.
+* Try using YCMD server for code completion, if that doesn't work then try 
+	moving my code completion to VH.
+* Only do the auto-save temp file when execute mode is running.
+* Add readline for the statusbar to slowgit update like before.
 
 ### Low
-* VimHelper
+* Make a new repo for dotfiles and move my dotfiles there.
 * VimHelper
 	Check if you can make python focus other vim instance. If so,
 		add other vims buffers to ö and make them switchable with ö.
-	Move my autocomplete to vimhelper.
-* Add a bind in unite to change sorting method from time to name.
 * TagGenerator
 	* helptags for vim
-	* todo
-* Change my unite snippet source to non volatile.
-* Echo result of rm mv add. Echomsg?
-* Make my draw into a real plugin.
 * Download all external binaries for windows and put them at a convenient
 	location to make installing vim easier.
 * Add bat and sh script for installing my vim.
-* Better names in Ã¶.
-* cp in unite.
-* Split vimrc into smaller files. Especially want to move foldingmethods to separate.
