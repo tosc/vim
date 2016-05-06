@@ -129,7 +129,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 # TODO
 
 ### Important
-* Look into fastfold, remove?
 * Move scripts to scripts folder.
 * Try removing my delim functions and learn to use C-B C-J C-F C-K instead. 
 	If you still miss delim then change them into Ultisnips ones.

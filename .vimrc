@@ -795,7 +795,6 @@ function! PASSSettings()
 	setlocal foldexpr=PassFolding(v:lnum)
 	setlocal foldtext=PassFoldText()
 	setlocal foldminlines=0
-	FastFoldUpdate
 endfunction
 
 function! GenPass(...)
@@ -1351,10 +1350,6 @@ hi default link uniteSource__Fil_Special PreProc
 " ---- [10] AUTOCMD ----
 autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
-
-" To make FastFold calculate the folds when you open a file.
-autocmd BufReadPost * normal zuz
-
 autocmd TextChanged,TextChangedI * call HighlightGitDisable()
 autocmd TextChanged,TextChangedI * call CreateTempFile()
 autocmd InsertCharPre * let v:char = Delim(v:char)
