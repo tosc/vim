@@ -464,7 +464,26 @@ noremap <leader>f :Unite line -custom-line-enable-highlight<CR>
 " G - Git
 map <leader>gc :!git -C %:h commit<CR>
 map <leader>gd :!git -C %:h diff<CR>
-map <leader>gD :!git -C %:h diff<CR>
+map <leader>gD :exec ":Gvdiff " input(""
+	\ . "HEAD            .git/HEAD"
+	\ . "\nmaster          .git/refs/heads/master"
+	\ . "\nHEAD^{}         The commit referenced by HEAD"
+	\ . "\nHEAD^           The parent of the commit referenced by HEAD"
+	\ . "\nHEAD:           The tree referenced by HEAD"
+	\ . "\n/HEAD           The file named HEAD in the work tree"
+	\ . "\nMakefile        The file named Makefile in the work tree"
+	\ . "\nHEAD^:Makefile  The file named Makefile in the parent of HEAD"
+	\ . "\n:Makefile       The file named Makefile in the index (writable)"
+	\ . "\n-               The current file in HEAD"
+	\ . "\n^               The current file in the previous commit"
+	\ . "\n~3              The current file 3 commits ago"
+	\ . "\n:               .git/index (Same as :Gstatus)"
+	\ . "\n:0              The current file in the index"
+	\ . "\n:1              The current file's common ancestor during a conflict"
+	\ . "\n:2              The current file in the target branch during a conflict"
+	\ . "\n:3              The current file in the merged branch during a conflict"
+	\ . "\n:/foo           The most recent commit with \"foo\" in the message\n"
+	\ )<CR>
 map <leader>gf :!git -C %:h fetch<CR> :call UpdateGitInfo()<CR>
 map <leader>gF :!git -C %:h pull<CR> :call UpdateGitInfo()<CR>
 map <leader>gg :!git -C %:h status<CR>
@@ -486,7 +505,7 @@ map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/gi
 
 if !g:disablePlugins
 	map <leader>gc :Gcommit<CR>
-	map <leader>gd :Gdiff<CR>
+	map <leader>gd :Gvdiff<CR>
 	map <leader>gg :Gstatus<CR>
 endif
 " H - Help, show binds.
