@@ -90,16 +90,16 @@ textbox = screen.subwin(1, textboxWidth - 2, offsetY + 1, 1)
 add_screen(textboxborder)
 textboxborder.border(0)
 
-"""
-Curses String List
-
-This class make sure that the strings added follow the correct formatting for the curses window.
-they will be drawn as.
-
-Parameters:
-    box - The box these strings will be drawn too.
-"""
 class CSL:
+    """
+    Curses String List
+
+    This class make sure that the strings added follow the correct formatting for the curses window.
+    they will be drawn as.
+
+    Parameters:
+        box - The box these strings will be drawn too.
+    """
     def __init__(self, box):
         self.lines = []
         self.lock = Lock()
@@ -135,14 +135,14 @@ class CSL:
                     string = self.lines[lineNr]
                 caddstr(self.box, 1, i+1, '{0:{1}s}'.format(string, self.boxWidth-2))
 
-"""
-Custom CSL that creates 2 CSLs where theirs strings syncs their y locations.
-
-Parameters:
-    box - The first box where strings will be added
-    box - The second box where strings will be added
-"""
 class ConsoleCSL:
+    """
+    Custom CSL that creates 2 CSLs where theirs strings syncs their y locations.
+
+    Parameters:
+        box - The first box where strings will be added
+        box - The second box where strings will be added
+    """
     def __init__(self, consoleBox, gutterBox):
         self.cMsgs = CSL(consoleBox)
         self.gMsgs = CSL(gutterBox)
@@ -179,10 +179,10 @@ def caddstr(box, x, y, string, errorOutput=False):
             print "x/maxX,y/maxY): {},{} ({},{})".format(x+len(string),maxX,y,maxY)
             print "|String| : |{}|".format(string)
 
-"""
-Inputfield for console
-"""
 class Textbox(Thread):
+    """
+    Inputfield for console
+    """
     def __init__(self):
         Thread.__init__(self)
         self.daemon = True
@@ -198,10 +198,10 @@ class Textbox(Thread):
                 console.process.stdin.write(output + "\n")
             textbox.clear()
 
-"""
-An external console that you can send commands to
-"""
 class Console(Thread):
+    """
+    An external console that you can send commands to
+    """
     def __init__(self):
         Thread.__init__(self)
         self.daemon = True
@@ -220,10 +220,10 @@ class Console(Thread):
                 if line:
                     consoleMsgs.addstr(self.name, line)
 
-"""
-Draws gui
-"""
 class Drawer(Thread):
+    """
+    Draws gui
+    """
     def __init__(self):
         Thread.__init__(self)
         self.draw = True
@@ -299,13 +299,13 @@ class Drawer(Thread):
                 y += 2
 
 
-"""
-Baseclass for all workers.
-
-Parameters:
-    name - name of worker
-"""
 class Worker(Thread):
+    """
+    Baseclass for all workers.
+
+    Parameters:
+        name - name of worker
+    """
     def __init__(self, name):
         Thread.__init__(self)
 
@@ -338,14 +338,14 @@ class Worker(Thread):
         pass
 
 
-"""
-Runs a script once and prints the output to the compiler window.
-
-Paramters:
-    script - the script to call, ex "pdflatex test.tex --output-error"
-    silent - disable output
-"""
 class RunScript(Worker):
+    """
+    Runs a script once and prints the output to the compiler window.
+
+    Paramters:
+        script - the script to call, ex "pdflatex test.tex --output-error"
+        silent - disable output
+    """
     def __init__(self, script, folder=scriptFolder, silent=False):
         Worker.__init__(self, "Script")
         self.daemon = True
@@ -377,10 +377,10 @@ class RunScript(Worker):
             consoleMsgs.addstr(self.name, str(e))
         self.running = False
 
-"""
-Autobuilds selected file. Runs when sucessful.
-"""
 class Compiler(Thread):
+    """
+    Autobuilds selected file. Runs when sucessful.
+    """
     global compileMsgs
     def __init__(self):
         Thread.__init__(self)
@@ -442,10 +442,10 @@ class Compiler(Thread):
         self.currentPath = path
         self.currentFolder,self.currentFile = os.path.split(path)
 
-"""
-Parses communication from VIM
-"""
 class Server(Thread):
+    """
+    Parses communication from VIM
+    """
     def __init__(self):
         Thread.__init__(self)
         self.name = "Server"
