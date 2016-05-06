@@ -64,3 +64,4 @@ streamopen	Close a stream
 streamread	Read from a stream
 streamreadline	Read a line from a stream
 streamwrite	write to a stream
+lorem	Lorem Ipsum - 50 Words

@@ -316,16 +316,9 @@ else
 	nnoremap Ö :e
 endif
 
-"SmartJump
-nnoremap <C-L> :call SmartJump()<CR>
-nnoremap <C-H> :call SmartJumpBack()<CR>
-
 "Switches repeat f/F, feels more logical on swedish keyboard.
 nnoremap , ;
 nnoremap ; ,
-
-" Jump to tag. C-T to jump back.
-nnoremap <C-J> <C-]>
 
 " Select pasted text.
 nnoremap <expr> gp '`[' . getregtype()[0] . '`]'
@@ -367,9 +360,6 @@ inoremap <C-Del> <C-O>de
 " Shift-Enter acts like O in normal
 inoremap <S-CR> <C-O>O
 
-" Autocomplete filename.
-inoremap <C-Y> <C-X><C-F>
-
 " Autocomplete spelling
 inoremap <C-S> <C-X><C-S>
 
@@ -381,23 +371,25 @@ else
 	inoremap <expr><TAB> getline(".")[col('.') - 2] =~ '\w' ? '<C-X><C-N>' : SpecialDelim("\<TAB>")
 endif
 
-" Jump to next(previous) ultisnips location if one exists, 
-" else jump to next(previous) delimiter.
-inoremap <pageup> <C-R>=SmartJump()<CR>
-inoremap <pagedown> <C-R>=SmartJumpBack()<CR>
-inoremap <C-L> <C-R>=SmartJump()<CR>
-inoremap <C-H> <C-R>=SmartJumpBack()<CR>
+let g:UltiSnipsJumpForwardTrigger="<C-J>"
+let g:UltiSnipsJumpBackwardTrigger="<C-K>"
+inoremap <C-J> <C-R>=SmartJump()<CR>
+inoremap <C-K> <C-R>=SmartJumpBack()<CR>
 
 " Readline bindings.
 inoremap <C-A> <home>
-inoremap <C-K> <C-O>D
 inoremap <C-E> <C-O>A
-inoremap <C-I> <C-E>
 inoremap <C-B> <left>
 inoremap <C-F> <right>
+inoremap <C-H> <Backspace>
+
+inoremap <A-B> <C-O>b
+inoremap â <C-O>b
+inoremap <A-F> <C-O>w
+inoremap æ <C-O>w
 
 " Enter works even when completionmenu is up.
-inoremap <expr> <CR> pumvisible() ? '<CR>' : SpecialDelim("\<CR>")
+inoremap <expr> <CR> pumvisible() ? '<C-E><CR>' : SpecialDelim("\<CR>")
 
 " Text chains that do special tings in Insert.
 let g:keychains = [
@@ -435,13 +427,6 @@ vnoremap ; ,
 xnoremap + $
 
 xnoremap å c<C-R>=PythonMath()<CR>
-
-" Jump to next(previous) ultisnips location if one exists,
-" else jump to next(previous) delimiter.
-snoremap <pageup> <ESC>:call SmartJump()<CR>
-snoremap <pagedown> <ESC>:call SmartJumpBack()<CR>
-snoremap <C-L> <ESC>:call SmartJump()<CR>
-snoremap <C-H> <ESC>:call SmartJumpBack()<CR>
 
 if !g:disablePlugins
 	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
@@ -1491,8 +1476,11 @@ endfunction
 " ---- [11.1] JUMP ----
 " Jumps you to the next/previous ultisnips location if exists.
 " Else it jumps to the next/previous delimiter.
-" Default delimiters: "'(){}[]
-" To change default delimiters just change b:smartJumpElements
+" Else jumps to $/^
+" To change default delimiters just change g:smartJumpElements
+if !exists('g:smartJumpElements')
+	let g:smartJumpElements = "[]'\"(){}<>\[\$]"
+endif
 function! SmartJump()
 	pclose
 	if !g:disablePlugins
@@ -1501,51 +1489,48 @@ function! SmartJump()
 			return ""
 		endif
 	endif
-	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}<>\[\$]"
-	endif
 	let cursorPos = getpos('.')
-	let pos = match(getline('.'), b:smartJumpElements, cursorPos[2] - 1)
+	let pos = match(getline('.'), g:smartJumpElements, cursorPos[2] - 1)
 	if pos == -1
-		return ""
+		normal $
 	else
 		let cursorPos[2] = pos + 1
 		call setpos('.', cursorPos)
-		call feedkeys("\<right>",'i')
 	endif
+	call feedkeys("\<right>",'i')
 	return ""
 endfunction
 function! SmartJumpBack()
+	pclose
 	if !g:disablePlugins
 		call UltiSnips#JumpBackwards()
 		if g:ulti_jump_backwards_res == 1
 			return ""
 		endif
 	endif
-	if !exists("b:smartJumpElements")
-		let b:smartJumpElements = "[]'\"(){}<>\[\$]"
-	endif
 	let cursorPos = getpos('.')
-	let newPos = match(getline('.'), b:smartJumpElements)
+	let newPos = match(getline('.'), g:smartJumpElements)
 	let pos = newPos
+	let matchCount = 1
 	if pos == -1 || pos > cursorPos[2] + 1
+		normal ^
 		return ""
 	endif
-	let matchCount = 1
 	while newPos < cursorPos[2] - 1
 		if newPos == -1
 			break
 		endif
 		let pos = newPos
-		let newPos = match(getline('.'), b:smartJumpElements, 0, matchCount)
+		let newPos = match(getline('.'), g:smartJumpElements, 0, matchCount)
 		let matchCount += 1
 	endwhile
-	let cursorPos[2] = pos + 1
-	call setpos('.', cursorPos)
+	if cursorPos[2] == pos + 1
+		normal ^
+	else
+		let cursorPos[2] = pos + 1
+		call setpos('.', cursorPos)
+	endif
 	return ""
-endfunction
-function! DelimMatch(text, start, end)
-let b:smartJumpElements = "[]'\"(){}<>\[]"
 endfunction
 " --------------------
 " ---- [11.2] TEMPBUFFER ----

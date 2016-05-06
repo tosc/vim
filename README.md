@@ -130,13 +130,15 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 
 ### Important
 * Look into fastfold, remove?
-* Test smartjump bindings. Add 0 and $ as things you can smartjump to.
-* Try removing my delim functions. Learn to use smartjump instead.
+* Try removing my delim functions and learn to use C-B C-J C-F C-K instead. 
+	If you still miss delim then change them into Ultisnips ones.
+* Move scripts to scripts folder.
 
 
 ### Mid
 * VH
 	- Add git draw to this.
+        - Save compiletimes and use them for lastTime estimation.
 * Find better way of calling help, make it so that I can use autocompletetion.
 * Fix my pythonsnippets for method and function. Don't use the same
 	helpfunction, use different ones and jump depending on that.
