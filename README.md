@@ -130,25 +130,16 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 
 ### Important
 * Look into fastfold, remove?
+* Move scripts to scripts folder.
 * Try removing my delim functions and learn to use C-B C-J C-F C-K instead. 
 	If you still miss delim then change them into Ultisnips ones.
-* Move scripts to scripts folder.
-
 
 ### Mid
 * VH
 	- Add git draw to this.
         - Save compiletimes and use them for lastTime estimation.
+	- Add code-completion.
 * Find better way of calling help, make it so that I can use autocompletetion.
-* Fix my pythonsnippets for method and function. Don't use the same
-	helpfunction, use different ones and jump depending on that.
-	In other words, if completing method then add that to a class.
-	If completing function then add that outside class.
-* Look into vim-operator-flashy.
-* Add mapping to fix p removing the yank register.
-	Try this mapping:
-	xnoremap p pgvy
-	Does this break any actions that use operators with p?
 * Split my vimrc into a basefile that doesn't require any plugins and one that does.
 	- Keeps 2 repositories for the two versions.
 	- Split vimrc into smaller files. Especially want to move foldingmethods to separate.
@@ -156,6 +147,10 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	moving my code completion to VH.
 * Only do the auto-save temp file when execute mode is running.
 * Add readline for the statusbar to slowgit update like before.
+* Add mapping to fix p removing the yank register.
+	Try this mapping:
+	xnoremap p pgvy
+	Does this break any actions that use operators with p?
 
 ### Low
 * Make a new repo for dotfiles and move my dotfiles there.
