@@ -769,7 +769,7 @@ autocmd Filetype todo call TODOSettings()
 function! PythonSettings()
 	setlocal omnifunc=
 	setlocal foldexpr=PythonFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
+	setlocal foldtext=PythonFoldText()
 endfunction
 
 autocmd Filetype python call PythonSettings()
@@ -903,7 +903,7 @@ function! OneIndentBraceFolding(lnum)
 		endif
 	else
 		if g:InsideBrace == 1
-			if line =~ '^\s*}' && indent(a:lnum)/8 == 1
+			if line =~ '^\s*}' && indent(a:lnum)/&shiftwidth == 1
 				let g:InsideBrace = 0
 				if  nextline =~ '^\s*$'
 					let g:InsideVar = 1
@@ -932,19 +932,19 @@ function! OneIndentBraceFolding(lnum)
 			elseif line =~ '^\s*/\*'
 				let g:InsideComment = 1
 				return '>1'
-			elseif line =~ '{' && indent(a:lnum)/8 == 1
+			elseif line =~ '{' && indent(a:lnum)/&shiftwidth == 1
 				let g:InsideBrace = 1
 				return ">1"
-			elseif line =~ '/// <summary>' && indent(a:lnum)/8 == 1
+			elseif line =~ '/// <summary>' && indent(a:lnum)/&shiftwidth == 1
 				let g:InsideBrace = 1
 				return ">1"
-			elseif line =~ '@Override' && indent(a:lnum)/8 == 1
+			elseif line =~ '@Override' && indent(a:lnum)/&shiftwidth == 1
 				let g:InsideBrace = 1
 				return ">1"
-			elseif nextline =~ '^\s*{' && indent(a:lnum + 1)/8 == 1
+			elseif nextline =~ '^\s*{' && indent(a:lnum + 1)/&shiftwidth == 1
 				let g:InsideBrace = 1
 				return ">1"
-			elseif indent(a:lnum)/8 >= 1
+			elseif indent(a:lnum)/&shiftwidth >= 1
 				return 1
 			else
 				return 0
@@ -1014,10 +1014,10 @@ function! IndentFolding(lnum)
 	if line =~ '^import' || line =~ '^from'
 		return 1
 	elseif line =~ '\S'
-		if indent(a:lnum)/8 < indent(a:lnum+1)/8
-			return ">" . indent(a:lnum+1)/8
+		if indent(a:lnum)/&shiftwidth < indent(a:lnum+1)/&shiftwidth
+			return ">" . indent(a:lnum+1)/&shiftwidth
 		else
-			return indent(a:lnum)/8
+			return indent(a:lnum)/&shiftwidth
 		endif
 	else
 		return '='
@@ -1026,30 +1026,26 @@ endfunction
 " --------------------
 " ---- [5.1.6] PYTHON ----
 function! PythonFolding(lnum)
+	let pline = getline(a:lnum-1)
 	let line = getline(a:lnum)
+	let nline = getline(a:lnum+1)
 	if line =~ '^import' || line =~ '^from'
 		let g:InsideVar = 0
 		return 1
 	elseif line =~ '\S'
-		if line =~ '^\s*def'
-			let g:InsideVar = 1
-			return ">1"
-		elseif line =~ '^\s*class'
+		if line =~ '^\s*def' || line =~ '^\s*class'
 			let g:InsideVar = 0
-			return 0
-		elseif indent(a:lnum)/8 < indent(a:lnum+1)/8 && g:InsideVar == 0
-			return ">1"
-		else
-			if g:InsideVar > indent(a:lnum)/8 || g:InsideVar == 0
-				let g:InsideVar = 0
-				return indent(a:lnum)/8
+			return ">" . (indent(a:lnum)/&shiftwidth + 1)
+		elseif indent(a:lnum) == 0
+			if g:InsideVar == 0
+				let g:InsideVar = 1
+				return ">1"
 			else
-				return g:InsideVar
+				return 1
 			endif
 		endif
-	else
-		return '='
 	endif
+	return '='
 endfunction
 " --------------------
 " ---- [5.1.7] LATEX ----
@@ -1058,13 +1054,13 @@ function! IndentFolding2(lnum)
 	let line = getline(a:lnum)
 	if line =~ "^\s*$"
 		return '='
-	elseif indent(a:lnum)/8 < indent(a:lnum+1)/8
-		return ">" . indent(a:lnum+1)/8
-	elseif indent(a:lnum)/8 < indent(a:lnum-1)/8 && 
+	elseif indent(a:lnum)/&shiftwidth < indent(a:lnum+1)/&shiftwidth
+		return ">" . indent(a:lnum+1)/&shiftwidth
+	elseif indent(a:lnum)/&shiftwidth < indent(a:lnum-1)/&shiftwidth && 
 		\ (line =~ '^\s*\\end' || line =~ '^\s*\\]')
-		return "<" . indent(a:lnum-1)/8
+		return "<" . indent(a:lnum-1)/&shiftwidth
 	else
-		return indent(a:lnum)/8
+		return indent(a:lnum)/&shiftwidth
 	endif
 endfunction
 " --------------------
@@ -1141,6 +1137,22 @@ function! PassFoldText()
 	let line = getline(v:foldstart)
 	let words = split(line, '\t')
 	return words[0]
+endfunction
+" --------------------
+" ---- [5.2.3] PYTHON ----
+function! PythonFoldText()
+	let line = substitute(getline(v:foldstart),'^\s*','','')
+	let indent_level = indent(v:foldstart)
+	let indent = repeat(' ', indent_level)
+	let endText = v:foldend - v:foldstart
+	if line =~ '^import' || line =~ '^from'
+		let line = "import"	
+	elseif !(line =~ '^\s*def' || line =~ '^\s*class')
+		let line = " - " . endText . " lines of code"
+	endif
+	return indent . line . repeat(" ", 
+		\ winwidth(0)-strlen(indent . line . endText) - 5) . 
+		\ endText . " "
 endfunction
 " --------------------
 " --------------------
