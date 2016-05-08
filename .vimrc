@@ -520,7 +520,7 @@ map <leader>iI :Unite tagfolders:~/git/info/ <CR>
 map <leader>ia :Unite tagfolders:~/git/info/ <CR>
 map <leader>in :Unite notes:~/git/info/ <CR>
 map <leader>if :Unite notes:~/git/info/ <CR>
-map <leader>ir :call VimHelperMessage("tags", "")
+map <leader>ir :call VimHelperMessage("tags", "") <CR>
 " J - Format json file.
 map <leader>j :%!python -m json.tool<CR>
 " K
@@ -582,7 +582,7 @@ endif
 " V - .vimrc
 map <leader>vr :e ~/git/vim/README.md<CR>
 map <leader>vR :call VimHelperRestart()<CR>
-map <leader>vh :e ~/git/vim/VimHelper.py<CR>
+map <leader>vh :e ~/git/vim/scripts/VimHelper.py<CR>
 map <leader>vv :e ~/git/vim/.vimrc<CR>
 map <leader>vd :w !diff % -<CR>
 " W
@@ -743,15 +743,8 @@ function! SnippetSettings()
 	setlocal foldmethod=expr
 endfunction
 
-function! SnippetUpdate()
-	let oldCWD = getcwd()
-	cd ~\git\vim
-	Start python SnippetComplete.py
-	execute 'cd ' . oldCWD
-endfunction
-
-autocmd BufWritePost *.snippets call SnippetUpdate()
 autocmd Filetype snippets call SnippetSettings()
+autocmd BufWritePost *.snippets call VimHelperMessage("snippet", "")
 " --------------------
 " ---- [4.6] TODO ----
 function! TODOSettings()
@@ -1787,7 +1780,7 @@ function! VimHelperRestart()
 endfunction
 function! VimHelperStart()
 	if !g:disableExternal
-		Spawn! -dir=~ python git\vim\VimHelper.py
+		Spawn! -dir=~ python git\vim\scripts\VimHelper.py
 	endif
 	let g:startedExternal = 1
 endfunction
