@@ -536,6 +536,7 @@ map <leader>n :bn <CR>
 " O - Open file explorer
 map <leader>o :call UniteOpen()<CR>
 map <leader>O :call UniteExplorer(expand("%:p:h"))<CR>
+" P - Quickfix commands
 map <leader>p :bp <CR>
 " Q - Quickfix commands
 map <leader>qn :cn <CR>
@@ -619,7 +620,7 @@ cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
 cnoremap <C-B> <left>
 cnoremap <C-F> <right>
 
-cnoremap <expr> h<space> getcmdtype() == ":" && getcmdline() == "" ? "call FullScreenHelp('')\<left>\<left>" : "h "
+cnoremap <expr> h<space> getcmdtype() == ":" && getcmdline() == "" ? "tab help " : "h "
 cnoremap <expr> n getcmdtype() == ":" && getcmdline() == "t" ? 'abnew' : "n"
 cnoremap <expr> c getcmdtype() == ":" && getcmdline() == "t" ? 'abc' : "c"
 
@@ -634,13 +635,14 @@ endif
 cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "t" ? "\<bs>Tt" : "t"
 command -nargs=1 Tt :e ~\.vim\tmp\tmp\<args>
 
+" Maps :W to :w. To prevent errors when I sometimes hold shift too long during save.
+command W :w
+
 " Show the my normal and insert bindings.
 cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ? 
 			\ "\<bs>" . 'call OpohBuffer() <bar> setlocal syntax=vim <bar>
 			\ keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.4\]<CR>
 			\ :0,.-1d<CR>/^" ---- \[3.5\]<CR> :.,$d<CR>gg' : '?'
-
-" See insert for delimiterbindings.
 " --------------------
 " ---- [3.6] UNITE ----
 function! UniteBinds()
@@ -1738,24 +1740,7 @@ function! SpecialDelim(key)
 	return returnV
 endfunction
 " --------------------
-" ---- [11.8] HELP ----
-function! FullScreenHelp(search)
-	let curPath = expand('%')
-	execute("h " . a:search)
-	let helpPath = expand('%')
-	if curPath != helpPath
-		let curPos = getpos('.')
-		close
-		execute("e " . a:search . " [HELP]")
-		execute("r " . helpPath)
-		call setpos(".",curPos)
-		setlocal syntax=help
-		setlocal filetype=help
-		setlocal buftype=nowrite
-	endif
-endfunction
-" --------------------
-" ---- [11.9] ON EXIT ----
+" ---- [11.8] ON EXIT ----
 function! OnExit()
 	call KillAllExternal()
 
@@ -1770,14 +1755,14 @@ function! KillAllExternal()
 endfunction
 
 " --------------------
-" ---- [11.10] AFTER INIT ----
+" ---- [11.9] AFTER INIT ----
 function! AfterInit()
 	if !g:startedExternal
 		call VimHelperMessage("client", "1")
 	endif
 endfunction
 " --------------------
-" ---- [11.11] VIMHELPER ----
+" ---- [11.10] VIMHELPER ----
 function! VimHelperMessage(type, message)
 if !g:disableVimHelper && g:timeoutVH > 0
 python << endpy

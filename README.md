@@ -130,34 +130,35 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 
 ### Important
 * Move scripts to scripts folder.
-* Try removing my delim functions and learn to use C-B C-J C-F C-K instead. 
-	If you still miss delim then change them into Ultisnips ones.
+* Map :q to save current layout and quit. Map :Q to real quit. Have vim load
+	last session on load. (Last session will be empty on :Q)
 
 ### Mid
 * VH
 	- Add git draw to this.
         - Save compiletimes and use them for lastTime estimation.
-	- Add code-completion.
-* Find better way of calling help, make it so that I can use autocompletetion.
-* Split my vimrc into a basefile that doesn't require any plugins and one that does.
-	- Keeps 2 repositories for the two versions.
-	- Split vimrc into smaller files. Especially want to move foldingmethods to separate.
-* Try using YCMD server for code completion, if that doesn't work then try 
-	moving my code completion to VH.
+* Change delim to ultisnips ones.
+- Split my vimrc into smaller files.
+	- Base vimsettings.
+	- Vimrc for plugins and external stuff.
+	- Foldmethods.
+- Make repositories
+	- Base + fold.
+	- Plugins with base + fold as submodule.
+	- Dotfiles
+* Code-comletion
+	- Try using YCMD server for code completion, if that doesn't work then try 
+		moving my code completion to VH.
 * Only do the auto-save temp file when execute mode is running.
 * Add readline for the statusbar to slowgit update like before.
-* Add mapping to fix p removing the yank register.
-	Try this mapping:
-	xnoremap p pgvy
-	Does this break any actions that use operators with p?
 
 ### Low
-* Make a new repo for dotfiles and move my dotfiles there.
 * VimHelper
 	Check if you can make python focus other vim instance. If so,
 		add other vims buffers to ö and make them switchable with ö.
 * TagGenerator
 	* helptags for vim
-* Download all external binaries for windows and put them at a convenient
-	location to make installing vim easier.
-* Add bat and sh script for installing my vim.
+* Installing vim:
+	- Download all external binaries for windows and put them at a convenient
+		location to make installing vim easier.
+	- Add bat and sh script for installing my vim.
