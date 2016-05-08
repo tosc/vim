@@ -58,7 +58,6 @@ if &guifont
 endif
 set wildmode=longest:full,list
 set directory=~/.vim/tmp/swapfiles//
-" Ignore message from exisiting swap
 set shortmess+=A
 set nobackup
 set winminheight=0
@@ -72,7 +71,6 @@ set ignorecase
 set smartcase
 set autoread
 set cryptmethod=blowfish
-set formatoptions-=cro
 set updatetime=1000
 set backspace=indent,eol,start
 let $LANG = 'en'
@@ -84,12 +82,9 @@ set wrapmargin=0
 set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ 
 set list
 
-" Shows marks on autowrapped lines
 set showbreak=<<
-
 set sessionoptions-=options
 set sessionoptions+=folds
-
 set rtp+=~/git/vim/scripts/
 
 "Disables bug with bg using putty
@@ -139,7 +134,6 @@ endif
 endif
 " ----------
 " ---- [2.1] ULTISNIPS ----
-" Needed for checking if a ultisnips action has happened.
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
 let g:ulti_jump_backwards_res = 0
@@ -289,8 +283,8 @@ let g:syntastic_auto_loc_list = 1
 " ---- [3] BINDINGS ----
 " ---- [3.0] NORMAL ----
 " I keep pressing << >> in the wrong order. HL are good for directions.
-nnoremap H << 
-nnoremap L >> 
+nnoremap H <<
+nnoremap L >>
 
 " Wanted a easier bind for $
 nnoremap + $
@@ -329,10 +323,10 @@ nnoremap M m
 nnoremap m `
 function! BindMark(uMap)
 	let lMap = tolower(a:uMap)
-	execute "nnoremap M" . lMap . " m" . a:uMap 
-	execute "nnoremap M" . a:uMap . " m" . lMap 
-	execute "nnoremap m" . lMap . " `" . a:uMap 
-	execute "nnoremap m" . a:uMap . " `" . lMap 
+	execute "nnoremap M" . lMap . " m" . a:uMap
+	execute "nnoremap M" . a:uMap . " m" . lMap
+	execute "nnoremap m" . lMap . " `" . a:uMap
+	execute "nnoremap m" . a:uMap . " `" . lMap
 endfunction
 let g:marks = split("A B C D E F H I J K L M N O P Q R S T U V W X Y Z")
 function! StartBind()
@@ -507,6 +501,7 @@ if !g:disablePlugins
 	map <leader>gc :Gcommit<CR>
 	map <leader>gd :Gvdiff<CR>
 	map <leader>gg :Gstatus<CR>
+	map <leader>gl :Glog --<CR>
 endif
 " H - Help, show binds.
 map <leader>hn :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.0\]<CR> :0,.-1d<CR>/^" ---- \[3.1\]<CR> :.,$d<CR>gg
@@ -542,8 +537,10 @@ map <leader>n :bn <CR>
 map <leader>o :call UniteOpen()<CR>
 map <leader>O :call UniteExplorer(expand("%:p:h"))<CR>
 map <leader>p :bp <CR>
-" Q - Quit window (not used?)
-map <leader>q :q <CR>
+" Q - Quickfix commands
+map <leader>qn :cn <CR>
+map <leader>qp :cp <CR>
+map <leader>qo :copen <CR>
 " R - Run file or project / Stop file or project
 map <leader>r :call VimHelperCompile() <cr>
 map <leader>R :call VimHelperMessage("compile", "") <cr>
@@ -679,7 +676,7 @@ autocmd FileType opoh call OpohBinds()
 " --------------------
 " ---- [4] FILETYPE SPECIFIC ----
 " ---- [4.0] All ----
-" :set filetype? To know current loaded filetype
+autocmd FileType * setlocal formatoptions-=cro
 " --------
 " ---- [4.1] JAVA ----
 function! JavaSettings()
@@ -831,7 +828,7 @@ autocmd Filetype jp call JAPANESESettings()
 " -------------
 " ---- [4.12] LATEX ----
 function! TEXSettings()
-	setlocal foldexpr=IndentFolding2(v:lnum)
+	setlocal foldexpr=TexFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	call EnglishSpellCheck()
 endfunction
@@ -1050,7 +1047,7 @@ endfunction
 " --------------------
 " ---- [5.1.7] LATEX ----
 " Includes row before new indent and row after.
-function! IndentFolding2(lnum)
+function! TexFolding(lnum)
 	let line = getline(a:lnum)
 	if line =~ "^\s*$"
 		return '='
