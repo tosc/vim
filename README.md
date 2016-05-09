@@ -80,13 +80,7 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 * Missing python27.dll. You might be using a 64bit vim with 32bit python or the other way around. Install the same version of python as your vim installation.
 
 ### Code-Completion
-#### C
-* clang_complete might have been updated. Try running make install on it.
-* Make sure clang is installed and if on windows make sure clang is in path.
-
 #### CS
-* You may have to build the server component. 
-* If you are on linux then you have to update your .slnfiles with the correct paths.
 * Make sure the omnisharp daemon is running and has initialized.
 
 #### Java
@@ -95,6 +89,9 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 ``Ex :ProjectCreate ~\git\test -n java``  
 ``If still unclear then look at :EclimHelp gettingstarted``  
 * If vim complains about imports then add the location of that import in Eclipse to your project.
+
+#### Snippets
+* If snippets don't complete then my tagfile for that filetype is wrong. Look into SnippetComplete.py script and try to figure out what the language: value has to be. (Case matters.) Run ctags --fields=+l filename and look what that returns.
 
 ### SSH
 * If Unite binding doesn't work then check that you are using the right encoding for ssh.
@@ -147,6 +144,7 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 * Add readline for the statusbar to slowgit update like before.
 
 ### Low
+* Go through all snippets files and update them to new way of doing things.
 * VimHelper
 	Check if you can make python focus other vim instance. If so,
 		add other vims buffers to ö and make them switchable with ö.

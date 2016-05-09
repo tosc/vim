@@ -1,184 +1,227 @@
 # Info
 #All snippets should end with $0 on the last line that has text on it.
 #- IE The user always has to push enter after expanding something simple.
+# Create a snippet for all normal snippet-triggers, both regex and normal
+# so they show up in code-completion.
+
 # Header
-snippet "import|include" "import:import|include" br
+snippet import "import" b
 <MISSING import|include>
 endsnippet
-snippet header "header:header" b
+snippet include "include" b
+<MISSING import|include>
+endsnippet
+snippet header "header" b
 <MISSING header>
 endsnippet
 
-# Logical operations
-snippet " \|\|| or" "or:or" r
-<MISSING or|||>
-endsnippet
-snippet " &&| and" "and:and" r
-<MISSING and|&&>
-endsnippet
-snippet "!([a-zA-Z0-9.,\-]+)| not" "not:not" r
-<MISSING !|not>
-endsnippet
-
 # Conditional snippets
-snippet if "if:if" b
+snippet if "if" b
 <MISSING if>
 endsnippet
-snippet "ifsh?o?r?t?" "if shorthand:ifshort" r
+snippet ifs "if shorthand"
 	<MISSING ifshort>
 endsnippet
-snippet "ifel?s?e?" "if else:ifelse" br
+snippet ifshort "if shorthand"
+	<MISSING ifshort>
+endsnippet
+snippet ife "if else" b
 <MISSING ifelse>
 endsnippet
-snippet "elif|(else if|elseif)" "else if:elif|elseif" br
+snippet ifelse "if else" b
+<MISSING ifelse>
+endsnippet
+snippet elif "else if" b
 <MISSING elif>
 endsnippet
-snippet else "else:else" b
+snippet "else if" "else if" b
+<MISSING elif>
+endsnippet
+snippet elseif "else if" b
+<MISSING elif>
+endsnippet
+snippet else "else" b
 <MISSING else>
 endsnippet
-snippet switch "switch:switch" b
+snippet switch "switch" b
 <MISSING switch>
 endsnippet
-snippet case "case:case" b
+snippet case "case" b
 <MISSING case>
 endsnippet
 	
 # Loop snippets
-snippet for "for:for" b
+snippet for "for" b
 <MISSING for>
 endsnippet
-snippet "for((?!e)\w+)" "for,??? as variable:for???" br
+snippet for??? "for??? as variable" b
 <MISSING for var>
 endsnippet
-snippet "fore(ach)?" "for each element in collection:foreach" br
+snippet fore "foreach" b
 <MISSING foreach>
 endsnippet
-snippet while "while:while" b
+snippet foreach "foreach" b
+<MISSING foreach>
+endsnippet
+snippet while "while" b
 <MISSING white>
 endsnippet
-snippet do "do while:do" b
+snippet do "do while" b
 <MISSING do>
 endsnippet
 
 # Methods/functinos
-snippet "func?t?i?o?n?|meth?o?d?" "function:function|method" br
+snippet function "function" b
 <MISSING func|method>
 endsnippet
-snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
-<MISSING var func|method>
+snippet func "function" b
+<MISSING func|method>
 endsnippet
-snippet "const?r?u?c?t?o?r?" "constructor:constructor" br
+snippet met "method" b
+<MISSING func|method>
+endsnippet
+snippet method "method" b
+<MISSING func|method>
+endsnippet
+snippet cons "constructor" b
+<MISSING constructor>
+endsnippet
+snippet constructor "constructor" b
 <MISSING constructor>
 endsnippet
 
 # String snippets
-snippet "[sS]tri?n?g?" "string variable:string|String" br
+snippet str "string variable" b
 <MISSING string var>
 endsnippet
-snippet " contains| in" "string contains/is in another string:contains|in" r
+snippet Str "string variable" b
+<MISSING string var>
+endsnippet
+snippet string "string variable" b
+<MISSING string var>
+endsnippet
+snippet String "string variable" b
+<MISSING string var>
+endsnippet
+snippet contains "contains"
 <MISSING contains|in>
 endsnippet
-snippet "[tT]o[sS]tring\(?\)?" "to string:tostring|ToString|toString" br
+snippet ToString "to string" b
+<MISSING ToString>
+endsnippet
+snippet toSring "to string" b
+<MISSING ToString>
+endsnippet
+snippet tostring "to string" b
+<MISSING ToString>
+endsnippet
+snippet Tostring "to string" b
 <MISSING ToString>
 endsnippet
 
 # int snippets
-snippet "[iI]nt" "int variable:int|Int" br
+snippet int "int" b
 <MISSING int var>
 endsnippet
-snippet "(\w+)\+\+" "increment:???++" r
-<MISSING ++>
-endsnippet
-snippet "(\w+)\-\-" "decrement:???--" r
-<MISSING -->
+snippet Int "int" b
+<MISSING int var>
 endsnippet
 
 # Variable snippets
-snippet "[dD]ouble" "double variable:double|Double" br
+snippet double "double" b
 <MISSING double var>
 endsnippet
-snippet "[fF]loat" "float variable:float|Float" br
+snippet Double "double" b
+<MISSING double var>
+endsnippet
+snippet float "float" b
 <MISSING float var>
 endsnippet
-snippet "[bB]ool" "bool variable:bool|Bool" br
+snippet Float "float" b
+<MISSING float var>
+endsnippet
+snippet bool "bool" b
+<MISSING bool var>
+endsnippet
+snippet Bool "bool" b
 <MISSING bool var>
 endsnippet
 
 # Datatype snippets
-snippet enum "enum:enum" b
+snippet enum "enum" b
 <MISSING enum>
 endsnippet
-snippet "[lL]ist" "list:list|List" br
+snippet list "list" b
 <MISSING list>
 endsnippet
-snippet "(\w+) ?[lL]ist" "list of type ???:??? list|??? List" br
-<MISSING list with type>
+snippet List "list" b
+<MISSING list>
 endsnippet
 
 # Documentation snippets
-snippet "\"|#|//" "comment" r
-<MISSING comment>
-endsnippet
-snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines:mlc|multilinecomment" br
+snippet mlc "multilinecomment" b
 <MISSING multiline comment>
 endsnippet
-snippet comment "comment:comment" b
+snippet multilinecomment "multilinecomment" b
+<MISSING multiline comment>
+endsnippet
+snippet comment "comment" b
 <MISSING documentation>
 endsnippet
 
 # Special snippets
-snippet sleep "Sleep program:sleep" b
+snippet sleep "Sleep program" b
 <MISSING sleep>
 endsnippet
-snippet time "current time in milliseconds:time" b
+snippet time "current time in milliseconds" b
 <MISSING time>
 endsnippet
-snippet "kill" "kill current script:kill" br
+snippet kill "kill current script" b
 <MISSING kill>
 endsnippet
-snippet print "print:print" b
+snippet print "print" b
 <MISSING print>
 endsnippet
-snippet "printva?r?" "print a variable:printvar" r
+snippet printvar "print a variable"
 <MISSING print var>
 endsnippet
-snippet "printli?s?t?" "print a list:printlist" r
+snippet printlist "print a list"
 <MISSING print list>
 endsnippet
 
 # New code snippets
-snippet filebase "runnable script:filebase" b
+snippet filebase "runnable script" b
 <MISSING main>
 endsnippet
-snippet class "new class:class" b
+snippet class "new class" b
 <MISSING class>
 endsnippet
-snippet "class( |)(\w+)" "New class:class???" br
+snippet class??? "New class" b
 <MISSING class???>
 endsnippet
-snippet subclass "new subclass:subclass" b
+snippet subclass "new subclass" b
 <MISSING subclass>
 endsnippet
-snippet "subclass( |)(\w+)" "New class:subclass???" br
+snippet subclass??? "New class" b
 <MISSING subclass???>
 endsnippet
-snippet thread "new thread:thread" b
+snippet thread "new thread" b
 <MISSING thread>
 endsnippet
 # Stream snippets
-snippet streamopen "Open a stream:streamopen" b
+snippet streamopen "Open a stream" b
 <MISSING streamopen>
 endsnippet
-snippet streamclose "Close a stream:streamopen" b
+snippet streamclose "Close a stream" b
 <MISSING streamclose>
 endsnippet
-snippet streamread "Read from a stream:streamread" b
+snippet streamread "Read from a stream" b
 <MISSING streamread>
 endsnippet
-snippet streamreadline "Read a line from a stream:streamreadline" b
+snippet streamreadline "Read a line from a stream" b
 <MISSING streamreadline>
 endsnippet
-snippet streamwrite "write to a stream:streamwrite" b
+snippet streamwrite "write to a stream" b
 <MISSING streamwrite>
 endsnippet
 

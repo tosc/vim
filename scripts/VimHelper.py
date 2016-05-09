@@ -515,8 +515,6 @@ class Server(Thread):
                     consoleMsgs.addstr(self.name, "Listening for changes - " + compiler.currentFile)
             elif server_msgs[0] == "tags":
                 workers.append(RunScript("python TagGenerator.py"))
-            elif server_msgs[0] == "snippet":
-                workers.append(RunScript("python SnippetComplete.py"))
             c.close()
 
 compiler = Compiler()

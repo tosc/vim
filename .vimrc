@@ -24,6 +24,7 @@ if !exists('g:disableVimHelper')
 	let g:disableVimHelper = 0
 endif
 set rtp+=~/git/vim/scripts/
+set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
 " --------------------
 " ---- [1] PLUGINS ----
 " ---- [1.0] VUNDLE ----
@@ -70,6 +71,8 @@ let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
 " --------
+" ---- [1.2] YOUCOMPLETEME ----
+" --------------------
 " ---- [1.4] UNITE ----
 let g:unite_force_overwrite_statusline = 0
 
@@ -289,7 +292,6 @@ autocmd FileType * setlocal formatoptions-=cro
 " ---- [3.4] VIMRC ----
 " -------------
 " ---- [3.5] SNIPPET ----
-autocmd BufWritePost *.snippets call VimHelperMessage("snippet", "")
 " --------------------
 " ---- [3.6] TODO ----
 " --------------------

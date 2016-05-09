@@ -1,2 +1,0 @@
-var(\w+)	variable into examplevar
-opt(\w+)	variable into examplevar
