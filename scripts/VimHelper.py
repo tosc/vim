@@ -1,4 +1,5 @@
 import os
+import json
 import re
 import time
 import subprocess
@@ -18,6 +19,15 @@ tmpFolder = home + ".vim/tmp/"
 compileFolder = tmpFolder + "compilefiles/"
 compileOutput = tmpFolder + "compile"
 consoleOutput = tmpFolder + "console"
+compileTimesFile = tmpFolder + "compileTimes"
+
+compileTimes = {}
+try:
+    f = open(compileTimesFile, 'r')
+    compileTimes = json.load(f)
+    f.close()
+except:
+    pass
 
 # Threads
 workers = []
@@ -194,6 +204,9 @@ class Textbox(Thread):
             output = textpad.Textbox(textbox).edit()
             if re.match("(quit)|(:q)|(exit)", output):
                 server.clients = -1
+            if re.match("(compiletimes)|(ct)", output):
+                for script,time in compileTimes.items():
+                    consoleMsgs.addstr("CT", str(script) + " - " + str(time))
             else:
                 console.process.stdin.write(output + "\n")
             textbox.clear()
@@ -299,30 +312,42 @@ class Drawer(Thread):
                 y += 2
 
 
-class Worker(Thread):
+class RunScript(Thread):
     """
-    Baseclass for all workers.
+    Runs a script once and prints the output to the compiler window.
 
-    Parameters:
-        name - name of worker
+    Paramters:
+        script - the script to call, ex "pdflatex test.tex --output-error"
+        silent - disable output
     """
-    def __init__(self, name):
+    def __init__(self, script, folder=scriptFolder, silent=False, args=""):
         Thread.__init__(self)
 
-        self.name = name
+        self.name = script
+
+        self.done = True
+        self.idle = False
+        self.hide = False
+        self.running = True
+        self.daemon = True
+        self.pause = True
+
+        self.timeStart = time.time()
+        self.timeDone = time.time()
+        self.lastTime = 1
+
+        if compileTimes.has_key(script):
+            self.lastTime = compileTimes[script]
 
         self.currentFolder = ""
         self.currentFile = ""
         self.currentPath = ""
 
-        self.done = True
-        self.idle = False
-        self.timeStart = time.time()
-        self.timeDone = time.time()
-        self.lastTime = 1
-
-        self.hide = False
-        self.running = True
+        self.script = script
+        self.args = args
+        self.currentFolder = folder
+        self.silent = silent
+        self.start()
 
     def run(self):
         while(self.running):
@@ -332,40 +357,20 @@ class Worker(Thread):
             if not self.idle:
                 self.timeDone = time.time()
                 self.lastTime = self.timeDone - self.timeStart
+                if not self.hide:
+                    compileTimes[self.script] = self.lastTime
                 self.done = True
-
-    def update(self):
-        pass
-
-
-class RunScript(Worker):
-    """
-    Runs a script once and prints the output to the compiler window.
-
-    Paramters:
-        script - the script to call, ex "pdflatex test.tex --output-error"
-        silent - disable output
-    """
-    def __init__(self, script, folder=scriptFolder, silent=False):
-        Worker.__init__(self, "Script")
-        self.daemon = True
-        self.lastTime = 0.1
-        self.pause = True
-        self.script = script
-        self.currentFolder = folder
-        self.silent = silent
-        self.start()
 
     def update(self):
         try:
             cop = open(compileOutput, 'w')
             if not self.silent:
-                consoleMsgs.addstr(self.name, "Calling: " + self.script)
-            cp = subprocess.Popen(self.script, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder)
+                consoleMsgs.addstr("Script", "Calling: " + self.script)
+            cp = subprocess.Popen(self.script + " " + self.args, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder)
             cp.wait()
             cop.close()
             if not self.silent:
-                consoleMsgs.addstr(self.name, "Done!")
+                consoleMsgs.addstr("Script", "Done!")
                 cop = open(compileOutput, 'r')
                 compileMsgs.clear()
                 line = cop.readline()
@@ -373,8 +378,8 @@ class RunScript(Worker):
                     compileMsgs.addstr(line)
                     line = cop.readline()
         except Exception,e:
-            consoleMsgs.addstr(self.name, "Failed")
-            consoleMsgs.addstr(self.name, str(e))
+            consoleMsgs.addstr("Script", "Failed")
+            consoleMsgs.addstr("Script", str(e))
         self.running = False
 
 class Compiler(Thread):
@@ -473,7 +478,7 @@ class Server(Thread):
                 running = False
                 break
             if server_msgs[0] == "path":
-                workers.append(RunScript("python GitStatusbar.py " + server_msgs[1], silent=True))
+                workers.append(RunScript("python GitStatusbar.py", args=server_msgs[1], silent=True))
             elif server_msgs[0] == "client":
                 if server_msgs[1] == "1":
                     self.clients += 1
@@ -509,11 +514,12 @@ server = Server()
 console = Console()
 
 while(True):
+    kill = False
     for worker in workers:
         if not worker.isAlive():
             workers.remove(worker)
     if server.clients == -1:
-        sys.exit()
+        kill = True
     if server.clients == 0:
         consoleMsgs.addstr("Client", "No vim clients left")
         kill = True
@@ -523,6 +529,12 @@ while(True):
             if server.clients > 0:
                 kill = False
                 break
-        if kill:
-            sys.exit()
+    if kill:
+        try:
+            f = open(compileTimesFile, 'w')
+            json.dump(compileTimes, f)
+            f.close()
+        except Exception,e:
+            print str(e)
+        sys.exit()
     time.sleep(0.1)

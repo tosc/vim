@@ -131,11 +131,8 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 ### Important
 
 ### Mid
-* Map :q to save current layout and quit. Map :Q to real quit. Have vim load
-	last session on load. (Last session will be empty on :Q)
 * VH
 	- Add git draw to this.
-        - Save compiletimes and use them for lastTime estimation.
 * Change delim to ultisnips ones.
 - Split my vimrc into smaller files.
 	- Base vimsettings.
