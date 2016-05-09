@@ -211,9 +211,10 @@ let g:syntastic_auto_loc_list = 1
 " ---- [2.0] NORMAL ----
 nnoremap ö :call UniteOpen()<CR>
 nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
-inoremap <TAB> <C-R>=NeoTab()<CR>
 " --------------------
 " ---- [2.1] INSERT ----
+inoremap <TAB> <C-R>=NeoTab()<CR>
+inoremap <S-TAB> <C-P>
 
 inoremap <C-J> <C-R>=USOrSmartJump()<CR>
 inoremap <C-K> <C-R>=USOrSmartJumpBack()<CR>
@@ -353,31 +354,15 @@ endfunction
 autocmd FileType * setlocal formatoptions-=cro
 " --------
 " ---- [3.1] JAVA ----
-function! JavaOmni(findstart, base)
-	let words = eclim#java#complete#CodeComplete(a:findstart, a:base)
-	return FilterOmni(words, a:findstart, a:base)
-endfunction
-
-autocmd Filetype java setlocal omnifunc=JavaOmni
+autocmd Filetype java setlocal omnifunc=eclim#java#complete#CodeComplete
 " --------
 " ---- [3.2] C# ----
-function! CSOmni(findstart, base)
-	let words = OmniSharp#Complete(a:findstart, a:base)
-	return FilterOmni(words, a:findstart, a:base)
-endfunction
-
 " Updates omnisharp to include new methods
 autocmd BufWritePost *.cs :OmniSharpReloadSolution
-
-autocmd Filetype cs setlocal omnifunc=CSOmni
+autocmd Filetype cs setlocal omnifunc=OmniSharp#Complete
 " ----------------
 " ---- [3.3] C ----
-function! COmni(findstart, base)
-	let words = ccomplete#Complete(a:findstart, a:base)
-	return FilterOmni(words, a:findstart, a:base)
-endfunction
-
-autocmd Filetype c,cpp setlocal omnifunc=COmni
+autocmd Filetype c,cpp setlocal omnifunc=ccomplete#Complete
 " --------------------
 " ---- [3.4] VIMRC ----
 " -------------
@@ -550,52 +535,10 @@ function! NeoTab()
 	if g:ulti_expand_res == 1
 		return ""
 	endif
-	if getline(".")[col('.') - 2] =~ '\w'
-		let longestCommon = NeoLongestCommon()
-		if longestCommon == ""
-			return pumvisible() ? "" : SpecialDelim("\<TAB>")
-		endif
-		return longestCommon
-	endif
-	return SpecialDelim("\<TAB>")
-endfunction
-
-function! NeoLongestCommon()
-	let neocomplete = neocomplete#get_current_neocomplete()
-	let complete_str = neocomplete#helper#match_word(neocomplete#get_cur_text(1))[1]
-	let candidates = neocomplete#filters#matcher_head#define().filter(
-		\ { 'candidates' : copy(neocomplete.candidates),
-		\ 'complete_str' : complete_str})
-	if pumvisible() && len(candidates) == 1
+	if getline(".")[col('.') - 2] =~ '\w' && pumvisible()
 		return "\<C-N>"
 	else
-		if len(candidates) > 1
-			let longestCommon = candidates[0].word
-			for keyword in candidates[1:]
-				while !neocomplete#head_match(keyword.word,longestCommon)
-					let longestCommon = longestCommon[:-2]
-				endwhile
-			endfor
-			if len(longestCommon) > len(complete_str)
-				let longestCommon = substitute(longestCommon,complete_str, "", "")
-			endif
-			if longestCommon == complete_str
-				let longestCommon = ""
-			endif
-		else
-			let longestCommon = ""
-		endif
-	endif
-	return longestCommon
-endfunction
-function! FilterOmni(words, findstart, base)
-	if a:findstart
-		return a:words
-	elseif type(a:words) == 0 && a:words < 0
-		return a:words
-	else
-		return filter(a:words, 'match(v:val["word"], a:base)==0')
-	endif
+	return SpecialDelim("\<TAB>")
 endfunction
 
 function! GetSnippetFiletypes()

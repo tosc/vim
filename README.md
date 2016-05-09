@@ -131,6 +131,7 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 ### Important
 * Make repositories
 	- Dotfiles
+* Change completion from longest to "best". Tab goes down, shift-tab goes up.
 
 ### Mid
 * VH
