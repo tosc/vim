@@ -1,8 +1,6 @@
 " ---- [0] INITIALIZATION ----
+source ~\git\vim\vim-base\.vimrc
 let requiredFolders = [
-		\ "~/.vim",
-		\ "~/.vim/tmp",
-		\ "~/.vim/tmp/tmp",
 		\ "~/.vim/tmp/swapfiles",
 		\ "~/.vim/tmp/gitstatusline",
 		\ "~/.vim/tmp/compilefiles",
@@ -13,20 +11,8 @@ for rawfolder in requiredFolders
 	if !isdirectory(folder)
 		call mkdir(folder)
 		let setup = 1
-		let g:disablePlugins = 1
-		let g:disableExternal = 1
 	endif
 endfor
-
-if !exists('g:disablePlugins')
-	let g:disablePlugins = 0
-endif
-if !exists('g:minimalMode')
-	let g:minimalMode = 0
-endif
-if !exists('g:disableExternal')
-	let g:disableExternal = 0
-endif
 if !exists('g:startedExternal')
 	let g:startedExternal = 0
 endif
@@ -36,104 +22,47 @@ endif
 if !exists('g:disableVimHelper')
 	let g:disableVimHelper = 0
 endif
-" --------------------
-" ---- [1] VIMSETTINGS ----
-autocmd!
-set nocompatible
-set relativenumber
-set guioptions=c
-set incsearch
-set ruler
-set completeopt=menu,longest
-set tabpagemax=100
-set notimeout
-if &guifont
-	set guifont=Inconsolata\ bold\ 10
-	" If you need to change this on another computer just use 
-	" set guifont=*
-	" Pick the font and size you want. Then type
-	" set guifont?
-	" To get the value you want to set guifont too. Then add that to your
-	" local .vimrc.
-endif
-set wildmode=longest:full,list
-set directory=~/.vim/tmp/swapfiles//
-set shortmess+=A
-set nobackup
-set winminheight=0
-set visualbell
-set hidden
-set splitbelow
-set splitright
-set scrolloff=999
-set nrformats-=octal
-set ignorecase
-set smartcase
-set autoread
-set cryptmethod=blowfish
-set updatetime=1000
-set backspace=indent,eol,start
-let $LANG = 'en'
-set colorcolumn=78
-set textwidth=0
-set wrapmargin=0
-
-" Shows whitespaces and tabs when using list.
-set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ 
-set list
-
-set showbreak=<<
-set sessionoptions-=options
-set sessionoptions+=folds
 set rtp+=~/git/vim/scripts/
+" --------------------
+" ---- [1] PLUGINS ----
+" ---- [1.0] VUNDLE ----
+" Required by vundle
+filetype off
+set rtp+=~/git/vim/bundle/Vundle.vim/
+call vundle#begin()
+Plugin 'gmarik/Vundle.vim'
 
-"Disables bug with bg using putty
-set t_ut=
+" Unite and unite plugins.
+Plugin 'Shougo/unite.vim'
+Plugin 'Shougo/neomru.vim'
 
-syntax on
-" ---------
-" ---- [2] PLUGINS ----
-" ---- [2.0] VUNDLE ----
-if exists('setup') || (!exists("g:reload") && !g:disablePlugins)
-	" Required by vundle
-	filetype off
-	set rtp+=~/git/vim/bundle/Vundle.vim/
-	call vundle#begin()
-	Plugin 'gmarik/Vundle.vim'
+" Snippets
+Plugin 'SirVer/ultisnips'
 
-	" Unite and unite plugins.
-	Plugin 'Shougo/unite.vim'
-	Plugin 'Shougo/neomru.vim'
+" Code-completion
+Plugin 'Shougo/neocomplete.vim'
 
-	" Snippets
-	Plugin 'SirVer/ultisnips'
+" Omnicomplete engines.
+Plugin 'Rip-Rip/clang_complete'
+Plugin 'OmniSharp/omnisharp-vim'
 
-	" Code-completion
-if has('lua') && !g:minimalMode
-	Plugin 'Shougo/neocomplete.vim'
-endif
-	" Omnicomplete engines.
-	Plugin 'Rip-Rip/clang_complete'
-	Plugin 'OmniSharp/omnisharp-vim'
+" Async external commands
+Plugin 'tpope/vim-dispatch'
+Plugin 'Shougo/vimproc.vim'
 
-	" Async external commands
-	Plugin 'tpope/vim-dispatch'
-	Plugin 'Shougo/vimproc.vim'
+" Syntax checker and syntax engines.
+Plugin 'scrooloose/syntastic'
 
-	" Syntax checker and syntax engines.
-	Plugin 'scrooloose/syntastic'
+" Div
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-surround'
+Plugin 'Konfekt/FastFold'
 
-	" Div
-	Plugin 'tpope/vim-fugitive'
-	Plugin 'tpope/vim-surround'
-	Plugin 'Konfekt/FastFold'
-
-	" Required by vundle
-	call vundle#end()
-	filetype plugin indent on
-endif
+" Required by vundle
+call vundle#end()
+filetype plugin indent on
 " ----------
-" ---- [2.1] ULTISNIPS ----
+" ---- [1.1] ULTISNIPS ----
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
 let g:ulti_jump_backwards_res = 0
@@ -146,35 +75,33 @@ let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
 " --------
-" ---- [2.2] ECLIM ----
+" ---- [1.2] ECLIM ----
 " Sets eclims completionmethod to omnifunc
 let g:EclimCompletionMethod = 'omnifunc'
 let g:EclimFileTypeValidate = 0
 " -----
-" ---- [2.3] OMNISHARP (C# OMNICOMPLETE) ----
+" ---- [1.3] OMNISHARP (C# OMNICOMPLETE) ----
 let g:OmniSharp_typeLookupInPreview = 1
 " Sets the sln file to the first file avaliable
 let g:OmniSharp_sln_list_index = 1
 " If omnisharp server is running never stop it.
 let g:Omnisharp_stop_server = 0
 " -------
-" ---- [2.4] UNITE ----
+" ---- [1.4] UNITE ----
 let g:unite_force_overwrite_statusline = 0
 
-if !g:disablePlugins
-	call unite#custom#default_action('buffer', 'goto')
-	call unite#filters#matcher_default#use(['matcher_fuzzy'])
-	call unite#filters#sorter_default#use(['sorter_rank'])
-	call unite#custom#profile('default', 'context', {
-				\ 'start_insert' : 1,
-				\ 'smartcase' : 1,
-				\ 'ignorecase' : 1,
-				\ 'no_split' : 1,
-				\ 'no_resize' : 1,
-				\ 'update_time' : 300,
-				\ 'cursor_line_highlight' : 'TabLine'
-				\ })
-endif
+call unite#custom#default_action('buffer', 'goto')
+call unite#filters#matcher_default#use(['matcher_fuzzy'])
+call unite#filters#sorter_default#use(['sorter_rank'])
+call unite#custom#profile('default', 'context', {
+			\ 'start_insert' : 1,
+			\ 'smartcase' : 1,
+			\ 'ignorecase' : 1,
+			\ 'no_split' : 1,
+			\ 'no_resize' : 1,
+			\ 'update_time' : 300,
+			\ 'cursor_line_highlight' : 'TabLine'
+			\ })
 
 function! UniteFixPath(path)
 	if has('unix')
@@ -226,7 +153,7 @@ endfunction
 call unite#custom_action('directory', 'my_dir', my_dir)
 call unite#custom#default_action('directory', 'my_dir')
 " --------------------
-" ---- [2.5] NEOCOMPLETE ----
+" ---- [1.5] NEOCOMPLETE ----
 let g:neocomplete#enable_at_startup = 1
 let g:neocomplete#skip_auto_completion_time = ''
 let g:neocomplete#auto_completion_start_length = 2
@@ -273,173 +200,40 @@ let g:neocomplete#enable_fuzzy_completion = 0
 let g:clang_complete_auto = 0
 let g:clang_auto_select = 0
 " --------------------
-" ---- [2.6] SYNTASTIC ----
+" ---- [1.6] SYNTASTIC ----
 let g:syntastic_mode_map = { "mode": "active",
 			   \ "active_filetypes": [],
 			   \ "passive_filetypes": ["vim"] }
 let g:syntastic_auto_loc_list = 1
 " --------------------
 " --------------------
-" ---- [3] BINDINGS ----
-" ---- [3.0] NORMAL ----
-" I keep pressing << >> in the wrong order. HL are good for directions.
-nnoremap H <<
-nnoremap L >>
-
-" Wanted a easier bind for $
-nnoremap + $
-
-" Do last recording. (Removes exmode which I never use.)
-nnoremap Q @@
-
-"Not vi-compatible but more logical. Y yanks to end of line.
-nnoremap Y y$
-
-" Close everything except current fold.
-nnoremap zV zMzv
-
-if !g:disablePlugins
-	" Search file using unite.
-	nnoremap ä :Unite line -custom-line-enable-highlight<CR>
-
-	nnoremap ö :call UniteOpen()<CR>
-	nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
-else
-	nnoremap ä /
-	nnoremap ö :e
-	nnoremap Ö :e
-endif
-
-"Switches repeat f/F, feels more logical on swedish keyboard.
-nnoremap , ;
-nnoremap ; ,
-
-" Select pasted text.
-nnoremap <expr> gp '`[' . getregtype()[0] . '`]'
-
-" Reverse local and global marks and bind create mark to M (except for g)
-" and goto mark ` to m.
-nnoremap M m
-nnoremap m `
-function! BindMark(uMap)
-	let lMap = tolower(a:uMap)
-	execute "nnoremap M" . lMap . " m" . a:uMap
-	execute "nnoremap M" . a:uMap . " m" . lMap
-	execute "nnoremap m" . lMap . " `" . a:uMap
-	execute "nnoremap m" . a:uMap . " `" . lMap
-endfunction
-let g:marks = split("A B C D E F H I J K L M N O P Q R S T U V W X Y Z")
-function! StartBind()
-	for i in range(len(g:marks))
-		call BindMark(g:marks[i])	
-	endfor
-endfunction
-call StartBind()
-
-" Good avaliable binds
-" §
-" ´
-" Enter
-" Backspace
-" Shift enter
-" Ä
-" s (synonym for cl)
-" S (synonym for cc)
+" ---- [2] BINDINGS ----
+" ---- [2.0] NORMAL ----
+nnoremap ö :call UniteOpen()<CR>
+nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
+inoremap <TAB> <C-R>=NeoTab()<CR>
 " --------------------
-" ---- [3.1] INSERT ----
-" Ctrl + del and Ctrl + bs like normal editors in insert
-inoremap <C-BS> <C-W>
-inoremap <C-Del> <C-O>de
+" ---- [2.1] INSERT ----
 
-" Shift-Enter acts like O in normal
-inoremap <S-CR> <C-O>O
-
-" Autocomplete spelling
-inoremap <C-S> <C-X><C-S>
-
-if !g:disablePlugins
-	" Run my tabcompletion.
-	inoremap <TAB> <C-R>=NeoTab()<CR>
-else
-	" Simple tabcompletion.
-	inoremap <expr><TAB> getline(".")[col('.') - 2] =~ '\w' ? '<C-X><C-N>' : SpecialDelim("\<TAB>")
-endif
+inoremap <C-J> <C-R>=USOrSmartJump()<CR>
+inoremap <C-K> <C-R>=USOrSmartJumpBack()<CR>
 
 let g:UltiSnipsJumpForwardTrigger="<C-J>"
 let g:UltiSnipsJumpBackwardTrigger="<C-K>"
-inoremap <C-J> <C-R>=SmartJump()<CR>
-inoremap <C-K> <C-R>=SmartJumpBack()<CR>
-
-" Readline bindings.
-inoremap <C-A> <home>
-inoremap <C-E> <C-O>A
-inoremap <C-B> <left>
-inoremap <C-F> <right>
-inoremap <C-H> <Backspace>
-
-inoremap <A-B> <C-O>b
-inoremap â <C-O>b
-inoremap <A-F> <C-O>w
-inoremap æ <C-O>w
-
-" Enter works even when completionmenu is up.
-inoremap <expr> <CR> pumvisible() ? '<C-E><CR>' : SpecialDelim("\<CR>")
-
-" Text chains that do special tings in Insert.
-let g:keychains = [
-	\ [["{"], ["}", "\<left>"], ["opt"]],
-	\ [["("], [")", "\<left>"], ["opt"]],
-	\ [["<"], [">", "\<left>"], ["opt"]],
-	\ [["["], ["]", "\<left>"], ["opt"]],
-	\ [['"'], ['"', "\<left>"], ["opt"]],
-	\ [["'"], ["'", "\<left>"], ["opt"]],
-	\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
-	\ [["b"], ["b"], ["b", "\<bs>\<bs>\<bs>()"]],
-	\ [["B"], ["B"], ["B", "\<bs>\<bs>\<bs>{}"]],
-	\ [["d"], ["d"], ["d", "\<bs>\<bs>\<bs>[]"]],
-	\ [["D"], ["D"], ["D", "\<bs>\<bs>\<bs><>"]],
-	\ ]
-
-" Special keys must be taken care of by my delim function.
-inoremap <expr> <left> SpecialDelim("\<left>")
-inoremap <expr> <right> SpecialDelim("\<right>")
-inoremap <expr> <up> SpecialDelim("\<up>")
-inoremap <expr> <down> SpecialDelim("\<down>")
-inoremap <expr> <space> SpecialDelim("\<space>")
-inoremap <expr> <bs> SpecialDelim("\<bs>")
 " --------------------
-" ---- [3.2] VISUAL ----
-" I keep pressing << >> in the wrong order. HL are good for directions.
-" Also reselects after action.
-vnoremap H <gv
-vnoremap L >gv
+" ---- [2.2] VISUAL ----
+xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 
-"Switches repeat f/F, feels more logical on swedish keyboard.
-vnoremap , ;
-vnoremap ; ,
-
-xnoremap + $
-
-xnoremap å c<C-R>=PythonMath()<CR>
-
-if !g:disablePlugins
-	xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
-endif
-
-" Remapped vim surround to s since all it does normaly is cl.
-if !g:disablePlugins
-	xmap s S
-	xmap sd s]
-	xmap sD s>
-	xmap sq s"
-	xmap st s'
-	xmap sm s$
-	xmap s( s)
-	xmap s{ s}
-endif
+xmap s S
+xmap sd s]
+xmap sD s>
+xmap sq s"
+xmap st s'
+xmap sm s$
+xmap s( s)
+xmap s{ s}
 " --------------------
-" ---- [3.3] LEADER ----
-let g:mapleader="\<space>"
+" ---- [2.3] LEADER ----
 
 " A
 " B - Bookmark
@@ -449,15 +243,10 @@ map <leader>co :Errors<CR>
 map <leader>cc :SyntasticCheck<CR>
 map <leader>ce :SyntasticCheck<CR>
 " D - Delete buffer
-map <leader>d :bd<CR>
-map <leader>D :bd!<CR>
 " E - Start external
-autocmd Filetype tex map <leader>e :Spawn! -dir=~ .vim\tmp\tmp\main.pdf <cr>
 " F
 noremap <leader>f :Unite line -custom-line-enable-highlight<CR>
 " G - Git
-map <leader>gc :!git -C %:h commit<CR>
-map <leader>gd :!git -C %:h diff<CR>
 map <leader>gD :exec ":Gvdiff " input(""
 	\ . "HEAD            .git/HEAD"
 	\ . "\nmaster          .git/refs/heads/master"
@@ -478,42 +267,14 @@ map <leader>gD :exec ":Gvdiff " input(""
 	\ . "\n:3              The current file in the merged branch during a conflict"
 	\ . "\n:/foo           The most recent commit with \"foo\" in the message\n"
 	\ )<CR>
-map <leader>gf :!git -C %:h fetch<CR> :call UpdateGitInfo()<CR>
-map <leader>gF :!git -C %:h pull<CR> :call UpdateGitInfo()<CR>
-map <leader>gg :!git -C %:h status<CR>
-map <leader>gp :!git -C %:h push<CR> :call UpdateGitInfo()<CR>
-map <leader>gP :!git -C %:h push --force<CR> :call UpdateGitInfo()<CR>
-" Opens a interactive menu that lets you pick what commits to use/squash.
-map <leader>gr :!git -C %:h rebase -i HEAD~
-
-"HardReset
-function! ResetGit()
-	if confirm("Reset git to remote?", "y\nn") == 1
-		echo system("git -C " . expand("%:p:h") . " reset --hard origin/HEAD")
-	endif
-endfunction
-map <leader>gR :call ResetGit()<CR>
-
 map <leader>gh :call HighlightDrawDisable()<CR>
-map <leader>g? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" H -<CR> :0,.-1d<CR>/^" I -<CR> :.,$d<CR>gg
 
-if !g:disablePlugins
-	map <leader>gc :Gcommit<CR>
-	map <leader>gd :Gvdiff<CR>
-	map <leader>gg :Gstatus<CR>
-	map <leader>gl :Glog --<CR>
-endif
+map <leader>gc :Gcommit<CR>
+map <leader>gd :Gvdiff<CR>
+map <leader>gg :Gstatus<CR>
+map <leader>gl :Glog --<CR>
 " H - Help, show binds.
-map <leader>hn :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.0\]<CR> :0,.-1d<CR>/^" ---- \[3.1\]<CR> :.,$d<CR>gg
-map <leader>hi :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.1\]<CR> :0,.-1d<CR>/^" ---- \[3.2\]<CR> :.,$d<CR>gg
-map <leader>hv :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.2\]<CR> :0,.-1d<CR>/^" ---- \[3.3\]<CR> :.,$d<CR>gg
-map <leader>hl :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.3\]<CR> :0,.-1d<CR>/^" ---- \[3.4\]<CR> :.,$d<CR>gg
-map <leader>hh :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.3\]<CR> :0,.-1d<CR>/^" ---- \[3.4\]<CR> :.,$d<CR>gg
-map <leader>hc :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.5\]<CR> :0,.-1d<CR>/^" ---- \[3.6\]<CR> :.,$d<CR>gg
 map <leader>hu :Unite us <CR>
-map <leader>hm :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r
-	\ ~/git/vim/.vimrc <CR> /^" ---- \[9.2\]<CR>j :0,.-1d<CR>/^" --------<CR>
-	\ :.,$d<CR>:call HelpMarkColor()<CR>
 " I - Information, notes on helpful things.
 map <leader>ii :call UniteTags(&l:filetype)<CR>
 map <leader>iI :Unite tagfolders:~/git/info/ <CR>
@@ -526,125 +287,42 @@ map <leader>j :%!python -m json.tool<CR>
 " K
 " L
 " M - Make
-autocmd Filetype c map <buffer><silent> <leader>m :w <bar> !./%:r <cr>
-autocmd Filetype cpp map <buffer><silent> <leader>m :w <bar> ! main <cr>
-autocmd Filetype cs map <buffer><silent> <leader>m :w <bar> ! main <cr>
-autocmd Filetype vim map <leader>m :so % <cr>
-autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
 " N - Next buffer
-map <leader>n :bn <CR>
 " O - Open file explorer
 map <leader>o :call UniteOpen()<CR>
 map <leader>O :call UniteExplorer(expand("%:p:h"))<CR>
 " P - Quickfix commands
-map <leader>p :bp <CR>
 " Q - Quickfix commands
-map <leader>qn :cn <CR>
-map <leader>qp :cp <CR>
-map <leader>qo :copen <CR>
 " R - Run file or project / Stop file or project
 map <leader>r :call VimHelperCompile() <cr>
 map <leader>R :call VimHelperMessage("compile", "") <cr>
 " S - Spellcheck
-map <leader>se :call EnglishSpellCheck() <CR>
-map <leader>ss :call SwedishSpellCheck() <CR>
-map <leader>so :call NoSpellCheck() <CR>
-map <leader>sc :call NoSpellCheck() <CR>
-map <leader>sd :call NoSpellCheck() <CR>
 " T - Tabs, temp and tabformat
-map <leader>tt :call OpenTempFile() <CR>
-function! OpenTempFile()
-	let fe = expand("%:e")	
-	if len(fe) > 0
-		e ~/.vim/tmp/tmp/temp.%:e
-	else
-		e ~/.vim/tmp/tmp/temp
-	endif
-endfunction
-map <leader>te :set expandtab <CR>
-map <leader>tE :set noexpandtab <CR>
-map <leader>t4 :set tabstop=4 <CR> :set shiftwidth=4 <CR>
-map <leader>t8 :set tabstop=8 <CR> :set shiftwidth=8 <CR>
-" Show/Hide tabs
-map <leader>ts :set listchars=tab:>\ ,trail:#,extends:>,precedes:<,nbsp:+ <CR>
-map <leader>tS :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
-map <leader>tc :tabclose <CR>
-map <leader>tn :tabnew <CR>
 " U - Ultisnips
-if !g:disablePlugins
-	map <leader>ue :UltiSnipsEdit <CR>
-	map <leader>uu :Unite file:~/git/vim/scripts/Ultisnips/ <CR>
-	map <leader>ua :Unite us <CR>
-	map <leader>uh :Unite us <CR>
-	map <leader>ul :Unite us <CR>
-	map <leader>us :Unite us <CR>
-endif
+map <leader>ue :UltiSnipsEdit <CR>
+map <leader>uu :Unite file:~/git/vim/scripts/Ultisnips/ <CR>
+map <leader>ua :Unite us <CR>
+map <leader>uh :Unite us <CR>
+map <leader>ul :Unite us <CR>
+map <leader>us :Unite us <CR>
 " V - .vimrc
-map <leader>vr :e ~/git/vim/README.md<CR>
 map <leader>vR :call VimHelperRestart()<CR>
 map <leader>vh :e ~/git/vim/scripts/VimHelper.py<CR>
+map <leader>vr :e ~/git/vim/README.md<CR>
 map <leader>vv :e ~/git/vim/.vimrc<CR>
-map <leader>vd :w !diff % -<CR>
+map <leader>vb :e ~/git/vim/vim-base/.vimrc<CR>
 " W
 " X
 " Y
 " Z - Z(S)essions
 " ?
-map <leader>? :call OpohBuffer() <bar> setlocal syntax=vim <bar> keepalt r ~/git/vim/.vimrc <CR> /^" H -<CR> :0,.-1d<CR>/^" I -<CR> :.,$d<CR>gg
 " --------------------
-" ---- [3.4] OMAP ----
-"This adds $$ as textobjects.	
-onoremap a$ :<c-u>normal! F$vf$<cr>
-onoremap i$ :<c-u>normal! T$vt$<cr>
-onoremap am :<c-u>normal! F$vf$<cr>
-onoremap im :<c-u>normal! T$vt$<cr>
-
-" Wanted binds like cib ciB but for [] and <> "" ''
-onoremap ad a[
-onoremap aD a<
-onoremap aq a"
-onoremap at a'
-
-onoremap id i[
-onoremap iD i<
-onoremap iq i"
-onoremap it i'
+" ---- [2.4] OMAP ----
 " --------------------
-" ---- [3.5] COMMAND ----
-cnoremap <C-BS> <C-W>
-
-" Readline bindings.
-cnoremap <C-A> <home>
-cnoremap <C-E> <end>
-cnoremap <C-K> <C-\>e getcmdpos() == 1 ? '' : getcmdline()[:getcmdpos()-2]<CR>
-cnoremap <C-B> <left>
-cnoremap <C-F> <right>
-
-cnoremap <expr> h<space> getcmdtype() == ":" && getcmdline() == "" ? "tab help " : "h "
-cnoremap <expr> n getcmdtype() == ":" && getcmdline() == "t" ? 'abnew' : "n"
-cnoremap <expr> c getcmdtype() == ":" && getcmdline() == "t" ? 'abc' : "c"
-
-if !g:disablePlugins
-	" I tend to write :git instead of :Git
-	cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>Git" : "t"
-else
-	cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>!git" : "t"
-endif
-
-"tt filename opens opens a file with filename in a tmp folder.
-cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "t" ? "\<bs>Tt" : "t"
-command -nargs=1 Tt :e ~\.vim\tmp\tmp\<args>
-
-" Maps :W to :w. To prevent errors when I sometimes hold shift too long during save.
-command W :w
-
-" Show the my normal and insert bindings.
-cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ? 
-			\ "\<bs>" . 'call OpohBuffer() <bar> setlocal syntax=vim <bar>
-			\ keepalt r ~/git/vim/.vimrc <CR> /^" ---- \[3.4\]<CR>
-			\ :0,.-1d<CR>/^" ---- \[3.5\]<CR> :.,$d<CR>gg' : '?'
+" ---- [2.5] COMMAND ----
+cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>Git" : "t"
 " --------------------
-" ---- [3.6] UNITE ----
+" ---- [2.6] UNITE ----
 function! UniteBinds()
 	nmap <buffer> b :Unite -prompt=bookmark> bmark<CR>
 	nmap <buffer> <ESC> :execute "normal \<Plug>(unite_all_exit)"<CR>
@@ -661,7 +339,7 @@ function! UniteBinds()
 endfunction
 autocmd FileType unite call UniteBinds()
 " --------------------
-" ---- [3.7] FUGITIVE ----
+" ---- [2.7] FUGITIVE ----
 function! FugitiveBindings()
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
@@ -669,39 +347,20 @@ function! FugitiveBindings()
 	nmap <buffer> <esc> :bd<cr>
 endfunction
 " --------------------
-" ---- [3.8] OPOHBUFFER ----
-function! OpohBinds()
-	nnoremap <buffer> <ESC> :execute("b #")<CR>
-endfunction
-autocmd FileType opoh call OpohBinds()
 " --------------------
-" --------------------
-" ---- [4] FILETYPE SPECIFIC ----
-" ---- [4.0] All ----
+" ---- [3] FILETYPE SPECIFIC ----
+" ---- [3.0] All ----
 autocmd FileType * setlocal formatoptions-=cro
 " --------
-" ---- [4.1] JAVA ----
-function! JavaSettings()
-	setlocal omnifunc=JavaOmni
-	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
-	setlocal foldtext=SpecialBraceFoldText()
-endfunction
-
+" ---- [3.1] JAVA ----
 function! JavaOmni(findstart, base)
 	let words = eclim#java#complete#CodeComplete(a:findstart, a:base)
 	return FilterOmni(words, a:findstart, a:base)
 endfunction
 
-autocmd Filetype java call JavaSettings()
+autocmd Filetype java setlocal omnifunc=JavaOmni
 " --------
-" ---- [4.2] C# ----
-function! CSSettings()
-	setlocal omnifunc=CSOmni
-	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
-	setlocal foldtext=SpecialBraceFoldText()
-	let g:unite_builder_make_command = "msbuild"
-endfunction
-
+" ---- [3.2] C# ----
 function! CSOmni(findstart, base)
 	let words = OmniSharp#Complete(a:findstart, a:base)
 	return FilterOmni(words, a:findstart, a:base)
@@ -710,127 +369,36 @@ endfunction
 " Updates omnisharp to include new methods
 autocmd BufWritePost *.cs :OmniSharpReloadSolution
 
-autocmd Filetype cs call CSSettings()
+autocmd Filetype cs setlocal omnifunc=CSOmni
 " ----------------
-" ---- [4.3] C ----
-function! CSettings()
-	setlocal omnifunc=COmni
-	setlocal foldexpr=BraceFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
+" ---- [3.3] C ----
 function! COmni(findstart, base)
 	let words = ccomplete#Complete(a:findstart, a:base)
 	return FilterOmni(words, a:findstart, a:base)
 endfunction
 
-autocmd Filetype c,cpp call CSettings()
+autocmd Filetype c,cpp setlocal omnifunc=COmni
 " --------------------
-" ---- [4.4] VIMRC ----
-function! VimSettings()
-	setlocal foldexpr=VimrcFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-" Pentadactyl file is a vim file.
-autocmd BufRead .pentadactylrc set filetype=vim
-autocmd Filetype vim call VimSettings()
+" ---- [3.4] VIMRC ----
 " -------------
-" ---- [4.5] SNIPPET ----
-function! SnippetSettings()
-	setlocal foldexpr=SnippetFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-	setlocal foldmethod=expr
-endfunction
-
-autocmd Filetype snippets call SnippetSettings()
+" ---- [3.5] SNIPPET ----
 autocmd BufWritePost *.snippets call VimHelperMessage("snippet", "")
 " --------------------
-" ---- [4.6] TODO ----
-function! TODOSettings()
-	setlocal foldexpr=IndentFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-" Files that end with .td are now todofiles.
-autocmd BufEnter *.td setlocal filetype=todo
-
-autocmd Filetype todo call TODOSettings()
+" ---- [3.6] TODO ----
 " --------------------
-" ---- [4.7] PYTHON ----
-function! PythonSettings()
-	setlocal omnifunc=
-	setlocal foldexpr=PythonFolding(v:lnum)
-	setlocal foldtext=PythonFoldText()
-endfunction
-
-autocmd Filetype python call PythonSettings()
+" ---- [3.7] PYTHON ----
 " --------------------
-" ---- [4.8] LUA ----
-function! LUASettings()
-	setlocal foldexpr=IndentFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-autocmd Filetype lua call LUASettings()
+" ---- [3.8] LUA ----
 " -------------
-" ---- [4.9] MAKE ----
-function! MAKESettings()
-	setlocal foldexpr=IndentFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-autocmd Filetype make call MAKESettings()
+" ---- [3.9] MAKE ----
 " -------------
-" ---- [4.10] PASS ----
-function! PASSSettings()
-	setlocal foldexpr=PassFolding(v:lnum)
-	setlocal foldtext=PassFoldText()
-	setlocal foldminlines=0
-endfunction
-
-function! GenPass(...)
-let l:passLen = (a:0 > 0 ? a:1 : 8)
-let l:password = ""
-if l:passLen > 0
-python << endpy
-import random, string, vim, sys
-characters = string.ascii_letters + string.digits + '@&-_=+?!'
-passLen = int(vim.eval("l:passLen"))
-password = "".join(random.choice(characters) for x in range(0,passLen))
-vim.command("let l:password = '" + str(password) + "'")
-endpy
-endif
-execute "normal a" . l:password
-endfunction
-
-" Files that end with .pass are now password files.
-autocmd BufNewFile,BufRead *.pass set filetype=pass
-
-autocmd Filetype pass call PASSSettings()
+" ---- [3.10] PASS ----
 " -------------
-" ---- [4.11] JAPANESE ----
-function! JAPANESESettings()
-	set guifont=MS_Gothic:h16:w8
-	set fileencoding=utf-8
-	set encoding=utf-8
-endfunction
-
-" Files that end with .jp are now japanese files.
-autocmd BufNewFile,BufRead *.jp set filetype=jp
-
-autocmd Filetype jp call JAPANESESettings()
+" ---- [3.11] JAPANESE ----
 " -------------
-" ---- [4.12] LATEX ----
-function! TEXSettings()
-	setlocal foldexpr=TexFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-	call EnglishSpellCheck()
-endfunction
-
-autocmd Filetype tex,plaintex call TEXSettings()
+" ---- [3.12] LATEX ----
 " --------------------
-" ---- [4.13] GITCOMMIT ----
+" ---- [3.13] GITCOMMIT ----
 function! GITCSettings()
 	" Don't fold gitstuff.
 	let &foldlevel = 99
@@ -840,331 +408,22 @@ endfunction
 
 autocmd FileType gitcommit call GITCSettings()
 " --------------------
-" ---- [4.14] MARKDOWN ----
-function! MDSettings()
-	setlocal foldexpr=MDFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-	call EnglishSpellCheck()
-endfunction
-
-autocmd FileType markdown call MDSettings()
+" ---- [3.14] MARKDOWN ----
 " --------------------
-" ---- [4.15] NOTE ----
-function! NOTESettings()
-	setlocal foldexpr=IndentFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-endfunction
-
-" Files that end with .pass are now password files.
-autocmd BufNewFile,BufRead *.note set filetype=note
-
-autocmd Filetype note call PASSSettings()
-autocmd BufWritePost *.note call VimHelperMessage("tags", "")
+" ---- [3.15] NOTE ----
 " --------------------
 " --------------------
-" ---- [5] FOLDING ----
-" ---- [5.0] FOLDSETTINGS ----
-set foldmethod=expr
-set foldnestmax=2
-set foldopen=
-" --------------------
-" ---- [5.1] FOLDEXPR ----
-" ---- [5.1.0] GLOBAL VARIABLES ----
-let g:InsideBrace = 0
-let g:InsideVar = 0
-let g:InsideComment = 0
-" --------------------
-" ---- [5.1.1] C# JAVA ----
-function! OneIndentBraceFolding(lnum)
-	let line = getline(a:lnum)
-	let nextline = getline(a:lnum+1)
-	if a:lnum == 1
-		let g:InsideBrace = 0
-		let g:InsideVar = 0
-	endif
-	if line =~ '^using' || line =~ '^import' || line =~ '^package'
-		return 1
-	elseif line =~ '^\s*$' && g:InsideComment == 0
-		if nextline =~ '^\s*$' && g:InsideVar == 1
-			return 1
-		elseif g:InsideVar == 1
-			let g:InsideVar = 0
-			return '<1'
-		else
-			return '='
-		endif
-	else
-		if g:InsideBrace == 1
-			if line =~ '^\s*}' && indent(a:lnum)/&shiftwidth == 1
-				let g:InsideBrace = 0
-				if  nextline =~ '^\s*$'
-					let g:InsideVar = 1
-					return '1'
-				else
-					return '<1'
-				endif
-			else
-				return 1
-			endif
-		elseif g:InsideComment == 1
-			if line =~ '\*/$'
-				let g:InsideComment = 0
-				if  nextline =~ '^\s*$'
-					let g:InsideVar = 1
-					return '1'
-				else
-					return '<1'
-				endif
-			else
-				return 1
-			endif
-		else
-			if line =~ '^\s*/\*' && line =~ '\*/$'
-				return '='
-			elseif line =~ '^\s*/\*'
-				let g:InsideComment = 1
-				return '>1'
-			elseif line =~ '{' && indent(a:lnum)/&shiftwidth == 1
-				let g:InsideBrace = 1
-				return ">1"
-			elseif line =~ '/// <summary>' && indent(a:lnum)/&shiftwidth == 1
-				let g:InsideBrace = 1
-				return ">1"
-			elseif line =~ '@Override' && indent(a:lnum)/&shiftwidth == 1
-				let g:InsideBrace = 1
-				return ">1"
-			elseif nextline =~ '^\s*{' && indent(a:lnum + 1)/&shiftwidth == 1
-				let g:InsideBrace = 1
-				return ">1"
-			elseif indent(a:lnum)/&shiftwidth >= 1
-				return 1
-			else
-				return 0
-			endif
-		endif
-	endif
-endfunction
-" --------------------
-" ---- [5.1.2] C ----
-function! BraceFolding(lnum)
-	let line=getline(a:lnum)
-	let nextline=getline(a:lnum + 1)
-	" Catches start of function body
-	if indent(a:lnum + 1) == 0 && nextline =~ '{'
-			let g:InsideBrace = 1
-	endif
-	" Catches end of function body
-	if indent(a:lnum) == 0 && line =~'}'
-			let g:InsideBrace = 0
-			return 1
-	endif
-	" If inside function body
-	if g:InsideBrace
-		return 1
-	" Rest, don't fold
-	else
-		let g:InsideVar = 0
-		return 0
-	endif
-endfunction
-" --------------------
-" ---- [5.1.3] VIM ----
-function! VimrcFolding(lnum)
-	let line = getline(a:lnum)
-	if line =~ '^\" ---- ' || line =~ '^function'
-		return 'a1'
-	elseif line =~ '^\" -----' || line =~ '^endfunction'
-		return 's1'
-	else
-		return '='
-	endif
-endfunction
-" --------------------
-" ---- [5.1.4] SNIPPETS ----
-function! SnippetFolding(lnum)
-	if a:lnum == 1
-		let g:InsideBrace = 0
-	endif
-	let line = getline(a:lnum)
-	if line =~ '^# ' && !g:InsideBrace
-		return '>1'
-	elseif (line =~ '^snippet' || line=~ '^pre_expand' || line=~ '^post_jump') && !g:InsideBrace
-		let g:InsideBrace = 1
-		return '>2'
-	elseif line =~ '^endsnippet'
-		let g:InsideBrace = 0
-		return '<2'
-	else
-		return '='
-	endif
-endfunction
-" --------------------
-" ---- [5.1.5] TODO LUA MAKE ----
-" Includes row before new indent.
-function! IndentFolding(lnum)
-	let line = getline(a:lnum)
-	if line =~ '^import' || line =~ '^from'
-		return 1
-	elseif line =~ '\S'
-		if indent(a:lnum)/&shiftwidth < indent(a:lnum+1)/&shiftwidth
-			return ">" . indent(a:lnum+1)/&shiftwidth
-		else
-			return indent(a:lnum)/&shiftwidth
-		endif
-	else
-		return '='
-	endif
-endfunction
-" --------------------
-" ---- [5.1.6] PYTHON ----
-function! PythonFolding(lnum)
-	let pline = getline(a:lnum-1)
-	let line = getline(a:lnum)
-	let nline = getline(a:lnum+1)
-	if line =~ '^import' || line =~ '^from'
-		let g:InsideVar = 0
-		return 1
-	elseif line =~ '\S'
-		if line =~ '^\s*def' || line =~ '^\s*class'
-			let g:InsideVar = 0
-			return ">" . (indent(a:lnum)/&shiftwidth + 1)
-		elseif indent(a:lnum) == 0
-			if g:InsideVar == 0
-				let g:InsideVar = 1
-				return ">1"
-			else
-				return 1
-			endif
-		endif
-	endif
-	return '='
-endfunction
-" --------------------
-" ---- [5.1.7] LATEX ----
-" Includes row before new indent and row after.
-function! TexFolding(lnum)
-	let line = getline(a:lnum)
-	if line =~ "^\s*$"
-		return '='
-	elseif indent(a:lnum)/&shiftwidth < indent(a:lnum+1)/&shiftwidth
-		return ">" . indent(a:lnum+1)/&shiftwidth
-	elseif indent(a:lnum)/&shiftwidth < indent(a:lnum-1)/&shiftwidth && 
-		\ (line =~ '^\s*\\end' || line =~ '^\s*\\]')
-		return "<" . indent(a:lnum-1)/&shiftwidth
-	else
-		return indent(a:lnum)/&shiftwidth
-	endif
-endfunction
-" --------------------
-" ---- [5.1.8] PASS ----
-function! PassFolding(lnum)
-	let line = getline(a:lnum)
-	if line == ""
-		return 0
-	endif
-	return ">1"
-endfunction
-" --------------------
-" ---- [5.1.9] MARKDOWN ----
-function! MDFolding(lnum)
-	let line = getline(a:lnum)
-	if line =~ "#"
-		let ind = strlen(substitute(line, "[^#]", "", "g")) - 1
-		return '>' . ind
-	else
-		return '='
-	endif
-
-endfunction
-" --------------------
-" ---------------
-" ---- [5.2] FOLDTEXT ----
-" ---- [5.2.0] DEFAULT ----
-" First line of fold
-function! NormalFoldText()
-	let line = substitute(getline(v:foldstart),'^\s*','','')
-	let indent_level = indent(v:foldstart)
-	if line =~ '^pre_expand' || line =~ '^post_jump'
-		let line = substitute(getline(v:foldstart+1),'^\s*','','')
-	endif
-	if line =~ '^snippet'
-		let indent_level = &l:tabstop
-	endif
-	let indent = repeat(' ', indent_level)
-	if line =~ '^import'
-	       let line = "import"	
-	endif
-	let endText = v:foldend - v:foldstart
-	return indent . line . repeat(" ", 
-		\ winwidth(0)-strlen(indent . line . endText) - 5) . 
-		\ endText . " "
-endfunction
-" --------------------
-" ---- [5.2.1] CS JAVA ----
-function! SpecialBraceFoldText()
-	let i = v:foldstart
-	let line = getline(i)
-	if line =~ '^using' || line =~ '^import' || line =~ '^package'
-		let line = "IMPORT"
-	elseif line =~ '/\*'
-		let line = "COMMENT"
-	elseif line =~ ';'
-		let line = "VARIABLES"
-	endif
-	while(line =~ '^\s*/' || line =~ '@' || line !~ '\S')
-		let i = i+1
-		let line = getline(i)
-	endwhile
-
-	let line = substitute(line,'^\s*','','')
-	let indent_level = indent(v:foldstart)
-	let indent = repeat(' ', indent_level)
-	return indent . line
-endfunction
-" --------------------
-" ---- [5.2.2] PASS ----
-" name pass username
-" name -------------
-function! PassFoldText()
-	let line = getline(v:foldstart)
-	let words = split(line, '\t')
-	return words[0]
-endfunction
-" --------------------
-" ---- [5.2.3] PYTHON ----
-function! PythonFoldText()
-	let line = substitute(getline(v:foldstart),'^\s*','','')
-	let indent_level = indent(v:foldstart)
-	let indent = repeat(' ', indent_level)
-	let endText = v:foldend - v:foldstart
-	if line =~ '^import' || line =~ '^from'
-		let line = "import"	
-	elseif !(line =~ '^\s*def' || line =~ '^\s*class')
-		let line = " - " . endText . " lines of code"
-	endif
-	return indent . line . repeat(" ", 
-		\ winwidth(0)-strlen(indent . line . endText) - 5) . 
-		\ endText . " "
-endfunction
-" --------------------
-" --------------------
-" --------------------
-" ---- [6] STATUSLINE ----
-set laststatus=2
+" ---- [4] STATUSLINE ----
 set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
-if !g:disablePlugins
-	set statusline+=%#warningmsg#%{SyntasticStatuslineFlag()}%*
-endif
+set statusline+=%#warningmsg#%{SyntasticStatuslineFlag()}%*
 
 " Gets the gitinfo for the statusline.
 function! MyStatusLine()
 	let b:statusLineVar = ""
-	if !g:disablePlugins
-		if SyntasticStatuslineFlag() == ""
-			hi StatusLine guibg=NONE
-		else
-			hi StatusLine guibg=red
-		endif
+	if SyntasticStatuslineFlag() == ""
+		hi StatusLine guibg=NONE
+	else
+		hi StatusLine guibg=red
 	endif
 	let gitStatusLineFile = expand("~/.vim/tmp/gitstatusline/") .  substitute(expand("%:p"), "[\\:/]", "-", "g")
 	if filereadable(gitStatusLineFile)
@@ -1177,94 +436,10 @@ function! MyStatusLine()
 	return b:statusLineVar
 endfunction
 " --------------------
-" ---- [7] TABLINE ----
-function! Tabline()
-	let s = ''
-	for i in range(tabpagenr('$'))
-		let tab = i + 1
-		let bufname = ''
-		for buf in tabpagebuflist(tab)
-			let bufname .= (bufname != '' ? ' | ' : '')
-			let bufname .= fnamemodify(bufname(buf), ':t') . 
-					\ (getbufvar(buf, "&mod") ? "[+]" : "")
-		endfor
-		let s .= '%' . tab . 'T' . (tab == tabpagenr() ? '%#TabLineSel#' : '%#TabLine#')
-		let s .= ' ' . tab . ' ' . (bufname != '' ? bufname . ' ' : '- ')
-	endfor
-	let s .= '%#TabLineFill#'
-	return s
-endfunction
-
-set tabline=%!Tabline()
+" ---- [5] COLORSETTINGS ----
+" ---- [5.0] DEFAULT ----
 " --------------------
-" ---- [8] MINIMALMODE ----
-if g:minimalMode
-	let s:CompletionCommand = "\<C-X>\<C-U>"
-	inoremap <TAB> <C-R>=MinimalTab()<CR>
-	let g:syntastic_mode_map = { "mode": "passive",
-				   \ "active_filetypes": [],
-				   \ "passive_filetypes": [] }
-endif
-" --------------------
-" ---- [9] COLORSETTINGS ----
-" ---- [9.0] DEFAULT ----
-colorscheme desert
-
-" Change to better colors when using a terminal
-" http://misc.flogisoft.com/_media/bash/colors_format/256_colors_bg.png
-if has("terminfo")
-	let &t_Co=256
-	set background=light
-endif
-
-hi Normal ctermbg=236 ctermfg=15 cterm=bold
-hi Identifier ctermfg=120 cterm=bold
-hi Title ctermfg=203 cterm=bold
-hi SpecialKey ctermfg=8 cterm=bold guifg=grey40
-hi NonText ctermfg=7 ctermbg=8
-hi IncSearch ctermfg=191 ctermbg=8
-hi Search ctermfg=15 ctermbg=172
-hi MoreMsg ctermfg=22
-hi Visual ctermbg=228 ctermfg=64
-hi Folded ctermbg=239 ctermfg=11 cterm=bold
-hi FoldColumn ctermbg=8 ctermfg=178
-hi Constant ctermfg=174 cterm=bold
-hi Statement ctermfg=228 cterm=bold
-hi PreProc ctermfg=9 cterm=bold
-hi Type ctermfg=185 cterm=bold
-hi Todo ctermfg=9 cterm=bold
-hi Special ctermfg=229 cterm=bold
-hi Normal ctermfg=15
-hi SpellBad ctermbg=NONE cterm=underline ctermfg=NONE gui=underline
-hi SpellCap ctermbg=NONE cterm=underline ctermfg=NONE gui=underline
-hi SpellLocal ctermbg=NONE cterm=underline ctermfg=NONE gui=underline
-hi SpellRare ctermbg=NONE cterm=underline ctermfg=NONE gui=underline
-hi Comment ctermfg=123 cterm=bold
-hi TabLineFill cterm=underline gui=underline guibg=grey30 ctermbg=239
-hi TabLine cterm=underline gui=underline guibg=grey30 ctermbg=239 ctermfg=NONE
-hi TabLineSel cterm=none gui=none ctermbg=NONE
-hi MoreMsg cterm=bold ctermfg=10 guifg=springgreen
-hi LineNr cterm=bold
-hi CursorLineNr cterm=bold
-hi Ignore cterm=bold ctermfg=236
-hi Directory cterm=bold
-hi Pmenu ctermfg=15 ctermbg=13 cterm=bold
-hi PmenuSel ctermfg=15 cterm=bold
-hi PmenuSbar ctermfg=NONE ctermbg=13
-hi PmenuThumb ctermfg=NONE ctermbg=13
-hi StatusLineNC ctermbg=239 ctermfg=15 cterm=bold guibg=grey40 guifg=NONE
-hi StatusLine gui=underline guibg=NONE guifg=NONE cterm=underline
-hi SignColumn guibg=NONE ctermbg=NONE
-hi ColorColumn guibg=grey30 ctermbg=239
-hi DiffAdd guibg=#002211 guifg=NONE ctermbg=22 ctermfg=NONE
-hi DiffChange guibg=#000066 guifg=NONE ctermbg=17 ctermfg=NONE
-hi DiffDelete guibg=#660000 guifg=red ctermbg=52 ctermfg=211
-hi DiffText guibg=dodgerblue4 guifg=NONE ctermbg=23 ctermfg=NONE
-
-autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
-autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
-" --------------------
-" ---- [9.1] DRAW ----
+" ---- [5.1] DRAW ----
 function! HighlightGitEnable()
 	hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
 	hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
@@ -1317,7 +492,7 @@ function! HighlightDrawDisable()
 	call HighlightMarkDisable()
 endfunction
 " --------------------
-" ---- [9.2] MARK COLORNAMES ----
+" ---- [5.2] MARK COLORNAMES ----
 "[a]quamarine
 "[b]rown
 "[c]oral
@@ -1344,19 +519,18 @@ endfunction
 "[y]ellow
 "[z] - weird color, weird letter
 " --------------------
-" ---- [9.3] UNITE ----
+" ---- [5.3] UNITE ----
 hi uniteSource__Dir gui=NONE cterm=NONE guifg=khaki ctermfg=228
 hi link uniteSource__Fil Identifier
 hi link uniteCandidateInputKeyword Search
 hi default link uniteSource__Fil_Special PreProc
 " --------------------
 " --------------------
-" ---- [10] AUTOCMD ----
+" ---- [6] AUTOCMD ----
 autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
 autocmd TextChanged,TextChangedI * call HighlightGitDisable()
 autocmd TextChanged,TextChangedI * call CreateTempFile()
-autocmd InsertCharPre * let v:char = Delim(v:char)
 autocmd InsertEnter * call HighlightDrawDisable()
 autocmd InsertLeave * call HighlightDrawEnable()
 
@@ -1369,8 +543,8 @@ function! CreateTempFile()
 	endif
 endfunction
 " --------------------
-" ---- [11] FUNCTIONS ----
-" ---- [11.0] TABCOMPLETION ----
+" ---- [7] FUNCTIONS ----
+" ---- [7.0] TABCOMPLETION ----
 function! NeoTab()
 	call UltiSnips#ExpandSnippet()
 	if g:ulti_expand_res == 1
@@ -1414,19 +588,6 @@ function! NeoLongestCommon()
 	endif
 	return longestCommon
 endfunction
-function! MinimalTab()
-	if getline(".")[col('.') - 2] =~ '\w'
-		call UltiSnips#ExpandSnippet()
-		if g:ulti_expand_res
-			return ""
-		else
-			return (pumvisible() ? "\<C-E>" : "") . s:CompletionCommand
-		endif
-	else
-		return SpecialDelim("\<TAB>")
-	endif
-endfunction
-
 function! FilterOmni(words, findstart, base)
 	if a:findstart
 		return a:words
@@ -1491,80 +652,23 @@ function! GetActiveSnippets()
 	return suggestions
 endfunction
 " --------------------
-" ---- [11.1] JUMP ----
-" Jumps you to the next/previous ultisnips location if exists.
-" Else it jumps to the next/previous delimiter.
-" Else jumps to $/^
-" To change default delimiters just change g:smartJumpElements
-if !exists('g:smartJumpElements')
-	let g:smartJumpElements = "[]'\"(){}<>\[\$]"
-endif
-function! SmartJump()
-	pclose
-	if !g:disablePlugins
-		call UltiSnips#JumpForwards()
-		if g:ulti_jump_forwards_res == 1
-			return ""
-		endif
-	endif
-	let cursorPos = getpos('.')
-	let pos = match(getline('.'), g:smartJumpElements, cursorPos[2] - 1)
-	if pos == -1
-		normal $
-	else
-		let cursorPos[2] = pos + 1
-		call setpos('.', cursorPos)
-	endif
-	call feedkeys("\<right>",'i')
-	return ""
-endfunction
-function! SmartJumpBack()
-	pclose
-	if !g:disablePlugins
-		call UltiSnips#JumpBackwards()
-		if g:ulti_jump_backwards_res == 1
-			return ""
-		endif
-	endif
-	let cursorPos = getpos('.')
-	let newPos = match(getline('.'), g:smartJumpElements)
-	let pos = newPos
-	let matchCount = 1
-	if pos == -1 || pos > cursorPos[2] + 1
-		normal ^
+" ---- [7.1] JUMP ----
+function! USOrSmartJump()
+	call UltiSnips#JumpForwards()
+	if g:ulti_jump_forwards_res == 1
 		return ""
 	endif
-	while newPos < cursorPos[2] - 1
-		if newPos == -1
-			break
-		endif
-		let pos = newPos
-		let newPos = match(getline('.'), g:smartJumpElements, 0, matchCount)
-		let matchCount += 1
-	endwhile
-	if cursorPos[2] == pos + 1
-		normal ^
-	else
-		let cursorPos[2] = pos + 1
-		call setpos('.', cursorPos)
+	return SmartJump()
+endfunction
+function! USOrSmartJumpBack()
+	call UltiSnips#JumpBackwards()
+	if g:ulti_jump_backwards_res == 1
+		return ""
 	endif
-	return ""
+	return SmartJumpBack()
 endfunction
 " --------------------
-" ---- [11.2] TEMPBUFFER ----
-function! OpohBuffer()
-	if bufexists("[Opoh]")
-		b Opoh
-	else
-		e [Opoh]
-	endif
-	execute("0,$d")
-	setlocal nobuflisted
-	setlocal filetype=opoh
-	setlocal buftype=nofile
-endfunction
-" --------------------
-" ---- [11.3] EVALUATE MATH ----
+" ---- [7.2] EVALUATE MATH ----
 function! PythonMath()
 let l:vimMath = getreg('"')
 if l:vimMath == ''
@@ -1578,29 +682,13 @@ endpy
 return l:pythonMath
 endfunction
 " --------------------
-" ---- [11.4] START EXTERNAL ----
+" ---- [7.3] START EXTERNAL ----
 function! StartEclim()
 	let g:EclimdRunning = 1
 	call vimproc#system_bg('eclimd')
 endfunction
 " --------------------
-" ---- [11.5] SPELLCHECK ----
-function! EnglishSpellCheck()
-	setlocal spell spelllang=en_us
-	let b:neocomplete_spell_file = 'american-english'
-endfunction
-
-function! SwedishSpellCheck()
-	setlocal spell spelllang=sv
-	let b:neocomplete_spell_file = 'swedish'
-endfunction
-
-function! NoSpellCheck()
-	setlocal nospell
-	let b:neocomplete_spell_file = ''
-endfunction
-" --------------------
-" ---- [11.6] GIT INFO ----
+" ---- [7.4] GIT INFO ----
 function! UpdateGitInfo()
 	let b:statusLineVar = ""
 	call UpdateMatches()
@@ -1674,66 +762,7 @@ function! AddGitMatches()
 	endif
 endfunction
 " --------------------
-" ---- [11.7] AUTODELIMITER ----
-"\ [["{"], ["{", "\<bs>\<cr>\<cr>}\<up>"]],
-let g:currentchains = []
-let g:delimCall = 0
-let g:optkeys = ["\<cr>", "\<left>", "\<space>", "\<tab>", "\<bs>"]
-function! Delim(key)
-	let g:delimCall = 0
-	let call = ""
-	for chains in g:keychains
-		if chains[0][0] ==# a:key
-			call add(g:currentchains, chains)
-		endif
-	endfor	
-	let newchains = []
-	for chains in g:currentchains
-		if chains[0][0] ==# a:key
-			if len(chains[0]) > 1
-				let call = chains[0][1]			
-			endif
-			let chains = chains[1:]
-			if chains != []
-				call add(newchains, chains)
-			endif
-		endif
-		if chains != []
-			if chains[0][0] == "opt"
-				if a:key == ";"
-					let call = "\<bs>\<right>;"
-				endif
-			endif
-		endif
-	endfor
-	let g:currentchains = newchains
-	if call != ""	
-		let g:delimCall = 1
-		call feedkeys(call)
-	endif
-	return a:key
-endfunction
-
-" Call this for all keys not being registered by InsertCharPre
-function! SpecialDelim(key)
-	let returnV = a:key
-	if g:delimCall == 0
-		for chains in g:currentchains
-			if chains[0][0] == "opt"
-				for key in g:optkeys
-					if key == a:key
-						let returnV = "\<right>" . a:key
-					endif
-				endfor			
-			endif
-		endfor
-		let g:currentchains = []
-	endif
-	let g:delimCall = 0
-	return returnV
-endfunction
-" --------------------
-" ---- [11.8] ON EXIT ----
+" ---- [7.5] ON EXIT ----
 function! OnExit()
 	call KillAllExternal()
 
@@ -1748,14 +777,14 @@ function! KillAllExternal()
 endfunction
 
 " --------------------
-" ---- [11.9] AFTER INIT ----
+" ---- [7.6] AFTER INIT ----
 function! AfterInit()
 	if !g:startedExternal
 		call VimHelperMessage("client", "1")
 	endif
 endfunction
 " --------------------
-" ---- [11.10] VIMHELPER ----
+" ---- [7.7] VIMHELPER ----
 function! VimHelperMessage(type, message)
 if !g:disableVimHelper && g:timeoutVH > 0
 python << endpy
@@ -1779,9 +808,7 @@ function! VimHelperRestart()
 	call VimHelperStart()
 endfunction
 function! VimHelperStart()
-	if !g:disableExternal
-		Spawn! -dir=~ python git\vim\scripts\VimHelper.py
-	endif
+	Spawn! -dir=~ python git\vim\scripts\VimHelper.py
 	let g:startedExternal = 1
 endfunction
 
@@ -1792,18 +819,7 @@ function! VimHelperCompile()
 endfunction
 " --------------------
 " --------------------
-" ---- [12] OS SPECIFIC ----
-" ---- [12.0] WINDOWS ----
-if(has("win32"))
-	au GUIEnter * simalt ~x
-endif
-" --------------------
-" ---- [12.1] LINUX ----
-if has('unix')
-endif
-" --------------------
-" --------------------
-" ---- [13] AFTER VIMRC ----
+" ---- [8] AFTER VIMRC ----
 if !exists("g:reload")
 	let g:reload = 1
 endif

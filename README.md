@@ -129,19 +129,18 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 # TODO
 
 ### Important
+* Make repositories
+	- Dotfiles
 
 ### Mid
 * VH
 	- Add git draw to this.
+	- Add compilestatusbar
+		- Show last time compiled.
+		- Show how long it took.
+		- Show script name.
+	- Add time column to console window.
 * Change delim to ultisnips ones.
-- Split my vimrc into smaller files.
-	- Base vimsettings.
-	- Vimrc for plugins and external stuff.
-	- Foldmethods.
-- Make repositories
-	- Base + fold.
-	- Plugins with base + fold as submodule.
-	- Dotfiles
 * Code-comletion
 	- Try using YCMD server for code completion, if that doesn't work then try 
 		moving my code completion to VH.
@@ -152,8 +151,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 * VimHelper
 	Check if you can make python focus other vim instance. If so,
 		add other vims buffers to ö and make them switchable with ö.
-* TagGenerator
-	* helptags for vim
 * Installing vim:
 	- Download all external binaries for windows and put them at a convenient
 		location to make installing vim easier.
