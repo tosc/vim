@@ -1,3 +1,4 @@
+" HEAVY VIM WITH ALL PLUGINS AND EXTERNAL HELPERS
 " ---- [0] INITIALIZATION ----
 source ~\git\vim\vim-base\.vimrc
 let requiredFolders = [
@@ -40,18 +41,11 @@ Plugin 'Shougo/neomru.vim'
 Plugin 'SirVer/ultisnips'
 
 " Code-completion
-Plugin 'Shougo/neocomplete.vim'
-
-" Omnicomplete engines.
-Plugin 'Rip-Rip/clang_complete'
-Plugin 'OmniSharp/omnisharp-vim'
+Plugin 'Valloric/YouCompleteMe'
 
 " Async external commands
 Plugin 'tpope/vim-dispatch'
 Plugin 'Shougo/vimproc.vim'
-
-" Syntax checker and syntax engines.
-Plugin 'scrooloose/syntastic'
 
 " Div
 Plugin 'tpope/vim-fugitive'
@@ -66,6 +60,7 @@ filetype plugin indent on
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
 let g:ulti_jump_backwards_res = 0
+let g:ulti_expand_or_jump_res = 0
 
 " Remove default ultisnips bindings.
 let g:UltiSnipsExpandTrigger="<Nop>"
@@ -75,18 +70,6 @@ let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
 " --------
-" ---- [1.2] ECLIM ----
-" Sets eclims completionmethod to omnifunc
-let g:EclimCompletionMethod = 'omnifunc'
-let g:EclimFileTypeValidate = 0
-" -----
-" ---- [1.3] OMNISHARP (C# OMNICOMPLETE) ----
-let g:OmniSharp_typeLookupInPreview = 1
-" Sets the sln file to the first file avaliable
-let g:OmniSharp_sln_list_index = 1
-" If omnisharp server is running never stop it.
-let g:Omnisharp_stop_server = 0
-" -------
 " ---- [1.4] UNITE ----
 let g:unite_force_overwrite_statusline = 0
 
@@ -153,64 +136,11 @@ endfunction
 call unite#custom_action('directory', 'my_dir', my_dir)
 call unite#custom#default_action('directory', 'my_dir')
 " --------------------
-" ---- [1.5] NEOCOMPLETE ----
-let g:neocomplete#enable_at_startup = 1
-let g:neocomplete#skip_auto_completion_time = ''
-let g:neocomplete#auto_completion_start_length = 2
-
-if !exists('g:neocomplete#keyword_patterns')
-	let g:neocomplete#keyword_patterns = {}
-endif
-let g:neocomplete#keyword_patterns.default = '\h\w*\|[^.\t]\.\w*'
-if !exists('g:neocomplete#sources#omni#input_patterns')
-	let g:neocomplete#sources#omni#input_patterns = {}
-endif
-let g:neocomplete#sources#omni#input_patterns.cs = '.*'
-let g:neocomplete#sources#omni#input_patterns.java = '.*'
-
-if !exists('g:neocomplete#force_omni_input_patterns')
-        let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_overwrite_completefunc = 1
-let g:neocomplete#force_omni_input_patterns.c =
-	\ '[^.[:digit:] *\t]\%(\.\|->\)\w*'
-let g:neocomplete#force_omni_input_patterns.cpp =
-	\ '[^.[:digit:] *\t]\%(\.\|->\)\w*\|\h\w*::\w*'
-let g:neocomplete#force_omni_input_patterns.objc =
-	\ '\[\h\w*\s\h\?\|\h\w*\%(\.\|->\)'
-let g:neocomplete#force_omni_input_patterns.objcpp =
-	\ '\[\h\w*\s\h\?\|\h\w*\%(\.\|->\)\|\h\w*::\w*'
-
-if !exists('g:neocomplete#sources')
-	let g:neocomplete#sources = {}
-endif
-let g:neocomplete#sources._ = ['us', 'buffer']
-let g:neocomplete#sources.vim = ['us', 'vim', 'buffer']
-let g:neocomplete#sources.python = ['us', 'jedi']
-let g:neocomplete#sources.cs = ['us', 'omni']
-
-let g:neocomplete#enable_smart_case = 0
-let g:neocomplete#enable_camel_case_completion = 0
-let g:neocomplete#enable_ignore_case = 0
-let g:neocomplete#sources#syntax#min_keyword_length = 1
-let g:neocomplete#min_keyword_length = 1
-let g:neocomplete#enable_auto_close_preview = 0
-let g:neocomplete#enable_fuzzy_completion = 0
-
-let g:clang_complete_auto = 0
-let g:clang_auto_select = 0
-" --------------------
-" ---- [1.6] SYNTASTIC ----
-let g:syntastic_mode_map = { "mode": "active",
-			   \ "active_filetypes": [],
-			   \ "passive_filetypes": ["vim"] }
-let g:syntastic_auto_loc_list = 1
-" --------------------
 " --------------------
 " ---- [2] BINDINGS ----
 " ---- [2.0] NORMAL ----
-nnoremap ö :call UniteOpen()<CR>
-nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
+nnoremap Ã¶ :call UniteOpen()<CR>
+nnoremap Ã– :call UniteExplorer(expand("%:p:h"))<CR>
 " --------------------
 " ---- [2.1] INSERT ----
 inoremap <TAB> <C-R>=NeoTab()<CR>
@@ -240,9 +170,6 @@ xmap s{ s}
 " B - Bookmark
 map <leader>b :Unite -prompt=bookmark> bmark<CR>
 " C - Compile
-map <leader>co :Errors<CR>
-map <leader>cc :SyntasticCheck<CR>
-map <leader>ce :SyntasticCheck<CR>
 " D - Delete buffer
 " E - Start external
 " F
@@ -354,15 +281,10 @@ endfunction
 autocmd FileType * setlocal formatoptions-=cro
 " --------
 " ---- [3.1] JAVA ----
-autocmd Filetype java setlocal omnifunc=eclim#java#complete#CodeComplete
 " --------
 " ---- [3.2] C# ----
-" Updates omnisharp to include new methods
-autocmd BufWritePost *.cs :OmniSharpReloadSolution
-autocmd Filetype cs setlocal omnifunc=OmniSharp#Complete
 " ----------------
 " ---- [3.3] C ----
-autocmd Filetype c,cpp setlocal omnifunc=ccomplete#Complete
 " --------------------
 " ---- [3.4] VIMRC ----
 " -------------
@@ -400,16 +322,10 @@ autocmd FileType gitcommit call GITCSettings()
 " --------------------
 " ---- [4] STATUSLINE ----
 set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
-set statusline+=%#warningmsg#%{SyntasticStatuslineFlag()}%*
 
 " Gets the gitinfo for the statusline.
 function! MyStatusLine()
 	let b:statusLineVar = ""
-	if SyntasticStatuslineFlag() == ""
-		hi StatusLine guibg=NONE
-	else
-		hi StatusLine guibg=red
-	endif
 	let gitStatusLineFile = expand("~/.vim/tmp/gitstatusline/") .  substitute(expand("%:p"), "[\\:/]", "-", "g")
 	if filereadable(gitStatusLineFile)
 		let statusInfo = readfile(gitStatusLineFile)
@@ -531,74 +447,16 @@ endfunction
 " ---- [7] FUNCTIONS ----
 " ---- [7.0] TABCOMPLETION ----
 function! NeoTab()
-	call UltiSnips#ExpandSnippet()
-	if g:ulti_expand_res == 1
-		return ""
-	endif
 	if getline(".")[col('.') - 2] =~ '\w' && pumvisible()
 		return "\<C-N>"
 	else
 	return SpecialDelim("\<TAB>")
 endfunction
-
-function! GetSnippetFiletypes()
-	let filetypes = []
-	if &l:filetype != ''
-		let filetypes += [&l:filetype]
-		if &l:filetype == 'plaintex'
-			let filetypes += ['tex']
-		elseif &l:filetype == 'cpp'
-			let filetypes += ['c']
-		endif
-	endif
-	let filetypes += ['all']
-	return filetypes
-endfunction
-
-let g:active_snippets = []
-function! GetActiveSnippets()
-	let g:active_snippets = []
-	let filetypes = s:get_snippet_filetypes()
-	let takenTriggers = []
-	let suggestions = []
-	for filetype in filetypes
-		let command = 'cat ~/git/vim/UltiSnips/' . filetype . '.snippets | grep "^snippet"'
-		let snippetList = split((exists("*vimproc#system") ? vimproc#system(command) : system(command)), "\n")
-		for snippet in snippetList
-			let tempList = split(snippet, '"')
-			if len(tempList) > 2
-				let rawDescription = split(snippet, '"')[-2]
-				if rawDescription =~ ':'
-					let descriptionList = split(rawDescription, ':')
-					let description = descriptionList[0]
-					let rawTriggers = descriptionList[1]
-					if rawTriggers != '' 
-						if rawTriggers =~ '|'
-							let triggers = split(rawTriggers, '|')
-						else
-							let triggers = [rawTriggers]
-						endif
-						for trigger in triggers
-							if index(takenTriggers,	trigger) == -1
-								call add(takenTriggers, trigger)
-								call add(suggestions, {
-								 \ 'word' : trigger,
-								 \ 'menu' : self.mark . ' ' . description . ' [' . filetype . ']'
-								 \ })
-							endif
-						endfor
-					endif
-				endif
-			endif
-		endfor
-	endfor
-	return suggestions
-endfunction
 " --------------------
 " ---- [7.1] JUMP ----
 function! USOrSmartJump()
-	call UltiSnips#JumpForwards()
-	if g:ulti_jump_forwards_res == 1
+	call UltiSnips#ExpandSnippetOrJump()
+	if g:ulti_expand_or_jump_res == 1
 		return ""
 	endif
 	return SmartJump()
@@ -626,10 +484,6 @@ return l:pythonMath
 endfunction
 " --------------------
 " ---- [7.3] START EXTERNAL ----
-function! StartEclim()
-	let g:EclimdRunning = 1
-	call vimproc#system_bg('eclimd')
-endfunction
 " --------------------
 " ---- [7.4] GIT INFO ----
 function! UpdateGitInfo()
@@ -707,18 +561,8 @@ endfunction
 " --------------------
 " ---- [7.5] ON EXIT ----
 function! OnExit()
-	call KillAllExternal()
-
 	call VimHelperMessage("client", "-1")
 endfunction
-
-function! KillAllExternal()
-	if exists("g:EclimdRunning")
-		ShutdownEclim
-	endif
-	call OmniSharp#StopServer()
-endfunction
-
 " --------------------
 " ---- [7.6] AFTER INIT ----
 function! AfterInit()
@@ -732,6 +576,7 @@ function! VimHelperMessage(type, message)
 if !g:disableVimHelper && g:timeoutVH > 0
 python << endpy
 import socket
+import vim
 try:
 	s = socket.socket()
 	s.connect(("localhost", 51351))
@@ -763,10 +608,6 @@ endfunction
 " --------------------
 " --------------------
 " ---- [8] AFTER VIMRC ----
-if !exists("g:reload")
-	let g:reload = 1
-endif
-
 if exists('setup')
 	autocmd VimEnter * BundleInstall
 endif

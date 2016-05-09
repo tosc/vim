@@ -131,7 +131,8 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 ### Important
 * Make repositories
 	- Dotfiles
-* Change completion from longest to "best". Tab goes down, shift-tab goes up.
+* Code-completion.
+	- Add custom completer using YCM Completer API for snippets.
 
 ### Mid
 * VH
@@ -142,9 +143,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 		- Show script name.
 	- Add time column to console window.
 * Change delim to ultisnips ones.
-* Code-comletion
-	- Try using YCMD server for code completion, if that doesn't work then try 
-		moving my code completion to VH.
 * Only do the auto-save temp file when execute mode is running.
 * Add readline for the statusbar to slowgit update like before.
 
