@@ -320,7 +320,7 @@ class RunScript(Thread):
         script - the script to call, ex "pdflatex test.tex --output-error"
         silent - disable output
     """
-    def __init__(self, script, folder=scriptFolder, silent=False, args=""):
+    def __init__(self, script, folder=scriptFolder, silent=False, args="", clear=True, scripts=[]):
         Thread.__init__(self)
 
         self.name = script
@@ -344,9 +344,12 @@ class RunScript(Thread):
         self.currentPath = ""
 
         self.script = script
+        self.scripts = [self.script + " " + args] 
+        self.scripts = self.scripts + scripts
         self.args = args
         self.currentFolder = folder
         self.silent = silent
+        self.clear = clear
         self.start()
 
     def run(self):
@@ -363,20 +366,24 @@ class RunScript(Thread):
 
     def update(self):
         try:
-            cop = open(compileOutput, 'w')
-            if not self.silent:
-                consoleMsgs.addstr("Script", "Calling: " + self.script)
-            cp = subprocess.Popen(self.script + " " + self.args, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder)
-            cp.wait()
-            cop.close()
-            if not self.silent:
-                consoleMsgs.addstr("Script", "Done!")
-                cop = open(compileOutput, 'r')
-                compileMsgs.clear()
-                line = cop.readline()
-                while(line):
-                    compileMsgs.addstr(line)
+            first = True
+            for script in self.scripts:
+                cop = open(compileOutput, 'w')
+                if not self.silent:
+                    consoleMsgs.addstr("Script", "Calling: " + self.script)
+                cp = subprocess.Popen(script, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder)
+                cp.wait()
+                cop.close()
+                if not self.silent:
+                    consoleMsgs.addstr("Script", "Done!")
+                    cop = open(compileOutput, 'r')
+                    if first:
+                        compileMsgs.clear()
                     line = cop.readline()
+                    while(line):
+                        compileMsgs.addstr(line)
+                        line = cop.readline()
+                first = False
         except Exception,e:
             consoleMsgs.addstr("Script", "Failed")
             consoleMsgs.addstr("Script", str(e))
@@ -425,7 +432,10 @@ class Compiler(Thread):
                             call = self.call(fileToCompile)
                             if call != "":
                                 subprocess.check_output("cp " + fileFromVim + " " +  fileToCompile, stderr=subprocess.STDOUT)
-                                workers.append(RunScript(call, self.currentFolder))
+                                if not re.search("\.c$", fileToCompile):
+                                    workers.append(RunScript(call, self.currentFolder))
+                                else:
+                                    workers.append(RunScript(call, self.currentFolder, scripts=[compileFolder + "./main"]))
                                 self.prevFileToCompile = fileToCompile
                                 self.prevArgs = self.args
                             else:
@@ -441,6 +451,8 @@ class Compiler(Thread):
             call = "python " + fileToCompile
         elif re.search("\.tex$", fileToCompile):
             call = "pdflatex -halt-on-error -output-directory={} {}".format(compileFolder, fileToCompile)
+        elif re.search("\.c$", fileToCompile):
+            call = "gcc -Wall " + fileToCompile + " -o " +  compileFolder + "main"
         return call + " " + self.args
 
     def setPath(self, path):
