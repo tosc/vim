@@ -4,7 +4,8 @@ global !p
 from snippetHelpers import *
 endglobal
 
-snippet include "include" b
+# Header
+snippet "import|include" "import:import|include" br
 #include <${1:stdio.h}>
 endsnippet
 snippet header "New C-header" b
@@ -16,28 +17,46 @@ $0
 #endif
 endsnippet
 
-snippet if "if" b
+# Logical operations
+snippet " \|\|| or" "or:or" r
+<MISSING or|||>
+endsnippet
+snippet " &&| and" "and:and" r
+<MISSING and|&&>
+endsnippet
+snippet "!([a-zA-Z0-9.,\-]+)| not" "not:not" r
+<MISSING !|not>
+endsnippet
+
+# Conditional snippets
+snippet if "if:if" b
 if(${1:condition})
 {
 	${VISUAL}
 	$0
 }
 endsnippet
-snippet elif "else if" b
+snippet "ifsh?o?r?t?" "if shorthand:ifshort" r
+	<MISSING ifshort>
+endsnippet
+snippet "ifel?s?e?" "if else:ifelse" br
+<MISSING ifelse>
+endsnippet
+snippet "elif|(else if|elseif)" "else if:elif|elseif" br
 else if(${1:condition})
 {
 	${VISUAL}
 	$0
 }
 endsnippet
-snippet else "else" b
+snippet else "else:else" b
 else
 {
 	${VISUAL}
 	$0
 }
 endsnippet
-snippet switch
+snippet switch "switch:switch" b
 switch(${1:var})
 {
 	case ${2:val}:
@@ -45,17 +64,152 @@ switch(${1:var})
 		break;
 }
 endsnippet
-snippet case
+snippet case "case:case" b
 case ${1:val}:
 	${0:${VISUAL}}
 	break;
 endsnippet
+	
+# Loop snippets
+snippet for "for:for" b
+int ${1:var};
+for($1 = 0; $1 < ${2:10}; i = i + 1)
+{
+	${0:${VISUAL}}
+}
+endsnippet
+snippet "for((?!e)\w+)" "for,??? as variable:for???" br
+int `!p snip.rv = match.group(1)`;
+for(`!p snip.rv = match.group(1)` = 0; `!p snip.rv = match.group(1)` < ${1:10}; `!p snip.rv = match.group(1)` = `!p snip.rv = match.group(1)` + 1)
+{
+	${0:${VISUAL}}
+}
+endsnippet
+snippet "fore(ach)?" "for each element in collection:foreach" br
+<MISSING foreach>
+endsnippet
+snippet while "while:while" b
+<MISSING white>
+endsnippet
+snippet do "do while:do" b
+<MISSING do>
+endsnippet
 
-snippet main "New C-class" b
+# Methods/functinos
+snippet "func?t?i?o?n?|meth?o?d?" "function:function|method" br
+<MISSING func|method>
+endsnippet
+snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
+<MISSING var func|method>
+endsnippet
+snippet "const?r?u?c?t?o?r?" "constructor:constructor" br
+<MISSING constructor>
+endsnippet
+
+# String snippets
+snippet "[sS]tri?n?g?" "string variable:string|String" br
+<MISSING string var>
+endsnippet
+snippet " contains| in" "string contains/is in another string:contains|in" r
+<MISSING contains|in>
+endsnippet
+snippet "[tT]o[sS]tring\(?\)?" "to string:tostring|ToString|toString" br
+<MISSING ToString>
+endsnippet
+
+# int snippets
+snippet "[iI]nt" "int variable:int|Int" br
+<MISSING int var>
+endsnippet
+snippet "(\w+)\+\+" "increment:???++" r
+<MISSING ++>
+endsnippet
+snippet "(\w+)\-\-" "decrement:???--" r
+<MISSING -->
+endsnippet
+
+# Variable snippets
+snippet "[dD]ouble" "double variable:double|Double" br
+<MISSING double var>
+endsnippet
+snippet "[fF]loat" "float variable:float|Float" br
+<MISSING float var>
+endsnippet
+snippet "[bB]ool" "bool variable:bool|Bool" br
+<MISSING bool var>
+endsnippet
+
+# Datatype snippets
+snippet enum "enum:enum" b
+<MISSING enum>
+endsnippet
+snippet "[lL]ist" "list:list|List" br
+<MISSING list>
+endsnippet
+snippet "(\w+) ?[lL]ist" "list of type ???:??? list|??? List" br
+<MISSING list with type>
+endsnippet
+
+# Documentation snippets
+snippet "\"|#|//" "comment" r
+<MISSING comment>
+endsnippet
+snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple lines:mlc|multilinecomment" br
+<MISSING multiline comment>
+endsnippet
+snippet comment "comment:comment" b
+<MISSING documentation>
+endsnippet
+
+# Special snippets
+snippet sleep "Sleep program:sleep" b
+<MISSING sleep>
+endsnippet
+snippet time "current time in milliseconds:time" b
+<MISSING time>
+endsnippet
+snippet "kill" "kill current script:kill" br
+<MISSING kill>
+endsnippet
+snippet print "print:print" b
+printf("$1");$0
+endsnippet
+snippet printf "print:printf" b
+printf("$1");$0
+endsnippet
+snippet printint "print a int:printint" b
+printf("%i\n", ${1:variable});$0
+endsnippet
+snippet "printstr(ing)?" "print a string:printstr|printstring" br
+printf("%s\n", ${1:variable});$0
+endsnippet
+snippet printfloat "print a float:printfloat" b
+printf("%f\n", ${1:variable});$0
+endsnippet
+snippet "printli?s?t?" "print a list:printlist" r
+<MISSING print list>
+endsnippet
+# New code snippets
+snippet "filebase|main" "runnable script:filebase|main" br
 int main(int argc, char* argv[])
 {
 	return 0;
 }
+endsnippet
+snippet class "new class:class" b
+<MISSING class>
+endsnippet
+snippet "class( |)(\w+)" "New class:class???" br
+<MISSING class???>
+endsnippet
+snippet subclass "new subclass:subclass" b
+<MISSING subclass>
+endsnippet
+snippet "subclass( |)(\w+)" "New class:subclass???" br
+<MISSING subclass???>
+endsnippet
+snippet thread "new thread:thread" b
+<MISSING thread>
 endsnippet
 snippet tcpclient "" b
 #include <sys/socket.h>
@@ -101,4 +255,26 @@ int main()
 
 	return 0;
 }
+endsnippet
+# Stream snippets
+snippet streamopen "Open a stream:streamopen" b
+<MISSING streamopen>
+endsnippet
+snippet streamclose "Close a stream:streamopen" b
+<MISSING streamclose>
+endsnippet
+snippet streamread "Read from a stream:streamread" b
+<MISSING streamread>
+endsnippet
+snippet streamreadline "Read a line from a stream:streamreadline" b
+<MISSING streamreadline>
+endsnippet
+snippet streamwrite "write to a stream:streamwrite" b
+<MISSING streamwrite>
+endsnippet
+
+
+# Text Snippets
+snippet lorem "Lorem Ipsum - 50 Words" b
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 endsnippet
