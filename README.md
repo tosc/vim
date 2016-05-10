@@ -132,6 +132,7 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	- Add custom completer using YCM Completer API for snippets.
 
 ### Mid
+* Go through installation again and remove everything that's no longer needed.
 * VH
 	- Add git draw to this.
 	- Add compilestatusbar
@@ -142,6 +143,7 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 * Change delim to ultisnips ones.
 * Only do the auto-save temp file when execute mode is running.
 * Add readline for the statusbar to slowgit update like before.
+* Add draw mark to base-vim.
 
 ### Low
 * Go through all snippets files and update them to new way of doing things.

@@ -1,4 +1,4 @@
-" HEAVY VIM WITH ALL PLUGINS AND EXTERNAL HELPERS
+" HEAVY VIM
 " ---- [0] INITIALIZATION ----
 source ~\git\vim\vim-base\.vimrc
 let requiredFolders = [
@@ -56,7 +56,7 @@ Plugin 'Konfekt/FastFold'
 " Required by vundle
 call vundle#end()
 filetype plugin indent on
-" ----------
+" --------------------
 " ---- [1.1] ULTISNIPS ----
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
@@ -70,10 +70,10 @@ let g:UltiSnipsJumpForwardTrigger="<Nop>"
 let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
-" --------
+" --------------------
 " ---- [1.2] YOUCOMPLETEME ----
 " --------------------
-" ---- [1.4] UNITE ----
+" ---- [1.3] UNITE ----
 let g:unite_force_overwrite_statusline = 0
 
 call unite#custom#default_action('buffer', 'goto')
@@ -282,15 +282,15 @@ endfunction
 " ---- [3] FILETYPE SPECIFIC ----
 " ---- [3.0] All ----
 autocmd FileType * setlocal formatoptions-=cro
-" --------
+" --------------------
 " ---- [3.1] JAVA ----
-" --------
+" --------------------
 " ---- [3.2] C# ----
-" ----------------
+" --------------------
 " ---- [3.3] C ----
 " --------------------
 " ---- [3.4] VIMRC ----
-" -------------
+" --------------------
 " ---- [3.5] SNIPPET ----
 " --------------------
 " ---- [3.6] TODO ----
@@ -298,13 +298,13 @@ autocmd FileType * setlocal formatoptions-=cro
 " ---- [3.7] PYTHON ----
 " --------------------
 " ---- [3.8] LUA ----
-" -------------
+" --------------------
 " ---- [3.9] MAKE ----
-" -------------
+" --------------------
 " ---- [3.10] PASS ----
-" -------------
+" --------------------
 " ---- [3.11] JAPANESE ----
-" -------------
+" --------------------
 " ---- [3.12] LATEX ----
 " --------------------
 " ---- [3.13] GITCOMMIT ----
@@ -449,7 +449,7 @@ endfunction
 " ---- [7] FUNCTIONS ----
 " ---- [7.0] TABCOMPLETION ----
 function! NeoTab()
-	if getline(".")[col('.') - 2] =~ '\w' && pumvisible()
+	if pumvisible()
 		return "\<C-N>"
 	else
 	return SpecialDelim("\<TAB>")
