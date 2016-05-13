@@ -414,6 +414,7 @@ hi default link uniteSource__Fil_Special PreProc
 autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
 autocmd TextChanged,TextChangedI * call CreateTempFile()
+autocmd FocusGained * call UpdateGitInfo()
 
 autocmd VimLeave * call OnExit()
 autocmd VimEnter * call AfterInit()
