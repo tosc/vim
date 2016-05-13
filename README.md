@@ -128,25 +128,42 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 ### Important
 * VH
 	- Change autocompiler to autotesting instead.
-* Move marks to vim-base.
+* Marks
+	- Remove draw-marks.
+	- Unite source
+		- Go through all marks and run getpos("'A").
+		- Get that line and populate unite with it.
+		- Highlight correct column for where the mark is.
+		- Find way of showing what file that is in.
+* Unite
+	- Find better way of changing input when pressing enter.
 
 ### Mid
-* Find way of splitting folding stuff into separate vimfile.
-	(The problem is how to source it in vim-base and have it work in heavy)
+* Split vimrc.
+	- The problem is how to source it in vim-base and have it work in heavy
+		- Look into runtime.
+		- If that doesn't work then make a .vimrc that only has source in it.
+		- Split rest into smaller parts that that .vimrc sources.
+		- Have my heavy vimrc source those files too.
+	- Split folding into a vimrc.
 * Make repositories
 	- Dotfiles
-* Go through installation again and remove everything in README that's no longer needed.
+* README
+	- Go through installation and remove everything that isn't required anymore.
 * VH
 	- Add compilestatusbar
 		- Show last time compiled.
 		- Show how long it took.
 		- Show script name.
 	- Add time column to console window.
-* Change delim to ultisnips ones.
+* Delim
+	- Change into ultisnips delim.
+	- Remove old delim.
 * Only do the auto-save temp file when execute mode is running.
 
 ### Low
-* Go through all snippets files and update them to new way of doing things.
+* Snippets
+	- Go through all snippets and update them to new way of working.
 * VimHelper
 	Check if you can make python focus other vim instance. If so,
 		add other vims buffers to ö and make them switchable with ö.
