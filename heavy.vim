@@ -320,8 +320,8 @@ autocmd FileType gitcommit call GITCSettings()
 " ---------------------------
 " ---- [3.15] NOTE ----------
 " ---------------------------
-" ---- [3.16] HELP ----
-" --------------------
+" ---- [3.16] HELP ----------
+" ---------------------------
 " ---------------------------
 " ---- [4] STATUSLINE -------
 set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
@@ -453,6 +453,17 @@ function! VimHelperCompile()
 	call VimHelperMessage("compile", expand("%:p"))
 	let args = input("Arguments? : ")
 	call VimHelperMessage("compileargs", args)
+endfunction
+" ---------------------------
+" ---- [7.7] TEMPBUFFER -----
+function! AddVimSection(section, subsection)
+	put = '\" Base'
+	put = '\" ----------------------------'
+	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/vim-base/base.vim")
+	put = ''
+	put = '\" Heavy'
+	put = '\" ----------------------------'
+	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/heavy.vim")
 endfunction
 " ---------------------------
 " ---------------------------

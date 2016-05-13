@@ -22,9 +22,6 @@ Vim settings.
 `` make install ``
 14. Create a vimrc with the lines:  
 ```VimL
-"let g:minimalMode = 1
-"let g:disablePlugins = 1
-"let g:disableExternal = 1
 source ~/git/vim/.vimrc
 ```  
 
@@ -131,11 +128,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 * Unite
 	- Find better way of changing input when pressing enter.
 	- Fix bmark
-* OpohBuffer
-	- Rename to tempbuffer.
-* Help-Bindings
-	- Fix help-bindings.
-	- Make helpbindings use both base and heavy in heavy.
 
 ### Mid
 * Make repositories
