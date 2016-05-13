@@ -14,8 +14,8 @@ try:
         currentPath = args[1]
         currentFolder,currentFile = os.path.split(currentPath)
 
-        filesRaw = subprocess.check_output("git -C " + currentFolder + " status -b -s", stderr=subprocess.STDOUT)
-        rowsRaw = subprocess.check_output("git -C " + currentFolder + " diff --numstat", stderr=subprocess.STDOUT)
+        filesRaw = subprocess.check_output("git status -b -s", stderr=subprocess.STDOUT, cwd=currentFolder, stdin=subprocess.PIPE)
+        rowsRaw = subprocess.check_output("git diff --numstat", stderr=subprocess.STDOUT, cwd=currentFolder, stdin=subprocess.PIPE)
 
         statusLine = ""
 
@@ -51,5 +51,6 @@ try:
         f = open(os.path.expanduser('~') + "/.vim/tmp/gitstatusline/" + statuslineFileName, 'w')
         f.write(statusLine)
         f.close()
-except:
+except Exception,e:
     print "Failed to update Statusbar"
+    print e
