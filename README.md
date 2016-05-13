@@ -125,9 +125,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 ### Important
 * VH
 	- Change autocompiler to autotesting instead.
-* Unite
-	- Find better way of changing input when pressing enter.
-	- Fix bmark
 
 ### Mid
 * Make repositories

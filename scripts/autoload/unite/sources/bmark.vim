@@ -35,6 +35,5 @@ let s:source.action_table.open = {
       \ }
 function! s:source.action_table.open.func(candidate)
 	let g:unite_bookmark_source = 0
-	let g:unite_path = a:candidate.action__path
-	call UniteExplorer()
+	call UniteExplorer(a:candidate.action__path)
 endfunction

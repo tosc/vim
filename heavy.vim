@@ -170,6 +170,9 @@ xmap s{ s}
 
 " A
 " B - Bookmark
+" Requires a file called bmark in ~/.cache/unite/bmark
+" Each line in that file is a bookmark with this formatting:
+" bookmark	bookmarkPath
 map <leader>b :Unite -prompt=bookmark> bmark<CR>
 " C - Compile
 " D - Delete buffer
