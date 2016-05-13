@@ -91,7 +91,7 @@ add_screen(statusBar)
 statusBar.border(0)
 (statusBarHeight, statusBarWidth) = statusBar.getmaxyx()
 
-gutter = screen.subwin(2*cellHeight, 9, offsetY, 0)
+gutter = screen.subwin(2*cellHeight, 17, offsetY, 0)
 gutter.border(0)
 (gutterHeight, gutterWidth) = gutter.getmaxyx()
 consoleWindow = screen.subwin(gutterHeight, windowWidth - gutterWidth, offsetY, gutterWidth)
@@ -164,7 +164,8 @@ class ConsoleCSL:
 
     def addstr(self, gutterStr, consoleStr):
         self.cMsgs.addstr(consoleStr)
-        self.gMsgs.addstr(gutterStr)
+        newGutterMsg = time.strftime("%H:%M:%S") + " " + gutterStr
+        self.gMsgs.addstr('{0:.{1}}'.format(newGutterMsg, gutterWidth-2))
 
     def draw(self):
         self.cMsgs.draw()

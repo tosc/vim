@@ -109,8 +109,6 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 ### Mid
 * README
 	- Go through installation and remove everything that isn't required anymore.
-* VH
-	- Add time column to console window.
 * Delim
 	- Change into ultisnips delim.
 	- Remove old delim.
