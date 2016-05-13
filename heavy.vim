@@ -145,9 +145,6 @@ nnoremap ö :call UniteOpen()<CR>
 nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
 " ---------------------------
 " ---- [2.1] INSERT ---------
-inoremap <TAB> <C-R>=NeoTab()<CR>
-inoremap <S-TAB> <C-P>
-
 inoremap <C-J> <C-R>=USOrSmartJump()<CR>
 inoremap <C-K> <C-R>=USOrSmartJumpBack()<CR>
 
@@ -367,11 +364,11 @@ endfunction
 " ---------------------------
 " ---- [7] FUNCTIONS --------
 " ---- [7.0] TABCOMPLETION --
-function! NeoTab()
+function! CustomTab()
 	if pumvisible()
 		return "\<C-N>"
 	else
-	return SpecialDelim("\<TAB>")
+	return "\<TAB>"
 endfunction
 " ---------------------------
 " ---- [7.1] JUMP -----------

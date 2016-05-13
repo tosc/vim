@@ -109,9 +109,6 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 ### Mid
 * README
 	- Go through installation and remove everything that isn't required anymore.
-* Delim
-	- Change into ultisnips delim.
-	- Remove old delim.
 * Only do the auto-save temp file when execute mode is running.
 
 ### Low
