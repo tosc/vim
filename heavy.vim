@@ -1,5 +1,5 @@
-"          HEAVY VIM
-" ---- [0] INITIALIZATION ----
+"       HEAVY VIM
+" ---- [0] INIT -------------
 let requiredFolders = [
 		\ "~/.vim/tmp/swapfiles",
 		\ "~/.vim/tmp/gitstatusline",
@@ -24,9 +24,9 @@ if !exists('g:disableVimHelper')
 endif
 set rtp+=~/git/vim/scripts/
 set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
-" --------------------
-" ---- [1] PLUGINS ----
-" ---- [1.0] VUNDLE ----
+" ---------------------------
+" ---- [1] PLUGINS ----------
+" ---- [1.0] VUNDLE ---------
 " Required by vundle
 filetype off
 set rtp+=~/git/vim/bundle/Vundle.vim/
@@ -55,8 +55,8 @@ Plugin 'Konfekt/FastFold'
 " Required by vundle
 call vundle#end()
 filetype plugin indent on
-" --------------------
-" ---- [1.1] ULTISNIPS ----
+" ---------------------------
+" ---- [1.1] ULTISNIPS ------
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
 let g:ulti_jump_backwards_res = 0
@@ -69,10 +69,10 @@ let g:UltiSnipsJumpForwardTrigger="<Nop>"
 let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
-" --------------------
-" ---- [1.2] YOUCOMPLETEME ----
-" --------------------
-" ---- [1.3] UNITE ----
+" ---------------------------
+" ---- [1.2] YCM ------------
+" ---------------------------
+" ---- [1.3] UNITE ----------
 let g:unite_force_overwrite_statusline = 0
 
 call unite#custom#default_action('buffer', 'goto')
@@ -137,10 +137,10 @@ function! my_dir.func(candidates)
 endfunction
 call unite#custom_action('directory', 'my_dir', my_dir)
 call unite#custom#default_action('directory', 'my_dir')
-" --------------------
-" --------------------
-" ---- [2] BINDINGS ----
-" ---- [2.0] NORMAL ----
+" ---------------------------
+" ---------------------------
+" ---- [2] BINDINGS ---------
+" ---- [2.0] NORMAL ---------
 nnoremap ö :call UniteOpen()<CR>
 nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
 nnoremap M! :delmarks A-Z<CR>:call UpdateMarks()<CR>
@@ -151,8 +151,8 @@ function! BindMark(uMap)
 	execute "nnoremap M" . a:uMap . " m" . lMap . ":call UpdateMarks()<CR>"
 endfunction
 call StartBind()
-" --------------------
-" ---- [2.1] INSERT ----
+" ---------------------------
+" ---- [2.1] INSERT ---------
 inoremap <TAB> <C-R>=NeoTab()<CR>
 inoremap <S-TAB> <C-P>
 
@@ -161,8 +161,8 @@ inoremap <C-K> <C-R>=USOrSmartJumpBack()<CR>
 
 let g:UltiSnipsJumpForwardTrigger="<C-J>"
 let g:UltiSnipsJumpBackwardTrigger="<C-K>"
-" --------------------
-" ---- [2.2] VISUAL ----
+" ---------------------------
+" ---- [2.2] VISUAL ---------
 xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 
 xmap s S
@@ -173,8 +173,8 @@ xmap st s'
 xmap sm s$
 xmap s( s)
 xmap s{ s}
-" --------------------
-" ---- [2.3] LEADER ----
+" ---------------------------
+" ---- [2.3] LEADER ---------
 
 " A
 " B - Bookmark
@@ -255,13 +255,13 @@ map <leader>vf :e ~/git/vim/vim-base/folding.vim<CR>
 " Y
 " Z - Z(S)essions
 " ?
-" --------------------
-" ---- [2.4] OMAP ----
-" --------------------
-" ---- [2.5] COMMAND ----
+" ---------------------------
+" ---- [2.4] OMAP -----------
+" ---------------------------
+" ---- [2.5] COMMAND --------
 cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>Git" : "t"
-" --------------------
-" ---- [2.6] UNITE ----
+" ---------------------------
+" ---- [2.6] UNITE ----------
 function! UniteBinds()
 	nmap <buffer> b :Unite -prompt=bookmark> bmark<CR>
 	nmap <buffer> <ESC> :execute "normal \<Plug>(unite_all_exit)"<CR>
@@ -277,45 +277,45 @@ function! UniteBinds()
 	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
 endfunction
 autocmd FileType unite call UniteBinds()
-" --------------------
-" ---- [2.7] FUGITIVE ----
+" ---------------------------
+" ---- [2.7] FUGITIVE -------
 function! FugitiveBindings()
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
 	nmap <buffer> gd D
 	nmap <buffer> <esc> :bd<cr>
 endfunction
-" --------------------
-" --------------------
-" ---- [3] FILETYPE SPECIFIC ----
-" ---- [3.0] All ----
+" ---------------------------
+" ---------------------------
+" ---- [3] FILETYPE ---------
+" ---- [3.0] All ------------
 autocmd FileType * setlocal formatoptions-=cro
-" --------------------
-" ---- [3.1] JAVA ----
-" --------------------
-" ---- [3.2] C# ----
-" --------------------
-" ---- [3.3] C ----
-" --------------------
-" ---- [3.4] VIMRC ----
-" --------------------
-" ---- [3.5] SNIPPET ----
-" --------------------
-" ---- [3.6] TODO ----
-" --------------------
-" ---- [3.7] PYTHON ----
-" --------------------
-" ---- [3.8] LUA ----
-" --------------------
-" ---- [3.9] MAKE ----
-" --------------------
-" ---- [3.10] PASS ----
-" --------------------
-" ---- [3.11] JAPANESE ----
-" --------------------
-" ---- [3.12] LATEX ----
-" --------------------
-" ---- [3.13] GITCOMMIT ----
+" ---------------------------
+" ---- [3.1] JAVA -----------
+" ---------------------------
+" ---- [3.2] C# -------------
+" ---------------------------
+" ---- [3.3] C --------------
+" ---------------------------
+" ---- [3.4] VIMRC ----------
+" ---------------------------
+" ---- [3.5] SNIPPET --------
+" ---------------------------
+" ---- [3.6] TODO -----------
+" ---------------------------
+" ---- [3.7] PYTHON ---------
+" ---------------------------
+" ---- [3.8] LUA ------------
+" ---------------------------
+" ---- [3.9] MAKE -----------
+" ---------------------------
+" ---- [3.10] PASS ----------
+" ---------------------------
+" ---- [3.11] JAPANESE ------
+" ---------------------------
+" ---- [3.12] LATEX ---------
+" ---------------------------
+" ---- [3.13] GITCOMMIT -----
 function! GITCSettings()
 	let &foldlevel = 99
 	call FugitiveBindings()
@@ -323,13 +323,13 @@ function! GITCSettings()
 endfunction
 
 autocmd FileType gitcommit call GITCSettings()
-" --------------------
-" ---- [3.14] MARKDOWN ----
-" --------------------
-" ---- [3.15] NOTE ----
-" --------------------
-" --------------------
-" ---- [4] STATUSLINE ----
+" ---------------------------
+" ---- [3.14] MARKDOWN ------
+" ---------------------------
+" ---- [3.15] NOTE ----------
+" ---------------------------
+" ---------------------------
+" ---- [4] STATUSLINE -------
 set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
 
 " Gets the gitinfo for the statusline.
@@ -345,11 +345,11 @@ function! MyStatusLine()
 
 	return b:statusLineVar
 endfunction
-" --------------------
+" ---------------------------
 " ---- [5] COLORSETTINGS ----
-" ---- [5.0] DEFAULT ----
-" --------------------
-" ---- [5.1] DRAW ----
+" ---- [5.0] DEFAULT --------
+" ---------------------------
+" ---- [5.1] DRAW -----------
 hi MarkA guibg=aquamarine guifg=blue ctermbg=123 ctermfg=27
 hi MarkB guibg=brown guifg=black ctermbg=130 ctermfg=0
 hi MarkC guibg=coral guifg=brown ctermbg=173 ctermfg=130
@@ -375,8 +375,8 @@ hi MarkW guibg=white guifg=black ctermbg=255 ctermfg=0
 hi MarkX guibg=black guifg=white ctermbg=0 ctermfg=255
 hi MarkY guibg=yellow guifg=black ctermbg=11 ctermfg=0
 hi MarkZ guibg=lightgreen guifg=black ctermbg=156 ctermfg=0
-" --------------------
-" ---- [5.2] MARK COLORNAMES ----
+" ---------------------------
+" ---- [5.2] MARK NAMES -----
 "[a]quamarine
 "[b]rown
 "[c]oral
@@ -402,15 +402,15 @@ hi MarkZ guibg=lightgreen guifg=black ctermbg=156 ctermfg=0
 "black te[x]t
 "[y]ellow
 "[z] - weird color, weird letter
-" --------------------
-" ---- [5.3] UNITE ----
+" ---------------------------
+" ---- [5.3] UNITE ----------
 hi uniteSource__Dir gui=NONE cterm=NONE guifg=khaki ctermfg=228
 hi link uniteSource__Fil Identifier
 hi link uniteCandidateInputKeyword Search
 hi default link uniteSource__Fil_Special PreProc
-" --------------------
-" --------------------
-" ---- [6] AUTOCMD ----
+" ---------------------------
+" ---------------------------
+" ---- [6] AUTOCMD ----------
 autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
 autocmd TextChanged,TextChangedI * call CreateTempFile()
@@ -423,17 +423,17 @@ function! CreateTempFile()
 		call writefile(getline(1,'$'), expand("~") . "/.vim/tmp/compilefiles/" . expand("%:t"))
 	endif
 endfunction
-" --------------------
-" ---- [7] FUNCTIONS ----
-" ---- [7.0] TABCOMPLETION ----
+" ---------------------------
+" ---- [7] FUNCTIONS --------
+" ---- [7.0] TABCOMPLETION --
 function! NeoTab()
 	if pumvisible()
 		return "\<C-N>"
 	else
 	return SpecialDelim("\<TAB>")
 endfunction
-" --------------------
-" ---- [7.1] JUMP ----
+" ---------------------------
+" ---- [7.1] JUMP -----------
 function! USOrSmartJump()
 	call UltiSnips#ExpandSnippetOrJump()
 	if g:ulti_expand_or_jump_res == 1
@@ -448,8 +448,8 @@ function! USOrSmartJumpBack()
 	endif
 	return SmartJumpBack()
 endfunction
-" --------------------
-" ---- [7.2] EVALUATE MATH ----
+" ---------------------------
+" ---- [7.2] EVAL MATH ------
 function! PythonMath()
 let l:vimMath = getreg('"')
 if l:vimMath == ''
@@ -462,28 +462,26 @@ vim.command("let l:pythonMath = '" + str(math) + "'")
 endpy
 return l:pythonMath
 endfunction
-" --------------------
-" ---- [7.3] START EXTERNAL ----
-" --------------------
-" ---- [7.4] GIT INFO ----
+" ---------------------------
+" ---- [7.3] GIT INFO -------
 function! UpdateGitInfo()
 	let b:statusLineVar = ""
 	call VimHelperMessage("path", expand("%:p"))
 endfunction
-" --------------------
-" ---- [7.5] ON EXIT ----
+" ---------------------------
+" ---- [7.4] ON EXIT --------
 function! OnExit()
 	call VimHelperMessage("client", "-1")
 endfunction
-" --------------------
-" ---- [7.6] AFTER INIT ----
+" ---------------------------
+" ---- [7.5] AFTER INIT -----
 function! AfterInit()
 	if !g:startedExternal
 		call VimHelperMessage("client", "1")
 	endif
 endfunction
-" --------------------
-" ---- [7.7] VIMHELPER ----
+" ---------------------------
+" ---- [7.6] VIMHELPER ------
 function! VimHelperMessage(type, message)
 if !g:disableVimHelper && g:timeoutVH > 0
 python << endpy
@@ -517,8 +515,8 @@ function! VimHelperCompile()
 	let args = input("Arguments? : ")
 	call VimHelperMessage("compileargs", args)
 endfunction
-" --------------------
-" ---- [7.8] MARKS ----
+" ---------------------------
+" ---- [7.7] MARKS ----------
 function! AddMarkMatches()
 	for mark in g:marks
 		call matchadd('Mark' . mark, "\\%'" . mark . '.')
@@ -534,10 +532,10 @@ function! UpdateMarks()
 	call AddMarkMatches()
 endfunction
 call UpdateMarks()
-" --------------------
-" --------------------
-" ---- [8] AFTER VIMRC ----
+" ---------------------------
+" ---------------------------
+" ---- [8] AFTER VIMRC ------
 if exists('setup')
 	autocmd VimEnter * BundleInstall
 endif
-" --------------------
+" ---------------------------

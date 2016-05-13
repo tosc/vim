@@ -127,16 +127,23 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 
 ### Important
 * VH
+	- Git statusbar not showing changes for submodules.
 	- Change autocompiler to autotesting instead.
 * Marks
 	- Remove draw-marks.
-	- Unite source
+* Unite
+	- Find better way of changing input when pressing enter.
+	- Fix bmark
+	- Create mark source
 		- Go through all marks and run getpos("'A").
 		- Get that line and populate unite with it.
 		- Highlight correct column for where the mark is.
 		- Find way of showing what file that is in.
-* Unite
-	- Find better way of changing input when pressing enter.
+* OpohBuffer
+	- Rename to tempbuffer.
+* Help-Bindings
+	- Fix help-bindings.
+	- Make helpbindings use both base and heavy in heavy.
 
 ### Mid
 * Make repositories
