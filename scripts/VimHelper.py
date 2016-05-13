@@ -46,16 +46,6 @@ drawer = None
 console = None
 git = None
 
-# Console lines
-cwd = ""
-try:
-    output = subprocess.check_output("pwd", stderr=subprocess.STDOUT, shell=True)
-    if "\n" in output:
-        output = output.split("\n")[0]
-    cwd = output
-except:
-    pass
-
 offsetY = 0
 def add_screen(screen):
     global offsetY
@@ -162,6 +152,10 @@ class CSL:
                     string = self.lines[lineNr]
                 caddstr(self.box, 1, i+1, '{0:{1}s}'.format(string, self.boxWidth-2))
 
+    def getlast(self):
+        with self.lock:
+            return self.lines[len(self.lines)-1]
+
 class ConsoleCSL:
     """
     Custom CSL that creates 2 CSLs where theirs strings syncs their y locations.
@@ -227,15 +221,27 @@ class Textbox(Thread):
             output = textpad.Textbox(textbox).edit()
             if re.match("(quit)|(:q)|(exit)", output):
                 server.clients = -1
-            if re.match("(compiletimes)|(ct)", output):
+            elif re.match("(compiletimes)|(ct)", output):
                 for script,time in compileTimes.items():
                     consoleMsgs.addstr("CT", str(script) + " - " + str(time))
-            if re.match("killall", output):
+            elif re.match("killall", output):
                 for worker in workers:
                     try:
                         worker.currentProcess.kill()
                     except:
                         pass
+            elif re.match("cd", output):
+                lastID = console.lineID
+                newCwd = drawer.cwd
+                console.process.stdin.write(output + "\n")
+                console.process.stdin.write("pwd\n")
+                while True:
+                    if lastID != console.lineID:
+                        lastMsg = consoleMsgs.cMsgs.getlast()
+                        if not "No such file or directory" in lastMsg:
+                            newCwd = lastMsg
+                        break
+                drawer.cwd = newCwd
             else:
                 console.process.stdin.write(output + "\n")
             textbox.clear()
@@ -252,6 +258,7 @@ class Console(Thread):
         cop = open(consoleOutput, 'w')
         self.process = subprocess.Popen("sh", stdin=subprocess.PIPE, stdout=cop, stderr=cop)
         self.start()
+        self.lineID = 0
 
     def run(self):
         while(True):
@@ -260,6 +267,9 @@ class Console(Thread):
             while True:
                 line = cop.readline()
                 if line:
+                    self.lineID += 1
+                    if self.lineID > 10000:
+                        self.lineID = 0
                     consoleMsgs.addstr(self.name, line)
 
 class Drawer(Thread):
@@ -275,6 +285,7 @@ class Drawer(Thread):
         self.lastCompileLength = "0.000"
         self.lastCompileLength = "{:8.3f}".format(0)
         self.lastCompileTime = "00:00:00"
+        self.cwd = ""
 
     def run(self):
         while(self.draw):
@@ -308,10 +319,10 @@ class Drawer(Thread):
                 serverStatus = "- "
 
         workerInfo = "Workers: " + str(len(workers)) + " | " + workerNames
-        padding = (" " * (statusBarWidth-2))[len(cwd)+2:-len(workerInfo)]
+        padding = (" " * (statusBarWidth-2))[len(self.cwd)+2:-len(workerInfo)]
         if len(padding) < 2:
             padding = " "*2
-        statusBarInfo = '{0:.{1}}'.format(serverStatus + cwd + padding + workerInfo, statusBarWidth-2)
+        statusBarInfo = '{0:.{1}}'.format(serverStatus + self.cwd + padding + workerInfo, statusBarWidth-2)
         caddstr(statusBar, 1, 1, statusBarInfo)
 
     def drawCompileStatusBar(self):
