@@ -37,5 +37,6 @@ let s:source.action_table.open = {
       \ 'is_start' : 1,
       \ }
 function! s:source.action_table.open.func(candidate)
-	execute "e +/" . a:candidate.search . " " . a:candidate.action__path
+	let searchStr = substitute(escape(a:candidate.search, " "), "*", ".", "")
+	execute "e +/^" . searchStr . " " . a:candidate.action__path
 endfunction
