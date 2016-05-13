@@ -64,7 +64,7 @@ curses.cbreak()
 # Remove cursors
 curses.curs_set(0)
 
-cellHeight = int((windowHeight - 6)/6)
+cellHeight = int((windowHeight - 9)/6)
 progressBarsHeight = cellHeight
 if cellHeight%2 != 0:
     progressBarsHeight -= 1
@@ -75,6 +75,11 @@ progressBars.border(0)
 (progressBarsHeight, progressBarsWidth) = progressBars.getmaxyx()
 maxWorkers = progressBarsHeight - 2
 barLen = (progressBarsWidth - 2)/2 - 2
+
+compileStatusBar = screen.subwin(3, windowWidth, offsetY, 0)
+add_screen(compileStatusBar)
+compileStatusBar.border(0)
+(compileStatusBarHeight, compileStatusBarWidth) = compileStatusBar.getmaxyx()
 
 compileWindow = screen.subwin(3*cellHeight, windowWidth, offsetY, 0)
 add_screen(compileWindow)
@@ -242,15 +247,21 @@ class Drawer(Thread):
         self.draw = True
         self.daemon = True
         self.start()
+        self.lastCompileCall = "Never compiled."
+        self.lastCompileLength = "0.000"
+        self.lastCompileLength = "{:8.3f}".format(0)
+        self.lastCompileTime = "00:00:00"
 
     def run(self):
         while(self.draw):
             self.drawProgressBars()
+            self.drawCompileStatusBar()
             self.drawStatusBar()
             consoleMsgs.draw()
             compileMsgs.draw()
 
             progressBars.refresh()
+            compileStatusBar.refresh()
             statusBar.refresh()
             consoleWindow.refresh()
             compileWindow.refresh()
@@ -278,6 +289,17 @@ class Drawer(Thread):
             padding = " "*2
         statusBarInfo = '{0:.{1}}'.format(serverStatus + cwd + padding + workerInfo, statusBarWidth-2)
         caddstr(statusBar, 1, 1, statusBarInfo)
+
+    def drawCompileStatusBar(self):
+        compilerStatus = "+ "
+        if compiler:
+            if not compiler.go:
+                compilerStatus = "- "
+        padding = (" " * (statusBarWidth-2))[len(self.lastCompileTime + self.lastCompileLength)+2:-len(self.lastCompileCall)]
+        if len(padding) < 2:
+            padding = " "*2
+        statusBarInfo = '{0:.{1}}'.format(compilerStatus + self.lastCompileTime + self.lastCompileLength + padding + self.lastCompileCall, compileStatusBarWidth-2)
+        caddstr(compileStatusBar, 1, 1, statusBarInfo)
 
     def drawProgressBars(self):
         y = 1
@@ -362,6 +384,9 @@ class RunScript(Thread):
                 self.lastTime = self.timeDone - self.timeStart
                 if not self.hide:
                     compileTimes[self.script] = self.lastTime
+                if not self.silent:
+                    drawer.lastCompileLength = "{:8.3f}".format(self.lastTime)
+                    drawer.lastCompileTime = time.strftime("%H:%M:%S")
                 self.done = True
 
     def update(self):
@@ -383,6 +408,7 @@ class RunScript(Thread):
                     while(line):
                         compileMsgs.addstr(line)
                         line = cop.readline()
+                    drawer.lastCompileCall = script
                 first = False
         except Exception,e:
             consoleMsgs.addstr("Script", "Failed")

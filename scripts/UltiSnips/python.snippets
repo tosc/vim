@@ -282,6 +282,10 @@ if snip.v.text == "":
 else:
 	snip.rv = "" `
 endsnippet
+
+snippet printf "formatted print" b
+'{}'.format(${1:var})$0
+endsnippet
 snippet "printva?r?" "print a variable:printvar" r
 print ${0}
 endsnippet
@@ -381,16 +385,6 @@ parser.feed(${5:"<p>test</p>"})
 ${0}
 endsnippet
 
-snippet inforegex "info about regex"
-# if !match:
-# - string does not match regex.
-# re.search
-# - match goes from the start, search goes whenever
-# match.group(1)
-# - First regexhit.
-# Example of regexes
-# - "^\s*$" - a Line with only whitespaces.
-endsnippet
 pre_expand "add_package_py('re')"
 snippet regex "regex:regex"
 ${1:match} = re.search('${2:^S*}', ${3:line})

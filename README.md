@@ -20,7 +20,7 @@ Vim settings.
 12. Install Mono-develop. (http://www.mono-project.com/)
 13. Build clang_complete.  
 `` make install ``
-14. Create a vimrc with the lines:  
+14. Create a vimrc with the line:  
 ```VimL
 source ~/git/vim/.vimrc
 ```  
@@ -40,7 +40,7 @@ source ~/git/vim/.vimrc
 `` make -f make_mingw32.mak``  
 `` make -f make_mingw64.mak``  
 10. Install curses-package for python. Download it here: http://www.lfd.uci.edu/~gohlke/pythonlibs/#curses
-`` python -m pip downloaded-filename.whl ``
+`` python -m pip downloaded-filename.whl ``  
 
 ##### (Optional)
 
@@ -110,10 +110,6 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 * README
 	- Go through installation and remove everything that isn't required anymore.
 * VH
-	- Add compilestatusbar
-		- Show last time compiled.
-		- Show how long it took.
-		- Show script name.
 	- Add time column to console window.
 * Delim
 	- Change into ultisnips delim.
