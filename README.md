@@ -126,15 +126,17 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 # TODO
 
 ### Important
-* Make repositories
-	- Dotfiles
-* Code-completion.
-	- Add custom completer using YCM Completer API for snippets.
+* VH
+	- Change autocompiler to autotesting instead.
+* Move marks to vim-base.
 
 ### Mid
-* Go through installation again and remove everything that's no longer needed.
+* Find way of splitting folding stuff into separate vimfile.
+	(The problem is how to source it in vim-base and have it work in heavy)
+* Make repositories
+	- Dotfiles
+* Go through installation again and remove everything in README that's no longer needed.
 * VH
-	- Add git draw to this.
 	- Add compilestatusbar
 		- Show last time compiled.
 		- Show how long it took.
@@ -142,8 +144,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	- Add time column to console window.
 * Change delim to ultisnips ones.
 * Only do the auto-save temp file when execute mode is running.
-* Add readline for the statusbar to slowgit update like before.
-* Add draw mark to base-vim.
 
 ### Low
 * Go through all snippets files and update them to new way of doing things.

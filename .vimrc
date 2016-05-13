@@ -1,6 +1,5 @@
 " HEAVY VIM
 " ---- [0] INITIALIZATION ----
-source ~\git\vim\vim-base\.vimrc
 let requiredFolders = [
 		\ "~/.vim/tmp/swapfiles",
 		\ "~/.vim/tmp/gitstatusline",
@@ -25,6 +24,7 @@ if !exists('g:disableVimHelper')
 endif
 set rtp+=~/git/vim/scripts/
 set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
+source ~/git/vim/vim-base/.vimrc
 " --------------------
 " ---- [1] PLUGINS ----
 " ---- [1.0] VUNDLE ----
@@ -144,6 +144,14 @@ call unite#custom#default_action('directory', 'my_dir')
 " ---- [2.0] NORMAL ----
 nnoremap ö :call UniteOpen()<CR>
 nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
+nnoremap M! :delmarks A-Z<CR>:call UpdateMarks()<CR>
+nnoremap m! :delmarks A-Z<CR>:call UpdateMarks()<CR>
+function! BindMark(uMap)
+	let lMap = tolower(a:uMap)
+	execute "nnoremap M" . lMap . " m" . a:uMap . ":call UpdateMarks()<CR>"
+	execute "nnoremap M" . a:uMap . " m" . lMap . ":call UpdateMarks()<CR>"
+endfunction
+call StartBind()
 " --------------------
 " ---- [2.1] INSERT ----
 inoremap <TAB> <C-R>=NeoTab()<CR>
@@ -198,7 +206,6 @@ map <leader>gD :exec ":Gvdiff " input(""
 	\ . "\n:3              The current file in the merged branch during a conflict"
 	\ . "\n:/foo           The most recent commit with \"foo\" in the message\n"
 	\ )<CR>
-map <leader>gh :call HighlightDrawDisable()<CR>
 
 map <leader>gc :Gcommit<CR>
 map <leader>gd :Gvdiff<CR>
@@ -309,7 +316,6 @@ autocmd FileType * setlocal formatoptions-=cro
 " --------------------
 " ---- [3.13] GITCOMMIT ----
 function! GITCSettings()
-	" Don't fold gitstuff.
 	let &foldlevel = 99
 	call FugitiveBindings()
 	call EnglishSpellCheck()
@@ -343,57 +349,31 @@ endfunction
 " ---- [5.0] DEFAULT ----
 " --------------------
 " ---- [5.1] DRAW ----
-function! HighlightGitEnable()
-	hi GitAdd guibg=#002211 guifg=green ctermbg=22 ctermfg=10
-	hi GitRem guibg=#660000 guifg=red ctermbg=52 ctermfg=211
-	hi GitCng guibg=#000066 guifg=#00DDFF ctermbg=17 ctermfg=51
-endfunction
-function! HighlightMarkEnable()
-	hi MarkA guibg=aquamarine guifg=blue ctermbg=123 ctermfg=27
-	hi MarkB guibg=brown guifg=black ctermbg=130 ctermfg=0
-	hi MarkC guibg=coral guifg=brown ctermbg=173 ctermfg=130
-	hi MarkD guibg=black guifg=cyan1 ctermbg=0 ctermfg=14
-	hi MarkE guibg=black guifg=red ctermbg=0 ctermfg=1
-	hi MarkF guibg=black guifg=yellow ctermbg=0 ctermfg=11
-	hi MarkH guibg=lightpink guifg=hotpink ctermbg=211 ctermfg=201
-	hi MarkI guibg=grey40 guifg=black ctermbg=8 ctermfg=0
-	hi MarkJ guibg=red guifg=green ctermbg=9 ctermfg=40
-	hi MarkK guibg=khaki4 guifg=white ctermbg=65 ctermfg=255
-	hi MarkL guibg=limegreen guifg=darkgreen ctermbg=40 ctermfg=28
-	hi MarkM guibg=goldenrod2 guifg=orange4 ctermbg=136 ctermfg=94
-	hi MarkN guibg=#002211 guifg=green ctermbg=0 ctermfg=40
-	hi MarkO guibg=darkorange2 guifg=darkorange4 ctermbg=208 ctermfg=130
-	hi MarkP guibg=purple guifg=white ctermbg=129 ctermfg=255
-	hi MarkQ guibg=darkcyan guifg=black ctermbg=29 ctermfg=17
-	hi MarkR guibg=red guifg=black ctermbg=1 ctermfg=0
-	hi MarkS guibg=black guifg=salmon ctermbg=0 ctermfg=167
-	hi MarkT guibg=tomato guifg=black ctermbg=167 ctermfg=0
-	hi MarkU guibg=darkblue guifg=yellow1 ctermbg=19 ctermfg=11
-	hi MarkV guibg=blue1 guifg=white ctermbg=33 ctermfg=255
-	hi MarkW guibg=white guifg=black ctermbg=255 ctermfg=0
-	hi MarkX guibg=black guifg=white ctermbg=0 ctermfg=255
-	hi MarkY guibg=yellow guifg=black ctermbg=11 ctermfg=0
-	hi MarkZ guibg=lightgreen guifg=black ctermbg=156 ctermfg=0
-endfunction
-function! HighlightDrawEnable()
-	call HighlightGitEnable()
-	call HighlightMarkEnable()
-endfunction
-
-function! HighlightGitDisable()
-	hi clear GitAdd		
-	hi clear GitRem
-	hi clear GitCng		
-endfunction
-function! HighlightMarkDisable()
-	for mark in g:marks
-		execute "hi clear Mark" . mark
-	endfor
-endfunction
-function! HighlightDrawDisable()
-	call HighlightGitDisable()
-	call HighlightMarkDisable()
-endfunction
+hi MarkA guibg=aquamarine guifg=blue ctermbg=123 ctermfg=27
+hi MarkB guibg=brown guifg=black ctermbg=130 ctermfg=0
+hi MarkC guibg=coral guifg=brown ctermbg=173 ctermfg=130
+hi MarkD guibg=black guifg=cyan1 ctermbg=0 ctermfg=14
+hi MarkE guibg=black guifg=red ctermbg=0 ctermfg=1
+hi MarkF guibg=black guifg=yellow ctermbg=0 ctermfg=11
+hi MarkH guibg=lightpink guifg=hotpink ctermbg=211 ctermfg=201
+hi MarkI guibg=grey40 guifg=black ctermbg=8 ctermfg=0
+hi MarkJ guibg=red guifg=green ctermbg=9 ctermfg=40
+hi MarkK guibg=khaki4 guifg=white ctermbg=65 ctermfg=255
+hi MarkL guibg=limegreen guifg=darkgreen ctermbg=40 ctermfg=28
+hi MarkM guibg=goldenrod2 guifg=orange4 ctermbg=136 ctermfg=94
+hi MarkN guibg=#002211 guifg=green ctermbg=0 ctermfg=40
+hi MarkO guibg=darkorange2 guifg=darkorange4 ctermbg=208 ctermfg=130
+hi MarkP guibg=purple guifg=white ctermbg=129 ctermfg=255
+hi MarkQ guibg=darkcyan guifg=black ctermbg=29 ctermfg=17
+hi MarkR guibg=red guifg=black ctermbg=1 ctermfg=0
+hi MarkS guibg=black guifg=salmon ctermbg=0 ctermfg=167
+hi MarkT guibg=tomato guifg=black ctermbg=167 ctermfg=0
+hi MarkU guibg=darkblue guifg=yellow1 ctermbg=19 ctermfg=11
+hi MarkV guibg=blue1 guifg=white ctermbg=33 ctermfg=255
+hi MarkW guibg=white guifg=black ctermbg=255 ctermfg=0
+hi MarkX guibg=black guifg=white ctermbg=0 ctermfg=255
+hi MarkY guibg=yellow guifg=black ctermbg=11 ctermfg=0
+hi MarkZ guibg=lightgreen guifg=black ctermbg=156 ctermfg=0
 " --------------------
 " ---- [5.2] MARK COLORNAMES ----
 "[a]quamarine
@@ -432,10 +412,7 @@ hi default link uniteSource__Fil_Special PreProc
 " ---- [6] AUTOCMD ----
 autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
-autocmd TextChanged,TextChangedI * call HighlightGitDisable()
 autocmd TextChanged,TextChangedI * call CreateTempFile()
-autocmd InsertEnter * call HighlightDrawDisable()
-autocmd InsertLeave * call HighlightDrawEnable()
 
 autocmd VimLeave * call OnExit()
 autocmd VimEnter * call AfterInit()
@@ -490,75 +467,7 @@ endfunction
 " ---- [7.4] GIT INFO ----
 function! UpdateGitInfo()
 	let b:statusLineVar = ""
-	call UpdateMatches()
 	call VimHelperMessage("path", expand("%:p"))
-endfunction
-
-" Draws lines added/removed and edited since last commit.
-let g:drawEnabled = 1
-function! UpdateMatches()
-	if g:drawEnabled
-		call clearmatches()
-		call HighlightDrawEnable()
-		call AddGitMatches()
-		call AddMarkMatches()
-	endif
-endfunction
-function! AddMarkMatches()
-	for mark in g:marks
-		call matchadd('Mark' . mark, "\\%'" . mark . '.')
-	endfor
-endfunction
-function! HelpMarkColor()
-	for i in range(len(g:marks))
-		call matchaddpos('Mark' . g:marks[i], [[i+1]])
-	endfor
-endfunction
-
-function! AddGitMatches()
-	" Get gitfolder.
-	let currentFolder = substitute(expand('%:h'), "\\", "/", "g")
-	let currentFile = expand('%:t')
-	" Get info about changed lines from git, use vimproc if avaliable
-	if exists("*vimproc#system")
-		let gitTemp = vimproc#system("git -C " . currentFolder . " diff -U0 " . currentFile)
-	else
-		let gitTemp = system("git -C " . currentFolder . " diff -U0 " . currentFile)
-	endif
-	" lines with @@ denote information about a changed chunk
-	if gitTemp =~ '@@'
-		let gitList = split(gitTemp, "\n")[4:]
-		for line in gitList
-			if line =~ '^@@ '
-				" Regexmagic to get changes.
-				let al = split(substitute(substitute(line, '^[^+]*+', '', ''), ' .*', '', ''), ',')
-				let rl = split(substitute(substitute(line, '^[^-]*-', '', ''), ' .*', '', ''), ',')
-				let add = (len(al) > 1 ? al[1] : '1')
-				let rem = (len(rl) > 1 ? rl[1] : '1')				
-				if add == '0'
-					let start = al[0] + 1
-					if indent(start) == 0
-						call matchaddpos('GitRem', [[start, 1, &l:tabstop]])
-					else
-						call matchaddpos('GitRem', [[start, 1]])
-					endif
-				else
-					let start = al[0]
-					let end = al[0] + add - 1
-					for line in range(start, end)
-						let tabpos = match(getline(line), '\t')
-						if tabpos == -1 || tabpos >= 8
-							call matchaddpos('Git' . (rem == 0 ? 'Add' : 'Cng'), [[line,1,&l:tabstop]])
-						elseif tabpos == 0
-							call matchaddpos('Git' . (rem == 0 ? 'Add' : 'Cng'), [[line,1]])
-						else
-							call matchaddpos('Git' . (rem == 0 ? 'Add' : 'Cng'), [[line,1,tabpos+1]])
-						endif
-					endfor
-				endif
-			endif	
-		endfor
-	endif
 endfunction
 " --------------------
 " ---- [7.5] ON EXIT ----
@@ -607,6 +516,23 @@ function! VimHelperCompile()
 	let args = input("Arguments? : ")
 	call VimHelperMessage("compileargs", args)
 endfunction
+" --------------------
+" ---- [7.8] MARKS ----
+function! AddMarkMatches()
+	for mark in g:marks
+		call matchadd('Mark' . mark, "\\%'" . mark . '.')
+	endfor
+endfunction
+function! HelpMarkColor()
+	for i in range(len(g:marks))
+		call matchaddpos('Mark' . g:marks[i], [[i+1]])
+	endfor
+endfunction
+function! UpdateMarks()
+	call clearmatches()
+	call AddMarkMatches()
+endfunction
+call UpdateMarks()
 " --------------------
 " --------------------
 " ---- [8] AFTER VIMRC ----
