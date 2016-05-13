@@ -13,6 +13,15 @@ from threading import Thread
 from threading import Condition
 from threading import Lock
 
+if sys.platform.startswith("win"):
+    import ctypes
+    SEM_NOGPFAULTERRORBOX = 0x0002 # From MSDN
+    ctypes.windll.kernel32.SetErrorMode(SEM_NOGPFAULTERRORBOX);
+    CREATE_NO_WINDOW = 0x08000000    # From Windows API
+    subprocess_flags = CREATE_NO_WINDOW
+else:
+    subprocess_flags = 0
+
 home = os.path.expanduser('~') + "/"
 scriptFolder = home + "git/vim/scripts/"
 tmpFolder = home + ".vim/tmp/"
@@ -179,7 +188,8 @@ consoleMsgs.addstr("Client", "Started vim-helper.")
 def caddstr(box, x, y, string, errorOutput=False):
     (maxY, maxX) = box.getmaxyx()
     if len(string) <= maxX-2 and y <= maxY-2:
-        box.addstr(y, x, string)
+        if not "\0" in string:
+            box.addstr(y, x, string)
     else:
         errorOutput = True
     if errorOutput:
@@ -397,7 +407,7 @@ class RunScript(Thread):
                 cop = open(compileOutput, 'w')
                 if not self.silent:
                     consoleMsgs.addstr("Script", "Calling: " + self.script)
-                cp = subprocess.Popen(script, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder)
+                cp = subprocess.Popen(script, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder, creationflags=subprocess_flags)
                 cp.wait()
                 cop.close()
                 if not self.silent:
@@ -459,10 +469,13 @@ class Compiler(Thread):
                             call = self.call(fileToCompile)
                             if call != "":
                                 subprocess.check_output("cp " + fileFromVim + " " +  fileToCompile, stderr=subprocess.STDOUT)
+                                compileScript = None
                                 if not re.search("\.c$", fileToCompile):
-                                    workers.append(RunScript(call, self.currentFolder))
+                                    compileScript = RunScript(call, self.currentFolder)
                                 else:
-                                    workers.append(RunScript(call, self.currentFolder, scripts=[compileFolder + "./main"]))
+                                    compileScript = RunScript(call, self.currentFolder, scripts=[compileFolder + "./main"])
+                                workers.append(compileScript)
+                                compileScript.join()
                                 self.prevFileToCompile = fileToCompile
                                 self.prevArgs = self.args
                             else:

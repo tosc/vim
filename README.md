@@ -103,13 +103,11 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 # TODO
 
 ### Important
-* VH
-	- Change autocompiler to autotesting instead.
+* Only do the auto-save temp file when execute mode is running.
 
 ### Mid
 * README
 	- Go through installation and remove everything that isn't required anymore.
-* Only do the auto-save temp file when execute mode is running.
 
 ### Low
 * Snippets
