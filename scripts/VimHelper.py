@@ -230,6 +230,12 @@ class Textbox(Thread):
             if re.match("(compiletimes)|(ct)", output):
                 for script,time in compileTimes.items():
                     consoleMsgs.addstr("CT", str(script) + " - " + str(time))
+            if re.match("killall", output):
+                for worker in workers:
+                    try:
+                        worker.currentProcess.kill()
+                    except:
+                        pass
             else:
                 console.process.stdin.write(output + "\n")
             textbox.clear()
@@ -390,6 +396,7 @@ class RunScript(Thread):
         self.currentFolder = folder
         self.silent = silent
         self.clear = clear
+        self.currentProcess = None
         self.start()
 
     def run(self):
@@ -414,8 +421,8 @@ class RunScript(Thread):
                 cop = open(compileOutput, 'w')
                 if not self.silent:
                     consoleMsgs.addstr("Script", "Calling: " + self.script)
-                cp = subprocess.Popen(script, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder, creationflags=subprocess_flags)
-                cp.wait()
+                self.currentProcess = subprocess.Popen(script, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder, creationflags=subprocess_flags)
+                self.currentProcess.wait()
                 cop.close()
                 if not self.silent:
                     consoleMsgs.addstr("Script", "Done!")
@@ -452,6 +459,7 @@ class Compiler(Thread):
         self.prevArgs = ""
         self.go = False
         self.start()
+        self.currentScript = None
 
     def run(self):
         while True:
@@ -476,13 +484,12 @@ class Compiler(Thread):
                             call = self.call(fileToCompile)
                             if call != "":
                                 subprocess.check_output("cp " + fileFromVim + " " +  fileToCompile, stderr=subprocess.STDOUT)
-                                compileScript = None
                                 if not re.search("\.c$", fileToCompile):
-                                    compileScript = RunScript(call, self.currentFolder)
+                                    self.currentScript = RunScript(call, self.currentFolder)
                                 else:
-                                    compileScript = RunScript(call, self.currentFolder, scripts=[compileFolder + "./main"])
-                                workers.append(compileScript)
-                                compileScript.join()
+                                    self.currentScript = RunScript(call, self.currentFolder, scripts=[compileFolder + "./main"])
+                                workers.append(self.currentScript)
+                                self.currentScript.join()
                                 self.prevFileToCompile = fileToCompile
                                 self.prevArgs = self.args
                             else:
@@ -552,11 +559,20 @@ class Server(Thread):
                     consoleMsgs.addstr(self.name, "Stopped listening for changes to " + compiler.currentFile)
                     compiler.setPath("")
                     compiler.go = False
+                    try:
+                        compiler.currentScript.currentProcess.kill()
+                    except:
+                        pass
                 else:
                     compiler.setPath(server_msgs[1])
             elif server_msgs[0] == "compileargs":
+                try:
+                    compiler.currentScript.currentProcess.kill()
+                except:
+                    pass
                 compiler.args = server_msgs[1]
                 with compiler.condition:
+                    compiler.go = False
                     compiler.go = True
                     compiler.condition.notify()
                     consoleMsgs.addstr(self.name, "Listening for changes - " + compiler.currentFile)
