@@ -131,19 +131,22 @@ class CSL:
         (self.boxHeight, self.boxWidth) = box.getmaxyx()
 
     def addstr(self, string):
+        nr_added = 0
         if "\n" in string:
             strings = string.split("\n")
             if(strings[-1]) == "":
                 strings = strings[:-1]
             for newString in strings:
-                self.addstr(newString)
+                nr_added += self.addstr(newString)
         else:
             if len(string) > self.boxWidth-2:
-                self.addstr(string[:self.boxWidth-2])
-                self.addstr(string[self.boxWidth-2:])
+                nr_added += self.addstr(string[:self.boxWidth-2])
+                nr_added += self.addstr(string[self.boxWidth-2:])
             else:
                 with self.lock:
                     self.lines.append("{0:{1}}".format(string, self.boxWidth-2))
+                    nr_added += 1
+        return nr_added
 
     def clear(self):
         with self.lock:
@@ -172,9 +175,13 @@ class ConsoleCSL:
         self.gMsgs = CSL(gutterBox)
 
     def addstr(self, gutterStr, consoleStr):
-        self.cMsgs.addstr(consoleStr)
-        newGutterMsg = time.strftime("%H:%M:%S") + " " + gutterStr
-        self.gMsgs.addstr('{0:.{1}}'.format(newGutterMsg, gutterWidth-2))
+        nr_added = self.cMsgs.addstr(consoleStr)
+        for i in range(0,nr_added):
+            if i == 0:
+                newGutterMsg = time.strftime("%H:%M:%S") + " " + gutterStr
+                self.gMsgs.addstr('{0:.{1}}'.format(newGutterMsg, gutterWidth-2))
+            else:
+                self.gMsgs.addstr("")
 
     def draw(self):
         self.cMsgs.draw()
@@ -356,7 +363,7 @@ class RunScript(Thread):
     def __init__(self, script, folder=scriptFolder, silent=False, args="", clear=True, scripts=[]):
         Thread.__init__(self)
 
-        self.name = script
+        self.name = "Script"
 
         self.done = True
         self.idle = False
@@ -546,7 +553,7 @@ class Server(Thread):
                     compiler.setPath("")
                     compiler.go = False
                 else:
-                        compiler.setPath(server_msgs[1])
+                    compiler.setPath(server_msgs[1])
             elif server_msgs[0] == "compileargs":
                 compiler.args = server_msgs[1]
                 with compiler.condition:
