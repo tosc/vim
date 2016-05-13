@@ -139,13 +139,6 @@ Firefox probably updated. Revert to a previous update. (45.0 worked great)
 	- Find better way of changing input when pressing enter.
 
 ### Mid
-* Split vimrc.
-	- The problem is how to source it in vim-base and have it work in heavy
-		- Look into runtime.
-		- If that doesn't work then make a .vimrc that only has source in it.
-		- Split rest into smaller parts that that .vimrc sources.
-		- Have my heavy vimrc source those files too.
-	- Split folding into a vimrc.
 * Make repositories
 	- Dotfiles
 * README
