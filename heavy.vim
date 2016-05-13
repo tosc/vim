@@ -359,7 +359,7 @@ autocmd VimEnter * call AfterInit()
 
 function! CreateTempFile()
 	if expand('%') != ''
-		call writefile(getline(1,'$'), expand("~") . "/.vim/tmp/compilefiles/" . expand("%:t"))
+		call writefile(getline(1,'$'), expand("~/.vim/tmp/compilefiles/") . expand("%:t"))
 	endif
 endfunction
 " ---------------------------
