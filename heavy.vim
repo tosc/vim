@@ -143,14 +143,6 @@ call unite#custom#default_action('directory', 'my_dir')
 " ---- [2.0] NORMAL ---------
 nnoremap ö :call UniteOpen()<CR>
 nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
-nnoremap M! :delmarks A-Z<CR>:call UpdateMarks()<CR>
-nnoremap m! :delmarks A-Z<CR>:call UpdateMarks()<CR>
-function! BindMark(uMap)
-	let lMap = tolower(a:uMap)
-	execute "nnoremap M" . lMap . " m" . a:uMap . ":call UpdateMarks()<CR>"
-	execute "nnoremap M" . a:uMap . " m" . lMap . ":call UpdateMarks()<CR>"
-endfunction
-call StartBind()
 " ---------------------------
 " ---- [2.1] INSERT ---------
 inoremap <TAB> <C-R>=NeoTab()<CR>
@@ -347,63 +339,7 @@ function! MyStatusLine()
 endfunction
 " ---------------------------
 " ---- [5] COLORSETTINGS ----
-" ---- [5.0] DEFAULT --------
-" ---------------------------
-" ---- [5.1] DRAW -----------
-hi MarkA guibg=aquamarine guifg=blue ctermbg=123 ctermfg=27
-hi MarkB guibg=brown guifg=black ctermbg=130 ctermfg=0
-hi MarkC guibg=coral guifg=brown ctermbg=173 ctermfg=130
-hi MarkD guibg=black guifg=cyan1 ctermbg=0 ctermfg=14
-hi MarkE guibg=black guifg=red ctermbg=0 ctermfg=1
-hi MarkF guibg=black guifg=yellow ctermbg=0 ctermfg=11
-hi MarkH guibg=lightpink guifg=hotpink ctermbg=211 ctermfg=201
-hi MarkI guibg=grey40 guifg=black ctermbg=8 ctermfg=0
-hi MarkJ guibg=red guifg=green ctermbg=9 ctermfg=40
-hi MarkK guibg=khaki4 guifg=white ctermbg=65 ctermfg=255
-hi MarkL guibg=limegreen guifg=darkgreen ctermbg=40 ctermfg=28
-hi MarkM guibg=goldenrod2 guifg=orange4 ctermbg=136 ctermfg=94
-hi MarkN guibg=#002211 guifg=green ctermbg=0 ctermfg=40
-hi MarkO guibg=darkorange2 guifg=darkorange4 ctermbg=208 ctermfg=130
-hi MarkP guibg=purple guifg=white ctermbg=129 ctermfg=255
-hi MarkQ guibg=darkcyan guifg=black ctermbg=29 ctermfg=17
-hi MarkR guibg=red guifg=black ctermbg=1 ctermfg=0
-hi MarkS guibg=black guifg=salmon ctermbg=0 ctermfg=167
-hi MarkT guibg=tomato guifg=black ctermbg=167 ctermfg=0
-hi MarkU guibg=darkblue guifg=yellow1 ctermbg=19 ctermfg=11
-hi MarkV guibg=blue1 guifg=white ctermbg=33 ctermfg=255
-hi MarkW guibg=white guifg=black ctermbg=255 ctermfg=0
-hi MarkX guibg=black guifg=white ctermbg=0 ctermfg=255
-hi MarkY guibg=yellow guifg=black ctermbg=11 ctermfg=0
-hi MarkZ guibg=lightgreen guifg=black ctermbg=156 ctermfg=0
-" ---------------------------
-" ---- [5.2] MARK NAMES -----
-"[a]quamarine
-"[b]rown
-"[c]oral
-"[d]iamant
-"[e]rror
-"[f]lourescent light
-"[h]ot pink
-"[i]nvisible
-"[j]ul
-"[k]haki
-"[l]ime -
-"[m]ustard
-"[n]eon green
-"[o]range
-"[p]urple
-"dar[q]cyan
-"[r]ed
-"[s]almon
-"[t]omato
-"[u]tomhus
-"[v]atten
-"[w]hite
-"black te[x]t
-"[y]ellow
-"[z] - weird color, weird letter
-" ---------------------------
-" ---- [5.3] UNITE ----------
+" ---- [5.1] UNITE ----------
 hi uniteSource__Dir gui=NONE cterm=NONE guifg=khaki ctermfg=228
 hi link uniteSource__Fil Identifier
 hi link uniteCandidateInputKeyword Search
@@ -516,23 +452,6 @@ function! VimHelperCompile()
 	let args = input("Arguments? : ")
 	call VimHelperMessage("compileargs", args)
 endfunction
-" ---------------------------
-" ---- [7.7] MARKS ----------
-function! AddMarkMatches()
-	for mark in g:marks
-		call matchadd('Mark' . mark, "\\%'" . mark . '.')
-	endfor
-endfunction
-function! HelpMarkColor()
-	for i in range(len(g:marks))
-		call matchaddpos('Mark' . g:marks[i], [[i+1]])
-	endfor
-endfunction
-function! UpdateMarks()
-	call clearmatches()
-	call AddMarkMatches()
-endfunction
-call UpdateMarks()
 " ---------------------------
 " ---------------------------
 " ---- [8] AFTER VIMRC ------
