@@ -1,4 +1,4 @@
-" HEAVY VIM
+"          HEAVY VIM
 " ---- [0] INITIALIZATION ----
 let requiredFolders = [
 		\ "~/.vim/tmp/swapfiles",
@@ -24,7 +24,8 @@ if !exists('g:disableVimHelper')
 endif
 set rtp+=~/git/vim/scripts/
 set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
-source ~/git/vim/vim-base/.vimrc
+source ~/git/vim/vim-base/vim-base.vim
+source ~/git/vim/vim-base/folding.vim
 " --------------------
 " ---- [1] PLUGINS ----
 " ---- [1.0] VUNDLE ----
@@ -248,7 +249,8 @@ map <leader>vR :call VimHelperRestart()<CR>
 map <leader>vh :e ~/git/vim/scripts/VimHelper.py<CR>
 map <leader>vr :e ~/git/vim/README.md<CR>
 map <leader>vv :e ~/git/vim/.vimrc<CR>
-map <leader>vb :e ~/git/vim/vim-base/.vimrc<CR>
+map <leader>vb :e ~/git/vim/vim-base/vim-base.vim<CR>
+map <leader>vf :e ~/git/vim/vim-base/folding.vim<CR>
 " W
 " X
 " Y
