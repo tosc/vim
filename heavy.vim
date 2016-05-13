@@ -13,15 +13,6 @@ for rawfolder in requiredFolders
 		let setup = 1
 	endif
 endfor
-if !exists('g:startedExternal')
-	let g:startedExternal = 0
-endif
-if !exists('g:timeoutVH')
-	let g:timeoutVH = 5
-endif
-if !exists('g:disableVimHelper')
-	let g:disableVimHelper = 0
-endif
 set rtp+=~/git/vim/scripts/
 set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
 " ---------------------------
@@ -224,7 +215,7 @@ map <leader>O :call UniteExplorer(expand("%:p:h"))<CR>
 " Q - Quickfix commands
 " R - Run file or project / Stop file or project
 map <leader>r :call VimHelperCompile() <cr>
-map <leader>R :call VimHelperMessage("compile", "") <cr>
+map <leader>R :call VimHelperCompileStop() <cr>
 " S - Spellcheck
 " T - Tabs, temp and tabformat
 " U - Ultisnips
@@ -357,7 +348,7 @@ autocmd VimLeave * call OnExit()
 autocmd VimEnter * call AfterInit()
 
 function! CreateTempFile()
-	if expand('%') != ''
+	if expand('%') != '' && g:compilingVH == 1
 		call writefile(getline(1,'$'), expand("~/.vim/tmp/compilefiles/") . expand("%:t"))
 	endif
 endfunction
@@ -420,6 +411,10 @@ function! AfterInit()
 endfunction
 " ---------------------------
 " ---- [7.6] VIMHELPER ------
+let g:startedExternal = 0
+let g:timeoutVH = 5
+let g:disableVimHelper = 0
+let g:compilingVH = 0
 function! VimHelperMessage(type, message)
 if !g:disableVimHelper && g:timeoutVH > 0
 python << endpy
@@ -439,7 +434,6 @@ endif
 endfunction
 
 function! VimHelperRestart()
-	let g:startedExternal = 5
 	call VimHelperMessage("client", "0")	
 	call VimHelperStart()
 endfunction
@@ -452,6 +446,11 @@ function! VimHelperCompile()
 	call VimHelperMessage("compile", expand("%:p"))
 	let args = input("Arguments? : ")
 	call VimHelperMessage("compileargs", args)
+	let g:compilingVH = 1
+endfunction
+function! VimHelperCompileStop()
+	call VimHelperMessage("compile", "")
+	let g:compilingVH = 0
 endfunction
 " ---------------------------
 " ---- [7.7] TEMPBUFFER -----

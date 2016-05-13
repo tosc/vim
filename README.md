@@ -103,7 +103,6 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 # TODO
 
 ### Important
-* Only do the auto-save temp file when execute mode is running.
 
 ### Mid
 * README
