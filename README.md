@@ -103,6 +103,10 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 # TODO
 
 ### Important
+* VH
+	- Compileoutput in realtime.
+		- Try using draw to always update compileoutput.
+		- Clear when script is done.
 
 ### Mid
 * README

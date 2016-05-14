@@ -429,7 +429,11 @@ class RunScript(Thread):
         try:
             first = True
             for script in self.scripts:
-                cop = open(compileOutput, 'w')
+                cop = None
+                if self.silent:
+                    cop = open(os.devnull, 'w')
+                else:
+                    cop = open(compileOutput, 'w')
                 if not self.silent:
                     consoleMsgs.addstr("Script", "Calling: " + self.script)
                 self.currentProcess = subprocess.Popen(script, stdout=cop, stderr=subprocess.STDOUT, cwd=self.currentFolder, creationflags=subprocess_flags)
