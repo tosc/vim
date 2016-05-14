@@ -107,7 +107,38 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 	- Compileoutput in realtime.
 		- Try using draw to always update compileoutput.
 		- Clear when script is done.
-
+		- Lock compileoutput when a realtimer is drawing.
+* TODO
+	- Create todosystem.
+	- Two modes, edit and view.
+	- View mode shows the todo sorted in order of importance.
+	- Edit mode shows the todo as a normal file.
+	- (1?) Have one giant todo with different subtodos linked to files.
+	- (2?) Show all todos from all files in view mode.
+	- (3?) Have a todolinker file that lists all files with todos.
+	- Todobindings
+		- - To check as done/undone.
+		- :w To actually remove the lines that were done and refresh sorting.
+			- (?) Keep last 100 todos that are done but hide them.
+		- e Open file related to todo.
+	- Formatting
+		- Tabformatting
+		- Files start with
+			#name	filename
+		- Sections and subsections are 
+			29 [] Text about todo
+	- View sorting
+		- Sort files by file with highest todoitem.
+			file
+				10 todo
+				3 todo	
+			file 
+				8 todo
+				5 todo
+	- Daily/Weekly/Montly todos.
+		- Have todos that reactivate by dates.
+* ProjectSettings
+	- Add way to save and load projectsettings.
 ### Mid
 * README
 	- Go through installation and remove everything that isn't required anymore.
