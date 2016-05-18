@@ -1,7 +1,6 @@
 "       HEAVY VIM
 " ---- [0] INIT -------------
 let requiredFolders = [
-		\ "~/.vim/tmp/swapfiles",
 		\ "~/.vim/tmp/gitstatusline",
 		\ "~/.vim/tmp/compilefiles",
 		\ "~/.cache",
