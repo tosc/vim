@@ -308,6 +308,7 @@ autocmd FileType gitcommit call GITCSettings()
 " ---- [3.14] MARKDOWN ------
 " ---------------------------
 " ---- [3.15] NOTE ----------
+autocmd BufWritePost *.note call VimHelperMessage("tags", "")
 " ---------------------------
 " ---- [3.16] HELP ----------
 " ---------------------------
