@@ -2,9 +2,7 @@
 " ---- [0] INIT -------------
 let requiredFolders = [
 		\ "~/.vim/tmp/gitstatusline",
-		\ "~/.vim/tmp/compilefiles",
-		\ "~/.cache",
-		\ "~/.cache/unite" ]
+		\ "~/.vim/tmp/compilefiles"]
 for rawfolder in requiredFolders
 	let folder = fnamemodify(rawfolder, ":p")
 	if !isdirectory(folder)
@@ -22,10 +20,6 @@ filetype off
 set rtp+=~/git/vim/bundle/Vundle.vim/
 call vundle#begin()
 Plugin 'gmarik/Vundle.vim'
-
-" Unite and unite plugins.
-Plugin 'Shougo/unite.vim'
-Plugin 'Shougo/neomru.vim'
 
 " Snippets
 Plugin 'SirVer/ultisnips'
@@ -62,77 +56,9 @@ let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
 " ---------------------------
 " ---- [1.2] YCM ------------
 " ---------------------------
-" ---- [1.3] UNITE ----------
-let g:unite_force_overwrite_statusline = 0
-
-call unite#custom#default_action('buffer', 'goto')
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#sorter_default#use(['sorter_rank'])
-call unite#custom#profile('default', 'context', {
-			\ 'start_insert' : 1,
-			\ 'smartcase' : 1,
-			\ 'ignorecase' : 1,
-			\ 'no_split' : 1,
-			\ 'no_resize' : 1,
-			\ 'update_time' : 300,
-			\ 'cursor_line_highlight' : 'TabLine'
-			\ })
-
-function! UniteFixPath(path)
-	if has('unix')
-		let path = a:path
-		return substitute(path, '//', '/', 'g')
-	elseif has('win32')
-		return substitute(a:path, '\', '/', 'g')
-	endif
-endfunction
-function! UniteTags(filetype)
-	let filepath = UniteFixPath(fnamemodify("~/git/info/", ':p')) . a:filetype
-	if !isdirectory(filepath) && a:filetype != ""
-		if confirm("About to create folders:\n\t" .
-					\ filepath . "\n\t" .
-					\ filepath . "/notes\n\t" .
-					\ filepath . "/documentation",
-				\ "&Yes\n&No\n&Cancel") == 1
-			execute 'call mkdir("". "' . filepath . '")'
-			execute 'call mkdir("". "' . filepath . "/notes" . '")'
-			execute 'call mkdir("". "' . filepath . "/documentation" . '")'
-			UniteClose
-		endif
-	else
-		call unite#start_temporary([
-		\ ['tags', a:filetype]],
-		\ {'prompt' : 'tags>'})
-	endif
-endfunction
-function! UniteExplorer(folder)
-	call unite#start([['file'], ['filn'], ['dirn']], {'input' : UniteFixPath(a:folder) . "/"})
-endfunction
-
-function! UniteOpen()
-	call unite#start([['buffer'], ['file_mru']])
-endfunction
-
-let my_dir = {
-      \ 'description' : 'yank word or text',
-      \ 'is_selectable' : 1,
-      \ }
-function! my_dir.func(candidates)
-	let text = join(map(copy(a:candidates),
-		\ "get(v:val, 'action__text', v:val.word)"), "\n")
-	if isdirectory(text)
-		let text = text . "/"
-	endif
-	call unite#start([['file'], ['filn'], ['dirn']], {'input' : text})
-endfunction
-call unite#custom_action('directory', 'my_dir', my_dir)
-call unite#custom#default_action('directory', 'my_dir')
-" ---------------------------
 " ---------------------------
 " ---- [2] BINDINGS ---------
 " ---- [2.0] NORMAL ---------
-nnoremap ö :call UniteOpen()<CR>
-nnoremap Ö :call UniteExplorer(expand("%:p:h"))<CR>
 " ---------------------------
 " ---- [2.1] INSERT ---------
 inoremap <C-J> <C-R>=USOrSmartJump()<CR>
@@ -156,16 +82,11 @@ xmap s{ s}
 " ---- [2.3] LEADER ---------
 
 " A
-" B - Bookmark
-" Requires a file called bmark in ~/.cache/unite/bmark
-" Each line in that file is a bookmark with this formatting:
-" bookmark	bookmarkPath
-map <leader>b :Unite -prompt=bookmark> bmark<CR>
+" B
 " C - Compile
 " D - Delete buffer
 " E - Start external
 " F
-noremap <leader>f :Unite line -custom-line-enable-highlight<CR>
 " G - Git
 map <leader>gD :exec ":Gvdiff " input(""
 	\ . "HEAD            .git/HEAD"
@@ -193,14 +114,7 @@ map <leader>gd :Gvdiff<CR>
 map <leader>gg :Gstatus<CR>
 map <leader>gl :Glog --<CR>
 " H - Help, show binds.
-map <leader>hu :Unite us <CR>
 " I - Information, notes on helpful things.
-map <leader>ii :call UniteTags(&l:filetype)<CR>
-map <leader>iI :Unite tagfolders:~/git/info/ <CR>
-map <leader>ia :Unite tagfolders:~/git/info/ <CR>
-map <leader>in :Unite notes:~/git/info/ <CR>
-map <leader>if :Unite notes:~/git/info/ <CR>
-map <leader>ir :call VimHelperMessage("tags", "") <CR>
 " J - Format json file.
 map <leader>j :%!python -m json.tool<CR>
 " K
@@ -208,8 +122,6 @@ map <leader>j :%!python -m json.tool<CR>
 " M - Make
 " N - Next buffer
 " O - Open file explorer
-map <leader>o :call UniteOpen()<CR>
-map <leader>O :call UniteExplorer(expand("%:p:h"))<CR>
 " P - Quickfix commands
 " Q - Quickfix commands
 " R - Run file or project / Stop file or project
@@ -219,11 +131,7 @@ map <leader>R :call VimHelperCompileStop() <cr>
 " T - Tabs, temp and tabformat
 " U - Ultisnips
 map <leader>ue :UltiSnipsEdit <CR>
-map <leader>uu :Unite file:~/git/vim/scripts/Ultisnips/ <CR>
-map <leader>ua :Unite us <CR>
-map <leader>uh :Unite us <CR>
-map <leader>ul :Unite us <CR>
-map <leader>us :Unite us <CR>
+map <leader>uu :call Explorer(["dir", "file"], expand("~/git/vim/scripts/UltiSnips/")) <CR>
 " V - .vimrc
 map <leader>vR :call VimHelperRestart()<CR>
 map <leader>vh :e ~/git/vim/scripts/VimHelper.py<CR>
@@ -242,24 +150,7 @@ map <leader>vf :e ~/git/vim/vim-base/folding.vim<CR>
 " ---- [2.5] COMMAND --------
 cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>Git" : "t"
 " ---------------------------
-" ---- [2.6] UNITE ----------
-function! UniteBinds()
-	nmap <buffer> b :Unite -prompt=bookmark> bmark<CR>
-	nmap <buffer> <ESC> :execute "normal \<Plug>(unite_all_exit)"<CR>
-	nmap <buffer> <S-Space> <Plug>(unite_redraw)
-	nmap <buffer> <BS> <Plug>(unite_insert_enter)
-	nmap <buffer> <space> V<space>
-	xmap <buffer> <TAB> <space><Plug>(unite_choose_action)
-	nnoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-	imap <buffer> <TAB> <Plug>(unite_select_next_line)
-	imap <buffer> <S-TAB> <Plug>(unite_select_previous_line)
-	imap <buffer> <S-Space> <Plug>(unite_redraw)
-	inoremap <buffer> <BS> <BS>
-	inoremap <silent><buffer><expr> <C-p> unite#do_action('preview')
-endfunction
-autocmd FileType unite call UniteBinds()
-" ---------------------------
-" ---- [2.7] FUGITIVE -------
+" ---- [2.6] FUGITIVE -------
 function! FugitiveBindings()
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
