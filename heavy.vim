@@ -27,10 +27,6 @@ Plugin 'SirVer/ultisnips'
 " Code-completion
 Plugin 'Valloric/YouCompleteMe'
 
-" Async external commands
-Plugin 'tpope/vim-dispatch'
-Plugin 'Shougo/vimproc.vim'
-
 " Div
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-surround'
@@ -222,12 +218,6 @@ function! MyStatusLine()
 endfunction
 " ---------------------------
 " ---- [5] COLORSETTINGS ----
-" ---- [5.1] UNITE ----------
-hi uniteSource__Dir gui=NONE cterm=NONE guifg=khaki ctermfg=228
-hi link uniteSource__Fil Identifier
-hi link uniteCandidateInputKeyword Search
-hi default link uniteSource__Fil_Special PreProc
-" ---------------------------
 " ---------------------------
 " ---- [6] AUTOCMD ----------
 autocmd BufWritePost * call UpdateGitInfo()
@@ -329,7 +319,7 @@ function! VimHelperRestart()
 	call VimHelperStart()
 endfunction
 function! VimHelperStart()
-	Spawn! -dir=~ python git\vim\scripts\VimHelper.py
+	"Spawn! -dir=~ python git\vim\scripts\VimHelper.py
 	let g:startedExternal = 1
 endfunction
 
