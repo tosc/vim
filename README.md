@@ -12,15 +12,7 @@ Vim settings.
 ``git submodule update``
 4. Install vim with if_lua. (On windows http://solar-blogg.blogspot.ca/p/vim-build.html is a good place for prebuilt binaries.)
 5. Install python.
-7. Install lua.
-8. Install clang.
-9. Install LaTex.
-10. Install Eclipse.
-11. Install ECLIM.
-12. Install Mono-develop. (http://www.mono-project.com/)
-13. Build clang_complete.  
-`` make install ``
-14. Create a vimrc with the line:  
+6. Create a vimrc with the line:  
 ```VimL
 source ~/git/vim/.vimrc
 ```  
@@ -36,40 +28,10 @@ source ~/git/vim/.vimrc
 7. Add mono/bin to path.
 8. Compile omnisharp.  
 `` Run msbuild in folder ~/.vim/bundle/omnisharp-vim/server``  
-9. Compile Vimproc (Different for 32/64bit, use same as your vim installation.)  
-`` make -f make_mingw32.mak``  
-`` make -f make_mingw64.mak``  
-10. Install curses-package for python. Download it here: http://www.lfd.uci.edu/~gohlke/pythonlibs/#curses
-`` python -m pip downloaded-filename.whl ``  
-
-##### (Optional)
-
-1. Resize cmd globally. (Rightclick title of cmd and select defaults.)
-2. Add VIM as editor for files without extension (Optional).  
-``[HKEY_CLASSES_ROOT.] @="No Extension"``  
-``[HKEY_CLASSES_ROOT\No Extension]``  
-``[HKEY_CLASSES_ROOT\No Extension\Shell]``  
-``[HKEY_CLASSES_ROOT\No Extension\Shell\Open]``  
-``[HKEY_CLASSES_ROOT\No Extension\Shell\Open\Command] @="C:\\pathtoexe\\yourexe.exe %1"``
 
 ### LINUX
 
-1. Compile Vimproc.  
-`` make -f make_unix.mak ``  
-2. Install curses-package for python.  
-`` pip install curses ``  
-
 ### MAC
-
-1. Compile Vimproc.   
-`` mac : make -f make_mac.mak``
-
-## OPTIONS
-
-Uncomment any of these lines from your vimrc to disable certain parts of the vimrc.  
-`` let g:minimalMode = 1 ``  - If you are on a slow computer but still want most of the functionality.  
-`` let g:disablePlugins = 1 ``  - Don't use any plugins.  
-`` let g:disableExternal = 1 ``  - Don't autostart external scripts. (Eclimd and texcompiler)  
 
 ## TROUBLESHOOTING
 ### ERROR
@@ -98,6 +60,3 @@ Uncomment any of these lines from your vimrc to disable certain parts of the vim
 
 ### Unite
 * If unite complains, try compiling vimproc.
-
-
-# TODO
