@@ -996,8 +996,20 @@ endfunction
 " ---- [7.5] EXPLORER -------
 "Open tagview.
 function! Explorer(sources, ...)
+	let tagfile = expand("%:p")
+	let ftype = ""
 	if a:0 > 0
-		let g:explorerpath = a:1
+		if index(a:sources, "dir") >= 0 || index(a:sources, "file") >= 0
+			let g:explorerpath = a:1
+		endif
+		if index(a:sources, "line") >= 0
+			let tagfile = a:1
+		endif
+	endif
+	if index(a:sources, "line") >= 0
+		execute "e " . tagfile
+		let ftype = &filetype
+		execute "bd"
 	endif
 	if bufexists("[TagBuffer]")
 		b ExplorerBuffer
@@ -1011,11 +1023,19 @@ function! Explorer(sources, ...)
 	autocmd TextChangedI <buffer> call ExplorerUpdate()
 	autocmd BufLeave <buffer> call clearmatches()
 	set filetype=tag
-	put =' '
+
 	let b:sources = a:sources
-	if index(b:sources, "dir") > 0 || index(b:sources, "file") > 0
+	let b:tagfile = tagfile
+	if index(a:sources, "line") >= 0
+		execute "set syntax=" . ftype
+		setlocal norelativenumber
+	endif
+
+	put =' '
+	if index(b:sources, "dir") >= 0 || index(b:sources, "file") >= 0
 		call setline(1, g:explorerpath)
 	endif
+
 	call ExplorerTags()
 	call ExplorerUpdate()
 	normal gg
@@ -1048,7 +1068,7 @@ function! ExplorerTags()
 					\ 'name' : info[0],
 					\ 'file' : info[1],
 					\ 'tag' : info[2],
-					\ 'alias' : info[0] . " | " . info[1],
+					\ 'alias' : "[" . source . "] " . info[0] . " | " . info[1],
 					\ 'source' : source}
 				call add(tags, tag)
 			endfor
@@ -1066,6 +1086,22 @@ function! ExplorerTags()
 			call extend(tags, ExplorerFilesDirs(bufline . "*", source))
 		elseif source == "file"
 			call extend(tags, ExplorerFilesDirs(bufline . "*", source))
+		elseif source == "line"
+			let tagfile = b:tagfile
+			let index = 1
+			for line in readfile(expand(tagfile))
+				if line != ""
+					let tag = {
+						\ 'name' : line,
+						\ 'file' : b:tagfile,
+						\ 'tag' : line,
+						\ 'alias' : index . " " . line,
+						\ 'lnum' : index,
+						\ 'source' : source}
+					call add(tags, tag)
+				endif
+				let index += 1
+			endfor
 		endif
 	endfor
 	let b:tags = tags
@@ -1075,7 +1111,7 @@ function! ExplorerUpdate()
 	let tags = []
 	let search = split(getbufline("%", 1)[0], " ")
 	let bufline = getbufline("%", 1)[0]
-	if (index(b:sources, "dir") > 0) || (index(b:sources, "file") > 0)
+	if (index(b:sources, "dir") >= 0) || (index(b:sources, "file") >= 0)
 		if bufline =~ "/$"
 			let g:explorerpath = bufline
 		else
@@ -1105,7 +1141,7 @@ endfunction
 function! ExplorerDraw()
 	call clearmatches()
 	let search = split(getbufline("%", 1)[0], " ")
-	if index(b:sources, "dir") > 0 || index(b:sources, "file") > 0
+	if index(b:sources, "dir") >= 0 || index(b:sources, "file") >= 0
 		let search = split(getbufline("%", 1)[0], g:explorerpath)
 	endif
 	for searcht in search
@@ -1116,11 +1152,10 @@ function! ExplorerDraw()
 		execute "2,$d_"
 	endif
 	for tag in b:currentTags
-		let info = tag.name
+		let line = "[" . tag.source . "] " . tag.name
 		if has_key(tag, "alias") > 0
-			let info = tag.alias
+			let line = tag.alias
 		endif
-		let line = "[" . tag.source . "] " . info
 		put = line
 	endfor
 	call setpos('.', curs)
@@ -1140,6 +1175,8 @@ function! ExplorerOpen()
 		execute "b " . tag.tag
 	elseif tag.source == "file"
 		execute "e " . tag.file
+	elseif tag.source == "line"
+		execute "e +" . tag.lnum . " " . tag.file
 	endif
 endfunction
 
@@ -1152,7 +1189,7 @@ function! ExplorerFilesDirs(path, source)
 			\ 'name' : line,
 			\ 'file' : line,
 			\ 'tag' : line,
-			\ 'alias' : fnamemodify(line, ":t"),
+			\ 'alias' : "[" . a:source . "] " . fnamemodify(line, ":t"),
 			\ 'source' : a:source}
 		if isdirectory(line)
 			if a:source == "dir"
