@@ -390,7 +390,7 @@ autocmd Filetype snippets call SnippetSettings()
 function! TODOSettings()
 	setlocal foldexpr=
 	setlocal foldtext=
-	syntax match Normal /^\s*\(\S\| \)\+\zs\t.*/ conceal
+	syntax match TodoSettings /\t[^\t]*$/ conceal
 endfunction
 
 function! TODOStart()
@@ -569,14 +569,16 @@ autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
 hi Todo0 ctermbg=236 ctermfg=15 cterm=bold guifg=white
 hi Todo1 ctermbg=236 ctermfg=123 cterm=bold guifg=cyan
 hi Todo2 ctermbg=236 ctermfg=45 cterm=bold guifg=springgreen1
-hi Todo3 ctermbg=236 ctermfg=34 cterm=bold guifg=green3
+hi Todo3 ctermbg=236 ctermfg=48 cterm=bold guifg=green3
 hi Todo4 ctermbg=236 ctermfg=40 cterm=bold guifg=greenyellow
 hi Todo5 ctermbg=236 ctermfg=154 cterm=bold guifg=olivedrab1
 hi Todo6 ctermbg=236 ctermfg=226 cterm=bold guifg=yellow
 hi Todo7 ctermbg=236 ctermfg=214 cterm=bold guifg=orange
-hi Todo8 ctermbg=236 ctermfg=130 cterm=bold guifg=darkorange3
-hi Todo9 ctermbg=236 ctermfg=196 cterm=bold guifg=red
+hi Todo8 ctermbg=236 ctermfg=208 cterm=bold guifg=darkorange3
+hi Todo9 ctermbg=236 ctermfg=202 cterm=bold guifg=indianred
+hi Todo10 ctermbg=236 ctermfg=196 cterm=bold guifg=red
 hi TodoRemove ctermbg=236 ctermfg=244 cterm=bold guifg=gray50
+hi TodoSettings cterm=bold
 " ---------------------------
 " ---------------------------
 " ---- [6] AUTOCMD ----------
@@ -846,7 +848,7 @@ function! TodoColor()
 		let prio = todo.priority
 		let color = prio/10
 		if color > 9
-			let color = 9
+			let color = 10
 		endif
 		if color < 0
 			let color = 0
