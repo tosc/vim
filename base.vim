@@ -93,7 +93,7 @@ nnoremap Y y$
 " Close everything except current fold.
 nnoremap zV zMzv
 
-nnoremap ä /
+nnoremap ä :call Explorer(["line"])<CR>
 nnoremap ö :call Explorer(["buffer", "mru"])<CR>
 nnoremap Ö :call Explorer(["dir", "file"])<CR>
 
@@ -1006,7 +1006,7 @@ function! Explorer(sources, ...)
 			let tagfile = a:1
 		endif
 	endif
-	if index(a:sources, "line") >= 0
+	if index(a:sources, "line") >= 0 && tagfile != ""
 		execute "e " . tagfile
 		let ftype = &filetype
 		execute "bd"
@@ -1089,19 +1089,21 @@ function! ExplorerTags()
 		elseif source == "line"
 			let tagfile = b:tagfile
 			let index = 1
-			for line in readfile(expand(tagfile))
-				if line != ""
-					let tag = {
-						\ 'name' : line,
-						\ 'file' : b:tagfile,
-						\ 'tag' : line,
-						\ 'alias' : index . " " . line,
-						\ 'lnum' : index,
-						\ 'source' : source}
-					call add(tags, tag)
-				endif
-				let index += 1
-			endfor
+			if tagfile != ""
+				for line in readfile(expand(tagfile))
+					if line != ""
+						let tag = {
+							\ 'name' : line,
+							\ 'file' : b:tagfile,
+							\ 'tag' : line,
+							\ 'alias' : index . " " . line,
+							\ 'lnum' : index,
+							\ 'source' : source}
+						call add(tags, tag)
+					endif
+					let index += 1
+				endfor
+			endif
 		endif
 	endfor
 	let b:tags = tags
