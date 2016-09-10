@@ -737,9 +737,9 @@ function! TodoLoad()
 	endfor
 endfunction
 
+"Read buffer and turn all lines into todos.
 function! Todos()
 	let todos = []
-	"Load all todos
 	for line in getbufline("%", 1, "$")
 		let ftabs = len(split(line, "^\\t", "1")) - 1
 		let todo = {
@@ -828,6 +828,7 @@ function! Todos()
 	call TodoUpdateBox()
 endfunction
 
+"Updates box before a todo into the right value.
 function! TodoUpdateBox()
 	for todo in b:todos
 		if todo.textOnly
@@ -843,6 +844,7 @@ function! TodoUpdateBox()
 	endfor
 endfunction
 
+"Colors each todo the right way.
 function! TodoColor()
 	let index = 1
 	for todo in b:todos
@@ -862,6 +864,7 @@ function! TodoColor()
 	endfor
 endfunction
 
+"Sorts all currently loaded todos.
 function! TodoSort()
 	"Pick a todo. Go down until you find the next todo with the same tabs.
 	"Find the end of that todo.
@@ -948,7 +951,6 @@ endfunction
 
 function! TodoWrite()
 	call Todos()
-	call TodoSort()
 	let todos = []
 	for todo in b:todos
 		if !todo.remove
@@ -956,6 +958,9 @@ function! TodoWrite()
 		endif
 	endfor
 	let b:todos = todos
+	call TodoUpdate()
+	call Todos()
+	call TodoSort()
 	call TodoUpdate()
 	let lines = getbufline("%", 1, "$")
 	call writefile(getbufline("%", 1, "$"), expand("%:p"))
