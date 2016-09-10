@@ -814,6 +814,7 @@ function! Todos()
 				endif
 				if todo.textTodo
 					let todo2.textOnly = todo.textTodo
+					let todo2.remove = todo.remove
 				endif
 				if todo2.priority == -1
 					let todo2.priority = todo.priority
