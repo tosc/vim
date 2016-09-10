@@ -133,8 +133,8 @@ map <leader>vR :call VimHelperRestart()<CR>
 map <leader>vh :e ~/git/vim/scripts/VimHelper.py<CR>
 map <leader>vr :e ~/git/vim/README.md<CR>
 map <leader>vv :e ~/git/vim/heavy.vim<CR>
-map <leader>vb :e ~/git/vim/vim-base/base.vim<CR>
-map <leader>vf :e ~/git/vim/vim-base/folding.vim<CR>
+map <leader>vb :e ~/git/vim/base.vim<CR>
+map <leader>vf :e ~/git/vim/folding.vim<CR>
 " W
 " X
 " Y
