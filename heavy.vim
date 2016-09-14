@@ -184,13 +184,7 @@ autocmd FileType * setlocal formatoptions-=cro
 " ---- [3.12] LATEX ---------
 " ---------------------------
 " ---- [3.13] GITCOMMIT -----
-function! GITCSettings()
-	let &foldlevel = 99
-	call FugitiveBindings()
-	call EnglishSpellCheck()
-endfunction
-
-autocmd FileType gitcommit call GITCSettings()
+autocmd FileType gitcommit call FugitiveBindings()
 " ---------------------------
 " ---- [3.14] MARKDOWN ------
 " ---------------------------

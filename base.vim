@@ -260,10 +260,10 @@ map <leader>tc :tabclose <CR>
 map <leader>tn :tabnew <CR>
 " U - Ultisnips
 " V - .vimrc
-map <leader>vr :e ~/git/vim-base/README.md<CR>
-map <leader>vv :e ~/git/vim-base/base.vim<CR>
-map <leader>vb :e ~/git/vim-base/base.vim<CR>
-map <leader>vf :e ~/git/vim-base/folding.vim<CR>
+map <leader>vr :e ~/git/vim/README.md<CR>
+map <leader>vv :e ~/git/vim/base.vim<CR>
+map <leader>vb :e ~/git/vim/base.vim<CR>
+map <leader>vf :e ~/git/vim/folding.vim<CR>
 map <leader>vd :vert diffsplit
 " W
 " X
@@ -475,6 +475,12 @@ endfunction
 autocmd Filetype tex,plaintex call TEXSettings()
 " ---------------------------
 " ---- [3.13] GITCOMMIT -----
+function! GITCSettings()
+	let &foldlevel = 99
+	call EnglishSpellCheck()
+endfunction
+
+autocmd FileType gitcommit call GITCSettings()
 " ---------------------------
 " ---- [3.14] MARKDOWN ------
 function! MDSettings()
