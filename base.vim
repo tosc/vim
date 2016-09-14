@@ -335,7 +335,7 @@ function! ExplorerBindings()
 	nnoremap <buffer> <ESC> :execute("bd")<CR>
 	nnoremap <buffer> <CR> :call ExplorerOpen()<CR>
 	inoremap <buffer> <CR> <ESC>:call ExplorerOpen()<CR>
-	inoremap <buffer> <TAB> <ESC>:call ExplorerTab()<CR>A
+	inoremap <buffer> <TAB> <ESC>:call ExplorerTab()<CR>
 endfunction
 " ---------------------------
 " ---------------------------
@@ -1185,6 +1185,8 @@ function! ExplorerOpen()
 		execute "e " . tag.file
 	elseif tag.source == "line"
 		execute "e +" . tag.lnum . " " . tag.file
+	elseif tag.source == "dir"
+		call ExplorerTab()
 	endif
 endfunction
 
@@ -1250,6 +1252,8 @@ function! ExplorerTab()
 		call setline(1, name)
 	endif
 	call ExplorerUpdate()
+	startinsert
+	call cursor(0, 100000)
 endfunction
 " ---------------------------
 " ---- [7.6] FILEMRU --------
