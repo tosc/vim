@@ -252,7 +252,7 @@ function! OpenTempFile()
 	endif
 endfunction
 map <leader>td :execute("e " . expand(g:todofile))<CR>
-map <leader>ta :call TodoAdd(expand("%:p"), expand("%:t"))<CR>
+map <leader>ta :call TodoAdd()<CR>
 " Show/Hide tabs
 map <leader>ts :set listchars=tab:>\ ,trail:#,extends:>,precedes:<,nbsp:+ <CR>
 map <leader>tS :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
@@ -327,7 +327,7 @@ autocmd FileType tempbuffer call TempBufferBinds()
 function! TodoBindings()
 	nnoremap <buffer> <ESC> :execute("bd")<CR>
 	nmap <buffer> - :call TodoToggle()<CR>
-	nmap <buffer> e :execute "e " . TodoDo({'todos' : g:todos, 'type' : "edit"}).file<CR>
+	nmap <buffer> e :call TodoE()<CR>
 endfunction
 " ------------------------------------
 " ---- [2.8] Explorer-bindings -------
@@ -394,13 +394,13 @@ function! TODOSettings()
 endfunction
 
 function! TODOStart()
+	setlocal filetype=todo
 	call TodoView()
 endfunction
 
 " Files that end with .td are now todofiles.
-autocmd BufEnter *.todo setlocal filetype=todo
+autocmd BufEnter *.todo call TODOStart()
 autocmd Filetype todo call TODOSettings()
-autocmd BufReadPost *.todo call TODOStart()
 " ------------------------------------
 " ---- [3.7] Python-filetype ---------
 function! PythonSettings()
@@ -700,7 +700,7 @@ function! NoSpellCheck()
 	setlocal nospell
 endfunction
 " ------------------------------------
-" ---- [7.4] Todoview-functions ------
+" ---- [7.4] Todo-functions ------
 
 "Check for todofile. If you have a local one, use that. If you have
 "the global one, use that. Else create a new local one.
@@ -739,9 +739,13 @@ function! TodoLoad()
 endfunction
 
 "Read buffer and turn all lines into todos.
-function! Todos()
+function! Todos(...)
 	let todos = []
-	for line in getbufline("%", 1, "$")
+	let lines = getbufline("%", 1, "$")
+	if a:0 > 0
+		let lines = a:1
+	endif
+	for line in lines
 		let ftabs = len(split(line, "^\\t", "1")) - 1
 		let todo = {
 			\ 'line' : line,
@@ -986,6 +990,43 @@ function! TodoToggle()
 		call TodoUpdateBox()
 	endif
 	call TodoUpdate()	
+endfunction
+
+function! TodoAdd()
+	let lines = readfile(expand(g:todofile))
+	call Todos(lines)
+	let lines = []
+	let found = 0
+	let newline = input("Input todo: ")
+	let priority = input("Input priority: ")
+	if priority != ""
+		let newline = newline . "	p=" . priority
+	endif
+	for todo in b:todos
+		call add(lines, todo.line)
+		if todo.file == expand("%:p") && !found && expand("%:p") != ""
+			call add(lines, repeat("	", todo.tabs + 1)
+		       				\ . newline)
+			let found = 1
+		endif
+	endfor
+	if !found
+		if expand("%:p") != ""
+			call add(lines, expand("%:t") . "	f=" . expand("%:p"))
+		endif
+		call add(lines, "	" . newline)
+	endif
+	call writefile(lines, expand(g:todofile))
+	unlet b:todos
+endfunction
+
+function! TodoE()
+	call Todos()
+	let index = getcurpos()[1] - 1
+	let todo = b:todos[index]
+	if todo.file != ""
+		execute "e " . todo.file
+	endif
 endfunction
 
 function! PreP()
