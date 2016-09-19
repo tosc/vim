@@ -1,5 +1,5 @@
 "       BASE VIM
-" ---- [0] INIT -------------
+" ---- [0] Init ----------------------
 let requiredFolders = [
 		\ "~/.vim",
 		\ "~/.vim/tmp",
@@ -16,8 +16,8 @@ let g:explorerpath = expand("~" . "/")
 if !filereadable(g:mrufile)
 	call writefile(([]), g:mrufile)
 endif
-" ---------------------------
-" ---- [1] VIMSETTINGS ------
+" ------------------------------------
+" ---- [1] Vimsettings ---------------
 autocmd!
 set nocompatible
 set modelines=0
@@ -71,9 +71,9 @@ set sessionoptions+=folds
 set t_ut=
 
 syntax on
-" ---------------------------
-" ---- [2] BINDINGS ---------
-" ---- [2.0] NORMAL ---------
+" ------------------------------------
+" ---- [2] Bindings ------------------
+" ---- [2.0] Normal-bindings ---------
 " I keep pressing << >> in the wrong order. HL are good for directions.
 nnoremap H <<
 nnoremap L >>
@@ -130,8 +130,8 @@ function! StartBind()
 	endfor
 endfunction
 call StartBind()
-" ---------------------------
-" ---- [2.1] INSERT ---------
+" ------------------------------------
+" ---- [2.1] Insert-bindings ---------
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
 inoremap  <C-W>
@@ -160,8 +160,8 @@ inoremap <C-H> <Backspace>
 
 " Enter works even when completionmenu is up.
 inoremap <expr> <CR> pumvisible() ? '<C-E><CR>' : "\<CR>"
-" ---------------------------
-" ---- [2.2] VISUAL ---------
+" ------------------------------------
+" ---- [2.2] Visual-bindings ---------
 " I keep pressing << >> in the wrong order. HL are good for directions.
 " Also reselects after action.
 vnoremap H <gv
@@ -174,8 +174,8 @@ vnoremap ; ,
 xnoremap + $
 
 xnoremap å c<C-R>=PythonMath()<CR>
-" ---------------------------
-" ---- [2.3] LEADER ---------
+" ------------------------------------
+" ---- [2.3] Leader-bindings ---------
 let g:mapleader="\<space>"
 
 " A
@@ -271,8 +271,8 @@ map <leader>vd :vert diffsplit
 " Z - Z(S)essions
 " ?
 map <leader>? :call ShowVimSection(2,3)<CR>
-" ---------------------------
-" ---- [2.4] OMAP -----------
+" ------------------------------------
+" ---- [2.4] Omap-bindings -----------
 "This adds $$ as textobjects.	
 onoremap a$ :<c-u>normal! F$vf$<cr>
 onoremap i$ :<c-u>normal! T$vt$<cr>
@@ -289,8 +289,8 @@ onoremap id i[
 onoremap iD i<
 onoremap iq i"
 onoremap it i'
-" ---------------------------
-" ---- [2.5] COMMAND --------
+" ------------------------------------
+" ---- [2.5] Command-bindings --------
 cnoremap <C-BS> <C-W>
 
 " Readline bindings.
@@ -316,58 +316,58 @@ command W :w
 " Show the my normal and insert bindings.
 cnoremap <expr> ? getcmdtype() == ":" && getcmdline() == "g" ? 
 			\ "\<bs>" . 'call ShowVimSection(2,5)<CR>' : '?'
-" ---------------------------
-" ---- [2.6] TEMPBUFFER -----
+" ------------------------------------
+" ---- [2.6] Temp-bindings -----------
 function! TempBufferBinds()
 	nnoremap <buffer> <ESC> :execute("bd")<CR>
 endfunction
 autocmd FileType tempbuffer call TempBufferBinds()
-" ---------------------------
-" ---- [2.7] TODOBINDINGS ---
+" ------------------------------------
+" ---- [2.7] Todo-bindings -----------
 function! TodoBindings()
 	nnoremap <buffer> <ESC> :execute("bd")<CR>
 	nmap <buffer> - :call TodoToggle()<CR>
 	nmap <buffer> e :execute "e " . TodoDo({'todos' : g:todos, 'type' : "edit"}).file<CR>
 endfunction
-" ---------------------------
-" ---- [2.8] EXPLORER -------
+" ------------------------------------
+" ---- [2.8] Explorer-bindings -------
 function! ExplorerBindings()
 	nnoremap <buffer> <ESC> :execute("bd")<CR>
 	nnoremap <buffer> <CR> :call ExplorerOpen()<CR>
 	inoremap <buffer> <CR> <ESC>:call ExplorerOpen()<CR>
 	inoremap <buffer> <TAB> <ESC>:call ExplorerTab()<CR>
 endfunction
-" ---------------------------
-" ---------------------------
-" ---- [3] FILETYPE ---------
-" ---- [3.0] All ------------
+" ------------------------------------
+" ------------------------------------
+" ---- [3] Filetype ------------------
+" ---- [3.0] All-filetype ------------
 autocmd FileType * setlocal formatoptions-=cro
-" ---------------------------
-" ---- [3.1] JAVA -----------
+" ------------------------------------
+" ---- [3.1] Java-filetype -----------
 function! JavaSettings()
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
 endfunction
 
 autocmd Filetype java call JavaSettings()
-" ---------------------------
-" ---- [3.2] C# -------------
+" ------------------------------------
+" ---- [3.2] Cs-filetype -------------
 function! CSSettings()
 	setlocal foldexpr=OneIndentBraceFolding(v:lnum)
 	setlocal foldtext=SpecialBraceFoldText()
 endfunction
 
 autocmd Filetype cs call CSSettings()
-" ---------------------------
-" ---- [3.3] C --------------
+" ------------------------------------
+" ---- [3.3] C-filetype --------------
 function! CSettings()
 	setlocal foldexpr=BraceFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 endfunction
 
 autocmd Filetype c,cpp call CSettings()
-" ---------------------------
-" ---- [3.4] VIMRC ----------
+" ------------------------------------
+" ---- [3.4] Vim-filetype ------------
 function! VimSettings()
 	setlocal foldexpr=VimrcFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -376,8 +376,8 @@ endfunction
 " Pentadactyl file is a vim file.
 autocmd BufRead .pentadactylrc set filetype=vim
 autocmd Filetype vim call VimSettings()
-" ---------------------------
-" ---- [3.5] SNIPPET --------
+" ------------------------------------
+" ---- [3.5] Snippet-filetype --------
 function! SnippetSettings()
 	setlocal foldexpr=SnippetFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -385,12 +385,12 @@ function! SnippetSettings()
 endfunction
 
 autocmd Filetype snippets call SnippetSettings()
-" ---------------------------
-" ---- [3.6] TODO -----------
+" ------------------------------------
+" ---- [3.6] Todo-filetype -----------
 function! TODOSettings()
-	setlocal foldexpr=
-	setlocal foldtext=
-	syntax match TodoSettings /\t[^\t]*$/ conceal
+	setlocal foldexpr=IndentFolding(v:lnum)
+	setlocal foldtext=NormalFoldText()
+	syntax match TodoSettings /\S\zs\t[^\t]*$/ conceal
 endfunction
 
 function! TODOStart()
@@ -401,8 +401,8 @@ endfunction
 autocmd BufEnter *.todo setlocal filetype=todo
 autocmd Filetype todo call TODOSettings()
 autocmd BufReadPost *.todo call TODOStart()
-" ---------------------------
-" ---- [3.7] PYTHON ---------
+" ------------------------------------
+" ---- [3.7] Python-filetype ---------
 function! PythonSettings()
 	setlocal omnifunc=
 	setlocal foldexpr=PythonFolding(v:lnum)
@@ -410,24 +410,24 @@ function! PythonSettings()
 endfunction
 
 autocmd Filetype python call PythonSettings()
-" ---------------------------
-" ---- [3.8] LUA ------------
+" ------------------------------------
+" ---- [3.8] Lua-filetype ------------
 function! LUASettings()
 	setlocal foldexpr=IndentFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 endfunction
 
 autocmd Filetype lua call LUASettings()
-" ---------------------------
-" ---- [3.9] MAKE -----------
+" ------------------------------------
+" ---- [3.9] Make-filetype -----------
 function! MAKESettings()
 	setlocal foldexpr=IndentFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 endfunction
 
 autocmd Filetype make call MAKESettings()
-" ---------------------------
-" ---- [3.10] PASS ----------
+" ------------------------------------
+" ---- [3.10] Pass-filetype ----------
 function! PASSSettings()
 	setlocal foldexpr=PassFolding(v:lnum)
 	setlocal foldtext=PassFoldText()
@@ -453,8 +453,8 @@ endfunction
 autocmd BufNewFile,BufRead *.pass set filetype=pass
 
 autocmd Filetype pass call PASSSettings()
-" ---------------------------
-" ---- [3.11] JAPANESE ------
+" ------------------------------------
+" ---- [3.11] Japanese-filetype ------
 function! JAPANESESettings()
 	set guifont=MS_Gothic:h16:w8
 	set fileencoding=utf-8
@@ -464,8 +464,8 @@ endfunction
 autocmd BufNewFile,BufRead *.jp set filetype=jp
 
 autocmd Filetype jp call JAPANESESettings()
-" ---------------------------
-" ---- [3.12] LATEX ---------
+" ------------------------------------
+" ---- [3.12] Latex-filetype ---------
 function! TEXSettings()
 	setlocal foldexpr=TexFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -473,16 +473,16 @@ function! TEXSettings()
 endfunction
 
 autocmd Filetype tex,plaintex call TEXSettings()
-" ---------------------------
-" ---- [3.13] GITCOMMIT -----
+" ------------------------------------
+" ---- [3.13] Gitcommit-filetype -----
 function! GITCSettings()
 	let &foldlevel = 99
 	call EnglishSpellCheck()
 endfunction
 
 autocmd FileType gitcommit call GITCSettings()
-" ---------------------------
-" ---- [3.14] MARKDOWN ------
+" ------------------------------------
+" ---- [3.14] Markdown-filetype ------
 function! MDSettings()
 	setlocal foldexpr=MDFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -490,8 +490,8 @@ function! MDSettings()
 endfunction
 
 autocmd FileType markdown call MDSettings()
-" ---------------------------
-" ---- [3.15] HELP ----------
+" ------------------------------------
+" ---- [3.15] Help-filetype ----------
 function! HelpIfHelp()
 	if getbufline("%", "1")[0] =~ '^\*\S*\*\s*'
 		setlocal filetype=help
@@ -499,20 +499,15 @@ function! HelpIfHelp()
 endfunction
 
 autocmd BufRead *.txt call HelpIfHelp()
-
-function! HelpBindings()
-	nmap <buffer> <ESC> :execute("bd")<CR>
-endfunction
-autocmd FileType help call HelpBindings()
 autocmd BufWritePost */git/info/notes/* helptags ~/git/info
-" ---------------------------
-" ---------------------------
-" ---- [4] STATUSLINE -------
+" ------------------------------------
+" ------------------------------------
+" ---- [4] Statusline ----------------
 set laststatus=2
 set statusline=%<\[%f\]\ %y\ \ %m%=%-14.(%l-%c%)\ %P
-" ---------------------------
-" ---- [5] COLORSETTINGS ----
-" ---- [5.0] DEFAULT ----
+" ------------------------------------
+" ---- [5] Colorsettings -------------
+" ---- [5.0] Default-colorsettings ---
 colorscheme desert
 
 " Change to better colors when using a terminal
@@ -570,8 +565,8 @@ hi DiffText guibg=dodgerblue4 guifg=NONE ctermbg=23 ctermfg=NONE
 
 autocmd InsertEnter * hi StatusLine gui=reverse cterm=reverse
 autocmd InsertLeave * hi StatusLine guibg=NONE gui=underline cterm=underline
-" ---------------------------
-" ---- [5.1] TODO ----
+" ------------------------------------
+" ---- [5.1] Todo-colorsettings ------
 hi Todo0 ctermbg=236 ctermfg=15 cterm=bold guifg=white
 hi Todo1 ctermbg=236 ctermfg=123 cterm=bold guifg=cyan
 hi Todo2 ctermbg=236 ctermfg=45 cterm=bold guifg=springgreen1
@@ -585,13 +580,13 @@ hi Todo9 ctermbg=236 ctermfg=202 cterm=bold guifg=indianred
 hi Todo10 ctermbg=236 ctermfg=196 cterm=bold guifg=red
 hi TodoRemove ctermbg=236 ctermfg=244 cterm=bold guifg=gray50
 hi TodoSettings cterm=bold
-" ---------------------------
-" ---------------------------
-" ---- [6] AUTOCMD ----------
+" ------------------------------------
+" ------------------------------------
+" ---- [6] Autocmd -------------------
 autocmd BufReadPost * call UpdateFileMRU()
-" ---------------------------
-" ---- [7] FUNCTIONS --------
-" ---- [7.0] TABCOMPLETION --
+" ------------------------------------
+" ---- [7] Functions -----------------
+" ---- [7.0] Tabcompletion-functions -
 let s:CompletionCommand = "\<C-X>\<C-N>"
 function! CustomTab()
 	if getline(".")[col('.') - 2] =~ '\w'
@@ -600,8 +595,8 @@ function! CustomTab()
 		return "\<TAB>"
 	endif
 endfunction
-" ---------------------------
-" ---- [7.1] JUMP -----------
+" ------------------------------------
+" ---- [7.1] Jump-functions ----------
 " Jumps you to the next/previous ultisnips location if exists.
 " Else it jumps to the next/previous delimiter.
 " Else jumps to $/^
@@ -648,8 +643,8 @@ function! SmartJumpBack()
 	endif
 	return ""
 endfunction
-" ---------------------------
-" ---- [7.2] TEMPBUFFER -----
+" ------------------------------------
+" ---- [7.2] Temp-functions ----------
 function! TempBuffer()
 	if bufexists("[TempBuffer]")
 		b TempBuffer
@@ -691,8 +686,8 @@ function! ShowVimSection(section, subsection)
 	call AddVimSection(a:section, a:subsection)
 	normal gg
 endfunction
-" ---------------------------
-" ---- [7.3] SPELLCHECK -----
+" ------------------------------------
+" ---- [7.3] Spellcheck-functions ----
 function! EnglishSpellCheck()
 	setlocal spell spelllang=en_us
 endfunction
@@ -704,8 +699,8 @@ endfunction
 function! NoSpellCheck()
 	setlocal nospell
 endfunction
-" ---------------------------
-" ---- [7.4] TODOVIEW -------
+" ------------------------------------
+" ---- [7.4] Todoview-functions ------
 
 "Check for todofile. If you have a local one, use that. If you have
 "the global one, use that. Else create a new local one.
@@ -998,8 +993,8 @@ function! PreP()
 		echo todo.priority . " - " . todo.line
 	endfor
 endfunction
-" ---------------------------
-" ---- [7.5] EXPLORER -------
+" ------------------------------------
+" ---- [7.5] Explorer-functions ------
 "Open tagview.
 function! Explorer(sources, ...)
 	let tagfile = expand("%:p")
@@ -1255,8 +1250,8 @@ function! ExplorerTab()
 	startinsert
 	call cursor(0, 100000)
 endfunction
-" ---------------------------
-" ---- [7.6] FILEMRU --------
+" ------------------------------------
+" ---- [7.6] Filemru-functions -------
 function! UpdateFileMRU()
 	let tags = readfile(g:mrufile)
 	let correctTags = []
@@ -1269,9 +1264,9 @@ function! UpdateFileMRU()
 	endfor
 	call writefile(correctTags, g:mrufile)
 endfunction
-" ---------------------------
-" ---------------------------
-" ---- [8] TABLINE ----------
+" ------------------------------------
+" ------------------------------------
+" ---- [8] Tabline -------------------
 function! Tabline()
 	let s = ''
 	for i in range(tabpagenr('$'))
@@ -1290,14 +1285,14 @@ function! Tabline()
 endfunction
 
 set tabline=%!Tabline()
-" ---------------------------
-" ---- [9] OS SPECIFIC ------
-" ---- [9.0] WINDOWS --------
+" ------------------------------------
+" ---- [9] OS specific ---------------
+" ---- [9.0] Windows -----------------
 if(has("win32"))
 	au GUIEnter * simalt ~x
 endif
-" ---------------------------
-" ---- [9.1] LINUX ----------
+" ------------------------------------
+" ---- [9.1] Linux -------------------
 if has('unix')
 	if has("gui")
 		set timeout
@@ -1305,5 +1300,5 @@ if has('unix')
 		set ttimeoutlen=0
 	endif
 endif
-" ---------------------------
-" ---------------------------
+" ------------------------------------
+" ------------------------------------

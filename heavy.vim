@@ -1,5 +1,5 @@
 "       HEAVY VIM
-" ---- [0] INIT -------------
+" ---- [0] Init ----------------------
 let requiredFolders = [
 		\ "~/.vim/tmp/gitstatusline",
 		\ "~/.vim/tmp/compilefiles"]
@@ -12,9 +12,9 @@ for rawfolder in requiredFolders
 endfor
 set rtp+=~/git/vim/scripts/
 set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
-" ---------------------------
-" ---- [1] PLUGINS ----------
-" ---- [1.0] VUNDLE ---------
+" ------------------------------------
+" ---- [1] Plugins -------------------
+" ---- [1.0] Vundle-plugin ------------------
 " Required by vundle
 filetype off
 set rtp+=~/git/vim/bundle/Vundle.vim/
@@ -35,8 +35,8 @@ Plugin 'Konfekt/FastFold'
 " Required by vundle
 call vundle#end()
 filetype plugin indent on
-" ---------------------------
-" ---- [1.1] ULTISNIPS ------
+" ------------------------------------
+" ---- [1.1] Ultisnips-plugin ---------------
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
 let g:ulti_jump_backwards_res = 0
@@ -49,21 +49,21 @@ let g:UltiSnipsJumpForwardTrigger="<Nop>"
 let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
-" ---------------------------
-" ---- [1.2] YCM ------------
-" ---------------------------
-" ---------------------------
-" ---- [2] BINDINGS ---------
-" ---- [2.0] NORMAL ---------
-" ---------------------------
-" ---- [2.1] INSERT ---------
+" ------------------------------------
+" ---- [1.2] Ycm-plugin ---------------------
+" ------------------------------------
+" ------------------------------------
+" ---- [2] Bindings ------------------
+" ---- [2.0] Normal-bindings ---------
+" ------------------------------------
+" ---- [2.1] Insert-bindings ---------
 inoremap <C-J> <C-R>=USOrSmartJump()<CR>
 inoremap <C-K> <C-R>=USOrSmartJumpBack()<CR>
 
 let g:UltiSnipsJumpForwardTrigger="<C-J>"
 let g:UltiSnipsJumpBackwardTrigger="<C-K>"
-" ---------------------------
-" ---- [2.2] VISUAL ---------
+" ------------------------------------
+" ---- [2.2] Visual-bindings ---------
 xnoremap <silent><TAB> :call UltiSnips#SaveLastVisualSelection()<CR>gvs
 
 xmap s S
@@ -74,8 +74,8 @@ xmap st s'
 xmap sm s$
 xmap s( s)
 xmap s{ s}
-" ---------------------------
-" ---- [2.3] LEADER ---------
+" ------------------------------------
+" ---- [2.3] Leader-bindings ---------
 
 " A
 " B
@@ -140,61 +140,30 @@ map <leader>vf :e ~/git/vim/folding.vim<CR>
 " Y
 " Z - Z(S)essions
 " ?
-" ---------------------------
-" ---- [2.4] OMAP -----------
-" ---------------------------
-" ---- [2.5] COMMAND --------
+" ------------------------------------
+" ---- [2.4] Omap-bindings -----------
+" ------------------------------------
+" ---- [2.5] Command-bindings --------
 cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>Git" : "t"
-" ---------------------------
-" ---- [2.6] FUGITIVE -------
+" ------------------------------------
+" ---- [2.6] Fugitive-bindings -------
 function! FugitiveBindings()
 	nmap <buffer> j <C-N>
 	nmap <buffer> k <C-P>
 	nmap <buffer> gd D
 	nmap <buffer> <esc> :bd<cr>
 endfunction
-" ---------------------------
-" ---------------------------
-" ---- [3] FILETYPE ---------
-" ---- [3.0] All ------------
+" ------------------------------------
+" ------------------------------------
+" ---- [3] Filetype ------------------
+" ---- [3.0] All-filetype ------------
 autocmd FileType * setlocal formatoptions-=cro
-" ---------------------------
-" ---- [3.1] JAVA -----------
-" ---------------------------
-" ---- [3.2] C# -------------
-" ---------------------------
-" ---- [3.3] C --------------
-" ---------------------------
-" ---- [3.4] VIMRC ----------
-" ---------------------------
-" ---- [3.5] SNIPPET --------
-" ---------------------------
-" ---- [3.6] TODO -----------
-" ---------------------------
-" ---- [3.7] PYTHON ---------
-" ---------------------------
-" ---- [3.8] LUA ------------
-" ---------------------------
-" ---- [3.9] MAKE -----------
-" ---------------------------
-" ---- [3.10] PASS ----------
-" ---------------------------
-" ---- [3.11] JAPANESE ------
-" ---------------------------
-" ---- [3.12] LATEX ---------
-" ---------------------------
-" ---- [3.13] GITCOMMIT -----
+" ------------------------------------
+" ---- [3.1] Gitcommit-filetype ------
 autocmd FileType gitcommit call FugitiveBindings()
-" ---------------------------
-" ---- [3.14] MARKDOWN ------
-" ---------------------------
-" ---- [3.15] NOTE ----------
-autocmd BufWritePost *.note call VimHelperMessage("tags", "")
-" ---------------------------
-" ---- [3.16] HELP ----------
-" ---------------------------
-" ---------------------------
-" ---- [4] STATUSLINE -------
+" ------------------------------------
+" ------------------------------------
+" ---- [4] Statusline ----------------
 set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
 
 " Gets the gitinfo for the statusline.
@@ -210,10 +179,10 @@ function! MyStatusLine()
 
 	return b:statusLineVar
 endfunction
-" ---------------------------
-" ---- [5] COLORSETTINGS ----
-" ---------------------------
-" ---- [6] AUTOCMD ----------
+" ------------------------------------
+" ---- [5] Colorsettings -------------
+" ------------------------------------
+" ---- [6] Autocmd -------------------
 autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
 autocmd TextChanged,TextChangedI * call CreateTempFile()
@@ -227,17 +196,17 @@ function! CreateTempFile()
 		call writefile(getline(1,'$'), expand("~/.vim/tmp/compilefiles/") . expand("%:t"))
 	endif
 endfunction
-" ---------------------------
-" ---- [7] FUNCTIONS --------
-" ---- [7.0] TABCOMPLETION --
+" ------------------------------------
+" ---- [7] Functions -----------------
+" ---- [7.0] Tabcompletion-functions -
 function! CustomTab()
 	if pumvisible()
 		return "\<C-N>"
 	else
 	return "\<TAB>"
 endfunction
-" ---------------------------
-" ---- [7.1] JUMP -----------
+" ------------------------------------
+" ---- [7.1] Jump-functions ----------
 function! USOrSmartJump()
 	call UltiSnips#ExpandSnippetOrJump()
 	if g:ulti_expand_or_jump_res == 1
@@ -252,8 +221,8 @@ function! USOrSmartJumpBack()
 	endif
 	return SmartJumpBack()
 endfunction
-" ---------------------------
-" ---- [7.2] EVAL MATH ------
+" ------------------------------------
+" ---- [7.2] Eval-math-functions -----
 function! PythonMath()
 let l:vimMath = getreg('"')
 if l:vimMath == ''
@@ -266,26 +235,26 @@ vim.command("let l:pythonMath = '" + str(math) + "'")
 endpy
 return l:pythonMath
 endfunction
-" ---------------------------
-" ---- [7.3] GIT INFO -------
+" ------------------------------------
+" ---- [7.3] Git-info-functions ------
 function! UpdateGitInfo()
 	let b:statusLineVar = ""
 	call VimHelperMessage("path", expand("%:p"))
 endfunction
-" ---------------------------
-" ---- [7.4] ON EXIT --------
+" ------------------------------------
+" ---- [7.4] On-exit-functions -------
 function! OnExit()
 	call VimHelperMessage("client", "-1")
 endfunction
-" ---------------------------
-" ---- [7.5] AFTER INIT -----
+" ------------------------------------
+" ---- [7.5] After-init-functions ----
 function! AfterInit()
 	if !g:startedExternal
 		call VimHelperMessage("client", "1")
 	endif
 endfunction
-" ---------------------------
-" ---- [7.6] VIMHELPER ------
+" ------------------------------------
+" ---- [7.6] Vimhelper-functions -----
 let g:startedExternal = 0
 let g:timeoutVH = 5
 let g:disableVimHelper = 0
@@ -327,21 +296,21 @@ function! VimHelperCompileStop()
 	call VimHelperMessage("compile", "")
 	let g:compilingVH = 0
 endfunction
-" ---------------------------
-" ---- [7.7] TEMPBUFFER -----
+" ------------------------------------
+" ---- [7.7] Temp-functions ----------
 function! AddVimSection(section, subsection)
 	put = '\" Base'
-	put = '\" ----------------------------'
-	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/vim-base/base.vim")
+	put = '\" -------------------------------------'
+	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/base.vim")
 	put = ''
 	put = '\" Heavy'
-	put = '\" ----------------------------'
+	put = '\" -------------------------------------'
 	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/heavy.vim")
 endfunction
-" ---------------------------
-" ---------------------------
-" ---- [8] AFTER VIMRC ------
+" ------------------------------------
+" ------------------------------------
+" ---- [8] After vimrc ---------------
 if exists('setup')
 	autocmd VimEnter * BundleInstall
 endif
-" ---------------------------
+" ------------------------------------
