@@ -12,31 +12,9 @@ for rawfolder in requiredFolders
 endfor
 set rtp+=~/git/vim/scripts/
 set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
+set packpath+=~/git/vim/
 " ------------------------------------
 " ---- [1] Plugins -------------------
-" ---- [1.0] Vundle-plugin ------------------
-" Required by vundle
-filetype off
-set rtp+=~/git/vim/bundle/Vundle.vim/
-call vundle#begin()
-Plugin 'gmarik/Vundle.vim'
-
-" Snippets
-Plugin 'SirVer/ultisnips'
-
-" Code-completion
-Plugin 'maralla/completor.vim'
-Plugin 'maralla/validator.vim'
-
-" Div
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-surround'
-Plugin 'Konfekt/FastFold'
-
-" Required by vundle
-call vundle#end()
-filetype plugin indent on
-" ------------------------------------
 " ---- [1.1] Ultisnips-plugin ---------------
 let g:ulti_expand_res = 0
 let g:ulti_jump_forwards_res = 0
@@ -309,7 +287,4 @@ endfunction
 " ------------------------------------
 " ------------------------------------
 " ---- [8] After vimrc ---------------
-if exists('setup')
-	autocmd VimEnter * BundleInstall
-endif
 " ------------------------------------
