@@ -25,7 +25,8 @@ Plugin 'gmarik/Vundle.vim'
 Plugin 'SirVer/ultisnips'
 
 " Code-completion
-Plugin 'Valloric/YouCompleteMe'
+Plugin 'maralla/completor.vim'
+Plugin 'maralla/validator.vim'
 
 " Div
 Plugin 'tpope/vim-fugitive'
@@ -49,8 +50,6 @@ let g:UltiSnipsJumpForwardTrigger="<Nop>"
 let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
-" ------------------------------------
-" ---- [1.2] Ycm-plugin ---------------------
 " ------------------------------------
 " ------------------------------------
 " ---- [2] Bindings ------------------
