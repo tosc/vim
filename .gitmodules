@@ -1,3 +1,18 @@
-[submodule "bundle/Vundle.vim"]
-	path = bundle/Vundle.vim
-	url = https://github.com/gmarik/Vundle.vim.git
+[submodule "pack/addons/start/completor.vim"]
+	path = pack/addons/start/completor.vim
+	url = https://github.com/maralla/completor.vim
+[submodule "pack/addons/start/ultisnips"]
+	path = pack/addons/start/ultisnips
+	url = https://github.com/SirVer/ultisnips
+[submodule "pack/addons/start/validator.vim"]
+	path = pack/addons/start/validator.vim
+	url = https://github.com/maralla/validator.vim
+[submodule "pack/addons/start/vim-fugitive"]
+	path = pack/addons/start/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive
+[submodule "pack/addons/start/vim-surround"]
+	path = pack/addons/start/vim-surround
+	url = https://github.com/tpope/vim-surround
+[submodule "pack/addons/start/FastFold"]
+	path = pack/addons/start/FastFold
+	url = https://github.com/Konfekt/FastFold

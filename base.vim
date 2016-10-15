@@ -679,7 +679,7 @@ function! AddVimSectionCall(section, subsection, filename)
 	endfor
 endfunction
 function! AddVimSection(section, subsection)
-	call AddVimSectionCall(a:section, a:subsection, "~/git/vim-base/base.vim")
+	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/base.vim")
 endfunction
 function! ShowVimSection(section, subsection)
 	call TempBuffer()
