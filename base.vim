@@ -375,6 +375,7 @@ endfunction
 
 " Pentadactyl file is a vim file.
 autocmd BufRead .pentadactylrc set filetype=vim
+autocmd BufRead .vimperatorrc set filetype=vim
 autocmd Filetype vim call VimSettings()
 " ------------------------------------
 " ---- [3.5] Snippet-filetype --------
