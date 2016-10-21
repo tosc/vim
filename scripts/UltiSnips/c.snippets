@@ -97,10 +97,16 @@ endsnippet
 
 # Methods/functinos
 snippet "func?t?i?o?n?|meth?o?d?" "function:function|method" br
-<MISSING func|method>
+${1:int} ${2:funcName}(${3:param})
+{
+	${0:${VISUAL}}	
+}
 endsnippet
 snippet "(\w+)(func?t?i?o?n?|meth?o?d?)" "function with type as match.group(1)" br
-<MISSING var func|method>
+`!p snip.rv = match.group(1)` ${1:funcName}(${2:param})
+{
+	${0:${VISUAL}}
+}
 endsnippet
 snippet "const?r?u?c?t?o?r?" "constructor:constructor" br
 <MISSING constructor>
