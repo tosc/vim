@@ -81,6 +81,9 @@ nnoremap L >>
 nnoremap <C-J> :call SmartJump()<CR>
 nnoremap <C-K> :call SmartJumpBack()<CR>
 
+" Easier binding for jumping to help-tag
+nnoremap <C-H> <C-]>
+
 " Wanted a easier bind for $
 nnoremap + $
 
@@ -492,14 +495,13 @@ endfunction
 
 autocmd FileType markdown call MDSettings()
 " ------------------------------------
-" ---- [3.15] Help-filetype ----------
-function! HelpIfHelp()
-	if getbufline("%", "1")[0] =~ '^\*\S*\*\s*'
-		setlocal filetype=help
-	endif	
+" ---- [3.15] Note-filetype ----------
+function! NoteSettings()
+	setlocal filetype=help
+	nnoremap <buffer> <C-H> :call DirectHelp()<CR>
 endfunction
 
-autocmd BufRead *.txt call HelpIfHelp()
+autocmd BufRead */git/info/notes/* call NoteSettings()
 autocmd BufWritePost */git/info/notes/* helptags ~/git/info
 " ------------------------------------
 " ------------------------------------
@@ -1206,10 +1208,15 @@ function! ExplorerDraw()
 	call setpos('.', curs)
 endfunction
 
-function! ExplorerOpen()
-	let tagindex = getpos('.')[1] - 2
-	if tagindex < 0
-		let tagindex = 0
+function! ExplorerOpen(...)
+	let tagindex = 0
+	if a:0 > 0
+		let tagindex = a:1
+	else
+		let tagindex = getpos('.')[1] - 2
+		if tagindex < 0
+			let tagindex = 0
+		endif
 	endif
 	let tag = b:currentTags[tagindex]
 	if tag.source == "mru"
@@ -1292,6 +1299,7 @@ function! ExplorerTab()
 	startinsert
 	call cursor(0, 100000)
 endfunction
+
 " ------------------------------------
 " ---- [7.6] Filemru-functions -------
 function! UpdateFileMRU()
@@ -1305,6 +1313,29 @@ function! UpdateFileMRU()
 		endif
 	endfor
 	call writefile(correctTags, g:mrufile)
+endfunction
+" ------------------------------------
+" ---- [7.7] DirectHelp ----------
+function! DirectHelp()
+	let helpTag = expand("<cWORD>")
+	if helpTag =~ "|.*|"
+		let helpTag = helpTag[1:-2]
+		let b:sources = ["notes"]
+		call ExplorerTags()
+		let index = -1
+		let tmpI = 0
+		for tag in b:tags
+			if tag.name == helpTag
+				let index = tmpI
+				break
+			endif
+			let tmpI += 1
+		endfor
+		let b:currentTags = b:tags
+		if index != -1
+			call ExplorerOpen(index)
+		endif
+	endif
 endfunction
 " ------------------------------------
 " ------------------------------------
