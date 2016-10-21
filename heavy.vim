@@ -214,44 +214,39 @@ function! GitStatusBuffer()
 	exec 'b '. currentBuf
 endfunction
 function! UpdateGitInfo()
-	if g:gitUpdating == 0
-		let g:gitUpdating = 2
-		let g:gitRowsJob = job_start(
-			\ ["git", "-C", expand("%:h"), "diff", "--numstat"], {
-			\ 'close_cb': 'UpdateGitRows',
-			\ 'out_io': 'file',
-			\ 'out_name': expand("~/.vim/tmp/tmp/gitRowStatus")})
-		let g:gitFilesJob = job_start(
-			\ ["git", "-C", expand("%:h"), "status", "-b", "-s"], {
-			\ 'close_cb': 'UpdateGitFiles',
-			\ 'out_io': 'file',
-			\ 'out_name': expand("~/.vim/tmp/tmp/gitFileStatus")})
+	if v:version >= 800
+		if g:gitUpdating == 0
+			let g:gitUpdating = 2
+			let g:gitRowsJob = job_start(
+				\ ["git", "-C", expand("%:h"), "diff", "--numstat"], {
+				\ 'close_cb': 'UpdateGitRows',
+				\ 'out_io': 'file',
+				\ 'out_name': expand("~/.vim/tmp/tmp/gitRowStatus")})
+			let g:gitFilesJob = job_start(
+				\ ["git", "-C", expand("%:h"), "status", "-b", "-s"], {
+				\ 'close_cb': 'UpdateGitFiles',
+				\ 'out_io': 'file',
+				\ 'out_name': expand("~/.vim/tmp/tmp/gitFileStatus")})
+		endif
 	endif
 endfunction
 
 " Adds information about git branch to statusline in the form of:
 " [master->origin/master]
 function! UpdateGitFiles(channel)
-	if !exists('b:gitFilesStatusLine')
-			let b:gitFilesStatusLine = ""
-	endif
-	let statusLine = ""
+	let b:gitFilesStatusLine = ""
 	let filesRaw = readfile(expand("~/.vim/tmp/tmp/gitFileStatus"))
 	if len(filesRaw) > 0
 		" [master->origin/master]
 		let fileRaw = substitute(filesRaw[0], "#", "", "g")
 		let fileRaw = substitute(fileRaw, "\\.\\.\\.", "->", "")
 		let fileRaw = substitute(fileRaw, " ", "", "")
-		let statusLine = "[" . fileRaw . "]"
+		let b:gitFilesStatusLine = "[" . fileRaw . "]"
 
 		" [m 3]
 		let filesChanged = len(filesRaw) - 1
 		if filesChanged > 0
-			let statusLine .= " [m " . filesChanged . "]"
-		endif
-
-		if statusLine != ""
-			let b:gitFilesStatusLine = statusLine
+			let b:gitFilesStatusLine .= " [m " . filesChanged . "]"
 		endif
 	endif
 	let g:gitUpdating -= 1
@@ -261,21 +256,15 @@ endfunction
 " [+3 -2]
 let g:testG = []
 function! UpdateGitRows(channel)
-	if !exists('b:gitRowsStatusLine')
-			let b:gitRowsStatusLine = ""
-	endif
-	let statusLine = ""
+	let b:gitRowsStatusLine = ""
 	let rowsRaw = readfile(expand("~/.vim/tmp/tmp/gitRowStatus"))
 	let currentFile = expand("%:t")
 	for row in rowsRaw
 		if row =~ currentFile && currentFile != ""
 			let changedRows = split(row, "\t")
-			let statusLine .= " [+" . changedRows[0] . " -" . changedRows[1] . "]"
+			let b:gitRowsStatusLine = " [+" . changedRows[0] . " -" . changedRows[1] . "]"
 		endif
 	endfor
-	if statusLine != ""
-		let b:gitRowsStatusLine = statusLine
-	endif
 	let g:gitUpdating -= 1
 endfunction
 " ------------------------------------
