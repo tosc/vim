@@ -1,8 +1,6 @@
 "       HEAVY VIM
 " ---- [0] Init ----------------------
-let requiredFolders = [
-		\ "~/.vim/tmp/gitstatusline",
-		\ "~/.vim/tmp/compilefiles"]
+let requiredFolders = ["~/.vim/tmp/compilefiles"]
 for rawfolder in requiredFolders
 	let folder = fnamemodify(rawfolder, ":p")
 	if !isdirectory(folder)
@@ -106,8 +104,6 @@ map <leader>R :call VimHelperCompileStop() <cr>
 map <leader>ue :UltiSnipsEdit <CR>
 map <leader>uu :call Explorer(["dir", "file"], expand("~/git/vim/scripts/UltiSnips/")) <CR>
 " V - .vimrc
-map <leader>vR :call VimHelperRestart()<CR>
-map <leader>vh :e ~/git/vim/scripts/VimHelper.py<CR>
 map <leader>vr :e ~/git/vim/README.md<CR>
 map <leader>vv :e ~/git/vim/heavy.vim<CR>
 map <leader>vb :e ~/git/vim/base.vim<CR>
@@ -145,16 +141,13 @@ set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
 
 " Gets the gitinfo for the statusline.
 function! MyStatusLine()
-	let b:statusLineVar = ""
-	let gitStatusLineFile = expand("~/.vim/tmp/gitstatusline/") .  substitute(expand("%:p"), "[\\:/]", "-", "g")
-	if filereadable(gitStatusLineFile)
-		let statusInfo = readfile(gitStatusLineFile)
-		if len(statusInfo) > 0
-			let b:statusLineVar = statusInfo[0]
-		endif
+	if !exists('b:gitFilesStatusLine')
+			let b:gitFilesStatusLine = ""
 	endif
-
-	return b:statusLineVar
+	if !exists('b:gitRowsStatusLine')
+			let b:gitRowsStatusLine = ""
+	endif
+	return b:gitFilesStatusLine . b:gitRowsStatusLine
 endfunction
 " ------------------------------------
 " ---- [5] Colorsettings -------------
@@ -165,11 +158,9 @@ autocmd BufEnter * call UpdateGitInfo()
 autocmd TextChanged,TextChangedI * call CreateTempFile()
 autocmd FocusGained * call UpdateGitInfo()
 
-autocmd VimLeave * call OnExit()
-autocmd VimEnter * call AfterInit()
-
+let g:compiling = 0
 function! CreateTempFile()
-	if expand('%') != '' && g:compilingVH == 1
+	if expand('%') != '' && g:compiling == 1
 		call writefile(getline(1,'$'), expand("~/.vim/tmp/compilefiles/") . expand("%:t"))
 	endif
 endfunction
@@ -214,67 +205,81 @@ return l:pythonMath
 endfunction
 " ------------------------------------
 " ---- [7.3] Git-info-functions ------
+let g:gitUpdating = 0
+
+function! GitStatusBuffer()
+	let currentBuf = bufnr('%')
+	let g:makeBufNum = bufnr('gitStatusBuffer', 1)
+	exec g:makeBufNum . 'bufdo %d'
+	exec 'b '. currentBuf
+endfunction
 function! UpdateGitInfo()
-	let b:statusLineVar = ""
-	call VimHelperMessage("path", expand("%:p"))
-endfunction
-" ------------------------------------
-" ---- [7.4] On-exit-functions -------
-function! OnExit()
-	call VimHelperMessage("client", "-1")
-endfunction
-" ------------------------------------
-" ---- [7.5] After-init-functions ----
-function! AfterInit()
-	if !g:startedExternal
-		call VimHelperMessage("client", "1")
+	if g:gitUpdating == 0
+		let g:gitUpdating = 2
+		let g:gitRowsJob = job_start(
+			\ ["git", "-C", expand("%:h"), "diff", "--numstat"], {
+			\ 'close_cb': 'UpdateGitRows',
+			\ 'out_io': 'file',
+			\ 'out_name': expand("~/.vim/tmp/tmp/gitRowStatus")})
+		let g:gitFilesJob = job_start(
+			\ ["git", "-C", expand("%:h"), "status", "-b", "-s"], {
+			\ 'close_cb': 'UpdateGitFiles',
+			\ 'out_io': 'file',
+			\ 'out_name': expand("~/.vim/tmp/tmp/gitFileStatus")})
 	endif
 endfunction
+
+" Adds information about git branch to statusline in the form of:
+" [master->origin/master]
+function! UpdateGitFiles(channel)
+	if !exists('b:gitFilesStatusLine')
+			let b:gitFilesStatusLine = ""
+	endif
+	let statusLine = ""
+	let filesRaw = readfile(expand("~/.vim/tmp/tmp/gitFileStatus"))
+	if len(filesRaw) > 0
+		" [master->origin/master]
+		let fileRaw = substitute(filesRaw[0], "#", "", "g")
+		let fileRaw = substitute(fileRaw, "\\.\\.\\.", "->", "")
+		let fileRaw = substitute(fileRaw, " ", "", "")
+		let statusLine = "[" . fileRaw . "]"
+
+		" [m 3]
+		let filesChanged = len(filesRaw) - 1
+		if filesChanged > 0
+			let statusLine .= " [m " . filesChanged . "]"
+		endif
+
+		if statusLine != ""
+			let b:gitFilesStatusLine = statusLine
+		endif
+	endif
+	let g:gitUpdating -= 1
+endfunction
+
+" Changed rows from git.
+" [+3 -2]
+let g:testG = []
+function! UpdateGitRows(channel)
+	if !exists('b:gitRowsStatusLine')
+			let b:gitRowsStatusLine = ""
+	endif
+	let statusLine = ""
+	let rowsRaw = readfile(expand("~/.vim/tmp/tmp/gitRowStatus"))
+	let currentFile = expand("%:t")
+	for row in rowsRaw
+		if row =~ currentFile && currentFile != ""
+			let changedRows = split(row, "\t")
+			let statusLine .= " [+" . changedRows[0] . " -" . changedRows[1] . "]"
+		endif
+	endfor
+	if statusLine != ""
+		let b:gitRowsStatusLine = statusLine
+	endif
+	let g:gitUpdating -= 1
+endfunction
 " ------------------------------------
-" ---- [7.6] Vimhelper-functions -----
-let g:startedExternal = 0
-let g:timeoutVH = 5
-let g:disableVimHelper = 0
-let g:compilingVH = 0
-function! VimHelperMessage(type, message)
-if !g:disableVimHelper && g:timeoutVH > 0
-python << endpy
-import socket
-import vim
-try:
-	s = socket.socket()
-	s.connect(("localhost", 51351))
-
-	s.send(vim.eval("a:type") + "\t" + vim.eval("a:message"))
-	vim.command("let g:timeoutVH = 5")
-except:
-	vim.command("call VimHelperStart()")
-	vim.command("let g:timeoutVH -= 1")
-endpy
-endif
-endfunction
-
-function! VimHelperRestart()
-	call VimHelperMessage("client", "0")	
-	call VimHelperStart()
-endfunction
-function! VimHelperStart()
-	"Spawn! -dir=~ python git\vim\scripts\VimHelper.py
-	let g:startedExternal = 1
-endfunction
-
-function! VimHelperCompile()
-	call VimHelperMessage("compile", expand("%:p"))
-	let args = input("Arguments? : ")
-	call VimHelperMessage("compileargs", args)
-	let g:compilingVH = 1
-endfunction
-function! VimHelperCompileStop()
-	call VimHelperMessage("compile", "")
-	let g:compilingVH = 0
-endfunction
-" ------------------------------------
-" ---- [7.7] Temp-functions ----------
+" ---- [7.4] Temp-functions ----------
 function! AddVimSection(section, subsection)
 	put = '\" Base'
 	put = '\" -------------------------------------'
