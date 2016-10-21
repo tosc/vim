@@ -605,7 +605,7 @@ endfunction
 " Else jumps to $/^
 " To change default delimiters just change g:smartJumpElements
 if !exists('g:smartJumpElements')
-	let g:smartJumpElements = "[]'\"(){}<>\[\$]"
+		let g:smartJumpElements = "[]'\"(){}<>\[\$|]"
 endif
 function! SmartJump()
 	pclose
