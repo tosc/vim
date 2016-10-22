@@ -3,7 +3,7 @@ if exists("b:current_syntax")
 endif
 
 syn match Everything '^.*$' contains=Package,Flags,String,Vars,Values
-syn match Package '^\s\+[a-zA-Z0-9_#\-.]\+' contained
+syn match Package '^\s\+[a-zA-Z0-9_#\-.\\%$/]\+' contained
 syn match Flags ' -\S\+'
 syn match Vars '{\S\+}'
 syn match Values '= \?\S\+'

@@ -1354,7 +1354,7 @@ endfunction
 " ------------------------------------
 " ---- [7.8] AutoCompile -------------
 function! CreateTempFile()
-	if exists('b:uCompilerRunning')
+	if exists('b:uCompilerRunning') && v:version >= 800
 		if expand('%') != '' && b:uCompilerRunning == 1
 			call writefile(getline(1,'$'),
 				\ expand("~/.vim/tmp/compilefiles/") . expand("%:t"))
@@ -1375,16 +1375,20 @@ function! CompileBuffer()
 endfunction
 
 function! WriteCompile()
-	call CompileBuffer()
-	let b:compiler = b:writeCompiler
-	autocmd BufWritePost <buffer> call CompileOnce()
+	if v:version >= 800
+		call CompileBuffer()
+		let b:compiler = b:writeCompiler
+		autocmd BufWritePost <buffer> call CompileOnce()
+	endif
 endfunction
 
 function! UpdateCompile()
-	call CompileBuffer()
-	let b:compiler = b:updateCompiler
-	let b:uCompilerRunning = 1
-	autocmd TextChanged,TextChangedI <buffer> call CompileOnce()
+	if v:version >= 800
+		call CompileBuffer()
+		let b:compiler = b:updateCompiler
+		let b:uCompilerRunning = 1
+		autocmd TextChanged,TextChangedI <buffer> call CompileOnce()
+	endif
 endfunction
 
 let g:compiling = 0
