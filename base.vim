@@ -510,7 +510,7 @@ autocmd FileType markdown call MDSettings()
 " ------------------------------------
 " ---- [3.15] Note-filetype ----------
 function! NoteSettings()
-	setlocal filetype=help
+	setlocal filetype=note
 	nnoremap <buffer> <C-H> :call DirectHelp()<CR>
 endfunction
 
