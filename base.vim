@@ -187,8 +187,7 @@ let g:mapleader="\<space>"
 " D - Delete buffer
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
-" E - Start external
-autocmd Filetype tex map <leader>e :Spawn! -dir=~ .vim\tmp\tmp\main.pdf <cr>
+" E
 " F
 " G - Git
 map <leader>gc :!git -C %:h commit<CR>
@@ -344,7 +343,17 @@ endfunction
 " ------------------------------------
 " ---- [3] Filetype ------------------
 " ---- [3.0] All-filetype ------------
-autocmd FileType * setlocal formatoptions-=cro
+autocmd FileType * call AllSettings()
+function! AllSettings()
+	setlocal formatoptions-=cro
+	let b:writeCompiler = {
+			\ 'compiler' : [],
+			\ 'runner' : []}
+	let b:updateCompiler = {
+			\ 'compiler' : [],
+			\ 'runner' : []}
+	let b:uCompilerRunning = 0
+endfunction
 " ------------------------------------
 " ---- [3.1] Java-filetype -----------
 function! JavaSettings()
@@ -366,6 +375,8 @@ autocmd Filetype cs call CSSettings()
 function! CSettings()
 	setlocal foldexpr=BraceFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
+	let b:updateCompiler.compiler = ["make", "-C", expand("%:h")]
+	let b:updateCompiler.runner = [expand("%:h") . "/test.sh"]
 endfunction
 
 autocmd Filetype c,cpp call CSettings()
@@ -408,9 +419,10 @@ autocmd Filetype todo call TODOSettings()
 " ------------------------------------
 " ---- [3.7] Python-filetype ---------
 function! PythonSettings()
-	setlocal omnifunc=
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=PythonFoldText()
+	let b:updateCompiler.runner = ["python", expand("~") . "/.vim/tmp/compilefiles/temp.py"]
+	let b:writeCompiler.runner = ["python", expand("%:p")]
 endfunction
 
 autocmd Filetype python call PythonSettings()
@@ -474,6 +486,7 @@ function! TEXSettings()
 	setlocal foldexpr=TexFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	call EnglishSpellCheck()
+	let b:updateCompiler.compiler = ["pdflatex", expand("~") . "/.vim/tmp/compilefiles/temp.tex"]
 endfunction
 
 autocmd Filetype tex,plaintex call TEXSettings()
@@ -587,6 +600,7 @@ hi TodoSettings cterm=bold
 " ------------------------------------
 " ---- [6] Autocmd -------------------
 autocmd BufReadPost * call UpdateFileMRU()
+autocmd TextChanged,TextChangedI * call CreateTempFile()
 " ------------------------------------
 " ---- [7] Functions -----------------
 " ---- [7.0] Tabcompletion-functions -
@@ -1056,7 +1070,7 @@ function! Explorer(sources, ...)
 		let ftype = &filetype
 		execute "bd"
 	endif
-	if bufexists("[TagBuffer]")
+	if bufexists("[ExplorerBuffer]")
 		b ExplorerBuffer
 	else
 		e [ExplorerBuffer]
@@ -1335,6 +1349,85 @@ function! DirectHelp()
 		if index != -1
 			call ExplorerOpen(index)
 		endif
+	endif
+endfunction
+" ------------------------------------
+" ---- [7.8] AutoCompile -------------
+function! CreateTempFile()
+	if exists('b:uCompilerRunning')
+		if expand('%') != '' && b:uCompilerRunning == 1
+			call writefile(getline(1,'$'),
+				\ expand("~/.vim/tmp/compilefiles/") . expand("%:t"))
+		endif
+	endif
+endfunction
+
+function! CompileBuffer()
+	let currentBuf = bufnr('%')
+	if bufexists("CompileBuffer")
+		b CompileBuffer
+	else
+		e CompileBuffer
+	endif
+	setlocal buftype=nofile
+	let g:makeBufNum = bufnr('CompileBuffer', 1)
+	exec "b " . currentBuf
+endfunction
+
+function! WriteCompile()
+	call CompileBuffer()
+	let b:compiler = b:writeCompiler
+	autocmd BufWritePost <buffer> call CompileOnce()
+endfunction
+
+function! UpdateCompile()
+	call CompileBuffer()
+	let b:compiler = b:updateCompiler
+	let b:uCompilerRunning = 1
+	autocmd TextChanged,TextChangedI <buffer> call CompileOnce()
+endfunction
+
+let g:compiling = 0
+let g:queuecompile = 0
+function! CompileOnce()
+	if g:compiling == 0
+		let cursorPos = getpos('.')
+		let currentBuf = bufnr('%')
+		execute g:makeBufNum . "bufdo 0,$d_"
+		exec "b " . currentBuf
+		call setpos('.', cursorPos)
+		let g:compiling = 1
+		if b:compiler.compiler != []
+			let g:compileJob = job_start(
+				\ b:compiler.compiler, {
+				\ 'close_cb': 'RunOnce',
+				\ 'out_io': 'buffer',
+				\ 'err_io': 'out',
+				\ 'out_name': 'CompileBuffer'})
+		else
+			call RunOnce("")
+		endif
+	else
+		let g:queuecompile = 1
+	endif
+endfunction
+function! RunOnce(channel)
+	if b:compiler.runner != []
+		let g:compileJob = job_start(
+			\ b:compiler.runner, {
+			\ 'close_cb': 'RunDone',
+			\ 'err_io': 'out',
+			\ 'out_io': 'buffer',
+			\ 'out_name': 'CompileBuffer'})
+	else
+		call RunDone("")
+	endif
+endfunction
+function! RunDone(channel)
+	let g:compiling = 0
+	if g:queuecompile
+		let g:queuecompile = 0
+		call CompileOnce()
 	endif
 endfunction
 " ------------------------------------

@@ -155,15 +155,7 @@ endfunction
 " ---- [6] Autocmd -------------------
 autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
-autocmd TextChanged,TextChangedI * call CreateTempFile()
 autocmd FocusGained * call UpdateGitInfo()
-
-let g:compiling = 0
-function! CreateTempFile()
-	if expand('%') != '' && g:compiling == 1
-		call writefile(getline(1,'$'), expand("~/.vim/tmp/compilefiles/") . expand("%:t"))
-	endif
-endfunction
 " ------------------------------------
 " ---- [7] Functions -----------------
 " ---- [7.0] Tabcompletion-functions -
