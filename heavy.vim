@@ -103,10 +103,6 @@ map <leader>R :call VimHelperCompileStop() <cr>
 map <leader>ue :UltiSnipsEdit <CR>
 map <leader>uu :call Explorer(["dir", "file"], expand("~/git/vim/scripts/UltiSnips/")) <CR>
 " V - .vimrc
-map <leader>vr :e ~/git/vim/README.md<CR>
-map <leader>vv :e ~/git/vim/heavy.vim<CR>
-map <leader>vb :e ~/git/vim/base.vim<CR>
-map <leader>vf :e ~/git/vim/folding.vim<CR>
 " W
 " X
 " Y

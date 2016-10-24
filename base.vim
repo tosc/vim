@@ -264,8 +264,9 @@ map <leader>tn :tabnew <CR>
 " U - Ultisnips
 " V - .vimrc
 map <leader>vr :e ~/git/vim/README.md<CR>
-map <leader>vv :e ~/git/vim/base.vim<CR>
+map <leader>vh :e ~/git/vim/heavy.vim<CR>
 map <leader>vb :e ~/git/vim/base.vim<CR>
+map <leader>vv :e ~/git/vim/base.vim<CR>
 map <leader>vf :e ~/git/vim/folding.vim<CR>
 map <leader>vd :vert diffsplit
 " W
