@@ -1207,7 +1207,7 @@ function! ExplorerDraw()
 		let search = split(getbufline("%", 1)[0], g:explorerpath)
 	endif
 	for searcht in search
-		call matchadd("Constant", "\\c" . searcht)
+		call matchadd("Constant", "\\c" . searcht . "\\ze.*|.*")
 	endfor
 	let curs = getpos('.')
 	if len(getbufline('%', 1, '$')) > 1
