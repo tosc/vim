@@ -1104,6 +1104,7 @@ function! Explorer(sources, ...)
 
    	syntax match Statement "\[mru\]"
    	syntax match Statement "\[dir\]"
+   	syntax match Statement "\[notes\]"
    	syntax match Function "\[buffer\]"
    	syntax match Function "\[file\]"
    	syntax match SpecialKey "| \S*$"
@@ -1207,7 +1208,11 @@ function! ExplorerDraw()
 		let search = split(getbufline("%", 1)[0], g:explorerpath)
 	endif
 	for searcht in search
-		call matchadd("Constant", "\\c" . searcht . "\\ze.*|.*")
+		let highlightPattern = "\\[.*\\] \\zs\\c" . searcht
+		if index(b:sources, "mru") >= 0
+			let highlightPattern .= "\\ze.*|.*"
+		endif
+		call matchadd("Constant",highlightPattern)
 	endfor
 	let curs = getpos('.')
 	if len(getbufline('%', 1, '$')) > 1
