@@ -8,7 +8,6 @@ for rawfolder in requiredFolders
 		let setup = 1
 	endif
 endfor
-set rtp+=~/git/vim/scripts/
 set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
 set packpath+=~/git/vim/
 " ------------------------------------

@@ -16,6 +16,7 @@ let g:explorerpath = expand("~" . "/")
 if !filereadable(g:mrufile)
 	call writefile(([]), g:mrufile)
 endif
+set rtp+=~/git/vim/scripts/
 " ------------------------------------
 " ---- [1] Vimsettings ---------------
 autocmd!
