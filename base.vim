@@ -1208,7 +1208,7 @@ function! ExplorerDraw()
 		let search = split(getbufline("%", 1)[0], g:explorerpath)
 	endif
 	for searcht in search
-		let highlightPattern = "\\[.*\\] \\zs\\c" . searcht
+		let highlightPattern = "\\[.*\\].*\\zs\\c" . searcht
 		if index(b:sources, "mru") >= 0
 			let highlightPattern .= "\\ze.*|.*"
 		endif
