@@ -311,11 +311,12 @@ function! ShowGitStatus(repo)
 					quit
 				endif
 			endif
-			if a:repo == "vim"
-				call GitFetch("info")
-			endif
+			break
 		endif
 	endfor
+	if a:repo == "vim"
+		call GitFetch("info")
+	endif
 endfunction
 " ------------------------------------
 " ---- [7.4] Temp-functions ----------
