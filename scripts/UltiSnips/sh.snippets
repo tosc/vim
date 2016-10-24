@@ -1,0 +1,27 @@
+priority 1
+
+# Conditional snippets
+snippet if "if:if" b
+if [ ${1:"$test" == "aaa"} ]; then
+	$0
+fi
+endsnippet
+snippet "ifel?s?e?" "if else:ifelse" br
+if [ ${1:"$test" == "aaa"} ]; then
+	$0
+else
+fi
+endsnippet
+snippet else "else" b
+else
+	$0
+endsnippet
+snippet "elif|(else if|elseif)" "else if:elif|elseif" br
+elif [ ${1:"$test" == "aaa"} ]; then
+	$0
+endsnippet
+snippet "fore(ach)?" "for each element in collection:foreach" br
+${1:command} | while read ${2:variable}; do
+	$0
+done
+endsnippet
