@@ -3,15 +3,14 @@
 let requiredFolders = [
 		\ "~/.vim",
 		\ "~/.vim/tmp",
-		\ "~/.vim/tmp/tmp",
-		\ "~/.vim/tmp/swapfiles"]
+		\ "~/.vim/swapfiles"]
 for rawfolder in requiredFolders
 	let folder = fnamemodify(rawfolder, ":p")
 	if !isdirectory(folder)
 		call mkdir(folder)
 	endif
 endfor
-let g:mrufile = expand("~/.vim/tmp/mru")
+let g:mrufile = expand("~/.vim/mru")
 let g:explorerpath = expand("~" . "/")
 if !filereadable(g:mrufile)
 	call writefile(([]), g:mrufile)
@@ -37,7 +36,7 @@ set guifont=Inconsolata\ bold\ 10
 	" To get the value you want to set guifont too. Then add that to your
 	" local .vimrc.
 set wildmode=longest:full,list
-set directory=~/.vim/tmp/swapfiles//
+set directory=~/.vim/swapfiles//
 set shortmess+=A
 set nobackup
 set winminheight=0
@@ -249,9 +248,9 @@ map <leader>tt :call OpenTempFile() <CR>
 function! OpenTempFile()
 	let fe = expand("%:e")	
 	if len(fe) > 0
-		e ~/.vim/tmp/tmp/temp.%:e
+		e ~/.vim/tmp/temp.%:e
 	else
-		e ~/.vim/tmp/tmp/temp
+		e ~/.vim/tmp/temp
 	endif
 endfunction
 map <leader>td :execute("e " . expand(g:todofile))<CR>
@@ -312,7 +311,7 @@ cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>!git"
 
 "tt filename opens opens a file with filename in a tmp folder.
 cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "t" ? "\<bs>Tt" : "t"
-command -nargs=1 Tt :e ~\.vim\tmp\tmp\<args>
+command -nargs=1 Tt :e ~\.vim\tmp\<args>
 
 " Maps :W to :w. To prevent errors when I sometimes hold shift too long during save.
 command W :w
@@ -423,7 +422,7 @@ autocmd Filetype todo call TODOSettings()
 function! PythonSettings()
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=PythonFoldText()
-	let b:updateCompiler.runner = ["python", expand("~") . "/.vim/tmp/compilefiles/temp.py"]
+	let b:updateCompiler.runner = ["python", expand("~") . "/.vim/compilefiles/temp.py"]
 	let b:writeCompiler.runner = ["python", expand("%:p")]
 endfunction
 
@@ -488,7 +487,7 @@ function! TEXSettings()
 	setlocal foldexpr=TexFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	call EnglishSpellCheck()
-	let b:updateCompiler.compiler = ["pdflatex", expand("~") . "/.vim/tmp/compilefiles/temp.tex"]
+	let b:updateCompiler.compiler = ["pdflatex", expand("~") . "/.vim/compilefiles/temp.tex"]
 endfunction
 
 autocmd Filetype tex,plaintex call TEXSettings()
@@ -1359,7 +1358,7 @@ function! CreateTempFile()
 	if exists('b:uCompilerRunning') && v:version >= 800
 		if expand('%') != '' && b:uCompilerRunning == 1
 			call writefile(getline(1,'$'),
-				\ expand("~/.vim/tmp/compilefiles/") . expand("%:t"))
+				\ expand("~/.vim/compilefiles/") . expand("%:t"))
 		endif
 	endif
 endfunction

@@ -1,6 +1,6 @@
 "       HEAVY VIM
 " ---- [0] Init ----------------------
-let requiredFolders = ["~/.vim/tmp/compilefiles"]
+let requiredFolders = ["~/.vim/compilefiles"]
 for rawfolder in requiredFolders
 	let folder = fnamemodify(rawfolder, ":p")
 	if !isdirectory(folder)
@@ -203,12 +203,12 @@ function! UpdateGitInfo()
 				\ ["git", "-C", expand("%:h"), "diff", "--numstat"], {
 				\ 'close_cb': 'UpdateGitRows',
 				\ 'out_io': 'file',
-				\ 'out_name': expand("~/.vim/tmp/tmp/gitRowStatus")})
+				\ 'out_name': expand("~/.vim/tmp/gitRowStatus")})
 			let g:gitFilesJob = job_start(
 				\ ["git", "-C", expand("%:h"), "status", "-b", "-s"], {
 				\ 'close_cb': 'UpdateGitFiles',
 				\ 'out_io': 'file',
-				\ 'out_name': expand("~/.vim/tmp/tmp/gitFileStatus")})
+				\ 'out_name': expand("~/.vim/tmp/gitFileStatus")})
 		endif
 	endif
 endfunction
@@ -217,7 +217,7 @@ endfunction
 " [master->origin/master]
 function! UpdateGitFiles(channel)
 	let b:gitFilesStatusLine = ""
-	let filesRaw = readfile(expand("~/.vim/tmp/tmp/gitFileStatus"))
+	let filesRaw = readfile(expand("~/.vim/tmp/gitFileStatus"))
 	if len(filesRaw) > 0
 		" [master->origin/master]
 		let fileRaw = substitute(filesRaw[0], "#", "", "g")
@@ -244,7 +244,7 @@ endfunction
 let g:testG = []
 function! UpdateGitRows(channel)
 	let b:gitRowsStatusLine = ""
-	let rowsRaw = readfile(expand("~/.vim/tmp/tmp/gitRowStatus"))
+	let rowsRaw = readfile(expand("~/.vim/tmp/gitRowStatus"))
 	let currentFile = expand("%:t")
 	for row in rowsRaw
 		if row =~ currentFile && currentFile != ""
