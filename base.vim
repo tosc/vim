@@ -1344,7 +1344,6 @@ function! ExplorerTab()
 	startinsert
 	call cursor(0, 100000)
 endfunction
-
 " ------------------------------------
 " ---- [7.6] Filemru-functions -------
 function! UpdateFileMRU()
@@ -1465,6 +1464,46 @@ function! RunDone(channel)
 		call CompileOnce()
 	endif
 endfunction
+" ------------------------------------
+" ---- [7.9] Delete-Rename-functions -
+function! CustomRename(file, ...)	
+	let reloadFile = 0
+	if a:0 > 0
+		let reloadFile = a:1
+	endif
+	let filename = fnamemodify(expand(a:file), ":p")
+	let tstr="Moving file/folder: " . filename . "\nNew location: "
+	let newName = input(tstr, fnamemodify(filename, ":h") . "/", "file")
+	if(rename(filename, newName))
+		echo "\nError: File/folder not moved."
+	else
+		echo "\nFile/folder moved."
+		if reloadFile
+			bd
+			execute "e " . newName
+		endif
+	endif
+endfunction
+function! CustomDelete(file, ...)
+	let removeBuffer = 0
+	if a:0 > 0
+		let removeBuffer = a:1
+	endif
+	let filename = fnamemodify(expand(a:file), ":p")
+	let tstr = "Removing file/folder: " . filename . "\nProceed?"
+	if confirm(tstr, "yes\nno", 2) == 1
+		if delete(filename, "rf")
+			echo "Error: File/folder not removed."
+		else
+			echo "File/folder removed."
+			if removeBuffer
+				bd
+			endif
+		endif
+	else
+		echo "Error: File/folder not removed."
+	endif
+endfunction	
 " ------------------------------------
 " ------------------------------------
 " ---- [8] Tabline -------------------
