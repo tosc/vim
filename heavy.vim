@@ -223,7 +223,7 @@ function! UpdateGitFiles(channel)
 		let fileRaw = substitute(filesRaw[0], "#", "", "g")
 		let fileRaw = substitute(fileRaw, "\\.\\.\\.", "->", "")
 		let fileRaw = substitute(fileRaw, " ", "", "")
-		if filesRaw[0] =~ "behind"
+		if filesRaw[0] =~ "behind" || filesRaw[0] =~ "ahead"
 			let fileRaw = substitute(fileRaw, " ", "] ", "")
 			let b:gitFilesStatusLine = "[" . fileRaw
 		else
