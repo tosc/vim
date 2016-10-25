@@ -28,7 +28,7 @@ set ruler
 set completeopt=menu,longest
 set tabpagemax=100
 set notimeout
-set guifont=Inconsolata\ bold\ 10
+set guifont=Inconsolata\ bold\ 14
 	" If you need to change this on another computer just use 
 	" set guifont=*
 	" Pick the font and size you want. Then type
@@ -548,6 +548,17 @@ function! HelpSettings()
 endfunction
 
 autocmd FileType help call HelpSettings()
+" ------------------------------------
+" ---- [3.17] Help-filetype ----------
+function! VimperatorFieldSettings()
+	startinsert
+	call cursor(100000, 100000)
+	nnoremap <buffer> <ESC> :wq<CR>
+	call EnglishSpellCheck()
+endfunction
+
+autocmd BufRead *vimperator-* set filetype=vimperatorfield
+autocmd FileType vimperatorfield call VimperatorFieldSettings()
 " ------------------------------------
 " ------------------------------------
 " ---- [4] Statusline ----------------
