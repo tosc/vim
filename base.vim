@@ -81,9 +81,6 @@ nnoremap L >>
 nnoremap <C-J> :call SmartJump()<CR>
 nnoremap <C-K> :call SmartJumpBack()<CR>
 
-" Easier binding for jumping to help-tag
-nnoremap <C-H> <C-]>
-
 " Wanted a easier bind for $
 nnoremap + $
 
@@ -253,6 +250,7 @@ function! OpenTempFile()
 		e ~/.vim/tmp/temp
 	endif
 endfunction
+map <leader>te :e ~/.vim/tmp/temp.
 map <leader>td :execute("e " . expand(g:todofile))<CR>
 map <leader>ta :call TodoAdd()<CR>
 " Show/Hide tabs
@@ -341,6 +339,17 @@ function! ExplorerBindings()
 	nnoremap <buffer> <CR> :call ExplorerOpen()<CR>
 	inoremap <buffer> <CR> <ESC>:call ExplorerOpen()<CR>
 	inoremap <buffer> <TAB> <ESC>:call ExplorerTab()<CR>
+endfunction
+" ------------------------------------
+" ---- [2.9] Note-bindings -------
+function! NoteBindings()
+	nnoremap <buffer> <C-H> :call DirectHelp()<CR>
+	nnoremap <C-H> <C-]>
+endfunction
+" ------------------------------------
+" ---- [2.10] Help-bindings -------
+function! HelpBindings()
+	nnoremap <C-H> <C-]>
 endfunction
 " ------------------------------------
 " ------------------------------------
@@ -514,11 +523,25 @@ autocmd FileType markdown call MDSettings()
 " ---- [3.15] Note-filetype ----------
 function! NoteSettings()
 	setlocal filetype=note
-	nnoremap <buffer> <C-H> :call DirectHelp()<CR>
+	call NoteBindings()
 endfunction
 
 autocmd BufRead */git/info/notes/* call NoteSettings()
 autocmd BufWritePost */git/info/notes/* helptags ~/git/info
+" ------------------------------------
+" ---- [3.16] Netrw-filetype ----------
+function! NetrwSettings()
+	call NetrwBindings()
+endfunction
+
+autocmd FileType netrw call NetrwSettings()
+" ------------------------------------
+" ---- [3.17] Help-filetype ----------
+function! HelpSettings()
+	call HelpBindings()
+endfunction
+
+autocmd FileType help call HelpSettings()
 " ------------------------------------
 " ------------------------------------
 " ---- [4] Statusline ----------------
