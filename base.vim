@@ -1359,6 +1359,7 @@ function! ExplorerDo(command, ...)
 				call CustomRename(tag.file)
 			elseif tag.source == "mru"
 				call CustomRename(tag.file)
+				call ExplorerTags()
 			endif
 			call ExplorerUpdate()	
 		elseif a:command == "delete"
@@ -1368,6 +1369,7 @@ function! ExplorerDo(command, ...)
 				call CustomDelete(tag.file)
 			elseif tag.source == "mru"
 				call CustomDelete(tag.file)
+				call ExplorerTags()
 			endif
 			call ExplorerUpdate()	
 		endif
@@ -1390,11 +1392,20 @@ endfunction
 function! UpdateFileMRU()
 	let tags = readfile(g:mrufile)
 	let correctTags = []
-	let newtag = expand("%:t") . "\t" . expand("%:p") . "\t" . "0"
-	call add(correctTags, newtag)
+	let newtag = ""
+	if expand("%") != ""
+		let newtag = expand("%:t") . "\t" . expand("%:p") . "\t" . "0"
+		call add(correctTags, newtag)
+	endif
 	for tag in tags
-		if tag != newtag
-			call add(correctTags, tag)
+		let info = split(tag, "\t")
+		let tagname = info[0]
+		let filename = info[1]
+		let tagsearch = info[2]
+		if filereadable(filename)
+			if tag != newtag
+				call add(correctTags, tag)
+			endif
 		endif
 	endfor
 	call writefile(correctTags, g:mrufile)
@@ -1526,6 +1537,7 @@ function! CustomRename(file, ...)
 			endif
 		endif
 	endif
+	call UpdateFileMRU()
 endfunction
 function! CustomMkdir(file)	
 	let filename = fnamemodify(expand(a:file), ":p")
@@ -1560,6 +1572,7 @@ function! CustomDelete(file, ...)
 			echo "Error: File/folder not removed."
 		endif
 	endif
+	call UpdateFileMRU()
 endfunction	
 " ------------------------------------
 " ------------------------------------
