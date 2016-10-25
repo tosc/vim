@@ -53,7 +53,7 @@ set cryptmethod=blowfish
 set updatetime=1000
 set backspace=indent,eol,start
 let $LANG = 'en'
-set colorcolumn=78
+set colorcolumn=79
 set textwidth=0
 set wrapmargin=0
 set encoding=utf-8
@@ -1158,6 +1158,7 @@ function! ExplorerTags()
 	for source in b:sources
 		if source == "mru" || source == "notes"
 			if source == "mru"
+				call UpdateFileMRU()
 				let tagfile = g:mrufile
 			elseif source == "notes"
 				let tagfile = "~/git/info/tags"
@@ -1264,6 +1265,9 @@ function! ExplorerDraw()
 		let line = "[" . tag.source . "] " . tag.name
 		if has_key(tag, "alias") > 0
 			let line = tag.alias
+		endif
+		if len(line) > 80
+			let line = line[:75] . "..."
 		endif
 		put = line
 	endfor
@@ -1548,7 +1552,6 @@ function! CustomRename(file, ...)
 			endif
 		endif
 	endif
-	call UpdateFileMRU()
 endfunction
 function! CustomMkdir(file)	
 	let filename = fnamemodify(expand(a:file), ":p")
@@ -1583,7 +1586,6 @@ function! CustomDelete(file, ...)
 			echo "Error: File/folder not removed."
 		endif
 	endif
-	call UpdateFileMRU()
 endfunction	
 " ------------------------------------
 " ------------------------------------
