@@ -185,7 +185,10 @@ let g:mapleader="\<space>"
 map <leader>d :bd<CR>
 map <leader>D :bd!<CR>
 " E
-" F
+" F - (Current) File
+map <leader>fd :call CustomDelete("%", 1)<CR>
+map <leader>fr :call CustomRename("%", 1)<CR>
+map <leader>fm :call CustomMkdir(expand("%:h"))<CR>
 " G - Git
 map <leader>gc :!git -C %:h commit<CR>
 map <leader>gd :!git -C %:h diff<CR>
@@ -336,8 +339,11 @@ function! ExplorerBindings()
 	nnoremap <buffer> i :call cursor(1, 100000)<CR>a
 	nnoremap <buffer> a :call cursor(1, 100000)<CR>a
 	nnoremap <buffer> <ESC> :execute("bd")<CR>
-	nnoremap <buffer> <CR> :call ExplorerOpen()<CR>
-	inoremap <buffer> <CR> <ESC>:call ExplorerOpen()<CR>
+	nnoremap <buffer> <CR> :call ExplorerDo("open")<CR>
+	nnoremap <buffer> r :call ExplorerDo("rename")<CR>
+	nnoremap <buffer> m :call ExplorerDo("mkdir")<CR>
+	nnoremap <buffer> d :call ExplorerDo("delete")<CR>
+	inoremap <buffer> <CR> <ESC>:call ExplorerDo("open")<CR>
 	inoremap <buffer> <TAB> <ESC>:call ExplorerTab()<CR>
 endfunction
 " ------------------------------------
@@ -1253,32 +1259,6 @@ function! ExplorerDraw()
 	call setpos('.', curs)
 endfunction
 
-function! ExplorerOpen(...)
-	let tagindex = 0
-	if a:0 > 0
-		let tagindex = a:1
-	else
-		let tagindex = getpos('.')[1] - 2
-		if tagindex < 0
-			let tagindex = 0
-		endif
-	endif
-	let tag = b:currentTags[tagindex]
-	if tag.source == "mru"
-		execute "e " . tag.file
-	elseif tag.source == "notes"
-		execute "e +" . tag.tag . " ~/git/info/" . tag.file
-	elseif tag.source == "buffer"
-		execute "b " . tag.tag
-	elseif tag.source == "file"
-		execute "e " . tag.file
-	elseif tag.source == "line"
-		execute "e +" . tag.lnum . " " . tag.file
-	elseif tag.source == "dir"
-		call ExplorerTab()
-	endif
-endfunction
-
 function! ExplorerFilesDirs(path, source)
 	let tags = []
 	let stuff = split(glob(a:path), "\n")
@@ -1344,6 +1324,67 @@ function! ExplorerTab()
 	startinsert
 	call cursor(0, 100000)
 endfunction
+
+function! ExplorerDo(command, ...)
+	let tagindex = 0
+	if a:0 > 0
+		let tagindex = a:1
+	else
+		let tagindex = getpos('.')[1] - 2
+		if tagindex < 0
+			let tagindex = 0
+		endif
+	endif
+	let bufline = getbufline("%", 1)[0]
+	if len(b:currentTags) > 0
+		let tag = b:currentTags[tagindex]
+		if a:command == "open"
+			if tag.source == "mru"
+				execute "e " . tag.file
+			elseif tag.source == "notes"
+				execute "e +" . tag.tag . " ~/git/info/" . tag.file
+			elseif tag.source == "buffer"
+				execute "b " . tag.tag
+			elseif tag.source == "file"
+				execute "e " . tag.file
+			elseif tag.source == "line"
+				execute "e +" . tag.lnum . " " . tag.file
+			elseif tag.source == "dir"
+				call ExplorerTab()
+			endif
+		elseif a:command == "rename"
+			if tag.source == "file"
+				call CustomRename(tag.file)
+			elseif tag.source == "dir"
+				call CustomRename(tag.file)
+			elseif tag.source == "mru"
+				call CustomRename(tag.file)
+			endif
+			call ExplorerUpdate()	
+		elseif a:command == "delete"
+			if tag.source == "file"
+				call CustomDelete(tag.file)
+			elseif tag.source == "dir"
+				call CustomDelete(tag.file)
+			elseif tag.source == "mru"
+				call CustomDelete(tag.file)
+			endif
+			call ExplorerUpdate()	
+		endif
+	else
+		if a:command == "open"
+			if index(b:sources, "file") >= 0
+				execute "e " . bufline
+			endif
+		endif
+	endif
+	if a:command == "mkdir"
+		if index(b:sources, "dir") >= 0
+			call CustomMkdir(bufline)
+		endif
+		call ExplorerUpdate()	
+	endif
+endfunction
 " ------------------------------------
 " ---- [7.6] Filemru-functions -------
 function! UpdateFileMRU()
@@ -1377,7 +1418,7 @@ function! DirectHelp()
 		endfor
 		let b:currentTags = b:tags
 		if index != -1
-			call ExplorerOpen(index)
+			call ExplorerDo("open", index)
 		endif
 	endif
 endfunction
@@ -1467,41 +1508,57 @@ endfunction
 " ------------------------------------
 " ---- [7.9] Delete-Rename-functions -
 function! CustomRename(file, ...)	
-	let reloadFile = 0
-	if a:0 > 0
-		let reloadFile = a:1
-	endif
-	let filename = fnamemodify(expand(a:file), ":p")
-	let tstr="Moving file/folder: " . filename . "\nNew location: "
-	let newName = input(tstr, fnamemodify(filename, ":h") . "/", "file")
-	if(rename(filename, newName))
-		echo "\nError: File/folder not moved."
-	else
-		echo "\nFile/folder moved."
-		if reloadFile
-			bd
-			execute "e " . newName
+	if expand(a:file) != ""
+		let reloadFile = 0
+		if a:0 > 0
+			let reloadFile = a:1
+		endif
+		let filename = fnamemodify(expand(a:file), ":p")
+		let tstr="Moving file/folder: " . filename . "\nNew location: "
+		let newName = input(tstr, fnamemodify(filename, ":h") . "/", "file")
+		if(rename(filename, newName))
+			echo "\nError: File/folder not moved."
+		else
+			echo "\nFile/folder moved."
+			if reloadFile
+				bd
+				execute "e " . newName
+			endif
 		endif
 	endif
 endfunction
-function! CustomDelete(file, ...)
-	let removeBuffer = 0
-	if a:0 > 0
-		let removeBuffer = a:1
-	endif
+function! CustomMkdir(file)	
 	let filename = fnamemodify(expand(a:file), ":p")
-	let tstr = "Removing file/folder: " . filename . "\nProceed?"
+	let tstr="New directory name: "
+	let newName = input(tstr, filename, "file")
+	let tstr="Create new directory: " . newName
 	if confirm(tstr, "yes\nno", 2) == 1
-		if delete(filename, "rf")
-			echo "Error: File/folder not removed."
-		else
-			echo "File/folder removed."
-			if removeBuffer
-				bd
-			endif
-		endif
+		call mkdir(newName)
+		echo "Directory created."
 	else
-		echo "Error: File/folder not removed."
+		echo "Directory not created."
+	endif
+endfunction
+function! CustomDelete(file, ...)
+	if expand(a:file) != ""
+		let removeBuffer = 0
+		if a:0 > 0
+			let removeBuffer = a:1
+		endif
+		let filename = fnamemodify(expand(a:file), ":p")
+		let tstr = "Removing file/folder: " . filename . "\nProceed?"
+		if confirm(tstr, "yes\nno", 2) == 1
+			if delete(filename, "rf")
+				echo "Error: File/folder not removed."
+			else
+				echo "File/folder removed."
+				if removeBuffer
+					bd
+				endif
+			endif
+		else
+			echo "Error: File/folder not removed."
+		endif
 	endif
 endfunction	
 " ------------------------------------
