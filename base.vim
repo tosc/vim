@@ -335,6 +335,8 @@ endfunction
 " ------------------------------------
 " ---- [2.8] Explorer-bindings -------
 function! ExplorerBindings()
+	nnoremap <buffer> i :call cursor(1, 100000)<CR>a
+	nnoremap <buffer> a :call cursor(1, 100000)<CR>a
 	nnoremap <buffer> <ESC> :execute("bd")<CR>
 	nnoremap <buffer> <CR> :call ExplorerOpen()<CR>
 	inoremap <buffer> <CR> <ESC>:call ExplorerOpen()<CR>
