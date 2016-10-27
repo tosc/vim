@@ -1252,7 +1252,7 @@ function! ExplorerDraw()
 	endif
 	for searcht in search
 		let highlightPattern = "\\[.*\\].*\\zs\\c" . searcht
-		if index(b:sources, "mru") >= 0
+		if index(b:sources, "mru") >= 0 || index(b:sources, "notes") >= 0
 			let highlightPattern .= "\\ze.*|.*"
 		endif
 		call matchadd("Constant",highlightPattern)
