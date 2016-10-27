@@ -1357,7 +1357,8 @@ function! ExplorerDo(command, ...)
 			if tag.source == "mru"
 				execute "e " . tag.file
 			elseif tag.source == "notes"
-				execute "e +" . tag.tag . " ~/git/info/" . tag.file
+				execute "e +" . escape(escape(tag.tag, "*"), "*") . 
+					\ " ~/git/info/" . tag.file
 			elseif tag.source == "buffer"
 				execute "b " . tag.tag
 			elseif tag.source == "file"
