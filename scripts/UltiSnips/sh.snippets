@@ -2,7 +2,7 @@ priority 1
 
 # Conditional snippets
 snippet if "if:if" b
-if [ ${1:"$test" == "aaa"} ]; then
+if [ "${1:$test}" == "${2:aaa}" ]; then
 	$0
 fi
 endsnippet
@@ -24,4 +24,25 @@ snippet "fore(ach)?" "for each element in collection:foreach" br
 ${1:command} | while read ${2:variable}; do
 	$0
 done
+endsnippet
+
+# Loop snippets
+snippet for "for:for" b
+for ${1:i} in $(seq ${2:1} ${3:10}); do
+	$0
+done
+endsnippet
+snippet "for((?!e)\w+)" "for,??? as variable:for???" br
+for `!p snip.rv = match.group(1)` in $(seq ${2:1} ${3:10}); do
+	$0
+done
+endsnippet
+
+
+# Methods/functinos
+snippet "func?t?i?o?n?|meth?o?d?" "function:function|method" br
+${1:funcName}()
+(
+	${0:${VISUAL}}	
+)
 endsnippet
