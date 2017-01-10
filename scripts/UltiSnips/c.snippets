@@ -8,14 +8,6 @@ endglobal
 snippet "import|include" "import:import|include" br
 #include <${1:stdio.h}>
 endsnippet
-snippet header "New C-header" b
-#ifndef `!v toupper(expand('%:r'))`_H_
-#define `!v toupper(expand('%:r'))`_H_
-
-$0
-
-#endif
-endsnippet
 
 # Logical operations
 snippet " \|\|| or" "or:or" r
@@ -164,7 +156,18 @@ snippet "(m(ulti)?l(ine)?c(omment)?)|'''|/\*" " A comment spanning multiple line
 <MISSING multiline comment>
 endsnippet
 snippet comment "comment:comment" b
-<MISSING documentation>
+<M ISSING documentation>
+endsnippet
+snippet documentation "documentation" b
+/**
+ * $1
+ */
+endsnippet
+snippet docparam "new parameter in documentation" b
+ * @param $0
+endsnippet
+snippet docreturn "add return to documentation" b
+ * @return $0
 endsnippet
 
 # Special snippets
@@ -196,7 +199,16 @@ snippet "printli?s?t?" "print a list:printlist" r
 <MISSING print list>
 endsnippet
 # New code snippets
-snippet "filebase|main" "runnable script:filebase|main" br
+snippet fileheader "New C-header" b
+#ifndef `!v toupper(expand('%:r'))`_H_
+#define `!v toupper(expand('%:r'))`_H_
+
+${1:int example(int i);}
+$0
+
+#endif
+endsnippet
+snippet filebase "filebase" b
 int main(int argc, char* argv[])
 {
 	return 0;
@@ -224,7 +236,7 @@ snippet tcpclient "" b
 #include <netdb.h>
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h> 
+#include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
 
@@ -244,19 +256,19 @@ int main()
 
 
 
-	server_addr.sin_family = AF_INET;     
-        server_addr.sin_port = htons(9637);   
+	server_addr.sin_family = AF_INET;
+        server_addr.sin_port = htons(9637);
         server_addr.sin_addr = *((struct in_addr *)host->h_addr);
-        bzero(&(server_addr.sin_zero),8); 
+        bzero(&(server_addr.sin_zero),8);
 
-        if (connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1) 
+        if (connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
 	{
 		perror("Connect");
 		exit(1);
 	}
 
 	sprintf(send_data, "windowNr 23 asdfj asd fjkasldf jaslkdf jasldf jasklvacsv masdklf jaslcvm asldfk jalwefi alsd");
-	send(sock,send_data,strlen(send_data), 0);   
+	send(sock,send_data,strlen(send_data), 0);
 	close(sock);
 
 	return 0;

@@ -4,29 +4,43 @@ global !p
 from snippetHelpers import *
 endglobal
 
-snippet makec
+
+snippet filebase
+CC = ${1:gcc}
+CFLAGS = ${2:-Wall}
+$0
+endsnippet
+snippet filec
 CC = ${1:gcc}
 CFLAGS = ${2:-Wall}
 
 ${3:name}: $3.c
-	$(CC) $3.c \$(CFLAGS) -o $3 
+	$(CC) $3.c \$(CFLAGS) -o $3
 $0
 endsnippet
-snippet newc
-${1:name}: $1.c
-	$(CC) $1.c \$(CFLAGS) -o $1 
-$0
-endsnippet
-snippet makecpp
+snippet filecpp
 CC = ${1:g++}
 CFLAGS = ${2:-Wall}
 
 all:
-	$(CC) -o ${3:main} \$(CFLAGS) 
+	$(CC) -o ${3:main} \$(CFLAGS)
 $0
 endsnippet
-snippet newcpp
+
+snippet newsourcec
+${1:name}: $1.c
+	$(CC) \$(CFLAGS) $1.c -o $1
+$0
+endsnippet
+snippet newlibraryc
+${1:name}: $1.c
+	$(CC) \$(CFLAGS) -c $1.c -o $1.o
+$0
+endsnippet
+
+
+snippet newsourcecpp
 ${1:name}: $1.cpp ${2:$1.h}
-	$(CC) -c $1.cpp \$(CFLAGS) 
+	$(CC) -c $1.cpp \$(CFLAGS)
 $0
 endsnippet

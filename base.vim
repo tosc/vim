@@ -222,7 +222,8 @@ map <leader>i :call Explorer(["notes"])<CR>
 " K
 " L
 " M - Make
-autocmd Filetype c map <buffer><silent> <leader>m :w <bar> !./%:r <cr>
+" Requires a make file with a run line that compiles and runs the program.
+autocmd Filetype c map <buffer><silent> <leader>m :w <bar> make run <cr>
 autocmd Filetype cpp map <buffer><silent> <leader>m :w <bar> ! main <cr>
 autocmd Filetype cs map <buffer><silent> <leader>m :w <bar> ! main <cr>
 autocmd Filetype vim map <leader>m :so % <cr>
@@ -393,8 +394,7 @@ autocmd Filetype cs call CSSettings()
 function! CSettings()
 	setlocal foldexpr=BraceFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
-	let b:updateCompiler.compiler = ["make", "-C", expand("%:h")]
-	let b:updateCompiler.runner = [expand("%:h") . "/test.sh"]
+	let b:updateCompiler.runner = ["make", "run", "-C", expand("%:h")]
 endfunction
 
 autocmd Filetype c,cpp call CSettings()
