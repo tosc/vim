@@ -25,6 +25,8 @@ let g:UltiSnipsJumpForwardTrigger="<Nop>"
 let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
 let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
+
+autocmd BufNewFile,BufRead all.snippets set filetype=snippets
 " ------------------------------------
 " ------------------------------------
 " ---- [2] Bindings ------------------
@@ -100,6 +102,7 @@ map <leader>R :call VimHelperCompileStop() <cr>
 " S - Spellcheck
 " T - Tabs, temp and tabformat
 " U - Ultisnips
+map <leader>ua :e ~/git/vim/scripts/UltiSnips/all.snippets<CR>
 map <leader>ue :UltiSnipsEdit <CR>
 map <leader>uu :call Explorer(["dir", "file"], expand("~/git/vim/scripts/UltiSnips/")) <CR>
 " V - .vimrc
