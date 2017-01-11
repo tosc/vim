@@ -58,6 +58,7 @@ set textwidth=0
 set wrapmargin=0
 set encoding=utf-8
 set shellslash
+set autoindent
 
 " Shows whitespaces and tabs when using list.
 set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ 
@@ -231,7 +232,7 @@ autocmd Filetype python map <buffer><silent> <leader>m :w <bar> ! python % <cr>
 " N - Next buffer
 map <leader>n :bn <CR>
 " O - Open file explorer
-" P - Previour buffer
+" P - Previous buffer
 map <leader>p :bp <CR>
 " Q - Quickfix commands
 map <leader>qn :cn <CR>

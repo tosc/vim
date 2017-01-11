@@ -15,7 +15,7 @@ CC = ${1:gcc}
 CFLAGS = ${2:-Wall}
 
 ${3:name}: $3.c
-	$(CC) $3.c \$(CFLAGS) -o $3
+	$(CC) \$(CFLAGS) $3.c -o $3
 $0
 endsnippet
 snippet filecpp
@@ -23,7 +23,7 @@ CC = ${1:g++}
 CFLAGS = ${2:-Wall}
 
 all:
-	$(CC) -o ${3:main} \$(CFLAGS)
+	$(CC) \$(CFLAGS) -o ${3:main}
 $0
 endsnippet
 
@@ -41,6 +41,6 @@ endsnippet
 
 snippet newsourcecpp
 ${1:name}: $1.cpp ${2:$1.h}
-	$(CC) -c $1.cpp \$(CFLAGS)
+	$(CC) \$(CFLAGS) -c $1.cpp
 $0
 endsnippet
