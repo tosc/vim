@@ -6,7 +6,7 @@ endglobal
 
 # Header
 snippet "import|include" "import:import|include" br
-#include <${1:stdio.h}>
+#include <${1:stdio}.h>
 endsnippet
 
 # Logical operations
@@ -213,6 +213,52 @@ int main(int argc, char* argv[])
 {
 	return 0;
 }
+endsnippet
+snippet filetest "file for testing" b
+#include <check.h>
+#include <stdlib.h>
+
+START_TEST(${1:test_case_1})
+{
+	${0:ck_assert_str_eq("test", "test1");}
+}
+END_TEST
+
+
+Suite *money_suite(void) {
+	Suite *s;
+	TCase *tc_core;
+
+	s = suite_create("Ratcommands");
+	tc_core = tcase_create("Core");
+
+	tcase_add_test(tc_core, $1);
+	suite_add_tcase(s, tc_core);
+
+	return s;
+}
+
+int main(int argc, char* argv[])
+{
+	int no_failed = 0;
+	Suite *s;
+	SRunner *runner;
+
+	s = money_suite();
+	runner = srunner_create(s);
+
+	srunner_run_all(runner, CK_NORMAL);
+	no_failed = srunner_ntests_failed(runner);
+	srunner_free(runner);
+	return (no_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+endsnippet
+snippet newtest "new test" b
+START_TEST(${1:test_case_1})
+{
+	${0:ck_assert_str_eq("test", "test1");}
+}
+END_TEST
 endsnippet
 snippet class "new class:class" b
 <MISSING class>
