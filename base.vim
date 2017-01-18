@@ -180,11 +180,13 @@ xnoremap å c<C-R>=PythonMath()<CR>
 let g:mapleader="\<space>"
 
 " A
-" B
-" C - Compile
+" B - (Last) Buffer
+map <leader>b :b# <CR>
+" C - Close
+map <leader>c <C-W>c
 " D - Delete buffer
-map <leader>d :bd<CR>
-map <leader>D :bd!<CR>
+map <leader>d :bd <CR>
+map <leader>D :bd! <CR>
 " E
 " F - (Current) File
 map <leader>fd :call CustomDelete("%", 1)<CR>
