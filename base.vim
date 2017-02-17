@@ -137,7 +137,6 @@ call StartBind()
 " ---- [2.1] Insert-bindings ---------
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
-inoremap  <C-W>
 inoremap <C-Del> <C-O>de
 inoremap [3;5~ <C-O>de
 
