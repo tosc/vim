@@ -33,8 +33,8 @@ autocmd BufNewFile,BufRead all.snippets set filetype=snippets
 " ---- [2.0] Normal-bindings ---------
 " ------------------------------------
 " ---- [2.1] Insert-bindings ---------
-inoremap <C-J> <C-R>=USOrSmartJump()<CR>
-inoremap <C-K> <C-R>=USOrSmartJumpBack()<CR>
+inoremap <C-J> <C-R>=UltiSnips#ExpandSnippetOrJump()<CR>
+inoremap <C-K> <C-R>=UltiSnips#JumpBackwards()<CR>
 
 let g:UltiSnipsJumpForwardTrigger="<C-J>"
 let g:UltiSnipsJumpBackwardTrigger="<C-K>"
@@ -165,23 +165,7 @@ function! CustomTab()
 	return "\<TAB>"
 endfunction
 " ------------------------------------
-" ---- [7.1] Jump-functions ----------
-function! USOrSmartJump()
-	call UltiSnips#ExpandSnippetOrJump()
-	if g:ulti_expand_or_jump_res == 1
-		return ""
-	endif
-	return SmartJump()
-endfunction
-function! USOrSmartJumpBack()
-	call UltiSnips#JumpBackwards()
-	if g:ulti_jump_backwards_res == 1
-		return ""
-	endif
-	return SmartJumpBack()
-endfunction
-" ------------------------------------
-" ---- [7.2] Eval-math-functions -----
+" ---- [7.1] Eval-math-functions -----
 function! PythonMath()
 let l:vimMath = getreg('"')
 if l:vimMath == ''
@@ -195,7 +179,7 @@ endpy
 return l:pythonMath
 endfunction
 " ------------------------------------
-" ---- [7.3] Git-info-functions ------
+" ---- [7.2] Git-info-functions ------
 let g:gitUpdating = 0
 
 function! UpdateGitInfo()
@@ -322,7 +306,7 @@ function! ShowGitStatus(repo)
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.4] Temp-functions ----------
+" ---- [7.3] Temp-functions ----------
 function! AddVimSection(section, subsection)
 	put = '\" Base'
 	put = '\" -------------------------------------'

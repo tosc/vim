@@ -79,8 +79,10 @@ syntax on
 nnoremap H <<
 nnoremap L >>
 
-nnoremap <C-J> :call SmartJump()<CR>
-nnoremap <C-K> :call SmartJumpBack()<CR>
+nnoremap <C-H> <C-W>h
+nnoremap <C-J> <C-W>j
+nnoremap <C-K> <C-W>k
+nnoremap <C-L> <C-W>l
 
 " Wanted a easier bind for $
 nnoremap + $
@@ -148,9 +150,6 @@ inoremap <C-S> <C-X><C-S>
 " Tab completion
 inoremap <TAB> <C-R>=CustomTab()<CR>
 inoremap <S-TAB> <C-P>
-
-inoremap <C-J> <C-R>=SmartJump()<CR>
-inoremap <C-K> <C-R>=SmartJumpBack()<CR>
 
 " Readline bindings.
 inoremap <C-A> <home>
@@ -353,13 +352,11 @@ endfunction
 " ------------------------------------
 " ---- [2.9] Note-bindings -------
 function! NoteBindings()
-	nnoremap <buffer> <C-H> :call DirectHelp()<CR>
-	nnoremap <C-H> <C-]>
+	nnoremap <buffer> <C-]> :call DirectHelp()<CR>
 endfunction
 " ------------------------------------
 " ---- [2.10] Help-bindings -------
 function! HelpBindings()
-	nnoremap <C-H> <C-]>
 endfunction
 " ------------------------------------
 " ------------------------------------
@@ -659,55 +656,7 @@ function! CustomTab()
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.1] Jump-functions ----------
-" Jumps you to the next/previous ultisnips location if exists.
-" Else it jumps to the next/previous delimiter.
-" Else jumps to $/^
-" To change default delimiters just change g:smartJumpElements
-if !exists('g:smartJumpElements')
-		let g:smartJumpElements = "[]'\"(){}<>\[\$|]"
-endif
-function! SmartJump()
-	pclose
-	let cursorPos = getpos('.')
-	let pos = match(getline('.'), g:smartJumpElements, cursorPos[2] - 1)
-	if pos == -1
-		normal $
-	else
-		let cursorPos[2] = pos + 1
-		call setpos('.', cursorPos)
-	endif
-	call feedkeys("\<right>",'i')
-	return ""
-endfunction
-function! SmartJumpBack()
-	pclose
-	let cursorPos = getpos('.')
-	let newPos = match(getline('.'), g:smartJumpElements)
-	let pos = newPos
-	let matchCount = 1
-	if pos == -1 || pos > cursorPos[2] + 1
-		normal ^
-		return ""
-	endif
-	while newPos < cursorPos[2] - 1
-		if newPos == -1
-			break
-		endif
-		let pos = newPos
-		let newPos = match(getline('.'), g:smartJumpElements, 0, matchCount)
-		let matchCount += 1
-	endwhile
-	if cursorPos[2] == pos + 1
-		normal ^
-	else
-		let cursorPos[2] = pos + 1
-		call setpos('.', cursorPos)
-	endif
-	return ""
-endfunction
-" ------------------------------------
-" ---- [7.2] Temp-functions ----------
+" ---- [7.1] Temp-functions ----------
 function! TempBuffer()
 	if bufexists("[TempBuffer]")
 		b TempBuffer
@@ -750,7 +699,7 @@ function! ShowVimSection(section, subsection)
 	normal gg
 endfunction
 " ------------------------------------
-" ---- [7.3] Spellcheck-functions ----
+" ---- [7.2] Spellcheck-functions ----
 function! EnglishSpellCheck()
 	setlocal spell spelllang=en_us
 endfunction
@@ -763,7 +712,7 @@ function! NoSpellCheck()
 	setlocal nospell
 endfunction
 " ------------------------------------
-" ---- [7.4] Todo-functions ------
+" ---- [7.3] Todo-functions ------
 
 "Check for todofile. If you have a local one, use that. If you have
 "the global one, use that. Else create a new local one.
@@ -1098,7 +1047,7 @@ function! PreP()
 	endfor
 endfunction
 " ------------------------------------
-" ---- [7.5] Explorer-functions ------
+" ---- [7.4] Explorer-functions ------
 "Open tagview.
 function! Explorer(sources, ...)
 	let tagfile = expand("%:p")
@@ -1407,7 +1356,7 @@ function! ExplorerDo(command, ...)
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.6] Filemru-functions -------
+" ---- [7.5] Filemru-functions -------
 function! UpdateFileMRU()
 	let tags = readfile(g:mrufile)
 	let correctTags = []
@@ -1430,7 +1379,7 @@ function! UpdateFileMRU()
 	call writefile(correctTags, g:mrufile)
 endfunction
 " ------------------------------------
-" ---- [7.7] DirectHelp ----------
+" ---- [7.6] DirectHelp ----------
 function! DirectHelp()
 	let helpTag = expand("<cWORD>")
 	if helpTag =~ "|.*|"
@@ -1453,7 +1402,7 @@ function! DirectHelp()
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.8] AutoCompile -------------
+" ---- [7.7] AutoCompile -------------
 function! CreateTempFile()
 	if exists('b:uCompilerRunning') && v:version >= 800
 		if expand('%') != '' && b:uCompilerRunning == 1
@@ -1536,7 +1485,7 @@ function! RunDone(channel)
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.9] Delete-Rename-functions -
+" ---- [7.8] Delete-Rename-functions -
 function! CustomRename(file, ...)	
 	if expand(a:file) != ""
 		let reloadFile = 0
