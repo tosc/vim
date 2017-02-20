@@ -137,6 +137,7 @@ call StartBind()
 " ---- [2.1] Insert-bindings ---------
 " Ctrl + del and Ctrl + bs like normal editors in insert
 inoremap <C-BS> <C-W>
+inoremap <C-H> <C-W>
 inoremap <C-Del> <C-O>de
 inoremap [3;5~ <C-O>de
 
@@ -155,7 +156,6 @@ inoremap <C-A> <home>
 inoremap <C-E> <C-O>A
 inoremap <C-B> <left>
 inoremap <C-F> <right>
-inoremap <C-H> <Backspace>
 
 " Enter works even when completionmenu is up.
 inoremap <expr> <CR> pumvisible() ? '<C-E><CR>' : "\<CR>"
