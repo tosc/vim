@@ -1379,24 +1379,42 @@ function! UpdateFileMRU()
 endfunction
 " ------------------------------------
 " ---- [7.6] DirectHelp ----------
+" Custom jump to tag command for note files.
 function! DirectHelp()
 	let helpTag = expand("<cWORD>")
 	if helpTag =~ "|.*|"
+		" Remove | from the tag.
 		let helpTag = helpTag[1:-2]
-		let b:sources = ["notes"]
-		call ExplorerTags()
-		let index = -1
-		let tmpI = 0
-		for tag in b:tags
-			if tag.name == helpTag
-				let index = tmpI
-				break
+		" Split the tag by options.
+		let tag = split(helpTag, ":")
+		let filename = tag[0]
+		" If the file is a pdf, open evince at the correct place.
+		" |file.pdf| or
+		" |file.pdf:pagenr|
+		if filename =~ "\.[pP][dD][fF]$"
+			let filepath = expand('~/git/info/' . filename)
+			let page = "0"
+			if len(tag) > 1
+				let page = tag[1]
 			endif
-			let tmpI += 1
-		endfor
-		let b:currentTags = b:tags
-		if index != -1
-			call ExplorerDo("open", index)
+			call system("evince " . filepath . " --page-label=" . page)
+		" If it's a normal note tag, jump to the specified note.
+		else
+			let b:sources = ["notes"]
+			call ExplorerTags()
+			let index = -1
+			let tmpI = 0
+			for tag in b:tags
+				if tag.name == helpTag
+					let index = tmpI
+					break
+				endif
+				let tmpI += 1
+			endfor
+			let b:currentTags = b:tags
+			if index != -1
+				call ExplorerDo("open", index)
+			endif
 		endif
 	endif
 endfunction

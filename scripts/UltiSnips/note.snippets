@@ -1,5 +1,32 @@
+# Snippet setttings
+priority 1
+
+# Header
+# Conditional snippets
+# Loop snippets
+# Methods/functinos
+# String snippets
+# int snippets
+# Variable snippets
+# Datatype snippets
+# Documentation snippets
+# Special snippets
 snippet = "===" b
 ==============================================================================
 ${1:header}						*${2:tag}*
 $0
+endsnippet
+
+# New code snippets
+snippet filebase "runnable script" b
+*${1:filename}.txt*
+	
+	${2:Notetype} notes.
+
+endsnippet
+
+# Stream snippets
+# Text Snippets
+snippet lorem "Lorem Ipsum - 50 Words" b
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
 endsnippet
