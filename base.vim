@@ -79,13 +79,14 @@ syntax on
 nnoremap H <<
 nnoremap L >>
 
+" Better window bindings.
 nnoremap <C-H> <C-W>h
 nnoremap <C-J> <C-W>j
 nnoremap <C-K> <C-W>k
 nnoremap <C-L> <C-W>l
 
-" Wanted a easier bind for $
-nnoremap + $
+" Easier bind for jump to definition
+nnoremap <C-M> <C-]>
 
 " Do last recording. (Removes exmode which I never use.)
 nnoremap Q @@
@@ -133,6 +134,13 @@ function! StartBind()
 	endfor
 endfunction
 call StartBind()
+
+" Free bindings.
+" CTRL-N (same as j)
+" CTRL-P (same as k)
+" CTRL-P (same as k)
+" s (same as cl)
+" S (same as cc)
 " ------------------------------------
 " ---- [2.1] Insert-bindings ---------
 " Ctrl + del and Ctrl + bs like normal editors in insert
@@ -351,6 +359,7 @@ endfunction
 " ------------------------------------
 " ---- [2.9] Note-bindings -------
 function! NoteBindings()
+	nnoremap <buffer> <C-M> :call DirectHelp()<CR>
 	nnoremap <buffer> <C-]> :call DirectHelp()<CR>
 endfunction
 " ------------------------------------
