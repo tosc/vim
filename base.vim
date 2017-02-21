@@ -178,8 +178,6 @@ vnoremap L >gv
 vnoremap , ;
 vnoremap ; ,
 
-xnoremap + $
-
 xnoremap å c<C-R>=PythonMath()<CR>
 " ------------------------------------
 " ---- [2.3] Leader-bindings ---------
