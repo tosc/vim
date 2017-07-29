@@ -25,7 +25,7 @@ set relativenumber
 set guioptions=c
 set incsearch
 set ruler
-set completeopt=menu,longest
+set completeopt=menu
 set tabpagemax=100
 set notimeout
 set guifont=Inconsolata\ bold\ 14
@@ -78,12 +78,6 @@ syntax on
 " I keep pressing << >> in the wrong order. HL are good for directions.
 nnoremap H <<
 nnoremap L >>
-
-" Better window bindings.
-nnoremap <C-H> <C-W>h
-nnoremap <C-J> <C-W>j
-nnoremap <C-K> <C-W>k
-nnoremap <C-L> <C-W>l
 
 " Easier bind for jump to definition
 nnoremap <C-M> <C-]>
@@ -164,6 +158,7 @@ inoremap <C-A> <home>
 inoremap <C-E> <C-O>A
 inoremap <C-B> <left>
 inoremap <C-F> <right>
+inoremap <C-K> <C-O>C
 
 " Enter works even when completionmenu is up.
 inoremap <expr> <CR> pumvisible() ? '<C-E><CR>' : "\<CR>"
@@ -496,7 +491,7 @@ autocmd Filetype pass call PASSSettings()
 " ------------------------------------
 " ---- [3.11] Japanese-filetype ------
 function! JAPANESESettings()
-	set guifont=MS_Gothic:h16:w8
+	set guifont=Inconsolata\ 24
 	set fileencoding=utf-8
 endfunction
 
@@ -1134,6 +1129,15 @@ function! ExplorerTags()
 					\ 'source' : source}
 				call add(tags, tag)
 			endfor
+			if source == "notes"
+				let passtag = {
+					\ 'name' : 'pass-password-file-passfile',
+					\ 'file' : 'pass.pass',
+					\ 'tag' : '0',
+					\ 'alias' : "[" . source . "] " . "pass-password-file-passfile | pass.pass",
+					\ 'source' : source}
+				call add(tags, passtag)
+			endif
 		elseif source == "buffer"
 			let bufs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
 			for buf in bufs

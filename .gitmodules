@@ -16,6 +16,3 @@
 [submodule "pack/addons/start/YouCompleteMe"]
 	path = pack/addons/start/YouCompleteMe
 	url = https://github.com/Valloric/YouCompleteMe
-[submodule "pack/addons/start/vim-tmux-navigator"]
-	path = pack/addons/start/vim-tmux-navigator
-	url = https://github.com/christoomey/vim-tmux-navigator

@@ -29,6 +29,7 @@ call SubSyntax("xf86conf")
 call SubSyntax("systemd")
 call SubSyntax("fun-args")
 call SubSyntax("cc")
+call SubSyntax("list")
 
 "Unuseful syntaxfiles.
 "call SubSyntax("make") - Requires formatting.
