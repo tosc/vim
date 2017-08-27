@@ -5,9 +5,9 @@ endif
 syn match Everything '^.*$' contains=Package,Flags,String,Vars,Values
 syn match Package '^\s\+[a-zA-Z0-9_#\-.\\%$/]\+' contained
 syn match Flags ' -\S\+'
-syn match Vars '{\S\+}'
+syn match Vars '{[^{}]\+}'
 syn match Values '= \?\S\+'
-syn match String '"\S\+"' contained
+syn match String '"[^"]\+"' contained
 
 hi def link Package Special
 hi def link Vars Package

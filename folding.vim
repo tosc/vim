@@ -210,7 +210,6 @@ function! MDFolding(lnum)
 	else
 		return '='
 	endif
-
 endfunction
 " ---------------------------
 " ---------------------------

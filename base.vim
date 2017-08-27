@@ -59,6 +59,7 @@ set wrapmargin=0
 set encoding=utf-8
 set shellslash
 set autoindent
+set showcmd
 
 " Shows whitespaces and tabs when using list.
 set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ 
@@ -536,7 +537,7 @@ endfunction
 autocmd BufRead */git/info/notes/* call NoteSettings()
 autocmd BufWritePost */git/info/notes/* helptags ~/git/info
 " ------------------------------------
-" ---- [3.16] Netrw-filetype ----------
+" ---- [3.16] Netrw-filetype ---------
 function! NetrwSettings()
 	call NetrwBindings()
 endfunction
@@ -550,7 +551,7 @@ endfunction
 
 autocmd FileType help call HelpSettings()
 " ------------------------------------
-" ---- [3.17] Help-filetype ----------
+" ---- [3.18] Vimperator-filetype ----
 function! VimperatorFieldSettings()
 	startinsert
 	call cursor(100000, 100000)
@@ -564,7 +565,7 @@ autocmd FileType vimperatorfield call VimperatorFieldSettings()
 " ------------------------------------
 " ---- [4] Statusline ----------------
 set laststatus=2
-set statusline=%<\[%f\]\ %y\ \ %m%=%-14.(%l-%c%)\ %P
+set statusline=%<\[%f\]\ %y\ \ %m%=%-14.(%l-%c%)\ %P-%L
 " ------------------------------------
 " ---- [5] Colorsettings -------------
 " ---- [5.0] Default-colorsettings ---
