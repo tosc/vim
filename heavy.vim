@@ -135,7 +135,7 @@ autocmd FileType gitcommit call FugitiveBindings()
 " ------------------------------------
 " ------------------------------------
 " ---- [4] Statusline ----------------
-set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P
+set statusline=%<\[%f\]\ %y\ %{MyStatusLine()}\ %m%=%-14.(%l-%c%)\ %P-%L
 
 " Gets the gitinfo for the statusline.
 function! MyStatusLine()
@@ -154,7 +154,6 @@ endfunction
 autocmd BufWritePost * call UpdateGitInfo()
 autocmd BufEnter * call UpdateGitInfo()
 autocmd FocusGained * call UpdateGitInfo()
-autocmd VimEnter * call CheckGitRepositories()
 " ------------------------------------
 " ---- [7] Functions -----------------
 " ---- [7.0] Tabcompletion-functions -
@@ -240,70 +239,6 @@ function! UpdateGitRows(channel)
 		endif
 	endfor
 	let g:gitUpdating -= 1
-endfunction
-
-function! CheckGitRepositories()
-	call GitFetch("vim")
-endfunction
-
-" Check status of my info and vim repsotories
-function! GitvimStatus(channel)
-	call GitStatus("vim")
-endfunction
-function! GitinfoStatus(channel)
-	call GitStatus("info")
-endfunction
-function! GitStatus(repo)
-	let g:gitStatusJob = job_start(
-		\ ["git", "-C", expand("~/git/" . a:repo), "status"], {
-		\ 'out_io': 'file',
-		\ 'close_cb': "ShowGit" . a:repo ."Status",
-		\ 'out_name': expand("~/.vim/tmp/gitStatus-" . a:repo)})
-endfunction
-
-function! GitFetch(repo)
-	if v:version >= 800
-		let g:gitFetchJob = job_start(
-			\ ["git", "-C", expand("~/git/" . a:repo), "fetch"], {
-			\ 'close_cb': "Git" . a:repo . "Status"})
-	endif
-endfunction
-
-function! ShowGitvimStatus(channel)
-	call ShowGitStatus("vim")
-endfunction
-function! ShowGitinfoStatus(channel)
-	call ShowGitStatus("info")
-endfunction
-function! ShowGitStatus(repo)
-	let filesRaw = readfile(expand("~/.vim/tmp/gitStatus-" . a:repo))
-	for file in filesRaw
-		if file =~ "Your branch is behind"		
-			let fileS = split(file, "by ")[1]
-			let commits = split(fileS, " ")[0]
-			let choices = ""
-			let promptString = "Repository: " . a:repo .
-				\ "\nBehind by " . commits . " commit"
-			if commits > 0
-				let promptString .= "s"
-			endif
-			if a:repo == "vim"
-				let promptString .= ".\nClose vim?"
-				let choices = "yes\nno"
-			elseif a:repo == "info"
-				let promptString .= "."
-			endif
-			if confirm(promptString, choices) == 1
-				if a:repo == "vim"
-					quit
-				endif
-			endif
-			break
-		endif
-	endfor
-	if a:repo == "vim"
-		call GitFetch("info")
-	endif
 endfunction
 " ------------------------------------
 " ---- [7.3] Temp-functions ----------

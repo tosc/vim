@@ -133,7 +133,6 @@ call StartBind()
 " Free bindings.
 " CTRL-N (same as j)
 " CTRL-P (same as k)
-" CTRL-P (same as k)
 " s (same as cl)
 " S (same as cc)
 " ------------------------------------
@@ -492,7 +491,7 @@ autocmd Filetype pass call PASSSettings()
 " ------------------------------------
 " ---- [3.11] Japanese-filetype ------
 function! JAPANESESettings()
-	set guifont=Inconsolata\ 24
+	set guifont=Inconsolata\ 18
 	set fileencoding=utf-8
 endfunction
 
@@ -1132,10 +1131,10 @@ function! ExplorerTags()
 			endfor
 			if source == "notes"
 				let passtag = {
-					\ 'name' : 'pass-password-file-passfile',
+					\ 'name' : 'pwdf-pass-password-file-passfile',
 					\ 'file' : 'pass.pass',
 					\ 'tag' : '0',
-					\ 'alias' : "[" . source . "] " . "pass-password-file-passfile | pass.pass",
+					\ 'alias' : "[" . source . "] " . "pwdf-pass-password-file-passfile | pass.pass",
 					\ 'source' : source}
 				call add(tags, passtag)
 			endif
