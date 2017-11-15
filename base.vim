@@ -561,6 +561,14 @@ endfunction
 autocmd BufRead *vimperator-* set filetype=vimperatorfield
 autocmd FileType vimperatorfield call VimperatorFieldSettings()
 " ------------------------------------
+" ---- [3.19] LFS-filetype ----
+function! LFSSettings()
+	setlocal foldexpr=IndentFolding(v:lnum)
+endfunction
+
+autocmd BufRead *.lfs set filetype=lfs
+autocmd FileType lfs call LFSSettings()
+" ------------------------------------
 " ------------------------------------
 " ---- [4] Statusline ----------------
 set laststatus=2

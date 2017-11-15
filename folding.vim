@@ -86,11 +86,11 @@ function! BraceFolding(lnum)
 	let line=getline(a:lnum)
 	let nextline=getline(a:lnum + 1)
 	" Catches start of function body
-	if indent(a:lnum + 1) == 0 && nextline =~ '{'
+	if indent(a:lnum + 1) == 0 && nextline =~ '{\s*$'
 			let g:InsideBrace = 1
 	endif
 	" Catches end of function body
-	if indent(a:lnum) == 0 && line =~'}'
+	if indent(a:lnum) == 0 && line =~'}\s*$'
 			let g:InsideBrace = 0
 			return 1
 	endif
@@ -207,6 +207,19 @@ function! MDFolding(lnum)
 	if line =~ "^#"
 		let ind = strlen(substitute(line, "[^#]", "", "g")) - 1
 		return '>' . ind
+	else
+		return '='
+	endif
+endfunction
+" ---------------------------
+" ---- [2.10] LFS -------
+function! LFSFolding(lnum)
+	let line = getline(a:lnum)
+	let ind = strlen(substitute(line, "[^#]", "", "g")) - 1
+	if line =~ "^\s*<icon>"
+		return 'a1'
+	elseif line =~ "^\s*<\\icon>"
+		return 's1'
 	else
 		return '='
 	endif
