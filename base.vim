@@ -1049,6 +1049,16 @@ function! PreP()
 endfunction
 " ------------------------------------
 " ---- [7.4] Explorer-functions ------
+" Custom tags for notes
+let g:extraNoteTags = []
+let extraTag = {
+	\ 'name' : 'pwdf-pass-password-file-passfile',
+	\ 'file' : 'pass.pass',
+	\ 'tag' : '0',
+	\ 'alias' : "[notes] " . "pwdf-pass-password-file-passfile | pass.pass",
+	\ 'source' : "notes"}
+call add(g:extraNoteTags, extraTag)
+
 "Open tagview.
 function! Explorer(sources, ...)
 	let tagfile = expand("%:p")
@@ -1130,13 +1140,9 @@ function! ExplorerTags()
 				call add(tags, tag)
 			endfor
 			if source == "notes"
-				let passtag = {
-					\ 'name' : 'pwdf-pass-password-file-passfile',
-					\ 'file' : 'pass.pass',
-					\ 'tag' : '0',
-					\ 'alias' : "[" . source . "] " . "pwdf-pass-password-file-passfile | pass.pass",
-					\ 'source' : source}
-				call add(tags, passtag)
+				for tag in g:extraNoteTags
+					call add(tags, tag)
+				endfor
 			endif
 		elseif source == "buffer"
 			let bufs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
