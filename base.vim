@@ -257,8 +257,6 @@ function! OpenTempFile()
 	endif
 endfunction
 map <leader>te :e ~/.vim/tmp/temp.
-map <leader>td :execute("e " . expand(g:todofile))<CR>
-map <leader>ta :call TodoAdd()<CR>
 " Show/Hide tabs
 map <leader>ts :set listchars=tab:>\ ,trail:#,extends:>,precedes:<,nbsp:+ <CR>
 map <leader>tS :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
@@ -330,14 +328,7 @@ function! TempBufferBinds()
 endfunction
 autocmd FileType tempbuffer call TempBufferBinds()
 " ------------------------------------
-" ---- [2.7] Todo-bindings -----------
-function! TodoBindings()
-	nnoremap <buffer> <ESC> :execute("bd")<CR>
-	nmap <buffer> - :call TodoToggle()<CR>
-	nmap <buffer> e :call TodoE()<CR>
-endfunction
-" ------------------------------------
-" ---- [2.8] Explorer-bindings -------
+" ---- [2.7] Explorer-bindings -------
 function! ExplorerBindings()
 	nnoremap <buffer> i :call cursor(1, 100000)<CR>a
 	nnoremap <buffer> a :call cursor(1, 100000)<CR>a
@@ -350,13 +341,13 @@ function! ExplorerBindings()
 	inoremap <buffer> <TAB> <ESC>:call ExplorerTab()<CR>
 endfunction
 " ------------------------------------
-" ---- [2.9] Note-bindings -------
+" ---- [2.8] Note-bindings -------
 function! NoteBindings()
 	nnoremap <buffer> <C-M> :call DirectHelp()<CR>
 	nnoremap <buffer> <C-]> :call DirectHelp()<CR>
 endfunction
 " ------------------------------------
-" ---- [2.10] Help-bindings -------
+" ---- [2.9] Help-bindings -------
 function! HelpBindings()
 endfunction
 " ------------------------------------
@@ -420,23 +411,7 @@ endfunction
 
 autocmd Filetype snippets call SnippetSettings()
 " ------------------------------------
-" ---- [3.6] Todo-filetype -----------
-function! TODOSettings()
-	setlocal foldexpr=IndentFolding(v:lnum)
-	setlocal foldtext=NormalFoldText()
-	syntax match TodoSettings /\S\zs\t[^\t]*$/ conceal
-endfunction
-
-function! TODOStart()
-	setlocal filetype=todo
-	call TodoView()
-endfunction
-
-" Files that end with .td are now todofiles.
-autocmd BufEnter *.todo call TODOStart()
-autocmd Filetype todo call TODOSettings()
-" ------------------------------------
-" ---- [3.7] Python-filetype ---------
+" ---- [3.6] Python-filetype ---------
 function! PythonSettings()
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=PythonFoldText()
@@ -446,7 +421,7 @@ endfunction
 
 autocmd Filetype python call PythonSettings()
 " ------------------------------------
-" ---- [3.8] Lua-filetype ------------
+" ---- [3.7] Lua-filetype ------------
 function! LUASettings()
 	setlocal foldexpr=IndentFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -454,7 +429,7 @@ endfunction
 
 autocmd Filetype lua call LUASettings()
 " ------------------------------------
-" ---- [3.9] Make-filetype -----------
+" ---- [3.8] Make-filetype -----------
 function! MAKESettings()
 	setlocal foldexpr=IndentFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -462,7 +437,7 @@ endfunction
 
 autocmd Filetype make call MAKESettings()
 " ------------------------------------
-" ---- [3.10] Pass-filetype ----------
+" ---- [3.9] Pass-filetype ----------
 function! PASSSettings()
 	setlocal foldexpr=PassFolding(v:lnum)
 	setlocal foldtext=PassFoldText()
@@ -489,7 +464,7 @@ autocmd BufNewFile,BufRead *.pass set filetype=pass
 
 autocmd Filetype pass call PASSSettings()
 " ------------------------------------
-" ---- [3.11] Japanese-filetype ------
+" ---- [3.10] Japanese-filetype ------
 function! JAPANESESettings()
 	set guifont=Inconsolata\ 18
 	set fileencoding=utf-8
@@ -500,7 +475,7 @@ autocmd BufNewFile,BufRead *.jp set filetype=jp
 
 autocmd Filetype jp call JAPANESESettings()
 " ------------------------------------
-" ---- [3.12] Latex-filetype ---------
+" ---- [3.11] Latex-filetype ---------
 function! TEXSettings()
 	setlocal foldexpr=TexFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -510,7 +485,7 @@ endfunction
 
 autocmd Filetype tex,plaintex call TEXSettings()
 " ------------------------------------
-" ---- [3.13] Gitcommit-filetype -----
+" ---- [3.12] Gitcommit-filetype -----
 function! GITCSettings()
 	let &foldlevel = 99
 	call EnglishSpellCheck()
@@ -518,7 +493,7 @@ endfunction
 
 autocmd FileType gitcommit call GITCSettings()
 " ------------------------------------
-" ---- [3.14] Markdown-filetype ------
+" ---- [3.13] Markdown-filetype ------
 function! MDSettings()
 	setlocal foldexpr=MDFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
@@ -527,7 +502,7 @@ endfunction
 
 autocmd FileType markdown call MDSettings()
 " ------------------------------------
-" ---- [3.15] Note-filetype ----------
+" ---- [3.14] Note-filetype ----------
 function! NoteSettings()
 	setlocal filetype=note
 	call NoteBindings()
@@ -539,21 +514,21 @@ let g:notesLocation = expand("~/git/info/")
 execute "autocmd BufRead " . g:notesLocation . "* call NoteSettings()"
 execute "autocmd BufWritePost " . g:notesLocation . "* helptags " . g:notesLocation
 " ------------------------------------
-" ---- [3.16] Netrw-filetype ---------
+" ---- [3.15] Netrw-filetype ---------
 function! NetrwSettings()
 	call NetrwBindings()
 endfunction
 
 autocmd FileType netrw call NetrwSettings()
 " ------------------------------------
-" ---- [3.17] Help-filetype ----------
+" ---- [3.16] Help-filetype ----------
 function! HelpSettings()
 	call HelpBindings()
 endfunction
 
 autocmd FileType help call HelpSettings()
 " ------------------------------------
-" ---- [3.18] Vimperator-filetype ----
+" ---- [3.17] Vimperator-filetype ----
 function! VimperatorFieldSettings()
 	startinsert
 	call cursor(100000, 100000)
@@ -564,7 +539,7 @@ endfunction
 autocmd BufRead *vimperator-* set filetype=vimperatorfield
 autocmd FileType vimperatorfield call VimperatorFieldSettings()
 " ------------------------------------
-" ---- [3.19] LFS-filetype ----
+" ---- [3.18] LFS-filetype ----
 function! LFSSettings()
 	setlocal foldexpr=IndentFolding(v:lnum)
 endfunction
@@ -724,342 +699,7 @@ function! NoSpellCheck()
 	setlocal nospell
 endfunction
 " ------------------------------------
-" ---- [7.3] Todo-functions ------
-
-"Check for todofile. If you have a local one, use that. If you have
-"the global one, use that. Else create a new local one.
-if filereadable(expand("~/todo.todo"))
-	let g:todofile = "~/todo.todo"
-elseif filereadable(expand("~/git/info/todo.todo"))
-	let g:todofile = "~/git/info/todo.todo"
-else
-	let g:todofile = "~/todo.todo"
-	call writefile(([]), expand(g:todofile))
-endif
-
-function! TodoView()
-	execute "0,$d_"
-	setlocal nobuflisted
-	setlocal nowrap
-	setlocal buftype=acwrite
-	call TodoBindings()
-	autocmd BufWriteCmd <buffer> call TodoWrite() | setlocal nomodified
-	autocmd BufLeave <buffer> call clearmatches()
-	set filetype=todo
-	setlocal conceallevel=2
-	call TodoLoad()
-	execute "0d_"
-	call Todos()
-	call TodoUpdate()
-	normal gg
-	setlocal nomodified
-endfunction
-
-"Reads todofile into buffer.
-function! TodoLoad()
-	for line in readfile(expand("%:p"))
-		put = line
-	endfor
-endfunction
-
-"Read buffer and turn all lines into todos.
-function! Todos(...)
-	let todos = []
-	let lines = getbufline("%", 1, "$")
-	if a:0 > 0
-		let lines = a:1
-	endif
-	for line in lines
-		let ftabs = len(split(line, "^\\t", "1")) - 1
-		let todo = {
-			\ 'line' : line,
-			\ 'priority' : -1,
-			\ 'remove' : 0,
-			\ 'textOnly' : 0,
-			\ 'textTodo' : 0,
-			\ 'tabs' : ftabs,
-			\ 'file' : ""}
-		if len(matchstr(line, "^\\s*\\[-\\]")) > 0
-			let todo.remove = 1
-		endif
-		let noiline = substitute(line, "^\\s*\\[\.\\] ", "", "")
-		let info = split(noiline, "\t")
-		let name = ""
-		let settings = ""
-		if len(info) > 0
-			let name = info[0]
-			if len(info) > 1
-				let settings = info[1]
-				let opts = split(settings, ",")
-				while len(opts) > 0
-					let opt = split(opts[0], "=")
-					let type = opt[0]
-					let opts = opts[1:]
-					if type == "p"
-						let todo.priority = str2nr(opt[1])
-					elseif type == "f"
-						let todo.file = opt[1]
-					elseif type == "-"
-						let todo.textTodo = 1
-					endif
-				endwhile
-			endif
-		endif
-		let todo.name = name
-		let indent = repeat("\t", todo.tabs)
-		let todo.line = indent . "[ ] " . name . "\t" . settings
-
-		call add(todos, todo)
-	endfor
-	"Go through all todos again updating all priorities.
-	let index = 0
-	while index < len(todos)
-		let todo = todos[index]
-		"This todo needs a priority
-		if todo.priority == -1
-			let prio = -1
-			let index2 = index + 1
-			while index2 < len(todos)
-				let todo2 = todos[index2]
-				if todo2.tabs <= todo.tabs
-					break
-				endif
-				if todo.textTodo
-					let todo2.textOnly = todo.textTodo
-				endif
-				if todo2.priority > prio
-					let prio = todo2.priority
-				endif
-				let index2 += 1
-			endwhile
-			let todo.priority = prio
-		"This todo has a priority
-		else
-			let index2 = index + 1
-			while index2 < len(todos)
-				let todo2 = todos[index2]
-				if todo2.tabs <= todo.tabs
-					break
-				endif
-				if todo.textTodo
-					let todo2.textOnly = todo.textTodo
-					let todo2.remove = todo.remove
-				endif
-				if todo2.priority == -1
-					let todo2.priority = todo.priority
-				endif
-				let index2 += 1
-			endwhile
-		endif
-		let index += 1
-	endwhile
-	let b:todos = todos
-	call TodoUpdateBox()
-endfunction
-
-"Updates box before a todo into the right value.
-function! TodoUpdateBox()
-	for todo in b:todos
-		if todo.textOnly
-			let box = ""
-		elseif todo.remove
-			let box = "[-] "
-		elseif todo.file != ""
-			let box = "[f] "
-		else
-			let box = "[ ] "
-		endif
-		let todo.line = substitute(todo.line, "\\[\.\\] ", box, "")
-	endfor
-endfunction
-
-"Colors each todo the right way.
-function! TodoColor()
-	let index = 1
-	for todo in b:todos
-		let prio = todo.priority
-		let color = prio/10
-		if color > 9
-			let color = 10
-		endif
-		if color < 0
-			let color = 0
-		endif
-		if todo.remove
-			let color = "Remove"
-		endif
-		call matchaddpos("Todo" . color, [index])
-		let index += 1
-	endfor
-endfunction
-
-"Sorts all currently loaded todos.
-function! TodoSort()
-	"Pick a todo. Go down until you find the next todo with the same tabs.
-	"Find the end of that todo.
-	"Switch place with that todo if you have lower priority.
-	"If you switched place, start over from the start.
-	"If you didn't switch place and you reaced the end of the file or a 
-	"tab that is smaller then yours then go pick the next todo.
-	
-	let todos = b:todos
-	let index = 0
-	while index < len(todos)
-		let switched = 0
-		let todo = todos[index]
-		let index2 = index + 1
-		"Find where the next todo starts.
-		while index2 < len(todos)
-			let todo2 = todos[index2]
-			if todo2.tabs < todo.tabs
-				break
-			elseif todo2.tabs == todo.tabs
-				let todostart = index
-				let todoend = index2
-				let todo2start = index2
-				if todo2.priority > todo.priority
-					let index3 = index2 + 1
-					"Find end of next todoblock.
-					while index3 < len(todos)
-						let todo3 = todos[index3]
-						if todo3.tabs <= todo2.tabs
-							break
-						endif
-						let index3 += 1
-					endwhile
-					let todo2end = index3
-					let sortedTodos = []
-					let addindex = 0
-					while addindex < todostart
-						call add(sortedTodos, todos[addindex])
-						let addindex += 1
-					endwhile
-					let addindex = todo2start
-					while addindex < todo2end
-						call add(sortedTodos, todos[addindex])
-						let addindex += 1
-					endwhile
-					let addindex = todostart
-					while addindex < todoend
-						call add(sortedTodos, todos[addindex])
-						let addindex += 1
-					endwhile
-					let addindex = todo2end
-					while addindex < len(todos)
-						call add(sortedTodos, todos[addindex])
-						let addindex += 1
-					endwhile
-					let todos = sortedTodos
-					let switched = 1
-					break
-				endif
-			endif
-			let index2 += 1
-			if switched
-				break
-			endif
-		endwhile
-		let index += 1
-		if switched
-			let index = 0
-		endif
-	endwhile
-	let b:todos = todos
-endfunction
-
-function! TodoUpdate()
-	let curs = getpos('.')
-	execute "0,$d_"
-	for todo in b:todos
-		put = todo.line
-	endfor		
-	execute "0d_"
-	call TodoColor()
-	call setpos('.', curs)
-endfunction
-
-function! TodoWrite()
-	call Todos()
-	let todos = []
-	for todo in b:todos
-		if !todo.remove
-			call add(todos, todo)
-		endif
-	endfor
-	let b:todos = todos
-	call TodoUpdate()
-	call Todos()
-	call TodoSort()
-	call TodoUpdate()
-	let lines = getbufline("%", 1, "$")
-	call writefile(getbufline("%", 1, "$"), expand("%:p"))
-endfunction
-
-function! TodoToggle()
-	call Todos()
-	let index = getcurpos()[1] - 1
-	let todo = b:todos[index]
-	if !todo.textOnly
-		let todo.remove = !todo.remove
-		let index += 1
-		while index < len(b:todos)
-			let todo2 = b:todos[index]
-			if todo.tabs < todo2.tabs
-				let todo2.remove = todo.remove
-			else
-				break	
-			endif
-			let index += 1
-		endwhile
-		call TodoUpdateBox()
-	endif
-	call TodoUpdate()	
-endfunction
-
-function! TodoAdd()
-	let lines = readfile(expand(g:todofile))
-	call Todos(lines)
-	let lines = []
-	let found = 0
-	let newline = input("Input todo: ")
-	let priority = input("Input priority: ")
-	if priority != ""
-		let newline = newline . "	p=" . priority
-	endif
-	for todo in b:todos
-		call add(lines, todo.line)
-		if todo.file == expand("%:p") && !found && expand("%:p") != ""
-			call add(lines, repeat("	", todo.tabs + 1)
-		       				\ . newline)
-			let found = 1
-		endif
-	endfor
-	if !found
-		if expand("%:p") != ""
-			call add(lines, expand("%:t") . "	f=" . expand("%:p"))
-		endif
-		call add(lines, "	" . newline)
-	endif
-	call writefile(lines, expand(g:todofile))
-	unlet b:todos
-endfunction
-
-function! TodoE()
-	call Todos()
-	let index = getcurpos()[1] - 1
-	let todo = b:todos[index]
-	if todo.file != ""
-		execute "e " . todo.file
-	endif
-endfunction
-
-function! PreP()
-	for todo in b:todos
-		echo todo.priority . " - " . todo.line
-	endfor
-endfunction
-" ------------------------------------
-" ---- [7.4] Explorer-functions ------
+" ---- [7.3] Explorer-functions ------
 " Custom tags for notes
 let g:extraNoteTags = []
 let extraTag = {
@@ -1435,7 +1075,7 @@ function! ExplorerWrite()
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.5] Filemru-functions -------
+" ---- [7.4] Filemru-functions -------
 function! UpdateFileMRU()
 	let tags = readfile(g:mrufile)
 	let correctTags = []
@@ -1458,7 +1098,7 @@ function! UpdateFileMRU()
 	call writefile(correctTags, g:mrufile)
 endfunction
 " ------------------------------------
-" ---- [7.6] DirectHelp ----------
+" ---- [7.5] DirectHelp ----------
 " Custom jump to tag command for note files.
 function! DirectHelp()
 	let helpTag = expand("<cWORD>")
@@ -1499,7 +1139,7 @@ function! DirectHelp()
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.7] AutoCompile -------------
+" ---- [7.6] AutoCompile -------------
 function! CreateTempFile()
 	if exists('b:uCompilerRunning') && v:version >= 800
 		if expand('%') != '' && b:uCompilerRunning == 1
@@ -1582,7 +1222,7 @@ function! RunDone(channel)
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.8] Delete-Rename-functions -
+" ---- [7.7] Delete-Rename-functions -
 function! CustomRename(file, ...)	
 	if expand(a:file) != ""
 		let reloadFile = 0
