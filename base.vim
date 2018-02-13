@@ -533,8 +533,11 @@ function! NoteSettings()
 	call NoteBindings()
 endfunction
 
-autocmd BufRead */git/info/notes/* call NoteSettings()
-autocmd BufWritePost */git/info/notes/* helptags ~/git/info
+" Default location of notes
+let g:notesLocation = expand("~/git/info/")
+
+execute "autocmd BufRead " . g:notesLocation . "* call NoteSettings()"
+execute "autocmd BufWritePost " . g:notesLocation . "* helptags " . g:notesLocation
 " ------------------------------------
 " ---- [3.16] Netrw-filetype ---------
 function! NetrwSettings()
@@ -1075,7 +1078,7 @@ function! Explorer(sources, ...)
 		if index(a:sources, "dir") >= 0 || index(a:sources, "file") >= 0
 			let g:explorerpath = a:1
 		endif
-		if index(a:sources, "line") >= 0
+		if index(a:sources, "line") >= 0 || index(a:sources, "checklist") >= 0
 			let tagfile = a:1
 		endif
 	endif
@@ -1091,11 +1094,12 @@ function! Explorer(sources, ...)
 	endif
 	execute "0,$d_"
 	setlocal nobuflisted
-	setlocal buftype=nofile
+	setlocal buftype=acwrite
 	call ExplorerBindings()
 	autocmd TextChangedI <buffer> call ExplorerUpdate()
 	autocmd BufLeave <buffer> call clearmatches()
 	set filetype=tag
+	autocmd BufWriteCmd <buffer> call ExplorerWrite() | setlocal nomodified
 
 	let b:sources = a:sources
 	let b:tagfile = tagfile
@@ -1121,6 +1125,7 @@ function! Explorer(sources, ...)
    	syntax match Function "\[buffer\]"
    	syntax match Function "\[file\]"
    	syntax match SpecialKey "| \S*$"
+   	syntax match SpecialKey "\[x\] .*"
 endfunction
 
 function! ExplorerTags()
@@ -1132,7 +1137,7 @@ function! ExplorerTags()
 				call UpdateFileMRU()
 				let tagfile = g:mrufile
 			elseif source == "notes"
-				let tagfile = "~/git/info/tags"
+				let tagfile = g:notesLocation . "/tags"
 			endif
 			for line in readfile(expand(tagfile))
 				let info = split(line, "\t")
@@ -1174,7 +1179,7 @@ function! ExplorerTags()
 					if line != ""
 						let tag = {
 							\ 'name' : line,
-							\ 'file' : b:tagfile,
+							\ 'file' : tagfile,
 							\ 'tag' : line,
 							\ 'alias' : index . " " . line,
 							\ 'lnum' : index,
@@ -1184,6 +1189,18 @@ function! ExplorerTags()
 					let index += 1
 				endfor
 			endif
+		elseif source == "checklist"
+			let tagfile = b:tagfile
+			for line in readfile(expand(tagfile))
+				let tag = {
+					\ 'name' : line,
+					\ 'file' : tagfile,
+					\ 'tag' : line,
+					\ 'alias' : "[-] " . line,
+					\ 'del' : 0,
+					\ 'source' : source}
+				call add(tags, tag)
+			endfor
 		endif
 	endfor
 	let b:tags = tags
@@ -1218,6 +1235,15 @@ function! ExplorerUpdate()
 	endif
 	let b:currentTags = tags
 	call ExplorerDraw()
+	setlocal nomodified
+	if index(b:sources, "checklist") >= 0
+		for tag in b:tags
+			if tag.del
+				setlocal modified
+				break
+			endif
+		endfor
+	endif
 endfunction
 
 function! ExplorerDraw()
@@ -1334,7 +1360,7 @@ function! ExplorerDo(command, ...)
 				execute "e " . tag.file
 			elseif tag.source == "notes"
 				execute "e +" . escape(escape(tag.tag, "*"), "*") . 
-					\ " ~/git/info/" . tag.file
+					\ " " . g:notesLocation . tag.file
 			elseif tag.source == "buffer"
 				execute "b " . tag.tag
 			elseif tag.source == "file"
@@ -1343,6 +1369,18 @@ function! ExplorerDo(command, ...)
 				execute "e +" . tag.lnum . " " . tag.file
 			elseif tag.source == "dir"
 				call ExplorerTab()
+			elseif tag.source == "checklist"
+				let tag.del = !tag.del
+				if tag.del
+					let tag.alias = "[x] " . tag.name
+				else
+					let tag.alias = "[-] " . tag.name
+				endif
+				normal dd
+				normal O
+				startinsert
+				call cursor(0, 100000)
+				call ExplorerUpdate()	
 			endif
 		elseif a:command == "rename"
 			if tag.source == "file"
@@ -1376,6 +1414,23 @@ function! ExplorerDo(command, ...)
 		if index(b:sources, "dir") >= 0
 			call CustomMkdir(bufline)
 		endif
+		call ExplorerUpdate()	
+	endif
+endfunction
+
+function! ExplorerWrite()
+	if index(b:sources, "checklist") >= 0
+		let tagfile = b:tagfile
+		let tags = []
+		let lines = []
+		for tag in b:tags
+			if !tag.del
+				call add(lines, tag.name)
+				call add(tags, tag)
+			endif
+		endfor
+		let b:tags = tags
+		call writefile(lines, expand(tagfile))
 		call ExplorerUpdate()	
 	endif
 endfunction
@@ -1417,7 +1472,7 @@ function! DirectHelp()
 		" |file.pdf| or
 		" |file.pdf:pagenr|
 		if filename =~ "\.[pP][dD][fF]$"
-			let filepath = expand('~/git/info/' . filename)
+			let filepath = expand(g:notesLocation . filename)
 			let page = "0"
 			if len(tag) > 1
 				let page = tag[1]
