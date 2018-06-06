@@ -1,9 +1,6 @@
 [submodule "pack/addons/start/ultisnips"]
 	path = pack/addons/start/ultisnips
 	url = https://github.com/SirVer/ultisnips
-[submodule "pack/addons/start/validator.vim"]
-	path = pack/addons/start/validator.vim
-	url = https://github.com/maralla/validator.vim
 [submodule "pack/addons/start/vim-fugitive"]
 	path = pack/addons/start/vim-fugitive
 	url = https://github.com/tpope/vim-fugitive
