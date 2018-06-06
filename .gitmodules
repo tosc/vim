@@ -13,6 +13,3 @@
 [submodule "pack/addons/start/FastFold"]
 	path = pack/addons/start/FastFold
 	url = https://github.com/Konfekt/FastFold
-[submodule "pack/addons/start/YouCompleteMe"]
-	path = pack/addons/start/YouCompleteMe
-	url = https://github.com/Valloric/YouCompleteMe
