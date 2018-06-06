@@ -107,9 +107,16 @@ endfunction
 " ---- [2.3] VIM ------------
 function! VimrcFolding(lnum)
 	let line = getline(a:lnum)
-	if line =~ '^\" ---- ' || line =~ '^function'
+	let nextline = getline(a:lnum+1)
+	if line =~ '^\" ---- ' || line =~ '^function' || line =~ '^\s*if' || line =~ '^\s*elseif'
 		return 'a1'
-	elseif line =~ '^\" ---------------------------' || line =~ '^endfunction'
+	elseif line =~ '^\" ---------------------------' || line =~ '^endfunction' || line =~ '^\s*endif'
+		if nextline =~ '^\s*elseif'
+			return 's2'
+		else
+			return 's1'
+		endif
+	elseif nextline =~ '^\s*elseif'
 		return 's1'
 	else
 		return '='
