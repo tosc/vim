@@ -149,10 +149,6 @@ inoremap <S-CR> <C-O>O
 " Autocomplete spelling
 inoremap <C-S> <C-X><C-S>
 
-" Tab completion
-inoremap <TAB> <C-R>=CustomTab()<CR>
-inoremap <S-TAB> <C-P>
-
 " Readline bindings.
 inoremap <C-A> <home>
 inoremap <C-E> <C-O>A
@@ -630,17 +626,7 @@ autocmd BufReadPost * call UpdateFileMRU()
 autocmd TextChanged,TextChangedI * call CreateTempFile()
 " ------------------------------------
 " ---- [7] Functions -----------------
-" ---- [7.0] Tabcompletion-functions -
-let s:CompletionCommand = "\<C-X>\<C-N>"
-function! CustomTab()
-	if getline(".")[col('.') - 2] =~ '\w'
-		return (pumvisible() ? "\<C-E>" : "") . s:CompletionCommand
-	else
-		return "\<TAB>"
-	endif
-endfunction
-" ------------------------------------
-" ---- [7.1] Temp-functions ----------
+" ---- [7.0] Temp-functions ----------
 function! TempBuffer()
 	if bufexists("[TempBuffer]")
 		b TempBuffer
@@ -683,7 +669,7 @@ function! ShowVimSection(section, subsection)
 	normal gg
 endfunction
 " ------------------------------------
-" ---- [7.2] Spellcheck-functions ----
+" ---- [7.1] Spellcheck-functions ----
 function! EnglishSpellCheck()
 	setlocal spell spelllang=en_us
 endfunction
@@ -696,7 +682,7 @@ function! NoSpellCheck()
 	setlocal nospell
 endfunction
 " ------------------------------------
-" ---- [7.3] Explorer-functions ------
+" ---- [7.2] Explorer-functions ------
 " Custom tags for notes
 let g:extraNoteTags = []
 let extraTag = {
@@ -1072,7 +1058,7 @@ function! ExplorerWrite()
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.4] Filemru-functions -------
+" ---- [7.3] Filemru-functions -------
 function! UpdateFileMRU()
 	let tags = readfile(g:mrufile)
 	let correctTags = []
@@ -1095,7 +1081,7 @@ function! UpdateFileMRU()
 	call writefile(correctTags, g:mrufile)
 endfunction
 " ------------------------------------
-" ---- [7.5] DirectHelp ----------
+" ---- [7.4] DirectHelp ----------
 " Custom jump to tag command for note files.
 function! DirectHelp()
 	let helpTag = expand("<cWORD>")
@@ -1136,7 +1122,7 @@ function! DirectHelp()
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.6] AutoCompile -------------
+" ---- [7.5] AutoCompile -------------
 function! CreateTempFile()
 	if exists('b:uCompilerRunning') && v:version >= 800
 		if expand('%') != '' && b:uCompilerRunning == 1
@@ -1219,7 +1205,7 @@ function! RunDone(channel)
 	endif
 endfunction
 " ------------------------------------
-" ---- [7.7] Delete-Rename-functions -
+" ---- [7.6] Delete-Rename-functions -
 function! CustomRename(file, ...)	
 	if expand(a:file) != ""
 		let reloadFile = 0

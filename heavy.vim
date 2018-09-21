@@ -28,6 +28,10 @@ let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
 
 autocmd BufNewFile,BufRead all.snippets set filetype=snippets
 " ------------------------------------
+" ---- [1.2] Completor-plugin ---------------
+" Disabled completor for these filetypes.
+let g:completor_blacklist = ['tag']
+" ------------------------------------
 " ------------------------------------
 " ---- [2] Bindings ------------------
 " ---- [2.0] Normal-bindings ---------
@@ -156,15 +160,7 @@ autocmd BufEnter * call UpdateGitInfo()
 autocmd FocusGained * call UpdateGitInfo()
 " ------------------------------------
 " ---- [7] Functions -----------------
-" ---- [7.0] Tabcompletion-functions -
-function! CustomTab()
-	if pumvisible()
-		return "\<C-N>"
-	else
-	return "\<TAB>"
-endfunction
-" ------------------------------------
-" ---- [7.1] Eval-math-functions -----
+" ---- [7.0] Eval-math-functions -----
 function! PythonMath()
 let l:vimMath = getreg('"')
 if l:vimMath == ''
@@ -178,7 +174,7 @@ endpy
 return l:pythonMath
 endfunction
 " ------------------------------------
-" ---- [7.2] Git-info-functions ------
+" ---- [7.1] Git-info-functions ------
 let g:gitUpdating = 0
 
 function! UpdateGitInfo()
@@ -241,7 +237,7 @@ function! UpdateGitRows(channel)
 	let g:gitUpdating -= 1
 endfunction
 " ------------------------------------
-" ---- [7.3] Temp-functions ----------
+" ---- [7.2] Temp-functions ----------
 function! AddVimSection(section, subsection)
 	put = '\" Base'
 	put = '\" -------------------------------------'
