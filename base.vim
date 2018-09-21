@@ -159,9 +159,6 @@ inoremap <C-E> <C-O>A
 inoremap <C-B> <left>
 inoremap <C-F> <right>
 inoremap <C-K> <C-O>C
-
-" Enter works even when completionmenu is up.
-inoremap <expr> <CR> pumvisible() ? '<C-E><CR>' : "\<CR>"
 " ------------------------------------
 " ---- [2.2] Visual-bindings ---------
 " I keep pressing << >> in the wrong order. HL are good for directions.

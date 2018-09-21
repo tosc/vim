@@ -202,7 +202,7 @@ endfunction
 " ---- [2.8] PASS -----------
 function! PassFolding(lnum)
 	let line = getline(a:lnum)
-	if line == ""
+	if line == "" || line =~ "^-"
 		return 0
 	endif
 	return ">1"
