@@ -19,6 +19,13 @@ runtime! syntax/help.vim
 let b:current_syntax = ''
 unlet b:current_syntax
 syntax include @HELP syntax/help.vim
+if has("ebcdic")
+	syn match helpHyperTextEntry	"\*[^"*|]\+\*\s"he=e-1 contains=helpStar
+	syn match helpHyperTextEntry	"\*[^"*|]\+\*$" contains=helpStar
+else
+	syn match helpHyperTextEntry	"\*[åäö#-)!+-~]\+\*\s"he=e-1 contains=helpStar
+	syn match helpHyperTextEntry	"\*[åäö#-)!+-~]\+\*$" contains=helpStar
+endif
 
 call SubSyntax("c")
 call SubSyntax("sh")

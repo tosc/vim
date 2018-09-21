@@ -506,7 +506,7 @@ let g:noteLocations = [expand("~/git/info/notes/tags-vn")]
 
 autocmd BufNewFile,BufRead *.vnx set filetype=vnotes
 autocmd Filetype vnotes call VnoteSettings()
-execute "autocmd BufWritePost *.vnx helptags " . expand("%:h:p")
+autocmd BufWritePost *.vnx helptags %:h
 " ------------------------------------
 " ---- [3.15] Netrw-filetype ---------
 function! NetrwSettings()
