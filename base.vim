@@ -495,17 +495,18 @@ endfunction
 
 autocmd FileType markdown call MDSettings()
 " ------------------------------------
-" ---- [3.14] Note-filetype ----------
-function! NoteSettings()
+" ---- [3.14] Vnote-filetype ----------
+function! VnoteSettings()
 	setlocal filetype=note
 	call NoteBindings()
 endfunction
 
 " Default location of notes
-let g:notesLocation = expand("~/git/info/")
+let g:noteLocations = [expand("~/git/info/notes/tags-vn")]
 
-execute "autocmd BufRead " . g:notesLocation . "* call NoteSettings()"
-execute "autocmd BufWritePost " . g:notesLocation . "* helptags " . g:notesLocation
+autocmd BufNewFile,BufRead *.vnx set filetype=vnotes
+autocmd Filetype vnotes call VnoteSettings()
+execute "autocmd BufWritePost *.vnx helptags " . expand("%:h:p")
 " ------------------------------------
 " ---- [3.15] Netrw-filetype ---------
 function! NetrwSettings()
@@ -688,6 +689,7 @@ let g:extraNoteTags = []
 let extraTag = {
 	\ 'name' : 'pwdf-pass-password-file-passfile',
 	\ 'file' : 'pass.pass',
+	\ 'path' : '~/git/info/pass.pass',
 	\ 'tag' : '0',
 	\ 'alias' : "[notes] " . "pwdf-pass-password-file-passfile | pass.pass",
 	\ 'source' : "notes"}
@@ -759,23 +761,37 @@ function! ExplorerTags()
 			if source == "mru"
 				call UpdateFileMRU()
 				let tagfile = g:mrufile
+				for line in readfile(expand(tagfile))
+					let info = split(line, "\t")
+					let tagname = info[0]
+					let filename = info[1]
+					let tagsearch = info[2]
+					let tag = {
+						\ 'name' : info[0],
+						\ 'file' : info[1],
+						\ 'tag' : info[2],
+						\ 'alias' : "[" . source . "] " . info[0] . " | " . info[1],
+						\ 'source' : source}
+					call add(tags, tag)
+				endfor
 			elseif source == "notes"
-				let tagfile = g:notesLocation . "/tags"
-			endif
-			for line in readfile(expand(tagfile))
-				let info = split(line, "\t")
-				let tagname = info[0]
-				let filename = info[1]
-				let tagsearch = info[2]
-				let tag = {
-					\ 'name' : info[0],
-					\ 'file' : info[1],
-					\ 'tag' : info[2],
-					\ 'alias' : "[" . source . "] " . info[0] . " | " . info[1],
-					\ 'source' : source}
-				call add(tags, tag)
-			endfor
-			if source == "notes"
+				for noteLocation in g:noteLocations
+					let lines = readfile(expand(noteLocation))
+					for line in lines
+						let info = split(line, "\t")
+						let tagname = info[0]
+						let filename = info[1]
+						let tagsearch = info[2]
+						let tag = {
+							\ 'name' : info[0],
+							\ 'file' : info[1],
+							\ 'tag' : info[2],
+							\ 'path' : fnamemodify(noteLocation, ":h") . "/" . info[1],
+							\ 'alias' : "[" . source . "] " . info[0] . " | " . info[1],
+							\ 'source' : source}
+						call add(tags, tag)
+					endfor
+				endfor
 				for tag in g:extraNoteTags
 					call add(tags, tag)
 				endfor
@@ -983,7 +999,7 @@ function! ExplorerDo(command, ...)
 				execute "e " . tag.file
 			elseif tag.source == "notes"
 				execute "e +" . escape(escape(tag.tag, "*"), "*") . 
-					\ " " . g:notesLocation . tag.file
+					\ " " . tag.path
 			elseif tag.source == "buffer"
 				execute "b " . tag.tag
 			elseif tag.source == "file"
