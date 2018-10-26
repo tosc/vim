@@ -171,6 +171,7 @@ xnoremap å c<C-R>=PythonMath()<CR>
 " ---- [2.3] Leader-bindings ---------
 let g:mapleader="\<space>"
 
+
 " A
 " B - (Last) Buffer
 map <leader>b :b# <CR>
@@ -265,6 +266,7 @@ map <leader>vf :e ~/git/vim/folding.vim<CR>
 map <leader>vd :vert diffsplit
 " W
 " X
+map <leader>x @@
 " Y
 " Z - Z(S)essions
 " ?
