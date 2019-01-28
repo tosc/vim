@@ -1,21 +1,24 @@
 "       BASE VIM
 " ---- [0] Init ----------------------
+if !exists("g:customVimHome")
+	let g:customVimHome = expand("~")
+endif
 let requiredFolders = [
-		\ "~/.vim",
-		\ "~/.vim/tmp",
-		\ "~/.vim/swapfiles"]
+		\ g:customVimHome . "/.vim",
+		\ g:customVimHome . "/.vim/tmp",
+		\ g:customVimHome . "/.vim/swapfiles"]
 for rawfolder in requiredFolders
 	let folder = fnamemodify(rawfolder, ":p")
 	if !isdirectory(folder)
 		call mkdir(folder)
 	endif
 endfor
-let g:mrufile = expand("~/.vim/mru")
-let g:explorerpath = expand("~" . "/")
+let g:mrufile = g:customVimHome . "/.vim/mru"
+let g:explorerpath = g:customVimHome . "/"
 if !filereadable(g:mrufile)
 	call writefile(([]), g:mrufile)
 endif
-set rtp+=~/git/vim/scripts/
+execute "set rtp+=" . g:customVimHome . "/git/vim/scripts/"
 " ------------------------------------
 " ---- [1] Vimsettings ---------------
 autocmd!
@@ -36,7 +39,7 @@ set guifont=Inconsolata\ bold\ 14
 	" To get the value you want to set guifont too. Then add that to your
 	" local .vimrc.
 set wildmode=longest:full,list
-set directory=~/.vim/swapfiles//
+execute "set directory=" . g:customVimHome . "/.vim/swapfiles//"
 set shortmess+=A
 set nobackup
 set winminheight=0
@@ -79,6 +82,9 @@ syntax on
 " I keep pressing << >> in the wrong order. HL are good for directions.
 nnoremap H <<
 nnoremap L >>
+
+" +/- maps made no sense locationwise, swapped them.
+nnoremap - _
 
 " Easier bind for jump to definition
 nnoremap <C-M> <C-]>
@@ -135,6 +141,8 @@ call StartBind()
 " CTRL-P (same as k)
 " s (same as cl)
 " S (same as cc)
+" + (same as j-)
+" _ (same as -)
 " ------------------------------------
 " ---- [2.1] Insert-bindings ---------
 " Ctrl + del and Ctrl + bs like normal editors in insert
@@ -214,7 +222,8 @@ map <leader>hh :call ShowVimSection(2,3)<CR>
 map <leader>hc :call ShowVimSection(2,5)<CR>
 " I - Information, notes on helpful things.
 map <leader>i :call Explorer(["notes"])<CR>
-" J - Format json file.
+" J - Snippets
+map <leader>j :call Explorer(["snippet"])<CR>
 " K
 " L
 " M - Make
@@ -245,12 +254,11 @@ map <leader>tt :call OpenTempFile() <CR>
 function! OpenTempFile()
 	let fe = expand("%:e")	
 	if len(fe) > 0
-		e ~/.vim/tmp/temp.%:e
+		execute "e " . g:customVimHome . "/.vim/tmp/temp.%:e"
 	else
-		e ~/.vim/tmp/temp
+		execute "e " . g:customVimHome . "/.vim/tmp/temp"
 	endif
 endfunction
-map <leader>te :e ~/.vim/tmp/temp.
 " Show/Hide tabs
 map <leader>ts :set listchars=tab:>\ ,trail:#,extends:>,precedes:<,nbsp:+ <CR>
 map <leader>tS :set listchars=tab:\ \ ,trail:#,extends:\ ,precedes:\ ,nbsp:\ <CR>
@@ -258,11 +266,11 @@ map <leader>tc :tabclose <CR>
 map <leader>tn :tabnew <CR>
 " U - Ultisnips
 " V - .vimrc
-map <leader>vr :e ~/git/vim/README.md<CR>
-map <leader>vh :e ~/git/vim/heavy.vim<CR>
-map <leader>vb :e ~/git/vim/base.vim<CR>
-map <leader>vv :e ~/git/vim/base.vim<CR>
-map <leader>vf :e ~/git/vim/folding.vim<CR>
+map <leader>vr :execute "e " . g:customVimHome . "/git/vim/README.md"<CR>
+map <leader>vh :execute "e " . g:customVimHome . "/git/vim/heavy.vim"<CR>
+map <leader>vb :execute "e " . g:customVimHome . "/git/vim/base.vim"<CR>
+map <leader>vv :execute "e " . g:customVimHome . "/git/vim/base.vim"<CR>
+map <leader>vf :execute "e " . g:customVimHome . "/git/vim/folding.vim"<CR>
 map <leader>vd :vert diffsplit
 " W
 " X
@@ -308,7 +316,7 @@ cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "gi" ? "\<bs>\<bs>!git"
 
 "tt filename opens opens a file with filename in a tmp folder.
 cnoremap <expr> t getcmdtype() == ":" && getcmdline() == "t" ? "\<bs>Tt" : "t"
-command -nargs=1 Tt :e ~\.vim\tmp\<args>
+execute "command -nargs=1 Tt :e " . g:customVimHome . " \.vim\tmp\<args>"
 
 " Maps :W to :w. To prevent errors when I sometimes hold shift too long during save.
 command W :w
@@ -410,7 +418,7 @@ autocmd Filetype snippets call SnippetSettings()
 function! PythonSettings()
 	setlocal foldexpr=PythonFolding(v:lnum)
 	setlocal foldtext=PythonFoldText()
-	let b:updateCompiler.runner = ["python", expand("~") . "/.vim/compilefiles/temp.py"]
+	let b:updateCompiler.runner = ["python", g:customVimHome . "/.vim/compilefiles/temp.py"]
 	let b:writeCompiler.runner = ["python", expand("%:p")]
 endfunction
 
@@ -475,7 +483,7 @@ function! TEXSettings()
 	setlocal foldexpr=TexFolding(v:lnum)
 	setlocal foldtext=NormalFoldText()
 	call EnglishSpellCheck()
-	let b:updateCompiler.compiler = ["pdflatex", expand("~") . "/.vim/compilefiles/temp.tex"]
+	let b:updateCompiler.compiler = ["pdflatex", g:customVimHome . "/.vim/compilefiles/temp.tex"]
 endfunction
 
 autocmd Filetype tex,plaintex call TEXSettings()
@@ -504,7 +512,10 @@ function! VnoteSettings()
 endfunction
 
 " Default location of notes
-let g:noteLocations = [expand("~/git/info/notes/tags-vn")]
+if !exists("g:noteLocations")
+	let g:noteLocations = []
+endif
+call add(g:noteLocations, g:customVimHome . "/git/info/notes/tags-vn")
 
 autocmd BufNewFile,BufRead *.vnx set filetype=vnotes
 autocmd Filetype vnotes call VnoteSettings()
@@ -542,6 +553,13 @@ endfunction
 
 autocmd BufRead *.lfs set filetype=lfs
 autocmd FileType lfs call LFSSettings()
+" ------------------------------------
+" ---- [3.19] Todo ----------
+function! TDFTSettings()
+endfunction
+
+autocmd BufRead *.tdft set filetype=tdft
+autocmd FileType tdft call TDFTSettings()
 " ------------------------------------
 " ------------------------------------
 " ---- [4] Statusline ----------------
@@ -663,7 +681,7 @@ function! AddVimSectionCall(section, subsection, filename)
 	endfor
 endfunction
 function! AddVimSection(section, subsection)
-	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/base.vim")
+	call AddVimSectionCall(a:section, a:subsection, g:customVimHome . "/git/vim/base.vim")
 endfunction
 function! ShowVimSection(section, subsection)
 	call TempBuffer()
@@ -687,11 +705,13 @@ endfunction
 " ------------------------------------
 " ---- [7.2] Explorer-functions ------
 " Custom tags for notes
-let g:extraNoteTags = []
+if !exists("g:extraNoteTags")
+	let g:extraNoteTags = []
+endif
 let extraTag = {
 	\ 'name' : 'pwdf-pass-password-file-passfile',
 	\ 'file' : 'pass.pass',
-	\ 'path' : '~/git/info/pass.pass',
+	\ 'path' : g:customVimHome . '/git/info/pass.pass',
 	\ 'tag' : '0',
 	\ 'alias' : "[notes] " . "pwdf-pass-password-file-passfile | pass.pass",
 	\ 'source' : "notes"}
@@ -748,7 +768,8 @@ function! Explorer(sources, ...)
 
    	syntax match Statement "\[mru\]"
    	syntax match Statement "\[dir\]"
-   	syntax match Statement "\[notes\]"
+   	syntax match Constant "\[notes\]"
+   	syntax match Constant "\[snippet\]"
    	syntax match Function "\[buffer\]"
    	syntax match Function "\[file\]"
    	syntax match SpecialKey "| \S*$"
@@ -759,7 +780,7 @@ function! ExplorerTags()
 	let tags = []
 	let bufline = getbufline("%", 1)[0]
 	for source in b:sources
-		if source == "mru" || source == "notes"
+		if source == "mru" || source == "notes" || source == "snippet"
 			if source == "mru"
 				call UpdateFileMRU()
 				let tagfile = g:mrufile
@@ -776,7 +797,7 @@ function! ExplorerTags()
 						\ 'source' : source}
 					call add(tags, tag)
 				endfor
-			elseif source == "notes"
+			elseif source == "notes" || source == "snippet"
 				for noteLocation in g:noteLocations
 					let lines = readfile(expand(noteLocation))
 					for line in lines
@@ -1002,6 +1023,24 @@ function! ExplorerDo(command, ...)
 			elseif tag.source == "notes"
 				execute "e +" . escape(escape(tag.tag, "*"), "*") . 
 					\ " " . tag.path
+			elseif tag.source == "snippet"
+				let snipp = ""
+				let inSnip = 0
+				for line in readfile(expand(tag.path))
+					if inSnip
+						if line =~ "^\s*$"
+							let inSnip = 0
+							call setreg("", snipp)						
+							break
+						endif
+						let snipp .= substitute(substitute(line, "^\\S", "", ""), "^\t", "", "") . "\n"
+					endif
+					if line =~ tag.tag
+						let inSnip = 1
+					endif
+				endfor
+				execute "bd"
+				normal p
 			elseif tag.source == "buffer"
 				execute "b " . tag.tag
 			elseif tag.source == "file"
@@ -1145,7 +1184,7 @@ function! CreateTempFile()
 	if exists('b:uCompilerRunning') && v:version >= 800
 		if expand('%') != '' && b:uCompilerRunning == 1
 			call writefile(getline(1,'$'),
-				\ expand("~/.vim/compilefiles/") . expand("%:t"))
+				\ g:customVimHome . "/.vim/compilefiles/" . expand("%:t"))
 		endif
 	endif
 endfunction

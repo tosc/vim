@@ -1,6 +1,6 @@
 "       HEAVY VIM
 " ---- [0] Init ----------------------
-let requiredFolders = ["~/.vim/compilefiles"]
+let requiredFolders = [g:customVimHome . "/.vim/compilefiles"]
 for rawfolder in requiredFolders
 	let folder = fnamemodify(rawfolder, ":p")
 	if !isdirectory(folder)
@@ -8,8 +8,8 @@ for rawfolder in requiredFolders
 		let setup = 1
 	endif
 endfor
-set tags+=~/git/vim/scripts/UltiSnips/tags/python.tags
-set packpath+=~/git/vim/
+execute "set tags+=" . g:customVimHome . "/git/vim/scripts/UltiSnips/tags/python.tags"
+execute "set packpath+=" . g:customVimHome . "/git/vim/"
 " ------------------------------------
 " ---- [1] Plugins -------------------
 " ---- [1.1] Ultisnips-plugin ---------------
@@ -24,7 +24,7 @@ let g:UltiSnipsListSnippets ="<Nop>"
 let g:UltiSnipsJumpForwardTrigger="<Nop>"
 let g:UltiSnipsJumpBackwardTrigger="<Nop>"
 
-let g:UltiSnipsSnippetsDir = "~/git/vim/scripts/UltiSnips"
+let g:UltiSnipsSnippetsDir = g:customVimHome . "/git/vim/scripts/UltiSnips"
 
 autocmd BufNewFile,BufRead all.snippets set filetype=snippets
 " ------------------------------------
@@ -91,8 +91,7 @@ map <leader>gg :Gstatus<CR>
 map <leader>gl :Glog --<CR>
 " H - Help, show binds.
 " I - Information, notes on helpful things.
-" J - Format json file.
-map <leader>j :%!python -m json.tool<CR>
+" J
 " K
 " L
 " M - Make
@@ -106,9 +105,9 @@ map <leader>R :call VimHelperCompileStop() <cr>
 " S - Spellcheck
 " T - Tabs, temp and tabformat
 " U - Ultisnips
-map <leader>ua :e ~/git/vim/scripts/UltiSnips/all.snippets<CR>
+map <leader>ua :execute "e " .  g:customVimHome . "/git/vim/scripts/UltiSnips/all.snippets"<CR>
 map <leader>ue :UltiSnipsEdit <CR>
-map <leader>uu :call Explorer(["dir", "file"], expand("~/git/vim/scripts/UltiSnips/")) <CR>
+map <leader>uu :call Explorer(["dir", "file"], g:customVimHome . "/git/vim/scripts/UltiSnips/") <CR>
 " V - .vimrc
 " W
 " X
@@ -185,12 +184,12 @@ function! UpdateGitInfo()
 				\ ["git", "-C", expand("%:h"), "diff", "--numstat"], {
 				\ 'close_cb': 'UpdateGitRows',
 				\ 'out_io': 'file',
-				\ 'out_name': expand("~/.vim/tmp/gitRowStatus")})
+				\ 'out_name': g:customVimHome . "/.vim/tmp/gitRowStatus"})
 			let g:gitFilesJob = job_start(
 				\ ["git", "-C", expand("%:h"), "status", "-b", "-s"], {
 				\ 'close_cb': 'UpdateGitFiles',
 				\ 'out_io': 'file',
-				\ 'out_name': expand("~/.vim/tmp/gitFileStatus")})
+				\ 'out_name': g:customVimHome . "/.vim/tmp/gitFileStatus"})
 		endif
 	endif
 endfunction
@@ -199,7 +198,7 @@ endfunction
 " [master->origin/master]
 function! UpdateGitFiles(channel)
 	let b:gitFilesStatusLine = ""
-	let filesRaw = readfile(expand("~/.vim/tmp/gitFileStatus"))
+	let filesRaw = readfile(g:customVimHome . "/.vim/tmp/gitFileStatus")
 	if len(filesRaw) > 0
 		" [master->origin/master]
 		let fileRaw = substitute(filesRaw[0], "#", "", "g")
@@ -226,7 +225,7 @@ endfunction
 let g:testG = []
 function! UpdateGitRows(channel)
 	let b:gitRowsStatusLine = ""
-	let rowsRaw = readfile(expand("~/.vim/tmp/gitRowStatus"))
+	let rowsRaw = readfile(g:customVimHome . "/.vim/tmp/gitRowStatus")
 	let currentFile = expand("%:t")
 	for row in rowsRaw
 		if row =~ currentFile && currentFile != ""
@@ -241,11 +240,11 @@ endfunction
 function! AddVimSection(section, subsection)
 	put = '\" Base'
 	put = '\" -------------------------------------'
-	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/base.vim")
+	call AddVimSectionCall(a:section, a:subsection, g:customVimHome . "/git/vim/base.vim")
 	put = ''
 	put = '\" Heavy'
 	put = '\" -------------------------------------'
-	call AddVimSectionCall(a:section, a:subsection, "~/git/vim/heavy.vim")
+	call AddVimSectionCall(a:section, a:subsection, g:customVimHome . "/git/vim/heavy.vim")
 endfunction
 " ------------------------------------
 " ------------------------------------
